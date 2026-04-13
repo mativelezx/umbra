@@ -12,11 +12,13 @@ export default function SettingsDeletePage() {
   const [purgeResearch, setPurgeResearch] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [devLink, setDevLink] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function handleRequest() {
     setLoading(true);
     setError(null);
+    setDevLink(null);
     try {
       const res = await fetch('/api/account/delete/request', {
         method: 'POST',
@@ -27,11 +29,22 @@ export default function SettingsDeletePage() {
       if (!res.ok || !data.ok) {
         throw new Error(data.error ?? 'delete_request_failed');
       }
-      setMessage(
-        'Te enviamos un email con un link de confirmación. El link vence en 5 minutos.',
-      );
+      if (data.data?.emailSent) {
+        setMessage(
+          'Te enviamos un email con un link de confirmación. El link vence en 5 minutos.',
+        );
+      } else if (data.data?.devMagicLink) {
+        setMessage(
+          'Modo desarrollo: no hay email configurado. Usá este link para confirmar (vence en 5 min):',
+        );
+        setDevLink(data.data.devMagicLink);
+      } else {
+        setMessage(
+          'Pedido registrado. Revisá los logs del servidor para el link de confirmación.',
+        );
+      }
     } catch (e) {
-      setError('No pudimos enviar el email. Probá de nuevo.');
+      setError('No pudimos procesar el pedido. Probá de nuevo.');
     } finally {
       setLoading(false);
     }
@@ -124,6 +137,16 @@ export default function SettingsDeletePage() {
           {message && (
             <div className="mt-4 rounded-md border border-accent-emerald/30 bg-accent-emerald/10 px-4 py-3 font-body text-sm text-accent-emerald">
               {message}
+              {devLink && (
+                <div className="mt-3 break-all">
+                  <a
+                    href={devLink}
+                    className="font-mono text-xs underline decoration-accent-emerald/50 hover:decoration-accent-emerald"
+                  >
+                    {devLink}
+                  </a>
+                </div>
+              )}
             </div>
           )}
 

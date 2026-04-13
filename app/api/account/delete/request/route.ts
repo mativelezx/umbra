@@ -2,6 +2,7 @@ import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { withErrorHandler } from '@/lib/api/with-error-handler';
 import { SessionExpiredError } from '@/lib/errors';
 import { computeHash, randomToken, CURRENT_PEPPER_VERSION } from '@/lib/security/peppers';
+import { sendDeleteConfirmationEmail } from '@/lib/email/resend';
 
 export const runtime = 'nodejs';
 
@@ -13,6 +14,9 @@ export const POST = withErrorHandler(async (req) => {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new SessionExpiredError();
+  if (!user.email) {
+    return Response.json({ ok: false, error: 'no_email_on_account' }, { status: 400 });
+  }
 
   const service = createServiceClient();
   const rawToken = randomToken(32);
@@ -32,28 +36,48 @@ export const POST = withErrorHandler(async (req) => {
     return Response.json({ ok: false, error: 'db_error' }, { status: 500 });
   }
 
-  // In production: send email via Resend with the magic link
-  // For v1 TFG: log the link so the developer can see it
   const url = new URL(req.url);
   const magicLink = `${url.origin}/settings/delete/confirm?token=${rawToken}`;
 
-  console.log(
-    JSON.stringify({
-      event: 'delete_confirmation_link',
-      user_id_hash: userIdHash,
-      email: user.email,
-      link: magicLink,
-      expires_at: expiresAt,
-      note: 'Resend integration not yet wired. This link is logged for developer access.',
-    }),
-  );
+  try {
+    const result = await sendDeleteConfirmationEmail({
+      to: user.email,
+      magicLink,
+      expiresAt,
+    });
 
-  // TODO: when RESEND_API_KEY is set, send real email here.
-  // For now we return the link in the response so the user can use it directly
-  // during development.
+    if (result.sent) {
+      console.log(
+        JSON.stringify({
+          event: 'delete_confirmation_sent',
+          user_id_hash: userIdHash,
+          provider: result.provider,
+          expires_at: expiresAt,
+        }),
+      );
+      return { emailSent: true as const };
+    }
 
-  return {
-    emailSent: true,
-    devMagicLink: process.env.NODE_ENV !== 'production' ? magicLink : undefined,
-  };
+    // No Resend key configured — dev mode fallback. Log the link server-side
+    // and hand it back inline so the developer can complete the flow.
+    console.log(
+      JSON.stringify({
+        event: 'delete_confirmation_link_dev',
+        user_id_hash: userIdHash,
+        email: user.email,
+        link: magicLink,
+        expires_at: expiresAt,
+        note: 'RESEND_API_KEY not set. Link returned inline for dev.',
+      }),
+    );
+
+    return {
+      emailSent: false as const,
+      devMagicLink: result.devLink,
+    };
+  } catch (err) {
+    console.error('[delete/request] email send failed', err);
+    // Don't leak the token on failure — user can retry.
+    return Response.json({ ok: false, error: 'email_send_failed' }, { status: 502 });
+  }
 });
