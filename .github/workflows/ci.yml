@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint · Typecheck · Unit tests · Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+        env:
+          # Dummy values so `next build` can resolve env at build time.
+          # Real values come from Vercel project settings at runtime.
+          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-anon-key
+          SUPABASE_SERVICE_ROLE_KEY: ci-placeholder-service-key
+          ANTHROPIC_API_KEY: ci-placeholder-anthropic-key
+          ANTHROPIC_MODEL_ID: claude-sonnet-4-6
+          ANTHROPIC_HAIKU_MODEL_ID: claude-haiku-4-5-20251001
+          CONSENT_IP_PEPPER_V1: 0000000000000000000000000000000000000000000000000000000000000000
+          CRISIS_PEPPER_V1: 0000000000000000000000000000000000000000000000000000000000000000
+          RESEARCH_PEPPER_V1: 0000000000000000000000000000000000000000000000000000000000000000
+          DELETE_TOKEN_PEPPER_V1: 0000000000000000000000000000000000000000000000000000000000000000
+          DAILY_TOKEN_CAP: '15000'
+          DAILY_COST_CAP_CENTS: '200'
+          GLOBAL_DAILY_BUDGET_USD: '50'
