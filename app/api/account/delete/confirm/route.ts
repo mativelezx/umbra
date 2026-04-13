@@ -45,45 +45,84 @@ export const POST = withErrorHandler(async (req) => {
   // Cascade delete BEFORE marking the token used. If anything fails mid-
   // cascade we want the user to be able to retry with the same link instead
   // of being locked out by a burned token on a partially-deleted account.
-  // Order: children first, then parent.
+  //
+  // Each step is wrapped in assertOk(): Supabase's PostgREST client returns
+  // `{ error }` on RLS denials / network errors without throwing, so if we
+  // don't inspect every return value a partial cascade could silently
+  // succeed and still reach the used_at marking below.
+  const assertOk = (label: string) => ({
+    error,
+  }: {
+    error: { message: string } | null;
+  }) => {
+    if (error) {
+      throw new Error(`${label}: ${error.message}`);
+    }
+  };
+
   try {
     // 1. messages (via conversations cascade)
-    const { data: convs } = await service
+    const { data: convs, error: convSelectErr } = await service
       .from('conversations')
       .select('id')
       .eq('user_id', user.id);
+    if (convSelectErr) throw new Error(`conversations select: ${convSelectErr.message}`);
     if (convs && convs.length > 0) {
       const convIds = convs.map((c) => c.id);
-      await service.from('messages').delete().in('conversation_id', convIds);
+      const res = await service.from('messages').delete().in('conversation_id', convIds);
+      assertOk('messages delete')(res);
     }
     // 2. conversations
-    await service.from('conversations').delete().eq('user_id', user.id);
+    assertOk('conversations delete')(
+      await service.from('conversations').delete().eq('user_id', user.id),
+    );
     // 3. crisis_events (HMAC lookup — not FK)
     const userHashCrisis = await computeHash('crisis', user.id);
-    await service.from('crisis_events').delete().eq('user_hash', userHashCrisis);
+    assertOk('crisis_events delete')(
+      await service.from('crisis_events').delete().eq('user_hash', userHashCrisis),
+    );
     // 4. narratives
-    await service.from('narratives').delete().eq('user_id', user.id);
+    assertOk('narratives delete')(
+      await service.from('narratives').delete().eq('user_id', user.id),
+    );
     // 5. future_letters
-    await service.from('future_letters').delete().eq('user_id', user.id);
+    assertOk('future_letters delete')(
+      await service.from('future_letters').delete().eq('user_id', user.id),
+    );
     // 6. evidence_highlights (cascades from psychological_profiles)
     // 7. rate_limits
-    await service.from('rate_limits').delete().eq('user_id', user.id);
+    assertOk('rate_limits delete')(
+      await service.from('rate_limits').delete().eq('user_id', user.id),
+    );
     // 8. psychological_profiles (cascades to evidence_highlights)
-    await service.from('psychological_profiles').delete().eq('user_id', user.id);
+    assertOk('psychological_profiles delete')(
+      await service.from('psychological_profiles').delete().eq('user_id', user.id),
+    );
     // 9. consent_records
-    await service.from('consent_records').delete().eq('user_id', user.id);
+    assertOk('consent_records delete')(
+      await service.from('consent_records').delete().eq('user_id', user.id),
+    );
     // 10. development_plans
-    await service.from('development_plans').delete().eq('user_id', user.id);
+    assertOk('development_plans delete')(
+      await service.from('development_plans').delete().eq('user_id', user.id),
+    );
     // 11. research_dataset IF purgeResearch
     if (body.purgeResearch) {
       const userHashResearch = await computeHash('research', user.id);
-      await service.from('research_dataset').delete().eq('user_hash', userHashResearch);
+      assertOk('research_dataset delete')(
+        await service.from('research_dataset').delete().eq('user_hash', userHashResearch),
+      );
     }
     // 12. profiles (parent — cascades from auth.users if we deleted auth)
-    await service.from('profiles').delete().eq('id', user.id);
+    assertOk('profiles delete')(
+      await service.from('profiles').delete().eq('id', user.id),
+    );
     // 13. auth.users (requires admin API — use service role).
     // Supabase's admin.deleteUser is via the auth admin namespace.
-    await service.auth.admin.deleteUser(user.id);
+    const adminRes = await service.auth.admin.deleteUser(user.id);
+    if (adminRes.error) {
+      throw new Error(`auth.users delete: ${adminRes.error.message}`);
+    }
 
     // 14. Cascade succeeded — now mark the token used and purge stale
     // delete_confirmations. If this cleanup fails, the cascade has already
