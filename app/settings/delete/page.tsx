@@ -39,9 +39,8 @@ export default function SettingsDeletePage() {
         );
         setDevLink(data.data.devMagicLink);
       } else {
-        setMessage(
-          'Pedido registrado. Revisá los logs del servidor para el link de confirmación.',
-        );
+        // Unreachable in production — any prod path must resolve to an error.
+        setError('No pudimos procesar el pedido. Probá de nuevo.');
       }
     } catch (e) {
       setError('No pudimos procesar el pedido. Probá de nuevo.');

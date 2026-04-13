@@ -16,14 +16,16 @@ test.describe('Phase 7 — SEO + error boundaries + metadata', () => {
     expect(body).toContain('Sitemap:');
   });
 
-  test('sitemap.xml includes landing, privacy, and terms', async ({ request }) => {
+  test('sitemap.xml advertises only public pages (no auth routes)', async ({ request }) => {
     const res = await request.get('/sitemap.xml');
     expect(res.status()).toBe(200);
     const body = await res.text();
     expect(body).toContain('<urlset');
     expect(body).toMatch(/<loc>[^<]*\/privacy<\/loc>/);
     expect(body).toMatch(/<loc>[^<]*\/terms<\/loc>/);
-    expect(body).toMatch(/<loc>[^<]*\/register<\/loc>/);
+    // Auth endpoints are Disallowed in robots; must not be advertised.
+    expect(body).not.toMatch(/<loc>[^<]*\/login<\/loc>/);
+    expect(body).not.toMatch(/<loc>[^<]*\/register<\/loc>/);
   });
 
   test('landing page has OG + Twitter metadata', async ({ page }) => {

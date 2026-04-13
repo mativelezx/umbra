@@ -228,6 +228,34 @@ export async function POST(req: Request) {
   let fullText = '';
   let inputTokens = 0;
   let outputTokens = 0;
+  // Idempotency guard: persistAssistantMessage() is called from both the
+  // happy path and the error path, and the happy path can itself throw
+  // between the insert and the final enqueue. Without a flag we risk
+  // inserting the same assistant row twice on certain error shapes.
+  let assistantPersisted = false;
+
+  async function persistAssistantMessage() {
+    if (assistantPersisted) return;
+    if (fullText.length === 0) return;
+    const { error: insertErr } = await service.from('messages').insert({
+      conversation_id: conversationId,
+      role: 'assistant',
+      content: fullText,
+    });
+    if (insertErr) {
+      console.error('[chat] assistant insert failed', insertErr);
+      return;
+    }
+    assistantPersisted = true;
+  }
+
+  async function bumpActivity() {
+    const { error: updErr } = await service
+      .from('conversations')
+      .update({ last_activity_at: new Date().toISOString() })
+      .eq('id', conversationId);
+    if (updErr) console.error('[chat] activity bump failed', updErr);
+  }
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -258,19 +286,8 @@ export async function POST(req: Request) {
           }
         }
 
-        // Persist assistant message
-        if (fullText.length > 0) {
-          await service.from('messages').insert({
-            conversation_id: conversationId,
-            role: 'assistant',
-            content: fullText,
-          });
-        }
-        // Update last activity
-        await service
-          .from('conversations')
-          .update({ last_activity_at: new Date().toISOString() })
-          .eq('id', conversationId);
+        await persistAssistantMessage();
+        await bumpActivity();
 
         controller.enqueue(
           encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`),
@@ -279,19 +296,11 @@ export async function POST(req: Request) {
         console.error('[chat] stream error', e);
         // Persist whatever partial output we captured so the user doesn't lose
         // the assistant's half-finished turn on retry, and keep the conversation
-        // activity timer fresh.
+        // activity timer fresh. persistAssistantMessage() is a no-op if the
+        // happy path already ran.
         try {
-          if (fullText.length > 0) {
-            await service.from('messages').insert({
-              conversation_id: conversationId,
-              role: 'assistant',
-              content: fullText,
-            });
-          }
-          await service
-            .from('conversations')
-            .update({ last_activity_at: new Date().toISOString() })
-            .eq('id', conversationId);
+          await persistAssistantMessage();
+          await bumpActivity();
         } catch (persistErr) {
           console.error('[chat] partial persist failed', persistErr);
         }
@@ -300,7 +309,7 @@ export async function POST(req: Request) {
             `data: ${JSON.stringify({
               type: 'error',
               message: 'stream_error',
-              partial: fullText.length > 0,
+              partial: assistantPersisted,
             })}\n\n`,
           ),
         );

@@ -42,14 +42,10 @@ export const POST = withErrorHandler(async (req) => {
     return Response.json({ ok: false, error: 'token_mismatch' }, { status: 403 });
   }
 
-  // Mark token as used atomically
-  await service
-    .from('delete_confirmations')
-    .update({ used_at: new Date().toISOString() })
-    .eq('id', confirmation.id);
-
-  // Cascade delete — FK cascades handle most of it when we delete profiles
-  // Order: children first, then parent
+  // Cascade delete BEFORE marking the token used. If anything fails mid-
+  // cascade we want the user to be able to retry with the same link instead
+  // of being locked out by a burned token on a partially-deleted account.
+  // Order: children first, then parent.
   try {
     // 1. messages (via conversations cascade)
     const { data: convs } = await service
@@ -72,25 +68,39 @@ export const POST = withErrorHandler(async (req) => {
     // 6. evidence_highlights (cascades from psychological_profiles)
     // 7. rate_limits
     await service.from('rate_limits').delete().eq('user_id', user.id);
-    // 8. delete_confirmations (all for this user)
-    await service.from('delete_confirmations').delete().eq('user_id', user.id);
-    // 9. psychological_profiles (cascades to evidence_highlights)
+    // 8. psychological_profiles (cascades to evidence_highlights)
     await service.from('psychological_profiles').delete().eq('user_id', user.id);
-    // 10. consent_records
+    // 9. consent_records
     await service.from('consent_records').delete().eq('user_id', user.id);
-    // 11. development_plans
+    // 10. development_plans
     await service.from('development_plans').delete().eq('user_id', user.id);
-    // 12. research_dataset IF purgeResearch
+    // 11. research_dataset IF purgeResearch
     if (body.purgeResearch) {
       const userHashResearch = await computeHash('research', user.id);
       await service.from('research_dataset').delete().eq('user_hash', userHashResearch);
     }
-    // 13. profiles (parent — cascades from auth.users if we deleted auth)
+    // 12. profiles (parent — cascades from auth.users if we deleted auth)
     await service.from('profiles').delete().eq('id', user.id);
-    // 14. auth.users (requires admin API — use service role)
+    // 13. auth.users (requires admin API — use service role).
     // Supabase's admin.deleteUser is via the auth admin namespace.
-    // With @supabase/ssr service client it's accessible via .auth.admin.deleteUser
     await service.auth.admin.deleteUser(user.id);
+
+    // 14. Cascade succeeded — now mark the token used and purge stale
+    // delete_confirmations. If this cleanup fails, the cascade has already
+    // happened so the user is effectively deleted; we just log and move on.
+    const nowIso = new Date().toISOString();
+    const { error: markErr } = await service
+      .from('delete_confirmations')
+      .update({ used_at: nowIso })
+      .eq('id', confirmation.id);
+    if (markErr) {
+      console.error('[delete/confirm] token mark failed after cascade', markErr);
+    }
+    // Token row may already be orphaned (user_id FK gone). Best-effort purge.
+    await service
+      .from('delete_confirmations')
+      .delete()
+      .eq('user_id', user.id);
   } catch (e) {
     console.error('[delete/confirm] cascade failed', e);
     return Response.json({ ok: false, error: 'cascade_failed' }, { status: 500 });

@@ -10,6 +10,24 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # Placeholder values so `next build` + middleware can resolve env at
+  # build time. Real values come from Vercel project settings at runtime.
+  # Peppers are 32-byte hex zeros (sufficient for build; NEVER used in prod).
+  NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-anon-key
+  SUPABASE_SERVICE_ROLE_KEY: ci-placeholder-service-key
+  ANTHROPIC_API_KEY: ci-placeholder-anthropic-key
+  ANTHROPIC_MODEL_ID: claude-sonnet-4-6
+  ANTHROPIC_HAIKU_MODEL_ID: claude-haiku-4-5-20251001
+  CONSENT_IP_PEPPER_V1: '0000000000000000000000000000000000000000000000000000000000000000'
+  CRISIS_PEPPER_V1: '0000000000000000000000000000000000000000000000000000000000000000'
+  RESEARCH_PEPPER_V1: '0000000000000000000000000000000000000000000000000000000000000000'
+  DELETE_TOKEN_PEPPER_V1: '0000000000000000000000000000000000000000000000000000000000000000'
+  DAILY_TOKEN_CAP: '15000'
+  DAILY_COST_CAP_CENTS: '200'
+  GLOBAL_DAILY_BUDGET_USD: '50'
+
 jobs:
   quality:
     name: Lint · Typecheck · Unit tests · Build
@@ -40,19 +58,76 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Upload .next build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-build
+          path: |
+            .next
+            !.next/cache
+          retention-days: 1
+
+  e2e-hardening:
+    name: Playwright · hardening smoke tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: quality
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers (Chromium only)
+        run: npx playwright install --with-deps chromium
+
+      - name: Download .next build output
+        uses: actions/download-artifact@v4
+        with:
+          name: next-build
+          path: .next
+
+      - name: Start Next.js in production mode
+        run: |
+          npx next start -p 3000 &
+          echo $! > .next-pid
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3000/ > /dev/null; then
+              echo "Next.js is up after ${i}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Next.js did not start within 30s"
+          exit 1
         env:
-          # Dummy values so `next build` can resolve env at build time.
-          # Real values come from Vercel project settings at runtime.
-          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-anon-key
-          SUPABASE_SERVICE_ROLE_KEY: ci-placeholder-service-key
-          ANTHROPIC_API_KEY: ci-placeholder-anthropic-key
-          ANTHROPIC_MODEL_ID: claude-sonnet-4-6
-          ANTHROPIC_HAIKU_MODEL_ID: claude-haiku-4-5-20251001
-          CONSENT_IP_PEPPER_V1: 0000000000000000000000000000000000000000000000000000000000000000
-          CRISIS_PEPPER_V1: 0000000000000000000000000000000000000000000000000000000000000000
-          RESEARCH_PEPPER_V1: 0000000000000000000000000000000000000000000000000000000000000000
-          DELETE_TOKEN_PEPPER_V1: 0000000000000000000000000000000000000000000000000000000000000000
-          DAILY_TOKEN_CAP: '15000'
-          DAILY_COST_CAP_CENTS: '200'
-          GLOBAL_DAILY_BUDGET_USD: '50'
+          PORT: '3000'
+
+      - name: Playwright hardening tests (landing + protected routes + phase7)
+        run: npx playwright test --project=chromium e2e/landing.spec.ts e2e/protected-routes.spec.ts e2e/phase7.spec.ts
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
+
+      - name: Stop Next.js
+        if: always()
+        run: |
+          if [ -f .next-pid ]; then
+            kill "$(cat .next-pid)" || true
+          fi
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7

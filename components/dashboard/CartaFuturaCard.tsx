@@ -19,6 +19,9 @@ interface CartaFuturaCardProps {
   };
 }
 
+const FOCUSABLE_SELECTOR =
+  'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
   const [open, setOpen] = useState(false);
   const unlockDate = new Date(letter.unlock_at);
@@ -27,6 +30,7 @@ export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
   const titleId = useId();
   const descriptionId = useId();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const openerRef = useRef<HTMLButtonElement>(null);
 
   const topJung = Object.entries(snapshot.jungFunctions)
@@ -44,8 +48,39 @@ export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
     closeButtonRef.current?.focus();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close();
+      if (e.key === 'Escape') {
+        close();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      // Focus trap: cycle Tab / Shift+Tab between the first and last
+      // focusable elements inside the dialog so keyboard users cannot
+      // escape behind the modal while it's open.
+      const dialog = dialogRef.current;
+      if (!dialog) return;
+      const focusables = Array.from(
+        dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
+      ).filter((el) => !el.hasAttribute('aria-hidden'));
+      if (focusables.length === 0) {
+        e.preventDefault();
+        return;
+      }
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      if (e.shiftKey) {
+        if (active === first || !dialog.contains(active)) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (active === last || !dialog.contains(active)) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     document.addEventListener('keydown', handleKey);
     return () => {
@@ -116,6 +151,7 @@ export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
           onClick={close}
         >
           <div
+            ref={dialogRef}
             className="card-glow relative max-w-2xl max-h-[85vh] overflow-y-auto rounded-lg p-8 md:p-10"
             onClick={(e) => e.stopPropagation()}
           >

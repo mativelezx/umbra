@@ -28,16 +28,21 @@ const BIG_FIVE_ORDER: Array<keyof BigFive> = [
 ];
 
 function BigFiveRadar({ values }: { values: BigFive }) {
-  const size = 320;
-  const center = size / 2;
-  const radius = size / 2 - 48;
+  // Wide viewBox: 520x360 with radius ~120. Extra horizontal room (260 on
+  // each side of center) leaves space for the longest axis labels
+  // ("Responsabilidad · 100") without clipping, while the vertical extent
+  // stays compact for PDF page flow.
+  const width = 520;
+  const height = 360;
+  const center = { x: width / 2, y: height / 2 };
+  const radius = 120;
   const axes = BIG_FIVE_ORDER.length;
 
   const angleFor = (i: number) => -Math.PI / 2 + (i * 2 * Math.PI) / axes;
   const point = (i: number, value: number) => {
     const angle = angleFor(i);
     const r = (value / 100) * radius;
-    return [center + r * Math.cos(angle), center + r * Math.sin(angle)] as const;
+    return [center.x + r * Math.cos(angle), center.y + r * Math.sin(angle)] as const;
   };
 
   const polygon = BIG_FIVE_ORDER.map((key, i) => point(i, values[key]).join(','))
@@ -47,7 +52,7 @@ function BigFiveRadar({ values }: { values: BigFive }) {
     const points = Array.from({ length: axes }, (_, i) => {
       const angle = angleFor(i);
       const r = (pct / 100) * radius;
-      return `${center + r * Math.cos(angle)},${center + r * Math.sin(angle)}`;
+      return `${center.x + r * Math.cos(angle)},${center.y + r * Math.sin(angle)}`;
     }).join(' ');
     return (
       <polygon
@@ -66,8 +71,8 @@ function BigFiveRadar({ values }: { values: BigFive }) {
     return (
       <line
         key={i}
-        x1={center}
-        y1={center}
+        x1={center.x}
+        y1={center.y}
         x2={x}
         y2={y}
         stroke="#d4b3ff"
@@ -80,8 +85,8 @@ function BigFiveRadar({ values }: { values: BigFive }) {
   const labels = BIG_FIVE_ORDER.map((key, i) => {
     const angle = angleFor(i);
     const labelRadius = radius + 22;
-    const x = center + labelRadius * Math.cos(angle);
-    const y = center + labelRadius * Math.sin(angle);
+    const x = center.x + labelRadius * Math.cos(angle);
+    const y = center.y + labelRadius * Math.sin(angle);
     const anchor =
       Math.abs(Math.cos(angle)) < 0.1
         ? 'middle'
@@ -106,12 +111,12 @@ function BigFiveRadar({ values }: { values: BigFive }) {
 
   return (
     <svg
-      width={size}
-      height={size}
-      viewBox={`0 0 ${size} ${size}`}
+      width={width}
+      height={height}
+      viewBox={`0 0 ${width} ${height}`}
       aria-label="Radar Big Five"
       role="img"
-      style={{ display: 'block', margin: '0 auto' }}
+      style={{ display: 'block', margin: '0 auto', maxWidth: '100%' }}
     >
       {gridRings}
       {axisLines}
