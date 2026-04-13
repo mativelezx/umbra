@@ -19,6 +19,118 @@ const BIG_FIVE_LABELS: Record<keyof BigFive, string> = {
   neuroticism: 'Sensibilidad',
 };
 
+const BIG_FIVE_ORDER: Array<keyof BigFive> = [
+  'openness',
+  'conscientiousness',
+  'extraversion',
+  'agreeableness',
+  'neuroticism',
+];
+
+function BigFiveRadar({ values }: { values: BigFive }) {
+  const size = 320;
+  const center = size / 2;
+  const radius = size / 2 - 48;
+  const axes = BIG_FIVE_ORDER.length;
+
+  const angleFor = (i: number) => -Math.PI / 2 + (i * 2 * Math.PI) / axes;
+  const point = (i: number, value: number) => {
+    const angle = angleFor(i);
+    const r = (value / 100) * radius;
+    return [center + r * Math.cos(angle), center + r * Math.sin(angle)] as const;
+  };
+
+  const polygon = BIG_FIVE_ORDER.map((key, i) => point(i, values[key]).join(','))
+    .join(' ');
+
+  const gridRings = [20, 40, 60, 80, 100].map((pct) => {
+    const points = Array.from({ length: axes }, (_, i) => {
+      const angle = angleFor(i);
+      const r = (pct / 100) * radius;
+      return `${center + r * Math.cos(angle)},${center + r * Math.sin(angle)}`;
+    }).join(' ');
+    return (
+      <polygon
+        key={pct}
+        points={points}
+        fill="none"
+        stroke="#d4b3ff"
+        strokeOpacity="0.22"
+        strokeWidth="1"
+      />
+    );
+  });
+
+  const axisLines = BIG_FIVE_ORDER.map((_, i) => {
+    const [x, y] = point(i, 100);
+    return (
+      <line
+        key={i}
+        x1={center}
+        y1={center}
+        x2={x}
+        y2={y}
+        stroke="#d4b3ff"
+        strokeOpacity="0.2"
+        strokeWidth="1"
+      />
+    );
+  });
+
+  const labels = BIG_FIVE_ORDER.map((key, i) => {
+    const angle = angleFor(i);
+    const labelRadius = radius + 22;
+    const x = center + labelRadius * Math.cos(angle);
+    const y = center + labelRadius * Math.sin(angle);
+    const anchor =
+      Math.abs(Math.cos(angle)) < 0.1
+        ? 'middle'
+        : Math.cos(angle) > 0
+          ? 'start'
+          : 'end';
+    return (
+      <text
+        key={key}
+        x={x}
+        y={y}
+        fontSize={11}
+        fontFamily="Inter, Arial, sans-serif"
+        fill="#3d1575"
+        textAnchor={anchor}
+        dominantBaseline="middle"
+      >
+        {BIG_FIVE_LABELS[key]} · {values[key]}
+      </text>
+    );
+  });
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox={`0 0 ${size} ${size}`}
+      aria-label="Radar Big Five"
+      role="img"
+      style={{ display: 'block', margin: '0 auto' }}
+    >
+      {gridRings}
+      {axisLines}
+      <polygon
+        points={polygon}
+        fill="#b466ff"
+        fillOpacity="0.25"
+        stroke="#7a2eff"
+        strokeWidth="2"
+      />
+      {BIG_FIVE_ORDER.map((key, i) => {
+        const [x, y] = point(i, values[key]);
+        return <circle key={key} cx={x} cy={y} r={4} fill="#7a2eff" />;
+      })}
+      {labels}
+    </svg>
+  );
+}
+
 const JUNG_LABELS: Record<keyof JungFunctions, string> = {
   Se: 'Sensación extravertida',
   Si: 'Sensación introvertida',
@@ -237,6 +349,8 @@ export default function ExportPage() {
 
             <div className="pdf-section pdf-card">
               <h3 style={{ margin: '0 0 16px' }}>Big Five (IPIP-NEO)</h3>
+              <BigFiveRadar values={data.profile.bigFive} />
+              <div style={{ height: '16px' }} />
               {(Object.keys(BIG_FIVE_LABELS) as Array<keyof BigFive>).map((key) => (
                 <div key={key} style={{ marginBottom: '12px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '13px' }}>
