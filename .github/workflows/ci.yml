@@ -59,13 +59,15 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Prune .next/cache before upload
+        run: rm -rf .next/cache
+
       - name: Upload .next build output
         uses: actions/upload-artifact@v4
         with:
           name: next-build
-          path: |
-            .next
-            !.next/cache
+          path: .next
+          include-hidden-files: true
           retention-days: 1
 
   e2e-hardening:
