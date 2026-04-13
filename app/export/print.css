@@ -1,0 +1,61 @@
+/* Print-safe styles for PDF export.
+ * html2canvas doesn't render backdrop-filter, complex gradients, or
+ * compositing correctly. This override gives a flat, readable PDF.
+ */
+
+.pdf-root {
+  background: #ffffff !important;
+  color: #1a1a2a !important;
+  padding: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: 'Inter', -apple-system, Arial, sans-serif;
+}
+
+.pdf-root * {
+  color: #1a1a2a !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+.pdf-root h1,
+.pdf-root h2,
+.pdf-root h3 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  color: #3d1575 !important;
+}
+
+.pdf-root .pdf-section {
+  page-break-inside: avoid;
+  break-inside: avoid;
+  margin-bottom: 40px;
+}
+
+.pdf-root .pdf-card {
+  background: #f5f3fa !important;
+  border: 1px solid #d4b3ff !important;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.pdf-root .pdf-bar {
+  height: 8px;
+  background: #e8d5ff;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.pdf-root .pdf-bar-fill {
+  height: 100%;
+  background: #7b2fcc;
+}
+
+.pdf-root .pdf-footer {
+  margin-top: 60px;
+  padding-top: 20px;
+  border-top: 1px solid #d4b3ff;
+  font-size: 11px;
+  color: #6b6490 !important;
+}

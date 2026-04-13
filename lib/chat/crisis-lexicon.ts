@@ -47,7 +47,7 @@ export const CRISIS_PATTERNS: readonly CrisisPattern[] = [
   // Explicit suicidal ideation
   { pattern: /\bsuicid(?:arme|ar|io|arse|arnos)\b/i, severity: 'high', tag: 'suicide_word' },
   { pattern: /\bquitarme la vida\b/i, severity: 'high', tag: 'take_my_life' },
-  { pattern: /\bmatarme\b(?! (?:estudiando|laburando|corriendo|trabajando|con))/i, severity: 'high', tag: 'kill_myself' },
+  { pattern: /\bmatarme\b(?! (?:estudiando|laburando|corriendo|trabajando|con|el hambre))/i, severity: 'high', tag: 'kill_myself' },
   { pattern: /\bno quiero (?:vivir|existir|estar)\b/i, severity: 'high', tag: 'dont_want_live' },
   { pattern: /\bpienso en (?:morir|suicid)\w*/i, severity: 'high', tag: 'thinking_die' },
   { pattern: /\bpastillas (?:para morir|para terminar|de m[aá]s)\b/i, severity: 'high', tag: 'pills_plan' },

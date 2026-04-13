@@ -28,7 +28,7 @@ export const POST = withErrorHandler(async (req) => {
     '0.0.0.0';
   const userAgent = req.headers.get('user-agent') ?? 'unknown';
 
-  const ipHash = computeHash('consent_ip', ip);
+  const ipHash = await computeHash('consent_ip', ip);
 
   const { error: consentError } = await supabase.from('consent_records').insert({
     user_id: user.id,

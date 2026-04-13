@@ -212,7 +212,7 @@ export const POST = withErrorHandler(async (req) => {
 
     if (profileRow?.research_opt_in) {
       const combinedText = body.texts.join('\n\n');
-      const userHash = computeHash('research', user.id);
+      const userHash = await computeHash('research', user.id);
       await service.from('research_dataset').insert({
         user_hash: userHash,
         pepper_version: CURRENT_PEPPER_VERSION,

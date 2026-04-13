@@ -114,8 +114,8 @@ export async function POST(req: Request) {
   } catch (e) {
     if (e instanceof CrisisDetected) {
       // Log crisis event with hashed payload
-      const userHash = computeHash('crisis', user.id);
-      const messageHash = computeHash('crisis', body.message);
+      const userHash = await computeHash('crisis', user.id);
+      const messageHash = await computeHash('crisis', body.message);
       await service.from('crisis_events').insert({
         user_hash: userHash,
         pepper_version: CURRENT_PEPPER_VERSION,
