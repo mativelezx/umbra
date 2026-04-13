@@ -159,6 +159,14 @@ export async function POST(req: Request) {
   let inputTokens = 0;
   let outputTokens = 0;
 
+  const safeEnqueue = (controller: ReadableStreamDefaultController, chunk: Uint8Array) => {
+    try {
+      controller.enqueue(chunk);
+    } catch {
+      // Client disconnected; keep accumulating fullText so we can still persist.
+    }
+  };
+
   const stream = new ReadableStream({
     async start(controller) {
       try {
@@ -170,7 +178,8 @@ export async function POST(req: Request) {
         })) {
           if (event.type === 'text') {
             fullText += event.text;
-            controller.enqueue(
+            safeEnqueue(
+              controller,
               encoder.encode(`data: ${JSON.stringify({ type: 'text', chunk: event.text })}\n\n`),
             );
           } else if (event.type === 'done') {
@@ -178,26 +187,35 @@ export async function POST(req: Request) {
             outputTokens = event.outputTokens;
           }
         }
-        // Persist narrative after stream completes
-        if (body.regenerate) {
-          await service.from('narratives').delete().eq('profile_id', body.profileId);
-        }
-        await service.from('narratives').insert({
-          user_id: user.id,
-          profile_id: body.profileId,
-          content: fullText,
-        });
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
+        safeEnqueue(controller, encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
       } catch (e) {
         console.error('[narrative] stream error', e);
-        controller.enqueue(
-          encoder.encode(
-            `data: ${JSON.stringify({ type: 'error', message: 'stream_error' })}\n\n`,
-          ),
+        safeEnqueue(
+          controller,
+          encoder.encode(`data: ${JSON.stringify({ type: 'error', message: 'stream_error' })}\n\n`),
         );
       } finally {
-        controller.close();
-        // Reconcile
+        try {
+          controller.close();
+        } catch {
+          // already closed on client disconnect
+        }
+        // Persist narrative regardless of client connection state, so users who
+        // navigate away mid-stream don't lose it and don't get recharged on return.
+        if (fullText.trim().length > 0) {
+          try {
+            if (body.regenerate) {
+              await service.from('narratives').delete().eq('profile_id', body.profileId);
+            }
+            await service.from('narratives').insert({
+              user_id: user.id,
+              profile_id: body.profileId,
+              content: fullText,
+            });
+          } catch (e) {
+            console.warn('[narrative] persist failed', e);
+          }
+        }
         try {
           const actualCost = costUsdCents(model, inputTokens, outputTokens);
           await service.rpc('reconcile_rate_limit', {

@@ -37,6 +37,46 @@ const PlanResponseSchema = z.object({
 const DAILY_TOKEN_CAP = Number(process.env.DAILY_TOKEN_CAP ?? 15000);
 const DAILY_COST_CAP_CENTS = Number(process.env.DAILY_COST_CAP_CENTS ?? 200);
 
+// Best-effort extraction of the outermost JSON object from free-form Claude
+// output. Handles markdown fences, trailing prose, and truncated responses by
+// walking the first balanced {...} and ignoring characters inside strings.
+function extractJsonObject(text: string): unknown | null {
+  const start = text.indexOf('{');
+  if (start === -1) return null;
+  let depth = 0;
+  let inString = false;
+  let escape = false;
+  for (let i = start; i < text.length; i++) {
+    const c = text[i];
+    if (escape) {
+      escape = false;
+      continue;
+    }
+    if (c === '\\') {
+      escape = true;
+      continue;
+    }
+    if (c === '"') {
+      inString = !inString;
+      continue;
+    }
+    if (inString) continue;
+    if (c === '{') depth++;
+    else if (c === '}') {
+      depth--;
+      if (depth === 0) {
+        const slice = text.slice(start, i + 1);
+        try {
+          return JSON.parse(slice);
+        } catch {
+          return null;
+        }
+      }
+    }
+  }
+  return null;
+}
+
 export const POST = withErrorHandler(async (req) => {
   const body = PlanInputSchema.parse(await req.json());
   const response = new Response();
@@ -123,15 +163,14 @@ export const POST = withErrorHandler(async (req) => {
       system,
       prompt,
       temperature: 0.4,
-      maxTokens: 1800,
+      maxTokens: 3500,
     });
     actualInput = result.inputTokens;
     actualOutput = result.outputTokens;
     actualCost = costUsdCents(model, actualInput, actualOutput);
 
-    const jsonMatch = result.text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('No JSON in plan response');
-    const rawJson = JSON.parse(jsonMatch[0]);
+    const rawJson = extractJsonObject(result.text);
+    if (!rawJson) throw new Error('No JSON in plan response');
     const validated = PlanResponseSchema.parse(rawJson);
 
     // Add IDs to each area/action/microgoal so UI can track checkboxes

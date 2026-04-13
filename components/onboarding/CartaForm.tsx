@@ -26,6 +26,13 @@ export function CartaForm({ profileId }: CartaFormProps) {
   async function save() {
     setLoading(true);
     setError(null);
+
+    // Demo mode: skip real API
+    if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+      setTimeout(() => router.push('/dashboard'), 300);
+      return;
+    }
+
     const res = await fetch('/api/carta', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

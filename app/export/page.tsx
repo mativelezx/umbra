@@ -46,6 +46,19 @@ export default function ExportPage() {
 
   useEffect(() => {
     async function load() {
+      // Demo mode: load seed
+      if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+        const seed = await import('@/lib/demo/seed');
+        setData({
+          profile: seed.DEMO_PROFILE,
+          narrative: seed.DEMO_NARRATIVE,
+          plan: { areas: seed.DEMO_PLAN.areas as unknown as ExportData['plan'] extends { areas: infer A } ? A : never },
+          userName: seed.DEMO_USER.full_name,
+        });
+        setLoading(false);
+        return;
+      }
+
       const supabase = createClient();
       const {
         data: { user },

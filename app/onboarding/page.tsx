@@ -24,6 +24,17 @@ export default function OnboardingPage() {
     setError(null);
     setStage('loading');
 
+    // Demo mode: skip the real Claude call. Show the progressive load
+    // animation for ~9s then drop into the carta form with seed data.
+    if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+      setTimeout(() => {
+        setProfileId('demo-profile-0000-0000-000000000001');
+        reset();
+        setStage('carta');
+      }, 9500);
+      return;
+    }
+
     const payload =
       mode === 'freetext'
         ? { mode, texts: [freeText] }

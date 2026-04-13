@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { withErrorHandler } from '@/lib/api/with-error-handler';
 import { computeHash, CURRENT_PEPPER_VERSION } from '@/lib/security/peppers';
 
@@ -22,6 +22,7 @@ export const POST = withErrorHandler(async (req) => {
     return Response.json({ ok: false, error: 'unauthenticated' }, { status: 401 });
   }
 
+  const service = createServiceClient();
   const ip =
     req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
     req.headers.get('x-real-ip') ??
@@ -30,7 +31,7 @@ export const POST = withErrorHandler(async (req) => {
 
   const ipHash = await computeHash('consent_ip', ip);
 
-  const { error: consentError } = await supabase.from('consent_records').insert({
+  const { error: consentError } = await service.from('consent_records').insert({
     user_id: user.id,
     consent_version: body.consentVersion,
     ip_hash: ipHash,
@@ -44,7 +45,7 @@ export const POST = withErrorHandler(async (req) => {
   }
 
   if (body.researchOptIn) {
-    await supabase
+    await service
       .from('profiles')
       .update({ research_opt_in: true })
       .eq('id', user.id);

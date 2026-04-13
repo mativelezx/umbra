@@ -15,6 +15,12 @@ const CONSENT_REQUIRED_PREFIXES = ['/onboarding', '/dashboard', '/chat', '/plan'
 export async function updateSession(req: NextRequest) {
   let res = NextResponse.next({ request: { headers: req.headers } });
 
+  // Demo mode: skip all auth redirects so developer can walk through the UI
+  // without a real Supabase project.
+  if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+    return res;
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

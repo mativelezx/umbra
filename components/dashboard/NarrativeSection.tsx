@@ -59,10 +59,11 @@ export function NarrativeSection({ profileId, initialContent }: NarrativeSection
   );
 
   useEffect(() => {
-    if (!initialContent) {
+    // If we have initial content (including demo seed), don't call the API
+    if (!initialContent && !profileId.startsWith('demo-')) {
       generate(false);
     }
-  }, [initialContent, generate]);
+  }, [initialContent, generate, profileId]);
 
   return (
     <section className="card-glow rounded-lg p-8 md:p-10">

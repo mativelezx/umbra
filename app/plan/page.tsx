@@ -41,6 +41,17 @@ export default function PlanPage() {
     async function init() {
       setLoading(true);
       setError(null);
+
+      // Demo mode: load seed plan
+      if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+        const seed = await import('@/lib/demo/seed');
+        setProfileId(seed.DEMO_PROFILE_ID);
+        setPlanId('demo-plan-0000-0000-000000000001');
+        setAreas(seed.DEMO_PLAN.areas as Area[]);
+        setLoading(false);
+        return;
+      }
+
       const supabase = createClient();
       const {
         data: { user },
@@ -126,7 +137,9 @@ export default function PlanPage() {
     );
     setAreas(newAreas);
 
-    // Persist
+    // Demo mode: state-only, no persistence
+    if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') return;
+
     const supabase = createClient();
     await supabase.from('development_plans').update({ areas: newAreas }).eq('id', planId);
   }

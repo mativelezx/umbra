@@ -1,4 +1,5 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
 type CookieStore = {
   get(name: string): string | undefined;
@@ -45,14 +46,13 @@ export function createEdgeClient(request: Request, response: Response) {
 }
 
 export function createEdgeServiceClient() {
-  return createServerClient(
+  return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
-      cookies: {
-        get: () => undefined,
-        set: () => {},
-        remove: () => {},
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
       },
     },
   );
