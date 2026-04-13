@@ -1,0 +1,117 @@
+{
+  "common": {
+    "continue": "Continue",
+    "back": "Back",
+    "next": "Next",
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "retry": "Retry",
+    "error_generic": "Something went wrong. Try again in a moment."
+  },
+  "landing": {
+    "hero_title_1": "Know your shadow.",
+    "hero_title_2": "Light your path.",
+    "hero_subtitle": "Self-knowledge with academic rigor. Jung, Big Five, and Positive Computing. In your language.",
+    "cta_start": "Start your journey",
+    "cta_learn": "Learn more",
+    "pillar_rigor_title": "Real theoretical base",
+    "pillar_rigor_desc": "Every analysis is grounded in academic sources. Not opinion dressed up as science.",
+    "pillar_jung_title": "Jung directly, not MBTI",
+    "pillar_jung_desc": "Cognitive functions from Psychological Types. No 16-type labels.",
+    "pillar_pc_title": "Positive Computing",
+    "pillar_pc_desc": "Designed for wellbeing, not to maximize screen time.",
+    "pillar_ar_title": "Your own voice",
+    "pillar_ar_desc": "A narrative in your own language and tone.",
+    "footer_not_therapy": "Umbra is not therapy. If you are in crisis: call your local emergency line."
+  },
+  "auth": {
+    "register_title": "Start your journey",
+    "register_cta": "Create account",
+    "login_title": "Sign in",
+    "login_cta": "Sign in",
+    "field_name": "Full name",
+    "field_email": "Email",
+    "field_password": "Password",
+    "switch_to_login": "Already have an account?",
+    "switch_to_register": "Don't have an account?",
+    "sign_in": "Sign in",
+    "sign_up": "Register",
+    "invalid_credentials": "Incorrect email or password.",
+    "email_exists": "An account with that email already exists.",
+    "weak_password": "Password must be at least 8 characters."
+  },
+  "consent": {
+    "title": "Before we begin",
+    "subtitle": "We need your consent to process your data according to Argentine Personal Data Protection Law (Ley 25.326).",
+    "accept_label": "I understand and accept the terms of use and the processing of my data under Ley 25.326",
+    "research_label": "I allow my pseudonymized data to be used for Umbra academic research (optional, changeable anytime)",
+    "cta": "Continue",
+    "learn_more": "See more details"
+  },
+  "onboarding": {
+    "mode_selector_title": "Start however feels comfortable",
+    "mode_guided": "Guide me with questions",
+    "mode_guided_desc": "5 areas, one question at a time. Great to start.",
+    "mode_freetext": "Free-form writing",
+    "mode_freetext_desc": "A single open text about yourself. No structure.",
+    "mode_hybrid": "Mix of both",
+    "mode_hybrid_desc": "Answer only the areas that resonate with you.",
+    "disclaimer_title": "Umbra is not therapy",
+    "disclaimer_text": "It is a self-knowledge tool. If you are in crisis, please seek a professional.",
+    "submit": "Show me what you see",
+    "word_count": "{count} words · minimum {min}",
+    "progressive_analyzing": "analyzing your words...",
+    "progressive_big_five": "exploring your Big Five",
+    "progressive_jung": "mapping your cognitive functions",
+    "progressive_archetype": "finding your archetype",
+    "progressive_evidence": "highlighting your evidence"
+  },
+  "dashboard": {
+    "greeting": "Hi, {name}",
+    "archetype_label": "Your dominant archetype",
+    "archetype_secondary": "+ {name}",
+    "narrative_label": "Your narrative",
+    "narrative_regenerate": "Regenerate narrative",
+    "narrative_loading": "Your narrative is being generated...",
+    "radar_label": "Big Five",
+    "jung_label": "Jung cognitive functions",
+    "carta_locked": "Your letter opens on {date}",
+    "carta_unlocked": "Read your letter to the future"
+  },
+  "chat": {
+    "banner": "Umbra is not therapy. In crisis: contact your local emergency line.",
+    "welcome": "Hi. What's on your mind today?",
+    "placeholder": "Write your reflection...",
+    "send": "Send",
+    "rate_limited": "You hit your daily cap (~30 messages). Come back tomorrow.",
+    "session_expired": "Your session in this conversation expired. Start a new one.",
+    "new_conversation": "Start new conversation",
+    "error": "Connection dropped. Retry."
+  },
+  "crisis_card": {
+    "title": "You need to talk to someone now",
+    "body": "Umbra is not therapy. What you are feeling matters and deserves immediate professional support.",
+    "back_home": "Back to home"
+  },
+  "plan": {
+    "title": "Your development plan",
+    "generate": "Generate my plan",
+    "regenerate": "Regenerate plan",
+    "area_label": "Area {n}",
+    "actions_label": "Actions",
+    "goals_label": "Micro-goals"
+  },
+  "export": {
+    "title": "Download your profile",
+    "subtitle": "A PDF with your profile, narrative and development plan.",
+    "download": "Download PDF",
+    "generating": "Preparing your PDF..."
+  },
+  "settings": {
+    "profile": "Your profile",
+    "export_data": "Download all my data",
+    "delete_account": "Delete my account",
+    "research_opt": "Research mode"
+  }
+}
