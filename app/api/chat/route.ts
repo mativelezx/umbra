@@ -259,11 +259,13 @@ export async function POST(req: Request) {
         }
 
         // Persist assistant message
-        await service.from('messages').insert({
-          conversation_id: conversationId,
-          role: 'assistant',
-          content: fullText,
-        });
+        if (fullText.length > 0) {
+          await service.from('messages').insert({
+            conversation_id: conversationId,
+            role: 'assistant',
+            content: fullText,
+          });
+        }
         // Update last activity
         await service
           .from('conversations')
@@ -275,9 +277,31 @@ export async function POST(req: Request) {
         );
       } catch (e) {
         console.error('[chat] stream error', e);
+        // Persist whatever partial output we captured so the user doesn't lose
+        // the assistant's half-finished turn on retry, and keep the conversation
+        // activity timer fresh.
+        try {
+          if (fullText.length > 0) {
+            await service.from('messages').insert({
+              conversation_id: conversationId,
+              role: 'assistant',
+              content: fullText,
+            });
+          }
+          await service
+            .from('conversations')
+            .update({ last_activity_at: new Date().toISOString() })
+            .eq('id', conversationId);
+        } catch (persistErr) {
+          console.error('[chat] partial persist failed', persistErr);
+        }
         controller.enqueue(
           encoder.encode(
-            `data: ${JSON.stringify({ type: 'error', message: 'stream_error' })}\n\n`,
+            `data: ${JSON.stringify({
+              type: 'error',
+              message: 'stream_error',
+              partial: fullText.length > 0,
+            })}\n\n`,
           ),
         );
       } finally {
