@@ -23,7 +23,7 @@ Plataforma de autoconocimiento basada en Jung (funciones cognitivas) + Big Five 
 - **TypeScript strict**
 - **Tailwind CSS 3.4** con tokens custom (`umbra-*`, `violet-*`, `accent-*`, `text-*`)
 - **Supabase** (Auth + PostgreSQL + RLS) via `@supabase/ssr`
-- **Anthropic Claude** (`claude-sonnet-4-6-20260301` pinneado via env var)
+- **Anthropic Claude** (`claude-sonnet-4-6` alias por default, o dated SKU via `ANTHROPIC_MODEL_ID`)
 - **Zustand 5** para stores de cliente
 - **Recharts** para el radar chart
 - **Phosphor Icons** (nunca emoji en UI)
@@ -34,17 +34,19 @@ Plataforma de autoconocimiento basada en Jung (funciones cognitivas) + Big Five 
 
 ## Status
 
-**Phases 1-6 shipped.** Ver `docs/PLAN.md` para el status dashboard completo.
+**Phases 1-7 shipped.** Ver `docs/PLAN.md` para el status dashboard completo.
 
 - ✓ Phase 1 — scaffolding
 - ✓ Phase 1.5 — ssr migration, errors, peppers, vitest, playwright, Migration 002
 - ✓ Phase 2 — landing + auth + consent + Ley 25.326 endpoints
 - ✓ Phase 3 — onboarding + analyze API + carta al futuro
 - ✓ Phase 4 — dashboard + Big Five radar + Jung bars + custom archetype SVGs + narrative
-- ✓ Phase 5 — narrative SSE + chat con full crisis safety pipeline
-- ✓ Phase 6 — plan + PDF export + settings + account APIs
+- ✓ Phase 5 — narrative SSE + chat con full crisis safety pipeline (crisis events persisted, partial assistant turns preserved on stream failure)
+- ✓ Phase 6 — plan + PDF export (con Big Five radar SVG inline) + settings dashboard + account APIs
+- ✓ Phase 7 — SEO (robots + sitemap + OG), error/not-found boundaries, `/settings` root landing, a11y pass (form labels + checkbox semantics + modal focus management), Resend email integration, CI workflow, Vercel config
+- ✓ Fullstack wire-up (2026-04-13) — analyze + narrative + plan validados contra Supabase real + Anthropic real via `e2e/full-flow.spec.ts`
 
-**57/57 unit tests passing. `tsc --noEmit` passing. `next build` compiles cleanly. 24 pages, 9 API routes, 80KB middleware.**
+**57/57 unit tests passing. `npm run typecheck` passing. `npm run build` compiles cleanly. 27 pages (incluyendo `robots.txt` + `sitemap.xml`), 10 API routes, 80KB middleware.**
 
 ## Setup local
 
@@ -61,7 +63,7 @@ NEXT_PUBLIC_SUPABASE_URL=https://TU-PROYECTO.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
 SUPABASE_SERVICE_ROLE_KEY=<service role key>
 ANTHROPIC_API_KEY=sk-ant-<tu key>
-ANTHROPIC_MODEL_ID=claude-sonnet-4-6-20260301
+ANTHROPIC_MODEL_ID=claude-sonnet-4-6
 ANTHROPIC_HAIKU_MODEL_ID=claude-haiku-4-5-20251001
 
 # Generar con: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
@@ -69,6 +71,14 @@ CONSENT_IP_PEPPER_V1=<32-byte hex>
 CRISIS_PEPPER_V1=<32-byte hex>
 RESEARCH_PEPPER_V1=<32-byte hex>
 DELETE_TOKEN_PEPPER_V1=<32-byte hex>
+
+# Email (delete confirmation magic links). Si no setteás RESEND_API_KEY el
+# sistema loggea el link al server y lo muestra inline en la UI en modo dev.
+RESEND_API_KEY=re_<tu-key>
+EMAIL_FROM=umbra@tu-dominio.com
+
+# Deployment base URL (used by robots.ts + sitemap.ts + metadataBase)
+NEXT_PUBLIC_SITE_URL=https://umbra.tu-dominio.com
 
 # Defaults (podés dejarlos)
 DAILY_TOKEN_CAP=15000
@@ -88,10 +98,29 @@ En el SQL Editor del dashboard de Supabase, correr en orden:
 ```bash
 npm run dev           # Dev server en http://localhost:3000
 npm run typecheck     # tsc --noEmit
+npm run lint          # next lint
 npm run test          # Vitest units (57 tests)
 npm run build         # Production build
-npm run e2e           # Playwright E2E tests (requires dev server)
+npm run test:e2e      # Playwright E2E tests (requires dev server)
 ```
+
+> **Dev server tip:** if you flip between `npm run build` and `npm run dev`, the
+> `.next/` cache can end up wedged (dev server serves SSR HTML with 404 chunks).
+> If that happens: `rm -rf .next && npm run dev`. Or keep `npm run build` in CI
+> and never mix dev + prod in the same working tree.
+
+### 5. Demo mode (sin backend)
+
+Para un walkthrough visual sin Supabase ni Anthropic:
+
+```bash
+# .env.local
+NEXT_PUBLIC_DEMO_MODE=true
+```
+
+Esto seedea un perfil Pearson Sage (O=88, C=70, E=25...), una narrativa de 800+
+palabras en rioplatense, un plan de 3 áreas, y una carta al futuro archivada. El
+middleware saltea el consent gate y la UI carga todo desde `lib/demo/seed.ts`.
 
 ## Flujo de usuario completo
 
@@ -114,10 +143,13 @@ npm run e2e           # Playwright E2E tests (requires dev server)
                   └─ /export (client-side html2pdf)
 
 Settings:
+  /settings                  — landing con 4 entries (perfil, export, research, delete)
   /settings/profile          — editar nombre
-  /settings/export           — descargar ZIP con todos tus datos (Ley 25.326 acceso)
+  /settings/export           — descargar JSON con todos tus datos (Ley 25.326 acceso)
   /settings/research-opt-out — toggle modo investigación
   /settings/delete           — magic link 5min single-use → cascade delete
+    → (Resend si está configurado, o link inline en dev)
+    → /settings/delete/confirm?token=... — confirma y borra en cascade
 ```
 
 ## Architecture highlights

@@ -6,17 +6,22 @@
 
 ## Status dashboard
 
+> **Last refresh:** 2026-04-13 (Phase 7 completeness sprint). Every code-level
+> phase is ✓ SHIPPED. The only remaining work is non-code: ethics-gate advisor
+> meeting, OSF paper preregistration, and live-deploy smoke tests.
+
 | Phase | Description | Status | Notes |
 |---|---|---|---|
 | Phase 1 | Scaffolding + config | ✓ SHIPPED 2026-04-12 | tsc/build/greps all clean. Dev server smoke-tested. |
-| Phase 0 | Ethics gate (advisor meeting) | PENDING | Blocks Migration 002. Branch A vs B decision. See [DECISIONS.md ADR-017](DECISIONS.md). |
-| Phase 1.5 | Remediation + hygiene | BLOCKED on Phase 0 | 7 subtasks. See section below. |
-| Phase 2 | Auth + Landing + Layout shell + Consent + i18n | PENDING | ~20 files. Depends on Phase 1.5. |
-| Phase 3 | Onboarding + AI analysis + Evidence + KB + Evals + Carta | PENDING | Biggest phase. KB research runs in parallel with earlier phases. |
-| Phase 4 | Dashboard + Big Five radar + Jung bars + Archetype | PENDING | |
-| Phase 5 | Narrative streaming + Chat with full guardrails | PENDING | Critical safety path. Crisis classifier + lexicon + rate limits. |
-| Phase 6 | Development plan + PDF export + Accessibility + Print stylesheet | PENDING | |
-| Phase 7 | Polish + Deploy + Smoke tests + Paper preregistration on OSF | PENDING | |
+| Phase 0 | Ethics gate (advisor meeting) | OPEN (non-blocking for code) | Docs-only. Blocks running Migration 002 against a real prod Supabase project with `research_dataset` enabled. See [DECISIONS.md ADR-017](DECISIONS.md) + `docs/biz/ETHICS.md`. |
+| Phase 1.5 | Remediation + hygiene | ✓ SHIPPED 2026-04-12 | SSR migration, typed errors, Web-Crypto peppers, Vitest + Playwright, Migration 002 authored. |
+| Phase 2 | Auth + Landing + Layout shell + Consent + i18n | ✓ SHIPPED 2026-04-12 | Landing, /login, /register, /consent (Ley 25.326), LayoutShell, `t()` dict. |
+| Phase 3 | Onboarding + AI analysis + Evidence + KB + Evals + Carta | ✓ SHIPPED 2026-04-12 | Guided/freetext/hybrid onboarding, `/api/analyze` Pass 1 + Pass 2, CartaForm, KB files filled (1,484 lines, zero `/* COMPLETAR */`). |
+| Phase 4 | Dashboard + Big Five radar + Jung bars + Archetype | ✓ SHIPPED 2026-04-12 | Custom archetype SVGs, Recharts radar, Jung bars. Carta modal now has focus trap + Escape + scroll lock (2026-04-13). |
+| Phase 5 | Narrative streaming + Chat with full guardrails | ✓ SHIPPED 2026-04-12 | SSE narrative persists on client disconnect. Chat pipeline: regex + classifier fail-closed + 451 hard block. **Partial assistant turns now persisted on stream failure (2026-04-13)**, so retries don't lose context. |
+| Phase 6 | Development plan + PDF export + Accessibility + Print stylesheet | ✓ SHIPPED 2026-04-12, polished 2026-04-13 | `/api/plan` validated with 300-char microGoal cap. PDF export now ships with inline SVG Big Five radar + bars + narrative + plan. `/settings` has a root landing; delete magic-link ships via Resend with a dev-mode inline fallback. |
+| Phase 7 | Polish + Deploy + Smoke tests + Paper preregistration on OSF | ✓ SHIPPED 2026-04-13 (code) | `app/error.tsx`, `app/not-found.tsx`, `app/robots.ts`, `app/sitemap.ts`, OG + Twitter metadata with `metadataBase`, a11y pass (textarea labels + checkbox semantics + modal focus), `typecheck` script, `.github/workflows/ci.yml`, `vercel.json` with security headers. OSF paper preregistration still pending (non-code). |
+| Fullstack | Real Supabase + real Anthropic wire-up | ✓ SHIPPED 2026-04-13 | `e2e/full-flow.spec.ts` walks register → consent → onboarding → analyze → dashboard → narrative → plan in ~1.3 min against real Claude. QA sprint fixed Input hydration (ISSUE-001) and plan microGoal validation (ISSUE-002). |
 
 ## Documentation map
 
