@@ -227,21 +227,26 @@ export default function PlanPage() {
                         <ul className="mt-4 flex flex-col gap-2">
                           {action.microGoals.map((goal) => (
                             <li key={goal.id}>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  toggleMicroGoal(area.id, action.id, goal.id)
-                                }
+                              <label
                                 className={cn(
-                                  'flex w-full items-start gap-3 rounded-md px-3 py-2 text-left transition-colors',
+                                  'flex w-full cursor-pointer items-start gap-3 rounded-md px-3 py-2 text-left transition-colors',
                                   goal.completed
                                     ? 'bg-accent-emerald/5 text-text-2 hover:bg-accent-emerald/10'
                                     : 'hover:bg-violet-400/5',
                                 )}
                               >
+                                <input
+                                  type="checkbox"
+                                  className="peer sr-only"
+                                  checked={goal.completed}
+                                  onChange={() =>
+                                    toggleMicroGoal(area.id, action.id, goal.id)
+                                  }
+                                />
                                 <span
+                                  aria-hidden="true"
                                   className={cn(
-                                    'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border',
+                                    'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-violet-400 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-umbra-void',
                                     goal.completed
                                       ? 'border-accent-emerald bg-accent-emerald/20 text-accent-emerald'
                                       : 'border-violet-400/40',
@@ -257,7 +262,7 @@ export default function PlanPage() {
                                 >
                                   {goal.text}
                                 </span>
-                              </button>
+                              </label>
                             </li>
                           ))}
                         </ul>

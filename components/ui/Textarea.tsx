@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, type TextareaHTMLAttributes } from 'react';
+import { forwardRef, useId, type TextareaHTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 import { wordCount } from '@/lib/utils';
 
@@ -15,7 +15,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
   { label, error, minWords, showCount, className, id, value, ...props },
   ref,
 ) {
-  const textareaId = id ?? `ta-${Math.random().toString(36).slice(2, 9)}`;
+  const generatedId = useId();
+  const textareaId = id ?? generatedId;
   const count = typeof value === 'string' ? wordCount(value) : 0;
   const meetsMin = minWords === undefined || count >= minWords;
 

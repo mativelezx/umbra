@@ -47,7 +47,11 @@ export function ChatInput({ onSend, disabled, placeholder = 'Escribí tu reflexi
       }}
       className="glass sticky bottom-20 lg:bottom-6 flex items-end gap-2 rounded-2xl p-3"
     >
+      <label htmlFor="chat-input" className="sr-only">
+        Tu mensaje
+      </label>
       <textarea
+        id="chat-input"
         ref={ref}
         value={value}
         onChange={(e) => {
@@ -59,8 +63,13 @@ export function ChatInput({ onSend, disabled, placeholder = 'Escribí tu reflexi
         disabled={disabled}
         rows={1}
         maxLength={2000}
+        aria-label="Tu mensaje"
+        aria-describedby="chat-input-hint"
         className="flex-1 resize-none bg-transparent font-body text-text-1 placeholder:text-text-3 focus:outline-none text-sm md:text-base max-h-40"
       />
+      <span id="chat-input-hint" className="sr-only">
+        Presioná Enter para enviar, Shift+Enter para salto de línea. Máximo 2000 caracteres.
+      </span>
       <button
         type="submit"
         disabled={disabled || !value.trim()}

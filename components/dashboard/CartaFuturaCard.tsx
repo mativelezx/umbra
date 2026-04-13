@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Lock, Envelope } from '@phosphor-icons/react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { Lock, Envelope, X } from '@phosphor-icons/react';
 import { formatDateEs } from '@/lib/utils';
 import type { Archetype, JungFunctions } from '@/types';
 import { ARCHETYPE_INFO } from '@/types';
@@ -24,11 +24,35 @@ export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
   const unlockDate = new Date(letter.unlock_at);
   const isUnlocked = unlockDate <= new Date();
   const daysLeft = Math.ceil((unlockDate.getTime() - Date.now()) / (24 * 60 * 60 * 1000));
+  const titleId = useId();
+  const descriptionId = useId();
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const openerRef = useRef<HTMLButtonElement>(null);
 
   const topJung = Object.entries(snapshot.jungFunctions)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 2)
     .map(([k]) => k);
+
+  const close = useCallback(() => setOpen(false), []);
+
+  useEffect(() => {
+    if (!open) {
+      openerRef.current?.focus();
+      return;
+    }
+    closeButtonRef.current?.focus();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close();
+    };
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('keydown', handleKey);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open, close]);
 
   return (
     <>
@@ -57,8 +81,10 @@ export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
                   entonces te dejó un mensaje.
                 </p>
                 <button
+                  ref={openerRef}
+                  type="button"
                   onClick={() => setOpen(true)}
-                  className="mt-4 inline-flex items-center gap-2 rounded-md border border-violet-400/30 bg-violet-400/10 px-4 py-2 font-heading text-sm text-violet-200 transition-colors hover:bg-violet-400/20"
+                  className="mt-4 inline-flex items-center gap-2 rounded-md border border-violet-400/30 bg-violet-400/10 px-4 py-2 font-heading text-sm text-violet-200 transition-colors hover:bg-violet-400/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-umbra-void"
                 >
                   Leer tu carta →
                 </button>
@@ -84,17 +110,33 @@ export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
         <div
           role="dialog"
           aria-modal="true"
+          aria-labelledby={titleId}
+          aria-describedby={descriptionId}
           className="fixed inset-0 z-50 flex items-center justify-center bg-umbra-void/80 p-4 backdrop-blur-xl"
-          onClick={() => setOpen(false)}
+          onClick={close}
         >
           <div
-            className="card-glow max-w-2xl max-h-[85vh] overflow-y-auto rounded-lg p-8 md:p-10"
+            className="card-glow relative max-w-2xl max-h-[85vh] overflow-y-auto rounded-lg p-8 md:p-10"
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+            <button
+              type="button"
+              onClick={close}
+              aria-label="Cerrar carta"
+              className="absolute right-4 top-4 rounded-md p-2 text-text-3 transition-colors hover:bg-violet-400/10 hover:text-text-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400"
+            >
+              <X size={18} weight="bold" />
+            </button>
+            <p
+              id={titleId}
+              className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3"
+            >
               Carta escrita el {formatDateEs(letter.written_at)}
             </p>
-            <article className="mt-6 font-display text-xl italic leading-relaxed text-text-1 md:text-2xl md:leading-[1.7]">
+            <article
+              id={descriptionId}
+              className="mt-6 font-display text-xl italic leading-relaxed text-text-1 md:text-2xl md:leading-[1.7]"
+            >
               {letter.content.split('\n\n').map((p, i) => (
                 <p key={i} className={i > 0 ? 'mt-4' : ''}>
                   {p}
@@ -111,8 +153,10 @@ export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
               </p>
             </div>
             <button
-              onClick={() => setOpen(false)}
-              className="mt-8 rounded-md border border-violet-400/20 px-4 py-2 font-heading text-sm text-text-2 hover:bg-violet-400/5 hover:text-text-1"
+              ref={closeButtonRef}
+              type="button"
+              onClick={close}
+              className="mt-8 rounded-md border border-violet-400/20 px-4 py-2 font-heading text-sm text-text-2 transition-colors hover:bg-violet-400/5 hover:text-text-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-umbra-void"
             >
               Cerrar
             </button>

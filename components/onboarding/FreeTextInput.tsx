@@ -42,6 +42,7 @@ export function FreeTextInput({ onSubmit, loading }: FreeTextInputProps) {
         maxLength={5000}
         rows={14}
         className="min-h-[300px]"
+        aria-label="Texto libre sobre vos"
       />
 
       <div className="flex justify-end">

@@ -52,6 +52,7 @@ export function GuidedFlow({ onSubmit, loading }: GuidedFlowProps) {
         showCount
         maxLength={2000}
         rows={8}
+        aria-label={`Respuesta para: ${area.label}`}
       />
 
       <div className="flex items-center justify-between">
