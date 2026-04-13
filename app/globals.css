@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body {
+    background-color: #050510;
+    color: #f0ecff;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100%;
+  }
+
+  body {
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Noise overlay — aplicado a body::before */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1' /%3E%3C/svg%3E");
+  }
+}
+
+@layer components {
+  /* Glass effect */
+  .glass {
+    background: rgba(180, 102, 255, 0.04);
+    border: 1px solid rgba(180, 102, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .glass:hover {
+    background: rgba(180, 102, 255, 0.08);
+    border-color: rgba(180, 102, 255, 0.2);
+  }
+
+  /* Glow card */
+  .card-glow {
+    background: linear-gradient(
+      135deg,
+      rgba(180, 102, 255, 0.06),
+      rgba(99, 102, 241, 0.03)
+    );
+    border: 1px solid rgba(180, 102, 255, 0.18);
+    box-shadow: 0 0 60px rgba(180, 102, 255, 0.04);
+  }
+
+  /* Gradient orb — elemento posicionado absoluto */
+  .orb {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .orb-violet {
+    background: radial-gradient(
+      circle,
+      rgba(180, 102, 255, 0.12),
+      transparent 65%
+    );
+  }
+
+  .orb-indigo {
+    background: radial-gradient(
+      circle,
+      rgba(99, 102, 241, 0.1),
+      transparent 65%
+    );
+  }
+}

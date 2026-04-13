@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Umbra — Design System v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<style>
+/* ╔═══════════════════════════════════════════╗
+   ║  UMBRA DESIGN SYSTEM v3 — Pro Max         ║
+   ║  Direction: SOMORA + Instrument Serif      ║
+   ╚═══════════════════════════════════════════╝ */
+
+:root {
+  --void:       #050510;
+  --abyss:      #08081A;
+  --deep:       #0E0E2A;
+  --shadow:     #16163A;
+  --mist:       #1E1E4A;
+  --surface:    #28285A;
+  --elevated:   #32326A;
+
+  --violet:       #B466FF;
+  --violet-50:    #F5ECFF;
+  --violet-100:   #E8D5FF;
+  --violet-200:   #D4B3FF;
+  --violet-300:   #CEA7FF;
+  --violet-400:   #B466FF;
+  --violet-500:   #9B3FEB;
+  --violet-600:   #7B2FCC;
+  --violet-700:   #5A1FA6;
+  --violet-800:   #3D1575;
+  --violet-900:   #1E0A3A;
+
+  --indigo:       #6366F1;
+  --indigo-light: #818CF8;
+  --cyan:         #06B6D4;
+  --emerald:      #10B981;
+  --amber:        #F59E0B;
+  --rose:         #F43F5E;
+
+  --text-1: #F0ECFF;
+  --text-2: #A8A0C8;
+  --text-3: #6B6490;
+  --text-4: #3D3860;
+
+  --glass: rgba(180,102,255,0.04);
+  --glass-border: rgba(180,102,255,0.10);
+  --glass-hover: rgba(180,102,255,0.08);
+  --glass-active: rgba(180,102,255,0.14);
+
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+body{
+  background:var(--abyss);color:var(--text-1);
+  font-family:var(--font-body);line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* ═══ COSMIC BACKGROUND ═══ */
+.cosmos{
+  position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.cosmos canvas{width:100%;height:100%}
+.cosmos .gradient-1{
+  position:absolute;width:900px;height:900px;top:-350px;right:-200px;
+  background:radial-gradient(circle,rgba(180,102,255,0.12),transparent 65%);
+  border-radius:50%;filter:blur(80px);
+  animation:drift 30s ease-in-out infinite;
+}
+.cosmos .gradient-2{
+  position:absolute;width:700px;height:700px;bottom:-250px;left:-150px;
+  background:radial-gradient(circle,rgba(99,102,241,0.10),transparent 65%);
+  border-radius:50%;filter:blur(80px);
+  animation:drift 25s ease-in-out infinite reverse;
+}
+.cosmos .gradient-3{
+  position:absolute;width:500px;height:500px;top:40%;left:30%;
+  background:radial-gradient(circle,rgba(6,182,212,0.05),transparent 70%);
+  border-radius:50%;filter:blur(100px);
+  animation:drift 35s ease-in-out infinite 5s;
+}
+@keyframes drift{
+  0%,100%{transform:translate(0,0) scale(1)}
+  25%{transform:translate(40px,-30px) scale(1.08)}
+  50%{transform:translate(-20px,40px) scale(0.95)}
+  75%{transform:translate(30px,20px) scale(1.03)}
+}
+
+/* Noise overlay */
+body::before{
+  content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
+  opacity:0.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat:repeat;
+}
+
+/* ═══ LAYOUT ═══ */
+.container{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:2rem}
+
+/* ═══ HEADER ═══ */
+.header{
+  text-align:center;padding:5rem 0 4rem;position:relative;
+  margin-bottom:2rem;
+}
+.header::after{
+  content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(180,102,255,0.2),transparent);
+}
+.header .logo-mark{
+  font-family:var(--font-display);font-size:5rem;font-weight:400;
+  line-height:1;letter-spacing:-0.02em;
+  background:linear-gradient(135deg,#fff 0%,var(--violet-300) 50%,var(--violet) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.header .tagline{
+  font-family:var(--font-display);font-style:italic;
+  font-size:1.3rem;color:var(--text-2);margin-top:0.5rem;
+}
+.header .pill{
+  display:inline-flex;align-items:center;gap:0.4rem;
+  margin-top:1.5rem;padding:0.3rem 1rem;border-radius:var(--radius-full);
+  font-size:0.65rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
+  background:rgba(180,102,255,0.08);border:1px solid rgba(180,102,255,0.15);
+  color:var(--violet-300);
+}
+.pill .dot-live{width:6px;height:6px;border-radius:50%;background:var(--emerald);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* ═══ NAV TABS ═══ */
+.nav{
+  display:flex;gap:0.3rem;justify-content:center;flex-wrap:wrap;
+  margin-bottom:3.5rem;padding:0.35rem;border-radius:var(--radius-full);
+  background:rgba(180,102,255,0.03);border:1px solid rgba(180,102,255,0.06);
+  width:fit-content;margin-left:auto;margin-right:auto;
+}
+.nav button{
+  padding:0.55rem 1.3rem;border-radius:var(--radius-full);font-size:0.8rem;font-weight:500;
+  border:none;background:transparent;color:var(--text-3);cursor:pointer;
+  transition:all 0.35s cubic-bezier(0.4,0,0.2,1);font-family:var(--font-body);
+}
+.nav button:hover{color:var(--text-1)}
+.nav button.active{
+  background:rgba(180,102,255,0.12);color:var(--violet-200);
+  box-shadow:0 0 20px rgba(180,102,255,0.08);
+}
+
+/* ═══ SECTIONS ═══ */
+.section{display:none;animation:fadeUp 0.5s ease}
+.section.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.section-header{margin-bottom:3rem}
+.section-number{
+  font-family:var(--font-mono);font-size:0.7rem;color:var(--violet);
+  letter-spacing:0.15em;margin-bottom:0.5rem;
+}
+.section-title{
+  font-family:var(--font-display);font-size:3rem;font-weight:400;
+  line-height:1.1;letter-spacing:-0.01em;
+}
+.section-subtitle{
+  font-family:var(--font-display);font-style:italic;
+  font-size:1.1rem;color:var(--text-3);margin-top:0.5rem;
+}
+
+h3{
+  font-family:var(--font-heading);font-size:0.75rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.12em;color:var(--text-3);
+  margin:3rem 0 1.25rem;
+  display:flex;align-items:center;gap:0.75rem;
+}
+h3::after{content:'';flex:1;height:1px;background:rgba(180,102,255,0.08)}
+
+/* ═══ SWATCH GRID ═══ */
+.swatch-row{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.swatch{
+  flex:1;min-width:100px;border-radius:var(--radius-md);overflow:hidden;
+  border:1px solid rgba(180,102,255,0.06);transition:all 0.3s;
+}
+.swatch:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.swatch-color{height:72px;display:flex;align-items:flex-end;padding:0.4rem 0.5rem;font-size:0.55rem;font-family:var(--font-mono)}
+.swatch-meta{padding:0.5rem;background:var(--deep)}
+.swatch-name{font-size:0.7rem;font-weight:600}
+.swatch-hex{font-size:0.6rem;font-family:var(--font-mono);color:var(--text-3)}
+
+/* ═══ TYPE SHOWCASE ═══ */
+.type-block{
+  position:relative;padding:2.5rem;margin-bottom:1.5rem;
+  border-radius:var(--radius-lg);overflow:hidden;
+  background:linear-gradient(135deg,rgba(180,102,255,0.03),rgba(99,102,241,0.02));
+  border:1px solid rgba(180,102,255,0.06);
+}
+.type-block::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(180,102,255,0.2),transparent);
+}
+.type-label{
+  font-family:var(--font-mono);font-size:0.6rem;color:var(--violet);
+  text-transform:uppercase;letter-spacing:0.15em;margin-bottom:1rem;
+  display:flex;align-items:center;gap:0.5rem;
+}
+.type-label::before{content:'';width:8px;height:1px;background:var(--violet)}
+
+/* ═══ BUTTONS ═══ */
+.btn{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  padding:0.75rem 1.6rem;border-radius:var(--radius-md);
+  font-size:0.85rem;font-weight:500;border:none;cursor:pointer;
+  transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
+  font-family:var(--font-body);position:relative;overflow:hidden;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--violet),var(--indigo));
+  color:#fff;
+  box-shadow:0 4px 24px rgba(180,102,255,0.25),inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.btn-primary:hover{
+  box-shadow:0 8px 40px rgba(180,102,255,0.4),inset 0 1px 0 rgba(255,255,255,0.15);
+  transform:translateY(-2px);
+}
+.btn-primary::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,0.08));
+}
+.btn-outline{
+  background:transparent;border:1.5px solid rgba(180,102,255,0.35);
+  color:var(--violet-300);
+}
+.btn-outline:hover{background:rgba(180,102,255,0.08);border-color:var(--violet)}
+.btn-glass{
+  background:var(--glass);border:1px solid var(--glass-border);
+  color:var(--text-1);backdrop-filter:blur(12px);
+}
+.btn-glass:hover{background:var(--glass-hover);border-color:rgba(180,102,255,0.2)}
+.btn-ghost{background:transparent;border:none;color:var(--text-3)}
+.btn-ghost:hover{color:var(--violet-300)}
+.btn-sm{padding:0.5rem 1rem;font-size:0.75rem;border-radius:var(--radius-sm)}
+.btn-lg{padding:0.9rem 2.2rem;font-size:1rem;border-radius:var(--radius-md)}
+.btn-icon{width:40px;height:40px;padding:0;justify-content:center;border-radius:var(--radius-sm)}
+
+/* ═══ INPUT ═══ */
+.input{
+  background:rgba(180,102,255,0.03);border:1px solid rgba(180,102,255,0.1);
+  border-radius:var(--radius-md);padding:0.85rem 1.1rem;
+  color:var(--text-1);font-size:0.85rem;font-family:var(--font-body);
+  width:100%;max-width:400px;outline:none;transition:all 0.3s;
+}
+.input::placeholder{color:var(--text-4)}
+.input:focus{border-color:var(--violet);box-shadow:0 0 0 3px rgba(180,102,255,0.1),0 0 20px rgba(180,102,255,0.05)}
+
+/* ═══ BADGES ═══ */
+.badge{
+  display:inline-flex;align-items:center;gap:0.35rem;
+  padding:0.2rem 0.65rem;border-radius:var(--radius-full);
+  font-size:0.65rem;font-weight:600;letter-spacing:0.03em;
+}
+.badge-v{background:rgba(180,102,255,0.12);color:var(--violet-200)}
+.badge-i{background:rgba(99,102,241,0.12);color:var(--indigo-light)}
+.badge-c{background:rgba(6,182,212,0.12);color:var(--cyan)}
+.badge-g{background:rgba(16,185,129,0.12);color:var(--emerald)}
+.badge-r{background:rgba(244,63,94,0.12);color:var(--rose)}
+
+/* ═══ CARDS ═══ */
+.card{
+  position:relative;padding:1.5rem;border-radius:var(--radius-lg);
+  background:var(--glass);border:1px solid var(--glass-border);
+  backdrop-filter:blur(12px);transition:all 0.4s;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(180,102,255,0.15),transparent);
+  opacity:0;transition:opacity 0.4s;
+}
+.card:hover{border-color:rgba(180,102,255,0.2);transform:translateY(-2px)}
+.card:hover::before{opacity:1}
+.card-glow{
+  background:linear-gradient(135deg,rgba(180,102,255,0.06),rgba(99,102,241,0.03));
+  border-color:rgba(180,102,255,0.18);
+  box-shadow:0 0 60px rgba(180,102,255,0.04);
+}
+.card-title{font-family:var(--font-display);font-size:1.2rem;margin-bottom:0.4rem}
+.card-text{font-size:0.82rem;color:var(--text-2);line-height:1.55}
+
+/* ═══ DIMENSION BARS ═══ */
+.dim{margin-bottom:0.85rem}
+.dim-head{display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:0.35rem}
+.dim-name{font-weight:500}
+.dim-val{font-family:var(--font-mono);font-size:0.72rem;color:var(--violet-300)}
+.dim-track{height:5px;border-radius:3px;background:rgba(180,102,255,0.08);overflow:hidden}
+.dim-fill{
+  height:100%;border-radius:3px;
+  background:linear-gradient(90deg,var(--violet-600),var(--violet),var(--violet-300));
+  transition:width 1.8s cubic-bezier(0.16,1,0.3,1);width:0;
+}
+.dim-fill.go{width:var(--w)}
+
+/* ═══ CHAT ═══ */
+.chat{max-width:520px}
+.bubble{
+  padding:0.85rem 1.1rem;border-radius:18px;font-size:0.82rem;
+  margin-bottom:0.65rem;max-width:88%;line-height:1.55;
+  animation:fadeUp 0.4s ease;
+}
+.bubble-ai{
+  background:linear-gradient(135deg,rgba(180,102,255,0.10),rgba(99,102,241,0.05));
+  border:1px solid rgba(180,102,255,0.12);border-bottom-left-radius:4px;
+}
+.bubble-user{
+  background:var(--mist);border:1px solid rgba(180,102,255,0.06);
+  margin-left:auto;border-bottom-right-radius:4px;
+}
+
+/* ═══ SCREEN FRAMES ═══ */
+.screens{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:2rem;margin-top:2rem}
+.frame{
+  border-radius:var(--radius-xl);overflow:hidden;
+  background:var(--deep);
+  border:1px solid rgba(180,102,255,0.08);
+  box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 80px rgba(180,102,255,0.03);
+  transition:all 0.5s;
+}
+.frame:hover{transform:translateY(-4px);box-shadow:0 30px 80px rgba(0,0,0,0.5),0 0 100px rgba(180,102,255,0.06)}
+.frame-top{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0.7rem 1.2rem;font-size:0.7rem;color:var(--text-3);
+  background:linear-gradient(180deg,rgba(180,102,255,0.08),transparent);
+}
+.frame-notch{width:80px;height:24px;background:var(--void);border-radius:0 0 14px 14px;margin:0 auto}
+.frame-body{padding:1.3rem}
+
+/* Dashboard specific */
+.greeting-label{font-family:var(--font-display);font-style:italic;font-size:0.85rem;color:var(--text-3)}
+.greeting-name{font-family:var(--font-display);font-size:1.8rem;margin-top:-0.1rem}
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin:1.2rem 0}
+.stat{
+  padding:0.8rem;border-radius:var(--radius-md);
+  background:rgba(180,102,255,0.04);border:1px solid rgba(180,102,255,0.08);
+}
+.stat-label{font-size:0.6rem;color:var(--text-3);text-transform:uppercase;letter-spacing:0.1em}
+.stat-val{font-family:var(--font-display);font-size:1.6rem;line-height:1.2}
+
+.archetype{
+  text-align:center;padding:1.3rem;border-radius:var(--radius-lg);margin-top:1rem;
+  background:linear-gradient(135deg,rgba(180,102,255,0.12),rgba(99,102,241,0.06));
+  border:1px solid rgba(180,102,255,0.2);
+  position:relative;overflow:hidden;
+}
+.archetype::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 0%,rgba(180,102,255,0.15),transparent 60%);
+}
+.archetype-icon{
+  width:52px;height:52px;margin:0 auto 0.6rem;border-radius:50%;
+  background:linear-gradient(135deg,var(--violet),var(--indigo));
+  display:flex;align-items:center;justify-content:center;font-size:1.4rem;
+  box-shadow:0 0 30px rgba(180,102,255,0.3);position:relative;
+}
+.archetype-tag{font-family:var(--font-display);font-style:italic;font-size:0.75rem;color:var(--violet-300);position:relative}
+.archetype-name{font-family:var(--font-display);font-size:1.15rem;position:relative}
+
+.tabbar{
+  display:flex;justify-content:space-around;align-items:center;
+  padding:0.7rem 0;margin-top:1.2rem;border-top:1px solid rgba(180,102,255,0.06);
+}
+.tabbar-item{
+  display:flex;flex-direction:column;align-items:center;gap:0.15rem;
+  font-size:0.55rem;color:var(--text-4);
+}
+.tabbar-item.on{color:var(--violet-300)}
+.tabbar-center{
+  width:44px;height:44px;border-radius:50%;margin-top:-22px;
+  background:linear-gradient(135deg,var(--violet),var(--indigo));
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+  box-shadow:0 4px 24px rgba(180,102,255,0.35);
+}
+
+/* ═══ PHOSPHOR ICONS ═══ */
+i[class^="ph"]{display:inline-flex;align-items:center;justify-content:center;line-height:1}
+.tabbar-item i,.tabbar-center i{font-size:1.15rem}
+.archetype-icon i{font-size:1.5rem;color:#fff}
+.onb-ico i{font-size:1.2rem;color:var(--violet-300)}
+.frame-top i{font-size:0.95rem}
+.btn-icon i{font-size:1.05rem}
+
+/* ═══ HERO ═══ */
+.hero{
+  text-align:center;padding:4rem 2rem;border-radius:var(--radius-xl);
+  position:relative;overflow:hidden;margin-top:2rem;
+  border:1px solid rgba(180,102,255,0.08);
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(180,102,255,0.12),transparent 60%);
+}
+.hero .hero-overline{
+  font-family:var(--font-mono);font-size:0.65rem;color:var(--violet);
+  letter-spacing:0.2em;text-transform:uppercase;margin-bottom:1.5rem;
+  position:relative;
+}
+.hero h2{
+  font-family:var(--font-display);font-size:3rem;font-weight:400;
+  line-height:1.15;margin-bottom:1.2rem;position:relative;
+}
+.hero h2 em{font-style:italic;color:var(--violet-300)}
+.hero .hero-body{
+  font-size:0.95rem;color:var(--text-2);max-width:520px;margin:0 auto 2rem;
+  line-height:1.7;position:relative;
+}
+.hero .hero-actions{display:flex;gap:0.75rem;justify-content:center;position:relative}
+
+/* ═══ PRINCIPLES ═══ */
+.principles{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;margin-top:1.5rem}
+.principle{
+  position:relative;padding:1.5rem;padding-left:1.75rem;
+  border-radius:var(--radius-md);
+  background:var(--glass);border:1px solid var(--glass-border);
+}
+.principle::before{
+  content:'';position:absolute;left:0;top:1rem;bottom:1rem;width:2px;
+  background:linear-gradient(180deg,var(--violet),var(--indigo));
+  border-radius:1px;
+}
+.principle-num{font-family:var(--font-mono);font-size:0.6rem;color:var(--violet);margin-bottom:0.5rem}
+.principle-title{font-family:var(--font-display);font-size:1.15rem;margin-bottom:0.35rem}
+.principle-text{font-size:0.78rem;color:var(--text-2);line-height:1.55}
+
+/* ═══ PHILOSOPHY CARD ═══ */
+.philosophy{
+  position:relative;padding:2.5rem;border-radius:var(--radius-xl);
+  background:linear-gradient(135deg,rgba(180,102,255,0.06),rgba(99,102,241,0.03));
+  border:1px solid rgba(180,102,255,0.12);overflow:hidden;max-width:800px;
+}
+.philosophy::before{
+  content:'';position:absolute;top:-100px;right:-100px;width:300px;height:300px;
+  background:radial-gradient(circle,rgba(180,102,255,0.1),transparent);border-radius:50%;
+}
+.philosophy .ph-title{
+  font-family:var(--font-display);font-size:1.8rem;margin-bottom:0.75rem;position:relative;
+}
+.philosophy .ph-body{font-size:0.9rem;color:var(--text-2);line-height:1.7;position:relative}
+.philosophy .ph-quote{
+  margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(180,102,255,0.08);
+  font-family:var(--font-display);font-style:italic;font-size:1.1rem;color:var(--violet-300);
+  position:relative;
+}
+
+/* ═══ ONBOARDING OPTIONS ═══ */
+.onb-list{display:flex;flex-direction:column;gap:0.65rem;margin-top:1.2rem}
+.onb{
+  display:flex;align-items:center;gap:0.75rem;padding:0.85rem;
+  border-radius:var(--radius-md);border:1px solid rgba(180,102,255,0.06);
+  background:var(--glass);cursor:pointer;transition:all 0.3s;text-align:left;
+}
+.onb:hover,.onb.sel{border-color:var(--violet);background:rgba(180,102,255,0.06)}
+.onb.sel{box-shadow:0 0 20px rgba(180,102,255,0.1)}
+.onb-ico{
+  width:38px;height:38px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+}
+.onb-ico.a{background:linear-gradient(135deg,rgba(180,102,255,0.15),rgba(99,102,241,0.08))}
+.onb-ico.b{background:linear-gradient(135deg,rgba(6,182,212,0.15),rgba(99,102,241,0.08))}
+.onb-ico.c{background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(6,182,212,0.08))}
+.onb-t{font-size:0.82rem;font-weight:600}
+.onb-d{font-size:0.7rem;color:var(--text-3)}
+
+/* Progress dots */
+.dots{display:flex;gap:0.4rem;justify-content:center;margin:1.2rem 0}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(180,102,255,0.15);transition:all 0.3s}
+.dot.on{background:var(--violet);box-shadow:0 0 10px rgba(180,102,255,0.4)}
+.dot.done{background:var(--emerald)}
+
+/* ═══ FLEX/GRID UTILITY ═══ */
+.flex{display:flex}.flex-wrap{flex-wrap:wrap}.gap-sm{gap:0.5rem}.gap-md{gap:1rem}.gap-lg{gap:1.5rem}
+.items-center{align-items:center}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.mt-1{margin-top:0.5rem}.mt-2{margin-top:1rem}.mt-3{margin-top:1.5rem}.mt-4{margin-top:2rem}
+.max-500{max-width:500px}.max-700{max-width:700px}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:768px){
+  .header .logo-mark{font-size:3.5rem}
+  .section-title{font-size:2.2rem}
+  .hero h2{font-size:2rem}
+  .screens{grid-template-columns:1fr}
+  .grid-2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- COSMIC BACKGROUND -->
+<div class="cosmos">
+  <div class="gradient-1"></div>
+  <div class="gradient-2"></div>
+  <div class="gradient-3"></div>
+  <canvas id="stars"></canvas>
+</div>
+
+<div class="container">
+
+<!-- ═══ HEADER ═══ -->
+<header class="header">
+  <div class="logo-mark">Umbra</div>
+  <div class="tagline">Conoce tu sombra. Ilumina tu camino.</div>
+  <div class="pill"><span class="dot-live"></span> Design System v3</div>
+</header>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav">
+  <button class="active" data-t="identity">/01 Identidad</button>
+  <button data-t="palette">/02 Paleta</button>
+  <button data-t="type">/03 Tipografía</button>
+  <button data-t="comp">/04 Componentes</button>
+  <button data-t="screens">/05 Pantallas</button>
+</nav>
+
+<!-- ══════════════════════════════════════ -->
+<!-- IDENTITY -->
+<!-- ══════════════════════════════════════ -->
+<section class="section active" id="identity">
+  <div class="section-header">
+    <div class="section-number">/01</div>
+    <div class="section-title">Identidad Visual</div>
+    <div class="section-subtitle">El cosmos interior</div>
+  </div>
+
+  <div class="philosophy">
+    <div class="ph-title">Filosofía</div>
+    <div class="ph-body">
+      Umbra vive en el espacio entre la vigilia y el sueño, entre lo consciente y lo inconsciente.
+      El violeta — color de la introspección, la intuición y la transformación — es el vehículo visual
+      que guía al usuario a través de su propia psique. La oscuridad no es vacío: es el lienzo donde
+      la verdad interior se revela.
+    </div>
+    <div class="ph-quote">"Lo que no se hace consciente se manifiesta en nuestras vidas como destino."</div>
+  </div>
+
+  <h3>Principios de diseño</h3>
+  <div class="principles">
+    <div class="principle">
+      <div class="principle-num">/01</div>
+      <div class="principle-title">Oscuridad reveladora</div>
+      <div class="principle-text">Los fondos profundos crean intimidad. Cada elemento emerge con intención, como insights del inconsciente.</div>
+    </div>
+    <div class="principle">
+      <div class="principle-num">/02</div>
+      <div class="principle-title">Violeta como puente</div>
+      <div class="principle-text">Conecta lo racional (azul) con lo emocional (rojo). Es el color de la individuación junguiana.</div>
+    </div>
+    <div class="principle">
+      <div class="principle-num">/03</div>
+      <div class="principle-title">Serif con alma</div>
+      <div class="principle-text">Instrument Serif aporta humanidad y gravitas. La tecnología habla con voz de sabiduría, no de máquina.</div>
+    </div>
+    <div class="principle">
+      <div class="principle-num">/04</div>
+      <div class="principle-title">Vidrio como capas</div>
+      <div class="principle-text">El glassmorphism representa las capas de la personalidad: transparentes, superpuestas, revelándose gradualmente.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ -->
+<!-- PALETTE -->
+<!-- ══════════════════════════════════════ -->
+<section class="section" id="palette">
+  <div class="section-header">
+    <div class="section-number">/02</div>
+    <div class="section-title">Paleta cromática</div>
+    <div class="section-subtitle">Los colores de la psique</div>
+  </div>
+
+  <h3>Surfaces</h3>
+  <div class="swatch-row">
+    <div class="swatch"><div class="swatch-color" style="background:#050510;color:var(--text-4)">Void</div><div class="swatch-meta"><div class="swatch-name">Void</div><div class="swatch-hex">#050510</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#08081A;color:var(--text-4)">Abyss</div><div class="swatch-meta"><div class="swatch-name">Abyss</div><div class="swatch-hex">#08081A</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#0E0E2A;color:var(--text-3)">Deep</div><div class="swatch-meta"><div class="swatch-name">Deep</div><div class="swatch-hex">#0E0E2A</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#16163A;color:var(--text-2)">Shadow</div><div class="swatch-meta"><div class="swatch-name">Shadow</div><div class="swatch-hex">#16163A</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#1E1E4A;color:var(--text-1)">Mist</div><div class="swatch-meta"><div class="swatch-name">Mist</div><div class="swatch-hex">#1E1E4A</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#28285A;color:var(--text-1)">Surface</div><div class="swatch-meta"><div class="swatch-name">Surface</div><div class="swatch-hex">#28285A</div></div></div>
+  </div>
+
+  <h3>Violeta cósmico — Primary</h3>
+  <div class="swatch-row">
+    <div class="swatch"><div class="swatch-color" style="background:#1E0A3A;color:#6B6490">900</div><div class="swatch-meta"><div class="swatch-name">Deepest</div><div class="swatch-hex">#1E0A3A</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#5A1FA6;color:#CEA7FF">700</div><div class="swatch-meta"><div class="swatch-name">Dark</div><div class="swatch-hex">#5A1FA6</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#7B2FCC;color:#fff">600</div><div class="swatch-meta"><div class="swatch-name">Medium</div><div class="swatch-hex">#7B2FCC</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#B466FF;color:#fff">400 ★</div><div class="swatch-meta"><div class="swatch-name">Primary</div><div class="swatch-hex">#B466FF</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#CEA7FF;color:#08081A">300</div><div class="swatch-meta"><div class="swatch-name">Lavender</div><div class="swatch-hex">#CEA7FF</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#E8D5FF;color:#08081A">100</div><div class="swatch-meta"><div class="swatch-name">Light</div><div class="swatch-hex">#E8D5FF</div></div></div>
+  </div>
+
+  <h3>Secondary & Semantic</h3>
+  <div class="swatch-row">
+    <div class="swatch"><div class="swatch-color" style="background:#6366F1;color:#fff">Indigo</div><div class="swatch-meta"><div class="swatch-name">Indigo</div><div class="swatch-hex">#6366F1</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#06B6D4;color:#08081A">Cyan</div><div class="swatch-meta"><div class="swatch-name">Insight</div><div class="swatch-hex">#06B6D4</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#10B981;color:#08081A">Emerald</div><div class="swatch-meta"><div class="swatch-name">Growth</div><div class="swatch-hex">#10B981</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#F59E0B;color:#08081A">Amber</div><div class="swatch-meta"><div class="swatch-name">Caution</div><div class="swatch-hex">#F59E0B</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#F43F5E;color:#fff">Rose</div><div class="swatch-meta"><div class="swatch-name">Tension</div><div class="swatch-hex">#F43F5E</div></div></div>
+  </div>
+
+  <h3>Text</h3>
+  <div class="swatch-row">
+    <div class="swatch"><div class="swatch-color" style="background:#F0ECFF;color:#08081A">Text-1</div><div class="swatch-meta"><div class="swatch-name">Primary</div><div class="swatch-hex">#F0ECFF</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#A8A0C8;color:#08081A">Text-2</div><div class="swatch-meta"><div class="swatch-name">Secondary</div><div class="swatch-hex">#A8A0C8</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#6B6490;color:#F0ECFF">Text-3</div><div class="swatch-meta"><div class="swatch-name">Tertiary</div><div class="swatch-hex">#6B6490</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#3D3860;color:#F0ECFF">Text-4</div><div class="swatch-meta"><div class="swatch-name">Muted</div><div class="swatch-hex">#3D3860</div></div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ -->
+<!-- TYPOGRAPHY -->
+<!-- ══════════════════════════════════════ -->
+<section class="section" id="type">
+  <div class="section-header">
+    <div class="section-number">/03</div>
+    <div class="section-title">Tipografía</div>
+    <div class="section-subtitle">Las voces de Umbra</div>
+  </div>
+
+  <div class="type-block">
+    <div class="type-label">Instrument Serif — Display & Headings</div>
+    <div style="font-family:var(--font-display);font-size:3.5rem;line-height:1.05;letter-spacing:-0.02em">
+      Conoce tu sombra
+    </div>
+    <div style="font-family:var(--font-display);font-style:italic;font-size:2rem;color:var(--violet-300);margin-top:0.5rem">
+      Ilumina tu camino interior
+    </div>
+    <div style="font-family:var(--font-display);font-size:1.1rem;color:var(--text-3);margin-top:0.5rem">
+      Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Oo Pp Qq Rr — 1234567890
+    </div>
+  </div>
+
+  <div class="type-block">
+    <div class="type-label">Instrument Serif Italic — Accent & labels decorativos</div>
+    <div style="font-family:var(--font-display);font-style:italic;font-size:2.5rem;color:var(--violet-300);letter-spacing:0.01em">
+      Shadow &nbsp; Soul &nbsp; Archetype &nbsp; Persona
+    </div>
+    <div style="font-family:var(--font-display);font-style:italic;font-size:1rem;color:var(--text-3);margin-top:0.5rem">
+      Usada para etiquetas decorativas, taglines, citas y elementos de ambient visual
+    </div>
+  </div>
+
+  <div class="type-block">
+    <div class="type-label">Space Grotesk — UI Labels & Subheadings</div>
+    <div style="font-family:var(--font-heading);font-size:1.5rem;font-weight:600;letter-spacing:-0.02em">
+      Funciones cognitivas dominantes
+    </div>
+    <div style="font-family:var(--font-heading);font-size:0.9rem;font-weight:500;color:var(--text-2);margin-top:0.3rem">
+      Para elementos de interfaz, navegación y labels técnicos que requieren claridad geométrica
+    </div>
+  </div>
+
+  <div class="type-block">
+    <div class="type-label">Inter — Body text</div>
+    <div style="font-size:1rem;line-height:1.7;color:var(--text-2)">
+      La individuación es el proceso central de la psicología analítica de Jung. Representa
+      el camino hacia la integración de las partes conscientes e inconscientes de la personalidad,
+      incluyendo la sombra, el ánima/ánimus y el Self.
+    </div>
+  </div>
+
+  <div class="type-block">
+    <div class="type-label">JetBrains Mono — Data & Metrics</div>
+    <div style="font-family:var(--font-mono);font-size:0.9rem;color:var(--violet-300)">
+      Fe: 82% &nbsp;|&nbsp; Ti: 74% &nbsp;|&nbsp; Ne: 68% &nbsp;|&nbsp; Si: 45%
+    </div>
+    <div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-3);margin-top:0.3rem">
+      Openness: 0.87 &nbsp;&nbsp; Conscientiousness: 0.62 &nbsp;&nbsp; Extraversion: 0.34
+    </div>
+  </div>
+
+  <h3>Escala tipográfica</h3>
+  <div class="type-block">
+    <div style="font-family:var(--font-display);font-size:3.5rem;line-height:1.05">Display — 56px</div>
+    <div style="font-family:var(--font-display);font-size:2.5rem;margin-top:0.5rem">H1 — 40px</div>
+    <div style="font-family:var(--font-display);font-size:1.8rem;margin-top:0.5rem;color:var(--text-2)">H2 — 28px</div>
+    <div style="font-family:var(--font-display);font-size:1.3rem;margin-top:0.5rem;color:var(--text-2)">H3 — 20px</div>
+    <div style="font-family:var(--font-heading);font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;margin-top:0.75rem;color:var(--text-3)">LABEL — 12px / Space Grotesk / Uppercase</div>
+    <div style="margin-top:0.5rem;font-size:1rem">Body — 16px / Inter</div>
+    <div style="margin-top:0.3rem;font-size:0.875rem;color:var(--text-2)">Small — 14px</div>
+    <div style="margin-top:0.3rem;font-family:var(--font-mono);font-size:0.8rem;color:var(--text-3)">Mono — 12.8px / JetBrains Mono</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ -->
+<!-- COMPONENTS -->
+<!-- ══════════════════════════════════════ -->
+<section class="section" id="comp">
+  <div class="section-header">
+    <div class="section-number">/04</div>
+    <div class="section-title">Componentes</div>
+    <div class="section-subtitle">Building blocks</div>
+  </div>
+
+  <h3>Botones</h3>
+  <div class="flex flex-wrap gap-md items-center">
+    <button class="btn btn-primary btn-lg">Explorar Sombra</button>
+    <button class="btn btn-primary">Continuar</button>
+    <button class="btn btn-primary btn-sm">Guardar</button>
+  </div>
+  <div class="flex flex-wrap gap-md items-center mt-2">
+    <button class="btn btn-outline">Ver Perfil</button>
+    <button class="btn btn-glass">Configurar</button>
+    <button class="btn btn-ghost">Cancelar</button>
+    <button class="btn btn-icon btn-glass"><i class="ph ph-gear"></i></button>
+  </div>
+
+  <h3>Inputs</h3>
+  <div class="flex flex-wrap gap-md">
+    <input class="input" placeholder="Describe cómo te sentís hoy..." />
+  </div>
+
+  <h3>Badges</h3>
+  <div class="flex flex-wrap gap-sm">
+    <span class="badge badge-v">Arquetipo: Explorador</span>
+    <span class="badge badge-i">Sesión #4</span>
+    <span class="badge badge-c">Insight nuevo</span>
+    <span class="badge badge-g">Progreso +12%</span>
+    <span class="badge badge-r">Tensión detectada</span>
+  </div>
+
+  <h3>Cards</h3>
+  <div class="grid-2 max-700">
+    <div class="card">
+      <div class="card-title">Función dominante</div>
+      <div class="card-text">Tu pensamiento introvertido (Ti) estructura internamente la realidad antes de actuar.</div>
+    </div>
+    <div class="card card-glow">
+      <div class="card-title" style="color:var(--violet-300)">Insight de hoy</div>
+      <div class="card-text">Tu puntaje de Apertura subió 8 puntos. Algo está cambiando en cómo percibís lo nuevo.</div>
+    </div>
+  </div>
+
+  <h3>Iconografía — Phosphor Icons</h3>
+  <div style="font-size:0.82rem;color:var(--text-2);margin-bottom:1.25rem;line-height:1.6">
+    Librería: <span style="font-family:var(--font-mono);color:var(--violet-300);font-size:0.75rem">@phosphor-icons/web</span> — Estilo base: <span style="font-family:var(--font-mono);color:var(--violet-300);font-size:0.75rem">Regular (ph)</span>
+  </div>
+  <div class="flex flex-wrap gap-md">
+    <div class="card" style="text-align:center;padding:1.2rem;min-width:90px;flex:0">
+      <i class="ph ph-compass" style="font-size:1.8rem;color:var(--violet-300)"></i>
+      <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-3);margin-top:0.5rem">compass</div>
+    </div>
+    <div class="card" style="text-align:center;padding:1.2rem;min-width:90px;flex:0">
+      <i class="ph ph-house" style="font-size:1.8rem;color:var(--violet-300)"></i>
+      <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-3);margin-top:0.5rem">house</div>
+    </div>
+    <div class="card" style="text-align:center;padding:1.2rem;min-width:90px;flex:0">
+      <i class="ph ph-sparkle" style="font-size:1.8rem;color:var(--violet-300)"></i>
+      <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-3);margin-top:0.5rem">sparkle</div>
+    </div>
+    <div class="card" style="text-align:center;padding:1.2rem;min-width:90px;flex:0">
+      <i class="ph ph-moon-stars" style="font-size:1.8rem;color:var(--violet-300)"></i>
+      <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-3);margin-top:0.5rem">moon-stars</div>
+    </div>
+    <div class="card" style="text-align:center;padding:1.2rem;min-width:90px;flex:0">
+      <i class="ph ph-chart-bar" style="font-size:1.8rem;color:var(--violet-300)"></i>
+      <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-3);margin-top:0.5rem">chart-bar</div>
+    </div>
+    <div class="card" style="text-align:center;padding:1.2rem;min-width:90px;flex:0">
+      <i class="ph ph-user" style="font-size:1.8rem;color:var(--violet-300)"></i>
+      <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-3);margin-top:0.5rem">user</div>
+    </div>
+    <div class="card" style="text-align:center;padding:1.2rem;min-width:90px;flex:0">
+      <i class="ph ph-chat-circle" style="font-size:1.8rem;color:var(--violet-300)"></i>
+      <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-3);margin-top:0.5rem">chat-circle</div>
+    </div>
+    <div class="card" style="text-align:center;padding:1.2rem;min-width:90px;flex:0">
+      <i class="ph ph-note-pencil" style="font-size:1.8rem;color:var(--violet-300)"></i>
+      <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-3);margin-top:0.5rem">note-pencil</div>
+    </div>
+    <div class="card" style="text-align:center;padding:1.2rem;min-width:90px;flex:0">
+      <i class="ph ph-target" style="font-size:1.8rem;color:var(--violet-300)"></i>
+      <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-3);margin-top:0.5rem">target</div>
+    </div>
+    <div class="card" style="text-align:center;padding:1.2rem;min-width:90px;flex:0">
+      <i class="ph ph-gear" style="font-size:1.8rem;color:var(--violet-300)"></i>
+      <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-3);margin-top:0.5rem">gear</div>
+    </div>
+    <div class="card" style="text-align:center;padding:1.2rem;min-width:90px;flex:0">
+      <i class="ph ph-brain" style="font-size:1.8rem;color:var(--violet-300)"></i>
+      <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-3);margin-top:0.5rem">brain</div>
+    </div>
+    <div class="card" style="text-align:center;padding:1.2rem;min-width:90px;flex:0">
+      <i class="ph ph-eye" style="font-size:1.8rem;color:var(--violet-300)"></i>
+      <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-3);margin-top:0.5rem">eye</div>
+    </div>
+    <div class="card" style="text-align:center;padding:1.2rem;min-width:90px;flex:0">
+      <i class="ph ph-lightning" style="font-size:1.8rem;color:var(--violet-300)"></i>
+      <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-3);margin-top:0.5rem">lightning</div>
+    </div>
+    <div class="card" style="text-align:center;padding:1.2rem;min-width:90px;flex:0">
+      <i class="ph ph-path" style="font-size:1.8rem;color:var(--violet-300)"></i>
+      <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-3);margin-top:0.5rem">path</div>
+    </div>
+    <div class="card" style="text-align:center;padding:1.2rem;min-width:90px;flex:0">
+      <i class="ph ph-shield-star" style="font-size:1.8rem;color:var(--violet-300)"></i>
+      <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-3);margin-top:0.5rem">shield-star</div>
+    </div>
+  </div>
+
+  <h3>Dimension Bars — Funciones Jung</h3>
+  <div class="max-500">
+    <div class="dim"><div class="dim-head"><span class="dim-name">Fe — Feeling Extravertido</span><span class="dim-val">82%</span></div><div class="dim-track"><div class="dim-fill" style="--w:82%"></div></div></div>
+    <div class="dim"><div class="dim-head"><span class="dim-name">Ti — Thinking Introvertido</span><span class="dim-val">74%</span></div><div class="dim-track"><div class="dim-fill" style="--w:74%"></div></div></div>
+    <div class="dim"><div class="dim-head"><span class="dim-name">Ne — Intuition Extravertido</span><span class="dim-val">68%</span></div><div class="dim-track"><div class="dim-fill" style="--w:68%"></div></div></div>
+    <div class="dim"><div class="dim-head"><span class="dim-name">Si — Sensing Introvertido</span><span class="dim-val">45%</span></div><div class="dim-track"><div class="dim-fill" style="--w:45%"></div></div></div>
+  </div>
+
+  <h3>Progress Dots</h3>
+  <div class="dots" style="justify-content:flex-start">
+    <div class="dot done"></div>
+    <div class="dot done"></div>
+    <div class="dot on"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+
+  <h3>Chat</h3>
+  <div class="chat">
+    <div class="bubble bubble-ai">
+      ¿Cómo describirías la relación entre lo que pensás y lo que sentís cuando tomás una decisión importante?
+    </div>
+    <div class="bubble bubble-user">
+      Generalmente pienso mucho antes, pero a veces la emoción me gana y actúo impulsivo
+    </div>
+    <div class="bubble bubble-ai">
+      Esa tensión entre análisis y emoción es un patrón clásico del eje Ti-Fe. Profundicemos en eso.
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ -->
+<!-- SCREENS -->
+<!-- ══════════════════════════════════════ -->
+<section class="section" id="screens">
+  <div class="section-header">
+    <div class="section-number">/05</div>
+    <div class="section-title">Pantallas</div>
+    <div class="section-subtitle">Mockups de referencia</div>
+  </div>
+
+  <div class="screens">
+
+    <!-- DASHBOARD -->
+    <div class="frame">
+      <div class="frame-top">
+        <span style="font-family:var(--font-mono);font-size:0.65rem">9:41</span>
+        <div class="frame-notch"></div>
+        <span><i class="ph ph-gear" style="font-size:0.95rem"></i></span>
+      </div>
+      <div class="frame-body">
+        <div class="greeting-label">Bienvenido de vuelta</div>
+        <div class="greeting-name">Matías</div>
+
+        <div class="stats-row">
+          <div class="stat">
+            <div class="stat-label">Sesiones</div>
+            <div class="stat-val">7</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Autoconocimiento</div>
+            <div class="stat-val" style="color:var(--violet-300)">68%</div>
+          </div>
+        </div>
+
+        <svg width="100%" viewBox="0 0 240 200" style="display:block;margin:0 auto">
+          <defs>
+            <linearGradient id="rg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="rgba(180,102,255,0.25)"/>
+              <stop offset="100%" stop-color="rgba(99,102,241,0.10)"/>
+            </linearGradient>
+          </defs>
+          <polygon points="120,15 210,55 210,145 120,185 30,145 30,55" fill="none" stroke="rgba(180,102,255,0.06)" stroke-width="1"/>
+          <polygon points="120,35 190,65 190,135 120,165 50,135 50,65" fill="none" stroke="rgba(180,102,255,0.04)" stroke-width="1"/>
+          <polygon points="120,55 170,75 170,125 120,145 70,125 70,75" fill="none" stroke="rgba(180,102,255,0.03)" stroke-width="1"/>
+          <polygon points="120,22 204,58 195,143 120,175 45,125 38,58" fill="url(#rg)" stroke="var(--violet)" stroke-width="1.5"/>
+          <circle cx="120" cy="22" r="3.5" fill="var(--violet-300)"/>
+          <circle cx="204" cy="58" r="3.5" fill="var(--violet-300)"/>
+          <circle cx="195" cy="143" r="3.5" fill="var(--violet-300)"/>
+          <circle cx="120" cy="175" r="3.5" fill="var(--violet-300)"/>
+          <circle cx="45" cy="125" r="3.5" fill="var(--violet-300)"/>
+          <circle cx="38" cy="58" r="3.5" fill="var(--violet-300)"/>
+          <text x="120" y="10" text-anchor="middle" fill="var(--text-3)" font-size="9" font-family="var(--font-mono)">O</text>
+          <text x="218" y="60" fill="var(--text-3)" font-size="9" font-family="var(--font-mono)">C</text>
+          <text x="218" y="148" fill="var(--text-3)" font-size="9" font-family="var(--font-mono)">E</text>
+          <text x="120" y="198" text-anchor="middle" fill="var(--text-3)" font-size="9" font-family="var(--font-mono)">A</text>
+          <text x="18" y="128" fill="var(--text-3)" font-size="9" font-family="var(--font-mono)">N</text>
+          <text x="20" y="58" fill="var(--text-3)" font-size="9" font-family="var(--font-mono)">Se</text>
+        </svg>
+
+        <div style="margin-top:0.75rem">
+          <div style="font-family:var(--font-heading);font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-3);margin-bottom:0.5rem">Funciones cognitivas</div>
+          <div class="dim"><div class="dim-head"><span class="dim-name" style="font-size:0.72rem">Fe</span><span class="dim-val">82%</span></div><div class="dim-track"><div class="dim-fill" style="--w:82%"></div></div></div>
+          <div class="dim"><div class="dim-head"><span class="dim-name" style="font-size:0.72rem">Ti</span><span class="dim-val">74%</span></div><div class="dim-track"><div class="dim-fill" style="--w:74%"></div></div></div>
+          <div class="dim"><div class="dim-head"><span class="dim-name" style="font-size:0.72rem">Ne</span><span class="dim-val">68%</span></div><div class="dim-track"><div class="dim-fill" style="--w:68%"></div></div></div>
+        </div>
+
+        <div class="archetype">
+          <div class="archetype-icon"><i class="ph ph-compass"></i></div>
+          <div class="archetype-tag">Tu arquetipo dominante</div>
+          <div class="archetype-name">El Explorador</div>
+        </div>
+
+        <div class="tabbar">
+          <div class="tabbar-item on"><i class="ph ph-house"></i><span>Home</span></div>
+          <div class="tabbar-item"><i class="ph ph-sparkle"></i><span>Insights</span></div>
+          <div class="tabbar-center"><i class="ph ph-moon-stars"></i></div>
+          <div class="tabbar-item"><i class="ph ph-chart-bar"></i><span>Stats</span></div>
+          <div class="tabbar-item"><i class="ph ph-user"></i><span>Perfil</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ONBOARDING -->
+    <div class="frame">
+      <div class="frame-top">
+        <span style="font-family:var(--font-mono);font-size:0.65rem">9:41</span>
+        <div class="frame-notch"></div>
+        <span></span>
+      </div>
+      <div class="frame-body" style="text-align:center">
+        <span class="badge badge-v" style="margin-bottom:0.75rem">Paso 2 de 4</span>
+        <div style="font-family:var(--font-display);font-size:1.6rem;margin:0.5rem 0 0.2rem">
+          ¿Cómo preferís explorar?
+        </div>
+        <div style="font-size:0.75rem;color:var(--text-3)">
+          Elegí el formato que más resuene con vos
+        </div>
+
+        <div class="onb-list">
+          <div class="onb">
+            <div class="onb-ico a"><i class="ph ph-chat-circle"></i></div>
+            <div><div class="onb-t">Conversación guiada</div><div class="onb-d">Chat adaptativo paso a paso</div></div>
+          </div>
+          <div class="onb sel">
+            <div class="onb-ico b"><i class="ph ph-note-pencil"></i></div>
+            <div><div class="onb-t">Cuestionario estructurado</div><div class="onb-d">Evaluación rápida con resultados inmediatos</div></div>
+          </div>
+          <div class="onb">
+            <div class="onb-ico c"><i class="ph ph-target"></i></div>
+            <div><div class="onb-t">Modo híbrido</div><div class="onb-d">Cuestionario + reflexión conversacional</div></div>
+          </div>
+        </div>
+
+        <div class="dots" style="margin:1.5rem 0 1rem">
+          <div class="dot done"></div><div class="dot on"></div><div class="dot"></div><div class="dot"></div>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%">Continuar</button>
+      </div>
+    </div>
+
+    <!-- CHAT SCREEN -->
+    <div class="frame">
+      <div class="frame-top">
+        <span><i class="ph ph-arrow-left" style="font-size:0.95rem"></i></span>
+        <div style="font-family:var(--font-display);font-style:italic;font-size:0.85rem;color:var(--violet-300)">Sesión #4</div>
+        <span><i class="ph ph-dots-three" style="font-size:0.95rem"></i></span>
+      </div>
+      <div class="frame-body">
+        <div class="chat" style="max-width:100%">
+          <div style="text-align:center;margin-bottom:1rem">
+            <span class="badge badge-v" style="font-size:0.6rem">Explorando eje Ti-Fe</span>
+          </div>
+          <div class="bubble bubble-ai">
+            Mencionaste que cuando te emocionás, la lógica pasa a segundo plano. ¿Podés darme un ejemplo reciente?
+          </div>
+          <div class="bubble bubble-user">
+            Sí, la semana pasada tomé una decisión de negocios sin analizar los números, solo por instinto
+          </div>
+          <div class="bubble bubble-ai">
+            Interesante. Eso sugiere que tu Feeling (Fe) puede estar en tensión con tu Ti cuando hay presión temporal. Esto es muy común en tu stack cognitivo.
+          </div>
+          <div style="display:flex;gap:0.5rem;margin-top:0.75rem">
+            <input class="input" style="max-width:none;flex:1;padding:0.65rem 0.85rem;font-size:0.8rem" placeholder="Escribí tu reflexión...">
+            <button class="btn btn-primary btn-icon" style="width:36px;height:36px;border-radius:10px;font-size:0.9rem"><i class="ph ph-arrow-up"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LANDING HERO -->
+  <h3 class="mt-4">Landing Hero</h3>
+  <div class="hero">
+    <div class="hero-overline">Psicología analítica + tecnología</div>
+    <h2>Descubrí las capas<br>de tu <em>personalidad</em></h2>
+    <div class="hero-body">
+      Umbra combina la profundidad de Jung, la precisión del Big Five
+      y los principios del Positive Computing para guiarte en un viaje
+      de autoconocimiento único.
+    </div>
+    <div class="hero-actions">
+      <button class="btn btn-primary btn-lg">Comenzar viaje</button>
+      <button class="btn btn-outline">Saber más</button>
+    </div>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<script>
+// ═══ STAR FIELD ═══
+const c=document.getElementById('stars'),x=c.getContext('2d');
+let W,H,stars=[];
+function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;init()}
+function init(){
+  stars=[];
+  for(let i=0;i<200;i++){
+    stars.push({
+      x:Math.random()*W,y:Math.random()*H,
+      r:Math.random()*1.2+0.3,
+      a:Math.random()*0.6+0.1,
+      s:Math.random()*0.0003+0.0001,
+      p:Math.random()*Math.PI*2
+    })
+  }
+}
+function draw(t){
+  x.clearRect(0,0,W,H);
+  stars.forEach(s=>{
+    const alpha=s.a*(0.5+0.5*Math.sin(t*s.s*1000+s.p));
+    x.beginPath();x.arc(s.x,s.y,s.r,0,Math.PI*2);
+    x.fillStyle=`rgba(180,160,255,${alpha})`;x.fill();
+  });
+  requestAnimationFrame(draw);
+}
+resize();window.addEventListener('resize',resize);requestAnimationFrame(draw);
+
+// ═══ TAB SWITCHING ═══
+document.querySelectorAll('.nav button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.nav button').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById(b.dataset.t).classList.add('active');
+    setTimeout(()=>document.querySelectorAll('.dim-fill').forEach(f=>f.classList.add('go')),150);
+  });
+});
+
+// ═══ DIMENSION BAR ANIMATION ═══
+const obs=new IntersectionObserver(e=>{
+  e.forEach(en=>{if(en.isIntersecting)en.target.classList.add('go')})
+},{threshold:0.3});
+document.querySelectorAll('.dim-fill').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
