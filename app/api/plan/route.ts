@@ -15,7 +15,7 @@ const PlanInputSchema = z.object({
 });
 
 const MicroGoalSchema = z.object({
-  text: z.string().min(1).max(200),
+  text: z.string().min(1).max(300),
 });
 
 const ActionSchema = z.object({
