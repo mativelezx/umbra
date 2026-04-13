@@ -115,7 +115,7 @@ export interface UserProfile {
 }
 
 // ─── Onboarding ───
-export type OnboardingMode = 'guided' | 'freetext';
+export type OnboardingMode = 'guided' | 'freetext' | 'hybrid';
 
 export interface OnboardingArea {
   key: string;
