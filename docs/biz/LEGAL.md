@@ -84,7 +84,9 @@ Blocking route that must be completed before `/onboarding`. Displays full consen
 CREATE TABLE public.consent_records (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
-  consent_version TEXT NOT NULL,       -- e.g. "2026-04-12-v1"
+  consent_version TEXT NOT NULL,       -- e.g. "2026-04-14-v1"
+  consent_text_hash TEXT NOT NULL DEFAULT '', -- SHA-256 del texto verbatim (migration 004, ADR-024)
+  locale TEXT NOT NULL DEFAULT 'es-AR', -- BCP-47 (migration 004, ADR-024)
   accepted_at TIMESTAMPTZ DEFAULT NOW(),
   ip_hash TEXT NOT NULL,               -- HMAC-SHA256(ip, CONSENT_IP_PEPPER_V1)
   pepper_version SMALLINT NOT NULL DEFAULT 1,
@@ -94,12 +96,23 @@ CREATE TABLE public.consent_records (
 
 IP hashing prevents unnecessary PII storage while allowing future-you to verify which IP accepted terms in a dispute. Pepper is in env, never in DB. See [tech/SECURITY.md](../tech/SECURITY.md).
 
-### Consent versioning
+### Consent versioning + verbatim integrity (ADR-024)
 
-- `consent_version` is a string like `2026-04-12-v1`
-- When the text materially changes, bump the version
-- On next login, user with stale version sees re-prompt
-- Previous `consent_records` rows are NOT deleted — they're the audit trail
+- `consent_version` is a string like `2026-04-14-v1`.
+- When the text materially changes, bump the version.
+- On next login, user with stale version sees re-prompt.
+- Previous `consent_records` rows are NOT deleted — they're the audit trail.
+- **`consent_text_hash`** is SHA-256 of the exact consent text as rendered
+  to the user (hex-encoded). This is new in migration 004 and satisfies
+  Ley 25.326 art. 7 verifiability requirement for sensitive data consent.
+  Pre-migration rows have empty string; they're auditable only by version.
+- The repo keeps versioned verbatim text at
+  [content/consent/v1-es-AR.md](../../content/consent/v1-es-AR.md) (and
+  future `v2-es-AR.md`, `v1-en.md`, etc.). A CI test hashes each file
+  and asserts the computed hash matches what clients send — preventing
+  drift between displayed text and archived file.
+- **`locale`** is BCP-47 (`es-AR`, `en`, etc.). Ready for multi-idioma
+  futuro via next-intl (ADR-010).
 
 ## Data rights endpoints
 
