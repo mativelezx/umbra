@@ -4,9 +4,12 @@ import { LayoutShell } from '@/components/layout/LayoutShell';
 import { ArchetypeCard } from '@/components/dashboard/ArchetypeCard';
 import { NarrativeSection } from '@/components/dashboard/NarrativeSection';
 import { BigFiveRadar } from '@/components/dashboard/BigFiveRadar';
-import { JungFunctions } from '@/components/dashboard/JungFunctions';
+import { JungAxisView } from '@/components/dashboard/JungAxisView';
+import { QuickGlance } from '@/components/dashboard/QuickGlance';
+import { ArchetypeMap } from '@/components/dashboard/ArchetypeMap';
 import { CartaFuturaCard } from '@/components/dashboard/CartaFuturaCard';
 import { Card } from '@/components/ui/Card';
+import { ARCHETYPE_INFO } from '@/types';
 import type { Archetype, BigFive, JungFunctions as JF } from '@/types';
 import {
   DEMO_BIG_FIVE,
@@ -43,10 +46,12 @@ function DashboardView({ data }: { data: DashboardData }) {
   const createdDays = Math.floor(
     (Date.now() - new Date(data.createdAt).getTime()) / (1000 * 60 * 60 * 24),
   );
+  const archetypeName = ARCHETYPE_INFO[data.archetype].name;
 
   return (
     <LayoutShell>
-      <div className="flex flex-col gap-6 md:gap-8">
+      <div className="flex flex-col gap-10 md:gap-12">
+        {/* HEADER */}
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
             Hola{data.fullName ? `, ${data.fullName.split(' ')[0]}` : ''}
@@ -59,27 +64,40 @@ function DashboardView({ data }: { data: DashboardData }) {
           </p>
         </div>
 
+        {/* ARCHETYPE HERO */}
         <ArchetypeCard archetype={data.archetype} secondary={data.secondary} />
 
+        {/* QUICK GLANCE — 3 cards above the fold */}
+        <QuickGlance
+          bigFive={data.bigFive}
+          jungFunctions={data.jungFunctions}
+          archetypeName={archetypeName}
+        />
+
+        {/* NARRATIVA — sectioned with iconography */}
         <NarrativeSection
           profileId={data.profileId}
           initialContent={data.narrativeContent}
         />
 
+        {/* DATA VIZ — 2 columns */}
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3 mb-4">
-              Big Five
+            <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+              Big Five · radar
             </p>
             <BigFiveRadar bigFive={data.bigFive} />
           </Card>
           <Card>
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3 mb-4">
-              Funciones cognitivas
+            <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+              Cómo tu mente trabaja · 4 ejes
             </p>
-            <JungFunctions jungFunctions={data.jungFunctions} />
+            <JungAxisView jungFunctions={data.jungFunctions} />
           </Card>
         </div>
+
+        {/* ARCHETYPE MAP — comparison with the other 5 */}
+        <ArchetypeMap userArchetype={data.archetype} />
 
         {data.letter && (
           <CartaFuturaCard
