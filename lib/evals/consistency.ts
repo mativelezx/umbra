@@ -334,9 +334,18 @@ export async function runH1(opts: {
 
   const snapshotEntries: Array<{ id: string; h1Runs: AnalyzeResponse[] }> = [];
   const results: H1Result[] = [];
+  const totalCases = cases.length;
 
-  for (const caseItem of cases) {
+  for (let caseIdx = 0; caseIdx < cases.length; caseIdx += 1) {
+    const caseItem = cases[caseIdx];
     const runs: AnalyzeResponse[] = [];
+
+    // Progress log to stderr (unbuffered in tsx) so long runs show
+    // activity. Writes to stderr to avoid contaminating any stdout
+    // JSON callers might pipe.
+    process.stderr.write(
+      `[h1] case ${caseIdx + 1}/${totalCases} (${caseItem.id}) — ${runsPerCase} runs\n`,
+    );
 
     for (let index = 0; index < runsPerCase; index += 1) {
       runs.push(await analyzeCaseText(caseItem.text, model));

@@ -1,77 +1,93 @@
 # Arquitectura del sistema
 
-<!-- FUENTE PRIMARIA: docs/tech/ARCHITECTURE.md + docs/DECISIONS.md
-     (25 ADRs). -->
+## Introducción
 
-> El diagrama Mermaid de topología vive en
-> [`docs/tech/ARCHITECTURE.md`](../docs/tech/ARCHITECTURE.md). Este
-> capítulo reproduce los diagramas clave (topología, crisis pipeline,
-> trust boundaries STRIDE) y justifica las decisiones de arquitectura
-> usando las ADRs relevantes como soporte.
+La arquitectura de Umbra responde a una doble exigencia: por una parte, ofrecer una experiencia interactiva con baja latencia para análisis, narrativa y chat; por otra, resguardar información personal y sensible conforme a los criterios técnicos y jurídicos aplicables a un TFG de Ingeniería en Software. Sobre esa base, el sistema se implementa con **Next.js 14 App Router** como marco de orquestación full stack, **TypeScript en modo strict** como disciplina de tipado, **Supabase** como plataforma unificada de autenticación y persistencia con **Row Level Security** (RLS), y **Anthropic Claude** como motor de inferencia para los procesos de análisis y generación textual. La ejecución se distribuye entre **Edge runtime** para rutas sensibles a latencia y streaming, y **Node runtime** para operaciones administrativas que requieren privilegios ampliados o librerías no compatibles con Edge.
 
-## Stack tecnológico
+La elección de este stack no es meramente instrumental. Next.js 14 permite articular en un mismo proyecto cliente, middleware y rutas de servidor con límites claros de responsabilidad; TypeScript strict reduce ambigüedad semántica en el dominio; Supabase traslada el control de acceso al nivel de base de datos, lo que mejora la coherencia entre sesión, API y almacenamiento; y Claude aporta capacidad generativa suficiente para construir perfiles, narrativas y respuestas contextuales con modelos fijados por SKU. En conjunto, estas decisiones buscan maximizar trazabilidad, mantenibilidad y reproducibilidad metodológica, tres propiedades especialmente relevantes cuando el sistema procesa textos introspectivos que pueden contener datos sensibles y, al mismo tiempo, constituye un artefacto académico susceptible de auditoría.
 
-<!-- FUENTE: docs/tech/ARCHITECTURE.md + ADRs 001, 003, 004, 009, 010. -->
+## Topología de alto nivel
 
-- **Next.js 14** (App Router, TypeScript strict)
-- **Supabase** (Auth + Postgres + RLS + SSR)
-- **Anthropic Claude API** (Sonnet 4.6 + Haiku 4.5, SKU pinned — ADR-005, ADR-014)
-- **Zod** para validación de inputs
-- **Zustand** para estado cliente
-- **Recharts** para visualizaciones
-- **Tailwind CSS 3.4** con design system custom
-- **next-intl** para i18n (ADR-010)
-- **vitest + Playwright** para testing (ADR-009)
-- **@axe-core/playwright** para a11y automatizada
+La topología de Umbra, documentada en el diagrama Mermaid de `docs/tech/ARCHITECTURE.md`, organiza el sistema en una secuencia de capas y zonas de confianza bien diferenciadas. En el extremo de interacción se ubica el **navegador del usuario**, que ejecuta la aplicación construida con Next.js App Router. Este cliente no accede directamente a secretos ni a operaciones privilegiadas; su función es presentar vistas, capturar entradas y consumir rutas autenticadas sobre HTTPS. El primer límite de confianza se produce al ingresar a **Vercel**, donde opera el `middleware.ts` de Next.js. Dicho middleware refresca la sesión de Supabase, aplica redirecciones por autenticación y fuerza una política de denegación por defecto: si no existe sesión válida o no se registra consentimiento, la navegación se reencauza hacia las rutas correspondientes.
 
-## Topología
+A partir de ese punto, la topología se bifurca en dos entornos de ejecución. El **Edge runtime** concentra las rutas `/api/analyze`, `/api/narrative`, `/api/chat` y `/api/plan`, es decir, aquellas que requieren baja latencia, streaming o tiempos de respuesta compatibles con llamadas de inferencia. El **Node runtime**, en cambio, contiene `/api/account/*`, donde se ubican operaciones de mayor privilegio, como exportación, borrado de cuenta, uso de `service_role` y envío de correos transaccionales. Esta separación no es estética: representa una frontera arquitectónica entre cómputo distribuido y funciones administrativas con acceso ampliado.
 
-<!-- FUENTE: docs/tech/ARCHITECTURE.md sección "High-level topology". -->
+En el plano de servicios externos, la arquitectura integra tres dependencias principales. **Supabase** provee autenticación, PostgreSQL, almacenamiento y RLS; **Anthropic Claude API** procesa prompts y genera salidas modeladas; **Resend** se utiliza para enlaces mágicos de confirmación en el flujo de borrado. Las rutas Edge consultan Supabase bajo el contexto del usuario autenticado y, por tanto, quedan restringidas por RLS; las rutas Node emplean `service_role` para tareas internas cuidadosamente encapsuladas. Claude recibe prompts y devuelve resultados, pero no participa en la administración de identidades ni en la persistencia. Resend, por su parte, permanece acotado a un caso de uso específico y no interviene en datos psicológicos.
 
-<!-- Incluir diagrama Mermaid; se renderiza en Pandoc via filter
-     mermaid-filter o se exporta manualmente a PNG antes del build. -->
+El flujo típico ilustra esta distribución. Durante **onboarding**, el usuario completa consentimiento y luego aporta textos introspectivos. La ruta **analyze** valida la entrada con Zod, verifica consentimiento, reserva presupuesto con `charge_rate_limit`, construye el prompt y consulta Claude. El resultado estructurado se persiste en `psychological_profiles`, creado inicialmente en la **migración 001**, mientras que ampliaciones como `consent_records`, `crisis_events`, `rate_limits`, `future_letters` y otros artefactos se incorporan en la **migración 002**. Después, la ruta **narrative** genera una interpretación extensa en streaming, y finalmente **chat** reutiliza el perfil y los controles de seguridad para sostener interacción contextual. La arquitectura, por tanto, no es una cadena lineal de llamadas, sino un conjunto de zonas con responsabilidades separadas y reglas explícitas de paso entre ellas.
 
 ## Decisiones arquitectónicas clave
 
-<!-- FUENTE: docs/DECISIONS.md. Incluir 3-5 ADRs verbatim como bloques
-     citados (no como anexos) porque cuentan la historia de cómo se
-     llegó a la arquitectura actual. -->
+### ADR-001 — Edge runtime para rutas que invocan Claude
 
-**ADR-001**: Edge runtime para rutas Claude
-<!-- citar verbatim -->
+El punto de partida de esta decisión fue empírico: las operaciones de análisis y generación narrativa no presentan tiempos homogéneos. La ADR-001 consigna que “**Claude API calls can take 3-20s**” y, sobre esa base, concluye que “**All routes under `/api/analyze*`, `/api/narrative`, `/api/chat`, `/api/plan` use Edge runtime**” (ADR-001, 2026-04-12). El contexto técnico es claro: en Vercel, el runtime Node del plan gratuito impone límites de tiempo menos favorables para llamadas prolongadas, mientras que el runtime Edge tolera mejor rutas orientadas a streaming o latencia distribuida.
 
-**ADR-002**: Jung directo, no MBTI
-<!-- citar verbatim — contrarresta la posible objeción "¿por qué no MBTI?" -->
+La decisión no consiste simplemente en “usar Edge porque es más rápido”, sino en reconocer la naturaleza de cada caso de uso. Umbra no ejecuta inferencia local ni procesos batch; delega el trabajo cognitivo a una API externa y debe administrar tiempos de espera, reintentos y streaming. En ese escenario, Edge reduce fricción operativa para rutas donde la percepción de inmediatez es decisiva. Por ello, analyze, narrative, chat y plan quedan en Edge, mientras que las rutas de cuenta permanecen en Node por requerir operaciones con `service_role` y compatibilidad con APIs del entorno Node.
 
-**ADR-008**: Observability `crisis_events` con salted hashes
-<!-- citar verbatim — muestra la tensión privacidad vs auditoría -->
+Las consecuencias son explícitas. La ADR advierte que “**Edge routes cannot use Node built-ins (`fs`, `child_process`)**”. En términos arquitectónicos, esto obliga a una fuerte disciplina de modularización: las rutas Edge deben depender de utilidades compatibles con Web Crypto, fetch y bibliotecas isomórficas; de allí la separación entre `lib/supabase/edge.ts`, `lib/claude/client.ts` y módulos puros de prompts o conocimiento. También explica decisiones derivadas, como mantener `html2pdf.js` del lado cliente, fuera del servidor, por incompatibilidad con Edge.
 
-**ADR-014**: Committed cache snapshots + pinned SKU
-<!-- citar verbatim — muestra cómo se garantiza reproducibilidad -->
+Metodológicamente, esta ADR muestra una arquitectura guiada por restricciones observables y no por preferencias abstractas. Para un trabajo académico, ello es importante porque permite justificar la infraestructura desde propiedades medibles del sistema: tiempos de respuesta, límites de plataforma y acoplamiento tecnológico. La elección de Edge no se presenta como moda de framework, sino como adecuación entre requerimientos de interacción y capacidades del entorno de ejecución.
 
-**ADR-023**: Validación mixed-methods Branch B + M3
-<!-- citar verbatim — justifica la elección metodológica -->
+### ADR-002 — Funciones cognitivas de Jung directamente, sin MBTI
 
-## Pipeline de crisis (safety)
+Aunque esta decisión parece teórica, en realidad afecta la arquitectura de conocimiento, los prompts y la validez epistemológica del sistema. La ADR-002 establece como contexto que “**MBTI is widely criticized as pseudoscience**” y decide que “**No MBTI terminology in code, prompts, or UI. The 8 functions (Se, Si, Ne, Ni, Te, Ti, Fe, Fi) are primary**” (ADR-002, 2026-04-12). Esta formulación desplaza el centro del sistema desde etiquetas tipológicas populares hacia una base conceptual más defendible para el ámbito académico.
 
-<!-- FUENTE: docs/tech/CHAT_SAFETY.md. -->
+Arquitectónicamente, la consecuencia es profunda. En `lib/knowledge/jung-functions.ts`, las funciones cognitivas se modelan como conocimiento primario y no como traducción desde perfiles MBTI. Eso evita contaminar el pipeline analítico con una taxonomía socialmente reconocible pero débil desde el punto de vista científico. La decisión impacta también en la interfaz y en la salida narrativa: Umbra no devuelve categorías tipo “INFJ” o “INTP”, sino perfiles continuos y matizados que dialogan con Big Five y arquetipos aplicados. Desde el diseño del sistema, esto reduce el riesgo de sobreclasificación discreta y favorece una representación más gradual.
 
-<!-- PENDIENTE: copiar el diagrama de flujo del pipeline + explicar la
-     lógica fail-closed + mostrar el test gate de H3. -->
+Las consecuencias también son comunicacionales. La ADR reconoce que “**We lose the recognizability of "INFJ / INTP" labels but gain academic defensibility**”. El sistema sacrifica inmediatez comercial a cambio de rigor conceptual. Esa renuncia tiene un efecto positivo en la integridad del artefacto: la arquitectura no adapta la teoría al marketing, sino que adapta la presentación a la teoría elegida. En un TFG, esta inversión de prioridades fortalece la defensa metodológica frente a objeciones previsibles del tribunal.
 
-## Threat model (STRIDE)
+La reflexión metodológica es decisiva. Umbra no solo implementa software; implementa un instrumento computacional de interpretación. Si el marco conceptual de entrada fuera débil, toda la cadena técnica heredaría esa fragilidad. Por eso, ADR-002 debe leerse como una decisión arquitectónica en sentido amplio: organiza el conocimiento fuente, delimita el vocabulario permitido y protege la coherencia epistemológica de las capas superiores del sistema, en especial prompts, evaluación y narrativa.
 
-<!-- FUENTE: docs/tech/THREAT_MODEL.md. -->
+### ADR-003 — Supabase + RLS en lugar de NextAuth
 
-<!-- Incluir el diagrama de trust boundaries y la tabla STRIDE por
-     componente. Este capítulo de la tesis es uno de los más fuertes
-     para el tribunal: muestra pensamiento de seguridad explícito. -->
+La ADR-003 resuelve una cuestión estructural de control de acceso. Su contexto afirma que “**Need auth + database + row-level access control**” y su decisión central indica: “**Supabase Auth for signup/login, Supabase PostgreSQL for data, RLS policies on every table enforcing `auth.uid() = user_id`**” (ADR-003, 2026-04-12). La comparación con NextAuth no se limita a autenticación; se refiere al lugar donde se hace cumplir la autorización. Mientras NextAuth habría dejado gran parte de esa lógica en TypeScript y en convenciones de aplicación, Supabase permite llevarla a la base de datos.
 
-## Cumplimiento Ley 25.326
+Esta decisión se materializa desde la **migración 001**, donde las tablas fundacionales (`profiles`, `psychological_profiles`, `narratives`, `conversations`, `messages`, `development_plans`) se crean junto con `ENABLE ROW LEVEL SECURITY` y políticas por usuario. La **migración 002** expande el mismo patrón a `consent_records`, `future_letters`, `rate_limits`, `evidence_highlights` y otros componentes, reservando un subconjunto como `service_role only` cuando el caso de uso lo requiere, por ejemplo `crisis_events`, `research_dataset` o `delete_confirmations`. De esta manera, el control de acceso no es una característica adyacente, sino una propiedad del esquema.
 
-<!-- FUENTE: docs/biz/LEGAL.md + ADR-017 + ADR-024 + migration 004. -->
+Las consecuencias señaladas por la ADR son honestas: “**Vendor lock-in to Supabase. No trivial path to self-hosting**”, pero a cambio se obtiene “**consistent auth model from DB to API to client, no drift**”. El trade-off es razonable para Umbra. Dado que el sistema trata datos sensibles y utiliza rutas Edge y Node con distintos privilegios, la consistencia entre identidad, sesión y consulta es más valiosa que una portabilidad hipotética. Además, el modelo con RLS reduce la probabilidad de que una omisión en la capa de aplicación exponga filas indebidas.
 
-<!-- PENDIENTE: explicar la implementación del consent flow, el hash
-     verbatim del texto consentido (ADR-024), los peppers versionados
-     (ADR-021), y los derechos del usuario (acceso, rectificación,
-     cancelación, oposición). -->
+Desde una reflexión metodológica, esta ADR es quizá la que mejor ejemplifica el principio de defensa en profundidad. No basta con confiar en que el frontend o la API “pidan lo correcto”; la arquitectura impone restricciones directamente donde residen los datos. Para una tesis que debe demostrar trazabilidad y seguridad, esta es una decisión especialmente robusta, porque convierte una convención de programación en una garantía verificable a nivel de infraestructura.
+
+### ADR-008 — `crisis_events` con salted hashes: privacidad y auditoría
+
+Umbra incorpora un pipeline de crisis para evitar respuestas inadecuadas ante indicios de autolesión o riesgo agudo. Sin embargo, auditar ese pipeline entra en tensión con la privacidad. La ADR-008 formula el problema con claridad: “**To debug the safety system you need visibility into what triggered it — but storing raw message bodies of crisis events creates a privacy risk worse than the one we're mitigating**”. La decisión resultante es igualmente explícita: “**No raw text. 30-day rotation via nightly cron**” (ADR-008, 2026-04-12).
+
+En términos de arquitectura de datos, ello se traduce en la tabla `crisis_events` introducida en la **migración 002**, donde se persisten `user_hash`, `message_hash`, `regex_hits`, `classifier_response`, `severity` y `created_at`, pero nunca el mensaje original. Los hashes se calculan con HMAC y pepper versionado, conforme al patrón formalizado luego en ADR-021. Así, el sistema conserva observabilidad suficiente para detectar patrones de disparo, tasas de severidad o errores del clasificador, sin almacenar texto crudo cuya sensibilidad sería superior al beneficio analítico.
+
+La consecuencia práctica es el trade-off que la propia ADR enuncia: “**Can debug patterns ... but cannot retrieve original text for review**”. Esto limita la capacidad de reconstruir ex post una interacción exacta, lo cual podría verse como una desventaja desde la perspectiva de auditoría fuerte. No obstante, para un sistema que no es una herramienta clínica ni un servicio de intervención terapéutica, la opción de minimización de datos resulta proporcional. La arquitectura asume que es preferible perder granularidad forense antes que ampliar innecesariamente la superficie de exposición de datos críticos.
+
+Metodológicamente, ADR-008 introduce una noción importante para Umbra: no toda trazabilidad debe perseguirse hasta el máximo posible. En sistemas con datos sensibles, la mejor arquitectura no es la que registra más, sino la que registra lo necesario para cumplir su finalidad sin degradar la privacidad del usuario. Esta decisión es particularmente relevante porque evita una contradicción ética frecuente en productos de seguridad: justificar nuevas recolecciones invasivas en nombre de la propia protección.
+
+### ADR-014 — Reproducibilidad mediante snapshots comprometidos y SKU fijado
+
+La última ADR seleccionada aborda un aspecto poco habitual en productos convencionales, pero central en un TFG: la reproducibilidad. Su contexto advierte que la afirmación “clone repo, run `npm run eval`” depende de una API de terceros, de un modelo hospedado mutable y de una caché potencialmente efímera. En consecuencia, la ADR-014 decide dos medidas decisivas: “**Pin `ANTHROPIC_MODEL_ID` to a dated SKU like `claude-sonnet-4-6-20260301`, never an alias**” y “**Eval snapshots ... [are] committed to the repo**” (ADR-014, 2026-04-12).
+
+Arquitectónicamente, esto afecta tanto la configuración de `lib/claude/client.ts` como la organización de `lib/evals/.cache/`. Fijar el SKU evita que un alias como `claude-sonnet-4-6` cambie silenciosamente de comportamiento y comprometa la estabilidad de H1 o H2. Comprometer snapshots al repositorio permite que las evaluaciones publicadas puedan reproducirse sin costo de API y sin dependencia temporal del proveedor externo. La arquitectura, por tanto, incorpora una capa de estabilización metodológica por encima de la dependencia viva.
+
+Las consecuencias son transparentes: “**Snapshot files add ~1-5 MB to the repo per eval run**” y la reproducibilidad pasa a formularse de modo más honesto: “**reproducible against committed snapshot at commit X**”, no frente a la API en tiempo real. Esta precisión es especialmente valiosa en un contexto académico, donde la robustez de una afirmación depende tanto de su verdad como de su correcto alcance.
+
+La reflexión metodológica final es que ADR-014 transforma una dependencia externa mutable en un insumo controlable para la investigación. En lugar de ocultar la fragilidad temporal de los modelos hospedados, la arquitectura la reconoce y la compensa. De este modo, Umbra no promete una estabilidad imposible; promete una reproducibilidad delimitada, verificable y compatible con la práctica científica aplicada al software.
+
+## Modelo de amenazas STRIDE
+
+El threat model de Umbra aplica STRIDE sobre siete componentes y, más que enumerar amenazas de forma exhaustiva, explicita dónde quedan los riesgos residuales más significativos. En el **middleware**, la amenaza principal es el bypass de autenticación o consentimiento. Su severidad sería crítica si fallara, razón por la cual el diseño se apoya en validación de sesión de Supabase y redirección por defecto. En las **rutas Edge**, los riesgos dominantes son la suplantación de identidad, la inyección de prompts y el agotamiento de presupuesto por abuso. La mitigación combina `supabase.auth.getUser()`, validación con Zod, bloques de conocimiento controlados y el circuito `charge_rate_limit`/`reconcile_rate_limit` introducido en la migración 002.
+
+En las **rutas Node**, el punto más delicado es la elevación de privilegios vinculada al `service_role`, así como la posibilidad de borrado indebido de cuentas. Por ello, el flujo de eliminación exige enlace mágico de un solo uso, TTL breve y token firmado con HMAC. En **Supabase**, el riesgo estructural más alto es la existencia de una tabla sin RLS o sin política apropiada. El threat model original lo identifica como residual crítico; posteriormente, ese riesgo fue reducido con la incorporación de un test de cobertura RLS en CI, aunque la tesis debe registrar que la preocupación surgió del análisis STRIDE.
+
+Respecto de **Anthropic**, los dos riesgos más notorios son la indisponibilidad del proveedor y la mutación silenciosa del modelo. El segundo fue mitigado por ADR-014 al fijar SKU; el primero subsiste como riesgo operacional, dado que una caída del servicio produce degradación de analyze, narrative o chat. En el **cliente**, la amenaza más importante es la divulgación de información por XSS o por manipulación del DOM para omitir consentimiento; React, la ausencia de `dangerouslySetInnerHTML` y la verificación server-side reducen ese vector. Finalmente, en el **pipeline de crisis**, el riesgo más severo es el falso negativo. La arquitectura responde con semántica fail-closed: ante error del clasificador, el sistema trata el caso como crisis.
+
+Entre los riesgos residuales documentados destacan, por tanto, tres: dependencia operativa de Anthropic, posibilidad de omisiones futuras en cobertura RLS si el esquema creciera sin controles, y necesidad de sostener controles de consentimiento verificable a lo largo de evoluciones de interfaz y localización. La utilidad del modelo STRIDE en este capítulo radica en mostrar que la seguridad no fue agregada al final, sino incorporada como criterio de diseño por componente y por frontera de confianza.
+
+## Cumplimiento de la Ley 25.326
+
+La arquitectura implementa la Ley 25.326 no como un anexo jurídico separado, sino como una serie de decisiones técnicas insertas en rutas, tablas y políticas de acceso. En relación con el **artículo 6**, Umbra exige un flujo de consentimiento bloqueante previo al onboarding. La tabla `consent_records`, creada en la **migración 002**, registra versión, fecha de aceptación, `ip_hash`, `pepper_version` y `user_agent`. Sin embargo, la arquitectura fue fortalecida por la **migración 004**, que añade `consent_text_hash` y `locale`. Esta ampliación permite demostrar qué texto exacto fue consentido, mediante hash SHA-256 del contenido verbatim almacenado en archivos versionados bajo `content/consent/`. Desde la perspectiva jurídica y técnica, ello convierte el consentimiento en un evento verificable y no meramente inferido por versión.
+
+Respecto del **artículo 7**, la arquitectura asume que los textos introspectivos, perfiles psicológicos, conversaciones y eventos vinculados a salud mental pueden constituir datos sensibles. Por eso aplica minimización, separación de privilegios y almacenamiento restringido por RLS. También evita almacenar texto crudo en `crisis_events`, utiliza HMAC con peppers versionados y limita la retención de `analysis_raw` y de auditorías de crisis a treinta días cuando corresponde. La lógica es consistente con una política de tratamiento proporcional: procesar lo necesario para la funcionalidad, pero reducir persistencia y reidentificación donde sea posible.
+
+En cuanto a los **arts. 13 a 17**, la arquitectura ofrece mecanismos concretos para el ejercicio de derechos. El derecho de **acceso** se implementa mediante `GET /api/account/export`, que compila y entrega los datos del usuario, incluyendo consentimientos e, incluso, filas de investigación cuando corresponde. El derecho de **rectificación** se canaliza por `/settings/profile`, donde pueden corregirse datos básicos de cuenta. El derecho de **cancelación** se materializa en `POST /api/account/delete/request` y `POST /api/account/delete/confirm`, con borrado en cascada y confirmación por enlace mágico. El derecho de **oposición** se expresa en `POST /api/account/research-opt-out`, que modifica la participación en tratamientos de investigación. La **migración 005**, al introducir `usability_responses`, mantiene esta misma filosofía: las respuestas quedan vinculadas a `user_id`, protegidas por RLS y, por tanto, continúan siendo exportables y eliminables dentro del mismo marco de derechos.
+
+## Cierre del capítulo
+
+La arquitectura de Umbra se articula, en síntesis, como una combinación de separación de responsabilidades, control de acceso a nivel de datos, ejecución diferenciada por runtime y decisiones metodológicas explícitas para sostener validez técnica y académica. Next.js 14 organiza la superficie de interacción; Supabase y RLS garantizan aislamiento por usuario; Claude aporta capacidad inferencial acotada por rutas Edge, presupuestos y modelos fijados; y el marco legal se traduce en estructuras persistentes verificables, especialmente desde `consent_records` y su fortalecimiento en la migración 004.
+
+También corresponde dejar constancia de las limitaciones y correcciones posteriores. El threat model había documentado como riesgo P1 una regresión en el flujo de importación desde ChatGPT, donde el texto bruto no llegaba al analizador final; esa limitación fue corregida post-entrega al recuperar `seedText` desde la sesión de onboarding e incorporarlo al análisis. Del mismo modo, el riesgo residual asociado a posibles tablas sin políticas RLS fue posteriormente mitigado con la incorporación de `lib/supabase/rls-coverage.test.ts`, que verifica en CI que toda tabla pública creada por migraciones tenga `ENABLE ROW LEVEL SECURITY` y, salvo los casos intencionalmente `service_role only`, al menos una política. Estas correcciones no alteran la arquitectura conceptual aquí expuesta; por el contrario, muestran que el diseño admite mejora incremental sin perder coherencia, y refuerzan la tesis de que Umbra fue concebida como un sistema técnicamente justificable, auditado y evolutivo.

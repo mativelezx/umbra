@@ -23,6 +23,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { runH2 } from '@/lib/evals/cross-model-paraphrase';
+import { EVAL_CASES } from '@/lib/evals/cases';
 
 function parseArg(name: string): string | undefined {
   const arg = process.argv.find((a) => a.startsWith(`--${name}=`));
@@ -31,12 +32,18 @@ function parseArg(name: string): string | undefined {
 
 async function main() {
   const passCriterion = parseArg('pass') ? Number(parseArg('pass')) : undefined;
+  const caseLimit = parseArg('cases') ? Number(parseArg('cases')) : undefined;
 
   // eslint-disable-next-line no-console
   console.log('[h2] starting paraphrase robustness eval');
+  if (caseLimit) {
+    // eslint-disable-next-line no-console
+    console.log(`[h2] limiting corpus to first ${caseLimit} cases`);
+  }
   const started = Date.now();
   // Note: --from-cache is picked up internally by cross-model-paraphrase.ts
-  const report = await runH2({ passCriterion });
+  const cases = caseLimit ? EVAL_CASES.slice(0, caseLimit) : undefined;
+  const report = await runH2({ passCriterion, cases });
   const elapsed = Date.now() - started;
 
   // eslint-disable-next-line no-console

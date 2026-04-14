@@ -23,6 +23,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { runH1 } from '@/lib/evals/consistency';
+import { EVAL_CASES } from '@/lib/evals/cases';
 
 function parseArg(name: string): string | undefined {
   const arg = process.argv.find((a) => a.startsWith(`--${name}=`));
@@ -32,13 +33,19 @@ function parseArg(name: string): string | undefined {
 async function main() {
   const runsPerCase = parseArg('runs') ? Number(parseArg('runs')) : undefined;
   const passCriterion = parseArg('pass') ? Number(parseArg('pass')) : undefined;
+  const caseLimit = parseArg('cases') ? Number(parseArg('cases')) : undefined;
 
   // eslint-disable-next-line no-console
   console.log('[h1] starting determinism eval');
+  if (caseLimit) {
+    // eslint-disable-next-line no-console
+    console.log(`[h1] limiting corpus to first ${caseLimit} cases`);
+  }
   const started = Date.now();
   // Note: --from-cache is picked up by consistency.ts internally via
   // process.argv inspection (shouldUseSnapshotCache helper).
-  const report = await runH1({ runsPerCase, passCriterion });
+  const cases = caseLimit ? EVAL_CASES.slice(0, caseLimit) : undefined;
+  const report = await runH1({ runsPerCase, passCriterion, cases });
   const elapsed = Date.now() - started;
 
   // eslint-disable-next-line no-console

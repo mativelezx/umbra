@@ -446,8 +446,13 @@ export async function runH2(opts: {
   }> = [];
 
   const results: H2Result[] = [];
+  const totalCases = cases.length;
 
-  for (const caseItem of cases) {
+  for (let caseIdx = 0; caseIdx < cases.length; caseIdx += 1) {
+    const caseItem = cases[caseIdx];
+    process.stderr.write(
+      `[h2] case ${caseIdx + 1}/${totalCases} (${caseItem.id}) — original + ${rewriters.length} rewrites\n`,
+    );
     const original = await analyzeCaseText(caseItem.text, analyzerModel);
 
     const rewrittenTexts = await Promise.all(
