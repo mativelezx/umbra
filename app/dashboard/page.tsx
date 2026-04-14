@@ -4,6 +4,7 @@ import { LayoutShell } from '@/components/layout/LayoutShell';
 import { ArchetypeCard } from '@/components/dashboard/ArchetypeCard';
 import { NarrativeSection } from '@/components/dashboard/NarrativeSection';
 import { NarrativeTOC } from '@/components/dashboard/NarrativeTOC';
+import { DashboardDepth } from '@/components/dashboard/DashboardDepth';
 import { BigFiveRadar } from '@/components/dashboard/BigFiveRadar';
 import { JungAxisView } from '@/components/dashboard/JungAxisView';
 import { QuickGlance } from '@/components/dashboard/QuickGlance';
@@ -55,16 +56,25 @@ function DashboardView({ data }: { data: DashboardData }) {
     <LayoutShell>
       <div className="flex flex-col gap-10 md:gap-12">
         {/* HEADER */}
-        <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
-            Hola{data.fullName ? `, ${data.fullName.split(' ')[0]}` : ''}
-          </p>
-          <h1 className="mt-2 font-display text-4xl italic text-text-1 md:text-5xl">
-            Tu perfil interior
-          </h1>
-          <p className="mt-1 font-mono text-xs text-text-4">
-            Analizaste hace {createdDays} {createdDays === 1 ? 'día' : 'días'}
-          </p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+              Hola{data.fullName ? `, ${data.fullName.split(' ')[0]}` : ''}
+            </p>
+            <h1 className="mt-2 font-display text-4xl italic text-text-1 md:text-5xl">
+              Tu perfil interior
+            </h1>
+            <p className="mt-1 font-mono text-xs text-text-4">
+              Analizaste hace {createdDays} {createdDays === 1 ? 'día' : 'días'}
+            </p>
+          </div>
+          <a
+            href="/export"
+            className="group inline-flex shrink-0 items-center gap-2 rounded-full border border-violet-400/20 bg-umbra-shadow/30 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-text-2 transition-all duration-200 hover:border-violet-400/50 hover:bg-violet-400/10 hover:text-text-1"
+            aria-label="Descargar perfil en PDF"
+          >
+            <span>Descargar PDF</span>
+          </a>
         </div>
 
         {/* ARCHETYPE HERO */}
@@ -104,31 +114,39 @@ function DashboardView({ data }: { data: DashboardData }) {
           />
         )}
 
-        {/* DATA VIZ — 2 columns */}
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card>
-            <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
-              Big Five · radar
-            </p>
-            <BigFiveRadar bigFive={data.bigFive} />
-          </Card>
-          <Card>
-            <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
-              Cómo tu mente trabaja · 4 ejes
-            </p>
-            <JungAxisView jungFunctions={data.jungFunctions} />
-          </Card>
-        </div>
+        {/* VISTA PROFUNDA — opt-in progressive disclosure (Fase 3.1 + ADR-025).
+            El usuario ve el archetype hero + quick glance + narrativa por
+            default. Los datos más densos (radar Big Five, 4 ejes Jung,
+            mapa comparativo de arquetipos, carta futura) se revelan al
+            expandir. Reduce carga cognitiva inicial y crea un momento de
+            "exploración elegida" en vez de bombardeo. */}
+        <DashboardDepth>
+          {/* DATA VIZ — 2 columns */}
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card>
+              <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+                Big Five · radar
+              </p>
+              <BigFiveRadar bigFive={data.bigFive} />
+            </Card>
+            <Card>
+              <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+                Cómo tu mente trabaja · 4 ejes
+              </p>
+              <JungAxisView jungFunctions={data.jungFunctions} />
+            </Card>
+          </div>
 
-        {/* ARCHETYPE MAP — comparison with the other 5 */}
-        <ArchetypeMap userArchetype={data.archetype} />
+          {/* ARCHETYPE MAP — comparison with the other 5 */}
+          <ArchetypeMap userArchetype={data.archetype} />
 
-        {data.letter && (
-          <CartaFuturaCard
-            letter={data.letter}
-            snapshot={{ archetype: data.archetype, jungFunctions: data.jungFunctions }}
-          />
-        )}
+          {data.letter && (
+            <CartaFuturaCard
+              letter={data.letter}
+              snapshot={{ archetype: data.archetype, jungFunctions: data.jungFunctions }}
+            />
+          )}
+        </DashboardDepth>
       </div>
     </LayoutShell>
   );

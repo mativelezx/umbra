@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { AuthProvider } from '@/lib/providers/auth-context';
+import { MotionProvider } from '@/components/motion/MotionProvider';
 import { ThemeProvider } from '@/lib/providers/theme';
 import './globals.css';
 
@@ -78,7 +79,9 @@ export default function RootLayout({
         </div>
         <ThemeProvider>
           <AuthProvider>
-            <div className="relative z-10 min-h-screen">{children}</div>
+            <MotionProvider>
+              <div className="relative z-10 min-h-screen">{children}</div>
+            </MotionProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>
