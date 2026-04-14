@@ -5,6 +5,7 @@ import { Card, GlassCard } from '@/components/ui/Card';
 import { DimensionBar } from '@/components/ui/DimensionBar';
 import { cn } from '@/lib/utils';
 import { ARCHETYPE_INFO } from '@/types';
+import { BIG_FIVE_LABELS, JUNG_LABELS } from '@/lib/dimensions/labels';
 import type {
   BigFiveDimension,
   InsightPing as InsightPingType,
@@ -14,23 +15,23 @@ import type {
 import { InsightPing } from './InsightPing';
 import { PhosphorIcon } from './cards/PhosphorIcon';
 
-const BIG_FIVE_LABELS: Record<BigFiveDimension, string> = {
-  openness: 'Apertura',
-  conscientiousness: 'Responsabilidad',
-  extraversion: 'Extraversión',
-  agreeableness: 'Amabilidad',
-  neuroticism: 'Inestabilidad emocional',
+const BIG_FIVE_SHORT: Record<BigFiveDimension, string> = {
+  openness: BIG_FIVE_LABELS.openness.label,
+  conscientiousness: BIG_FIVE_LABELS.conscientiousness.label,
+  extraversion: BIG_FIVE_LABELS.extraversion.label,
+  agreeableness: BIG_FIVE_LABELS.agreeableness.label,
+  neuroticism: BIG_FIVE_LABELS.neuroticism.label,
 };
 
-const JUNG_LABELS: Record<JungFunctionKey, string> = {
-  Se: 'Se · sensorial ext',
-  Si: 'Si · sensorial int',
-  Ne: 'Ne · intuición ext',
-  Ni: 'Ni · intuición int',
-  Te: 'Te · pensar ext',
-  Ti: 'Ti · pensar int',
-  Fe: 'Fe · sentir ext',
-  Fi: 'Fi · sentir int',
+const JUNG_SHORT: Record<JungFunctionKey, string> = {
+  Se: JUNG_LABELS.Se.label,
+  Si: JUNG_LABELS.Si.label,
+  Ne: JUNG_LABELS.Ne.label,
+  Ni: JUNG_LABELS.Ni.label,
+  Te: JUNG_LABELS.Te.label,
+  Ti: JUNG_LABELS.Ti.label,
+  Fe: JUNG_LABELS.Fe.label,
+  Fi: JUNG_LABELS.Fi.label,
 };
 
 interface LiveProfilePanelProps {
@@ -87,13 +88,13 @@ export function LiveProfilePanel({
             <h3 className="font-heading text-xs uppercase tracking-wider text-text-3">
               Big Five
             </h3>
-            {(Object.keys(BIG_FIVE_LABELS) as BigFiveDimension[]).map((k) => {
+            {(Object.keys(BIG_FIVE_SHORT) as BigFiveDimension[]).map((k) => {
               const est = workingProfile.bigFive[k];
               const emphasized = est.confidence > 60;
               return (
                 <DimensionBar
                   key={k}
-                  label={BIG_FIVE_LABELS[k]}
+                  label={BIG_FIVE_SHORT[k]}
                   value={est.value}
                   emphasized={emphasized}
                   className={cn(est.confidence < 20 && 'opacity-40')}
@@ -106,13 +107,13 @@ export function LiveProfilePanel({
             <h3 className="font-heading text-xs uppercase tracking-wider text-text-3">
               Funciones Jung
             </h3>
-            {(Object.keys(JUNG_LABELS) as JungFunctionKey[]).map((k) => {
+            {(Object.keys(JUNG_SHORT) as JungFunctionKey[]).map((k) => {
               const est = workingProfile.jungFunctions[k];
               const emphasized = est.confidence > 60 && est.value > 60;
               return (
                 <CompactBar
                   key={k}
-                  label={JUNG_LABELS[k]}
+                  label={JUNG_SHORT[k]}
                   value={est.value}
                   emphasized={emphasized}
                   dimmed={est.confidence < 20}
