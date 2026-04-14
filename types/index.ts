@@ -323,6 +323,7 @@ export interface OnboardingSessionState {
   status: OnboardingSessionStatus;
   turns: OnboardingTurn[];
   workingProfile: WorkingProfile;
+  flags: Record<string, unknown>;
   startedAt: string;
   updatedAt: string;
   completedAt?: string;
