@@ -194,9 +194,13 @@ export async function commitFallbackTurn(
     signals: [],
     insights: [],
   });
+  // Merge `degraded: true` into the existing flags instead of replacing the
+  // whole object. Replacing wipes `seeded: true` and other prior flags, which
+  // silently reverts a seeded session to the normal 8-turn flow on the next
+  // request after a fallback. Flagged in codex review 2026-04-14.
   return updateSession(svc, session.sessionId, {
     turns,
-    flags: { degraded: true },
+    flags: { ...session.flags, degraded: true },
   });
 }
 

@@ -84,14 +84,25 @@ function DashboardView({ data }: { data: DashboardData }) {
           turnsCount={data.turnsCount}
         />
 
-        {/* NARRATIVA — sectioned with iconography + sticky TOC on desktop */}
-        <div className="lg:grid lg:grid-cols-[180px_1fr] lg:gap-10">
-          <NarrativeTOC />
+        {/* NARRATIVA — sectioned with iconography + sticky TOC on desktop.
+            TOC only renders when the narrative has at least one `##` heading,
+            because legacy narratives (pre-5-section prompt) parse as a single
+            fallback block with no section ids to spy on — rendering the TOC
+            anyway would leave it pointing at nothing. */}
+        {data.narrativeContent && /^##\s+/m.test(data.narrativeContent) ? (
+          <div className="lg:grid lg:grid-cols-[180px_1fr] lg:gap-10">
+            <NarrativeTOC />
+            <NarrativeSection
+              profileId={data.profileId}
+              initialContent={data.narrativeContent}
+            />
+          </div>
+        ) : (
           <NarrativeSection
             profileId={data.profileId}
             initialContent={data.narrativeContent}
           />
-        </div>
+        )}
 
         {/* DATA VIZ — 2 columns */}
         <div className="grid gap-6 md:grid-cols-2">

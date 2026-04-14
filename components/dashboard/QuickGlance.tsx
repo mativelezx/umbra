@@ -102,7 +102,7 @@ export function QuickGlance({
       )}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <GlanceCard
-          label="Tu mayor fuerza Big Five"
+          label="Tu rasgo Big Five más marcado"
           icon={BIG_FIVE_ICON[topBf.key]}
           title={topBfLabel.label}
           value={topBf.value}
