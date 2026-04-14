@@ -10,6 +10,7 @@ export default defineConfig({
     setupFiles: ['./vitest.setup.ts'],
     include: ['lib/**/*.test.{ts,tsx}', 'components/**/*.test.{ts,tsx}'],
     exclude: ['node_modules', '.next', 'e2e'],
+    css: false,
   },
   resolve: {
     alias: {
