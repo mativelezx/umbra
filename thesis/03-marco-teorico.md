@@ -1,78 +1,102 @@
 # Marco teórico
 
-<!-- FUENTE PRIMARIA: lib/knowledge/big-five.ts, lib/knowledge/jung-functions.ts,
-     lib/knowledge/archetypes.ts, lib/knowledge/positive-computing.ts,
-     docs/biz/ETHICS.md.
+## 1. Introducción
 
-     Cada archivo del knowledge base tiene JSDoc con @source, @reference,
-     @page_or_section, @verbatim (ADR-018). Extraer esas citas y darles
-     formato APA 7th en el capítulo. -->
+Umbra se sitúa en la intersección entre tres tradiciones que, consideradas por separado, resultan valiosas pero insuficientes para sostener una experiencia de autoconocimiento digital con pretensión académica y criterio ético. La primera tradición es el modelo de los Big Five, particularmente en su operacionalización mediante IPIP-NEO, que aporta un lenguaje empírico y dimensional para describir diferencias individuales observables en el comportamiento. La segunda es la teoría de las funciones cognitivas de Jung, que ofrece una lectura más profunda de la arquitectura cognitiva desde la cual esas tendencias conductuales pueden emerger. La tercera es Positive Computing, que no constituye una teoría de la personalidad, sino un marco normativo de diseño orientado al bienestar humano, indispensable para traducir el análisis psicológico en una interacción tecnológica responsable (Calvo & Peters, 2014; Goldberg, 1999; Jung, 1921; Sauer, 2020).
 
-## Big Five / OCEAN (IPIP-NEO)
+La hipótesis de diseño de Umbra es que la triangulación entre estas tres tradiciones produce un marco más sólido que el uso aislado de cualquiera de ellas. El modelo Big Five, por sí solo, describe gradientes disposicionales con buena base empírica, pero ofrece una narrativa interpretativa limitada sobre el modo en que el sujeto percibe, organiza y valora su experiencia. La teoría junguiana, por sí sola, aporta riqueza hermenéutica, pero pierde robustez cuando se transforma en tipologías cerradas o en etiquetas populares poco defendibles psicométricamente. Positive Computing, por sí solo, puede guiar la interfaz y el tono del sistema, pero no sustituye una teoría suficientemente precisa para inferir rasgos ni para estructurar perfiles.
 
-<!-- FUENTE: lib/knowledge/big-five.ts + Goldberg (1999). -->
+Por ello, Umbra no adopta un eclecticismo indiscriminado, sino una arquitectura teórica por capas. Big Five provee el plano descriptivo y cuantificable; Jung provee el plano explicativo de la preferencia cognitiva; Pearson traduce ambos planos a una síntesis narrativa conductualmente reconocible; y Positive Computing regula cómo ese conocimiento debe devolverse al usuario. La triangulación no busca fusionar sin criterio escuelas heterogéneas, sino asignar a cada una una función específica dentro del sistema. En esa medida, el valor del marco teórico de Umbra reside menos en la originalidad de cada fuente que en la precisión con la que se distribuyen sus competencias epistemológicas y operativas.
 
-Origen: Costa & McCrae (1992) NEO-PI-R, luego Goldberg (1999) IPIP-NEO
-(dominio público). Umbra usa IPIP-NEO por motivos de licencia (ADR-015).
+## 2. Big Five / OCEAN vía IPIP-NEO
 
-Las cinco dimensiones:
+El primer pilar del marco teórico de Umbra es el modelo de los Big Five, también conocido como OCEAN por las iniciales de sus cinco dimensiones principales: openness, conscientiousness, extraversion, agreeableness y neuroticism. En la psicología de la personalidad contemporánea, este modelo constituye uno de los consensos más robustos para describir diferencias individuales relativamente estables. Sin embargo, Umbra no adopta como instrumento textual el NEO-PI-R de Costa y McCrae, sino su derivación de dominio público IPIP-NEO, desarrollada por Goldberg (1999), decisión documentada en el ADR-015 del proyecto.
 
-- **Apertura a la experiencia** (openness)
-- **Responsabilidad** (conscientiousness)
-- **Extraversión** (extraversion)
-- **Amabilidad** (agreeableness)
-- **Neuroticismo** (neuroticism)
+Históricamente, el NEO-PI-R de Costa y McCrae (1992) consolidó el modelo de cinco factores mediante un instrumento ampliamente difundido en contextos clínicos, académicos y organizacionales. Su importancia es central porque fijó un lenguaje operacional para pensar la personalidad en términos de dimensiones amplias y facetas específicas. No obstante, se trata de un instrumento propietario. Para un proyecto de software libre y repositorio abierto como Umbra, esa condición genera una restricción jurídica y metodológica: no resulta viable incorporar contenidos derivados del manual en un producto abierto sin un régimen de licencias específico. Frente a ello, IPIP-NEO ofrece una solución académicamente defendible: conserva una estructura comparable de cinco dominios y treinta facetas, posee uso libre y ha sido empleado en centenares de estudios revisados por pares, lo cual permite sostener continuidad científica sin comprometer la apertura del proyecto (Costa & McCrae, 1992; Goldberg, 1999).
 
-<!-- PENDIENTE: expandir con definición operacional de cada facet que
-     usa Umbra, citando Goldberg. -->
+Desde el punto de vista conceptual, apertura a la experiencia refiere a la disposición hacia la curiosidad intelectual, la imaginación, la sensibilidad estética, la exploración de ideas abstractas y la revisión de valores heredados. En términos operacionales, una puntuación alta en esta dimensión sugiere interés por la novedad, gusto por la complejidad simbólica y tolerancia a perspectivas alternativas; una puntuación baja sugiere preferencia por lo concreto, lo familiar y lo práctico. En Umbra, esta dimensión se infiere a partir de marcadores textuales asociados con imaginación, intereses artísticos, emocionalidad matizada, apertura a la aventura, intelecto y revisión de valores.
 
-## Funciones cognitivas de Jung
+La responsabilidad o conscientiousness describe el grado en que una persona se organiza, planifica, persevera y orienta su conducta hacia metas sostenidas. Operacionalmente, incluye autoeficacia, orden, sentido del deber, orientación al logro, autodisciplina y prudencia. Una puntuación alta expresa estructura, confiabilidad y capacidad de sostener rutinas; una baja, mayor espontaneidad y flexibilidad, aunque también mayor riesgo de dispersión. Umbra interpreta esta dimensión a partir de evidencia textual relativa a hábitos, planificación, continuidad en proyectos y manejo de compromisos.
 
-<!-- FUENTE: lib/knowledge/jung-functions.ts + Jung (1921) + Sauer (2020). -->
+La extraversión expresa la tendencia a buscar estimulación en el entorno externo, disfrutar la interacción social, iniciar contacto con otros y mantener un nivel elevado de actividad. Sus facetas incluyen cordialidad, gregarismo, asertividad, nivel de actividad, búsqueda de emociones y alegría. En términos operacionales, una puntuación alta indica una disposición energizada por el contacto social y la novedad externa; una baja indica reserva, preferencia por espacios íntimos y necesidad de recuperación en soledad. Umbra no entiende esta dimensión como simple sociabilidad, sino como una combinación de activación, iniciativa y orientación hacia el mundo exterior.
 
-Umbra usa las 8 funciones directamente (Se, Si, Ne, Ni, Te, Ti, Fe, Fi)
-**no** vía MBTI. La decisión está documentada en ADR-002 y se
-fundamenta en Sauer (2020) "Rehabilitating Jung's Cognitive Function
-Theory" que enmarca las funciones como la arquitectura cognitiva que
-genera los rasgos conductuales del Big Five.
+La amabilidad o agreeableness remite al grado de cooperación, confianza, altruismo, modestia, empatía y búsqueda de armonía interpersonal. Una puntuación alta indica sensibilidad al otro y preferencia por relaciones cooperativas; una baja indica mayor franqueza confrontativa, orientación competitiva o prioridad por la eficacia sobre la diplomacia. En Umbra, esta dimensión se extrae de indicadores discursivos sobre confianza en los demás, disposición a ceder, cuidado interpersonal y modo de tramitar el conflicto.
 
-<!-- PENDIENTE: expandir cada función con definición operacional. -->
+Finalmente, el neuroticismo designa la reactividad emocional y la propensión a experimentar ansiedad, irritabilidad, tristeza, vergüenza social, impulsividad o vulnerabilidad al estrés. Inversamente, un nivel bajo puede leerse como mayor estabilidad emocional. En Umbra, esta dimensión no se presenta como patología, sino como una medida de sensibilidad afectiva y de facilidad para quedar sobrepasado por emociones difíciles. Ello es importante porque evita confundir una variable de personalidad con una categoría clínica.
 
-## Arquetipos aplicados (Pearson)
+Operativamente, Umbra asigna a cada dimensión una puntuación entre 0 y 100 a partir del análisis de textos introspectivos ingresados por el usuario. Estas puntuaciones no deben interpretarse como percentiles poblacionales ni como medidas diagnósticas, sino como una escala intervalar heurística de intensidad relativa dentro del perfil inferido. El sistema instruye al modelo a evitar el valor 50 como punto neutro por defecto y a distribuir matices según la evidencia disponible; posteriormente, la API valida y acota los valores fuera de rango al intervalo 0-100. Así, el perfil final conserva comparabilidad interna entre dimensiones, aunque no pretende sustituir una administración psicométrica formal. Esta elección es coherente con la naturaleza del sistema: Umbra no administra un test estandarizado tradicional, sino que construye una inferencia estructurada sobre texto libre utilizando un marco teórico explícito.
 
-<!-- FUENTE: lib/knowledge/archetypes.ts + Pearson (1991). -->
+En consecuencia, la adopción de IPIP-NEO cumple una doble función. Por un lado, asegura un anclaje empírico en uno de los modelos de personalidad más consolidados de la literatura. Por otro, garantiza compatibilidad legal y técnica con un repositorio abierto, algo que el NEO-PI-R no permite en iguales condiciones. El resultado es un compromiso pragmático y epistemológicamente razonable entre rigor, reproducibilidad y apertura (Costa & McCrae, 1992; Goldberg, 1999).
 
-Umbra usa el sistema de 6 arquetipos de Carol Pearson (*Awakening the
-Heroes Within*, 1991): Hero, Sage, Explorer, Creator, Caregiver, Rebel.
-La elección vs los arquetipos estructurales de Jung (Anima, Shadow, Self)
-está documentada en ADR-007.
+## 3. Funciones cognitivas de Jung
 
-## Positive Computing
+El segundo pilar teórico de Umbra es la teoría de las funciones cognitivas formulada por Carl Gustav Jung en *Tipos psicológicos* (1921). A diferencia de los Big Five, cuyo valor principal reside en la descripción empírica de patrones conductuales relativamente estables, la teoría junguiana intenta explicar de qué modo la conciencia selecciona, procesa y valora la experiencia. En este marco, Umbra no utiliza el MBTI ni ninguna tipología de dieciséis letras, sino las ocho funciones directamente, decisión fijada en el ADR-002 del proyecto.
 
-<!-- FUENTE: lib/knowledge/positive-computing.ts + Calvo & Peters (2014). -->
+En términos históricos, Jung distingue primero dos actitudes generales, extraversión e introversión, y luego cuatro funciones básicas de la conciencia: sensación, intuición, pensamiento y sentimiento. Al combinar cada función con cada actitud, emerge un conjunto de ocho funciones cognitivas. Su valor teórico no radica en producir etiquetas identitarias rígidas, sino en ofrecer una gramática de preferencias cognitivas. Umbra retoma esta teoría por dos razones. La primera es que la obra original se encuentra en dominio público y puede ser citada directamente. La segunda es que investigaciones recientes han intentado rehabilitarla no como tipología popular, sino como marco de arquitectura cognitiva que puede articularse con modelos dimensionales contemporáneos, especialmente con Big Five (Jung, 1921; Sauer, 2020).
 
-Calvo & Peters (2014) proponen que la tecnología puede activamente
-promover el bienestar en vez de solo evitar daño. Umbra implementa los
-principios operativos como do/don't rules en el system prompt del chat:
+Las funciones de percepción son cuatro. La sensación extravertida (Se) orienta la atención hacia el aquí y ahora del mundo sensible; privilegia el dato inmediato, lo concreto, lo corporal y lo actuado. La sensación introvertida (Si) registra la experiencia desde su resonancia interna y su huella mnémica; privilegia la continuidad con experiencias previas, los detalles recordados y la estabilidad del registro interno. La intuición extravertida (Ne) capta posibilidades emergentes en el entorno, conecta dominios diversos y produce combinaciones novedosas; es expansiva, exploratoria y asociativa. La intuición introvertida (Ni), en cambio, organiza imágenes, símbolos y patrones profundos en una visión unificada; tiende a anticipar direcciones y a construir sentido a partir de síntesis internas.
 
-- **Autonomía**
-- **Competencia**
-- **Relación**
-- **Mindfulness**
-- **Emoción positiva**
-- **Engagement**
-- **Resiliencia**
-- **Autocompasión**
+Las funciones de juicio también son cuatro. El pensamiento extravertido (Te) ordena el mundo externo mediante criterios de eficacia, estructura, procedimiento y resultado; busca que la realidad funcione según reglas verificables. El pensamiento introvertido (Ti) privilegia la coherencia lógica interna; analiza categorías, depura conceptos y prefiere la precisión conceptual antes que la utilidad inmediata. El sentimiento extravertido (Fe) evalúa situaciones según su impacto relacional y el clima afectivo compartido; privilegia la armonía, la consideración interpersonal y la regulación del vínculo. El sentimiento introvertido (Fi) se organiza alrededor de una brújula valorativa interna; privilegia la autenticidad, la fidelidad a convicciones profundas y la congruencia subjetiva.
 
-## Metodología computacional (H1/H2)
+Umbra trata estas ocho funciones como dimensiones continuas de preferencia relativa, no como compartimentos mutuamente excluyentes. Cada usuario recibe una puntuación de 0 a 100 en Se, Si, Ne, Ni, Te, Ti, Fe y Fi. En el prompt de análisis se indica, además, que funciones por encima de 65 pueden considerarse dominantes y funciones por debajo de 35 pueden tratarse como áreas en desarrollo. Esto significa que el sistema no obliga a una clasificación tipológica, sino que reconoce configuraciones mixtas. Una persona puede mostrar, por ejemplo, alto Ni y alto Fi sin que ello exija adjudicarle un tipo cerrado. Tal decisión resulta metodológicamente importante, porque preserva el carácter gradual del análisis y evita convertir la teoría junguiana en un etiquetado simplificado.
 
-<!-- FUENTE: docs/biz/VALIDATION.md + ADR-011 + ADR-014. -->
+Esta distancia respecto del MBTI es deliberada. El indicador Myers-Briggs popularizó una adaptación de Jung en forma de cuatro dicotomías y dieciséis tipos, pero esa simplificación ha sido objeto de críticas persistentes por su escasa consistencia psicométrica, su tendencia a dicotomizar variables que parecen distribuirse de modo continuo y su limitada estabilidad cuando se repite la medición. Stein y Swan (2019) sintetizan parte de esas objeciones al evaluar la validez del MBTI. Umbra adopta esa crítica: si el objetivo es sostener una tesis de ingeniería de software con base académica, la popularidad del MBTI no compensa sus debilidades como instrumento. Por ello, el sistema elimina toda terminología del tipo INFJ, ENTP o equivalente, y conserva únicamente la teoría funcional subyacente.
 
-El modelo como instrumento: marco de evaluación donde un LLM actúa como
-instrumento estocástico y los eval cases son estímulos fijos. Este
-framing se usa para justificar la elección del OSF Standard Preregistration
-en vez del secondary-data o human-subjects template (ADR-012).
+La cuestión decisiva, no obstante, es por qué mantener las funciones si se rechaza la tipología. Aquí resulta relevante Sauer (2020), quien propone entender la teoría de Jung como una hipótesis sobre arquitectura cognitiva. En ese marco, las funciones no serían meras etiquetas narrativas, sino patrones de preferencia en el procesamiento de información y en la valoración de la experiencia. Bajo esta lectura, los rasgos del Big Five pueden interpretarse como manifestaciones conductuales relativamente estables de procesos cognitivos más profundos. Por ejemplo, una alta apertura puede asociarse con configuraciones donde Ne o Ni aparecen intensificadas; una alta responsabilidad puede articularse con Te o Si; ciertas formas de amabilidad pueden relacionarse con Fe o Fi. No se trata de equivalencias lineales, sino de una relación explicativa plausible entre niveles distintos del fenómeno.
 
-## Referencias del capítulo
+Umbra aprovecha precisamente esa diferencia de niveles. Big Five responde a la pregunta “qué patrones conductuales aparecen con mayor frecuencia”; Jung intenta responder “desde qué modo de percepción y juicio podrían organizarse esos patrones”. La inferencia de funciones se realiza, al igual que en Big Five, sobre texto libre. El sistema emplea definiciones operacionales e indicadores lingüísticos: presencia de referencias sensoriales inmediatas, anclaje en memoria autobiográfica, proliferación de hipótesis, lenguaje de síntesis visionaria, vocabulario de sistemas y resultados, preocupación por la precisión conceptual, atención al clima vincular o énfasis en valores no negociables. Como toda inferencia textual, esto tiene límites; sin embargo, permite traducir una teoría clásica a una estructura computable y graduada.
 
-<!-- Auto-generadas desde 14-referencias.bib vía Pandoc + APA CSL. -->
+En suma, la inclusión de Jung en Umbra no responde a una concesión al imaginario popular de la tipología, sino a la necesidad de añadir un nivel interpretativo que el modelo de rasgos no provee por sí solo. El proyecto asume que las funciones pueden ser empleadas como heurísticas teóricas dimensionales aun cuando la conversión a tipos categóricos, propia del MBTI, sea psicométricamente deficiente. Esa posición conserva la riqueza hermenéutica de Jung y, al mismo tiempo, se mantiene compatible con una implementación computacional más prudente (Jung, 1921; Sauer, 2020; Stein & Swan, 2019).
+
+## 4. Arquetipos aplicados de Pearson
+
+El tercer componente sustantivo del marco teórico de Umbra es el uso de arquetipos aplicados a partir de Carol Pearson. Conviene precisar desde el inicio que Umbra no utiliza los arquetipos estructurales de Jung, tales como Anima, Animus, Sombra o Self, porque esos conceptos describen dinámicas intrapsíquicas profundas y no se traducen de manera inmediata en patrones observables de conducta cotidiana. Su valor clínico y simbólico es alto, pero su conversión a una capa de datos interoperable dentro de un sistema digital resulta problemática. En cambio, Pearson propone un uso aplicado y narrativo de los arquetipos, orientado a roles de acción, motivaciones recurrentes y conflictos reconocibles en la vida adulta (Pearson, 1991).
+
+Umbra fija, por decisión de diseño registrada en el ADR-007, un conjunto operativo de seis arquetipos: Hero, Sage, Explorer, Creator, Caregiver y Rebel. La fijación del conjunto no es un detalle menor, sino parte del contrato de datos del sistema: estos seis valores estructuran la salida del analizador, la narrativa posterior, la visualización del perfil y la consistencia de las evaluaciones. Cambiar el conjunto afectaría capas múltiples del producto. Por ello, el arquetipo en Umbra no es una metáfora libre, sino una categoría interpretativa controlada.
+
+Cada arquetipo resume una orientación conductual dominante. El Héroe se organiza en torno al desafío, la superación y la eficacia frente a obstáculos. El Sabio privilegia el conocimiento, la verdad y la comprensión profunda. El Explorador busca libertad, novedad y expansión de fronteras. El Creador necesita dar forma a lo imaginado y producir algo singular. El Cuidador se orienta al servicio, la protección y la contención del otro. El Rebelde cuestiona lo dado y busca transformar lo que percibe como injusto o caduco. Estas categorías resultan especialmente útiles en la interfaz porque condensan complejidad psicológica en una figura legible para el usuario, sin reducir el perfil a un solo rasgo.
+
+La ventaja metodológica del sistema de Pearson es que puede derivarse de forma rule-based a partir de capas anteriores más estructuradas. En Umbra, los arquetipos no se infieren desde cero, sino como síntesis de patrones en Big Five y en las funciones dominantes de Jung. Así, combinaciones de alta responsabilidad y extraversión con predominio de Te o Se favorecen el Héroe; alta apertura con Ni o Ti favorece el Sabio; alta apertura y extraversión con Ne o Se favorecen el Explorador; apertura con intuición y fuerte impronta valorativa favorece el Creador; amabilidad con Fe o Fi favorece el Cuidador; y apertura con baja amabilidad y predominio de Ne o Ti favorece el Rebelde. La ventaja de este esquema es doble: mantiene trazabilidad conceptual y evita que la narrativa arquetipal quede desligada del análisis empírico previo.
+
+Por tanto, el arquetipo no funciona como diagnóstico ni como esencia última del sujeto. Opera como una síntesis narrativa accionable, útil para traducir una combinación de rasgos y preferencias cognitivas a un lenguaje de identidad práctica. Allí reside su aporte específico dentro de Umbra: no compite con Big Five ni con Jung, sino que los vuelve comunicables.
+
+## 5. Positive Computing
+
+El cuarto pilar del marco teórico de Umbra es Positive Computing. A diferencia de los modelos anteriores, no se trata de una teoría de personalidad, sino de un paradigma de diseño tecnológico orientado al bienestar y al potencial humano. Su incorporación resulta clave porque Umbra no solo analiza perfiles, sino que conversa con personas. En consecuencia, no basta con inferir bien; también es necesario responder bien. Positive Computing formula precisamente esa exigencia: la tecnología no debe limitarse a ser eficiente o usable, sino contribuir activamente a condiciones de bienestar humano (Calvo & Peters, 2014).
+
+Este enfoque debe distinguirse, en primer lugar, de la psicología positiva. La psicología positiva investiga variables como fortalezas, emociones positivas, sentido o resiliencia. Positive Computing, en cambio, toma ese tipo de hallazgos y los desplaza al diseño de sistemas interactivos. También debe distinguirse de la interacción humano-computadora tradicional. La HCI clásica suele optimizar tareas en términos de fricción, velocidad, claridad o eficiencia. Positive Computing sostiene que una interfaz puede ser funcional y, al mismo tiempo, empobrecer la agencia, la autoimagen o la relación del sujeto consigo mismo. Por ello, el criterio no es solo ausencia de fricción, sino presencia deliberada de condiciones de bienestar.
+
+En Umbra, este enfoque se operacionaliza mediante ocho factores: autonomía, competencia, relación, atención plena, emoción positiva, engagement, resiliencia y autocompasión. Los tres primeros remiten directamente a la teoría de la autodeterminación de Ryan y Deci (2000): una experiencia tecnológica es más sana cuando preserva la sensación de agencia, la percepción de capacidad y el vínculo humano significativo. A ello se suman atención plena, como protección frente a la dispersión y la saturación; emoción positiva, no como optimismo forzado sino como tono esperanzador y honesto; engagement, entendido no como captura conductual sino como profundidad cualitativa del involucramiento; resiliencia, como apoyo al crecimiento frente a la dificultad; y autocompasión, como principio de no juicio hacia la propia vulnerabilidad.
+
+Umbra codifica estos principios como reglas de hacer y no hacer dentro del system prompt del chat. En la práctica, ello significa que el sistema evita dar órdenes, no fomenta dependencia, no simula amistad, no utiliza lenguaje clínico, no gamifica la introspección y no diseña mecanismos de retención adictiva. A la vez, valida antes de interpretar, ofrece sugerencias no prescriptivas, enmarca dificultades como oportunidades de integración y conserva un tono cálido sin recurrir a positivismo tóxico. La autonomía, por ejemplo, se expresa incluso en un “dial” conversacional que permite elegir cuán directivo puede ser el asistente. La relación se protege mediante la consigna explícita de que Umbra no es terapia ni sustituto de vínculos humanos. El engagement, en consonancia con la ética del proyecto, se formula como “profundidad sobre amplitud” y “calidad sobre cantidad”, lo que invierte la lógica de plataformas orientadas a maximizar permanencia.
+
+Este punto enlaza con la ética relacional del sistema. En la documentación ética de Umbra aparece de forma explícita la fórmula “no es terapeuta, es un espejo inteligente”. Esa definición es teóricamente relevante. Impide atribuir al sistema un rol clínico que no puede ni debe desempeñar y, al mismo tiempo, delimita su responsabilidad: ofrecer reflejo, lenguaje, encuadre y cuidado conversacional, pero no diagnóstico, tratamiento ni reemplazo de ayuda profesional. Positive Computing funciona así como una capa de contención normativa que regula cómo se devuelve al usuario el conocimiento derivado de Big Five, Jung y Pearson. Su papel no es secundario, sino constitutivo: sin esta capa, Umbra correría el riesgo de convertir una lectura psicológica legítima en una experiencia relacional impropia o dañina (Calvo & Peters, 2014; Ryan & Deci, 2000).
+
+## 6. Integración de los tres frameworks
+
+La integración teórica de Umbra se materializa en una secuencia computacional precisa. El proceso comienza con los textos introspectivos del usuario, que constituyen el insumo principal del sistema. Sobre ese corpus, el prompt `analyze-profile.ts` inyecta el bloque de conocimiento de Big Five, el bloque de funciones de Jung y el bloque de arquetipos aplicados de Pearson. En una primera capa, el modelo asigna puntuaciones de 0 a 100 a las cinco dimensiones Big Five; en una segunda, asigna puntuaciones de 0 a 100 a las ocho funciones cognitivas; en una tercera, deriva un arquetipo dominante y uno secundario a partir de reglas que conectan patrones de rasgos y funciones. El resultado se valida, se acota al rango 0-100 cuando corresponde y se persiste como perfil estructurado.
+
+La capa de Positive Computing entra inmediatamente después, no para modificar la inferencia del perfil, sino para gobernar cómo ese perfil será presentado y discutido en el chat contextual. Allí el system prompt incorpora reglas explícitas de autonomía, competencia, relación, atención plena, emoción positiva, resiliencia y autocompasión, además de la política de engagement no extractivo. De este modo, el análisis y la interacción quedan articulados pero diferenciados: primero se estima el perfil; después se regula el modo en que ese perfil se convierte en conversación.
+
+Por ello, la integración no es ecléctica en sentido débil. Cada tradición cumple una función distinta y no intercambiable. Big Five aporta gradientes conductuales con el mayor respaldo empírico del conjunto. Jung aporta una hipótesis de arquitectura cognitiva capaz de explicar por qué ciertos patrones conductuales tienden a agruparse. Pearson aporta una síntesis narrativa legible y accionable, apropiada para la devolución al usuario. Positive Computing aporta el marco ético-operativo que impide que la devolución se vuelva clínica, manipulativa o reductiva. El diseño de Umbra depende precisamente de esa distribución de funciones: cuando se respeta, el sistema puede combinar rigor descriptivo, riqueza interpretativa, inteligibilidad narrativa y prudencia relacional en una misma experiencia.
+
+## 7. Limitaciones del marco teórico
+
+El marco teórico adoptado por Umbra presenta, no obstante, limitaciones que deben ser explicitadas. En primer lugar, aunque el modelo Big Five posee amplio respaldo internacional, su validez en contextos culturales argentinos exige cautela cuando la inferencia se realiza sobre lenguaje natural y no sobre instrumentos estandarizados administrados bajo condiciones controladas. Modismos, estilos discursivos, diferencias socioeducativas y convenciones expresivas locales pueden alterar la relación entre lenguaje y rasgo inferido.
+
+En segundo lugar, la teoría de las funciones cognitivas de Jung sigue siendo objeto de debate. Aun cuando Sauer (2020) ofrece una rehabilitación conceptualmente fértil, no existe consenso en considerar las funciones entidades psicológicas empíricamente “reales” en el mismo sentido en que suelen modelarse los rasgos. En Umbra, por tanto, conviene tratarlas como heurísticas interpretativas fuertes, no como hechos psicométricos cerrados.
+
+En tercer lugar, el uso de un modelo de lenguaje para inferir perfiles implica riesgo de reducción psicológica. Todo sistema que transforma texto en puntuaciones corre el peligro de sobreinterpretar, congelar la identidad en una salida numérica o conferir apariencia de precisión a inferencias necesariamente probabilísticas. De allí la importancia de mantener una comunicación prudente, de presentar el perfil como espejo y no como verdad definitiva, y de conservar abierta la posibilidad de revisión crítica por parte del usuario.
+
+Referencias citadas en este capítulo:
+
+- Calvo, R. A., & Peters, D. (2014). *Positive computing: Technology for wellbeing and human potential*. MIT Press.
+- Costa, P. T., Jr., & McCrae, R. R. (1992). *Revised NEO Personality Inventory (NEO PI-R) and NEO Five-Factor Inventory (NEO-FFI) professional manual*. Psychological Assessment Resources.
+- Goldberg, L. R. (1999). A broad-bandwidth, public-domain, personality inventory measuring the lower-level facets of several five-factor models. En I. Mervielde, I. Deary, F. De Fruyt, & F. Ostendorf (Eds.), *Personality psychology in Europe* (Vol. 7, pp. 7-28). Tilburg University Press.
+- Jung, C. G. (1921). *Tipos psicológicos*.
+- Pearson, C. S. (1991). *Awakening the heroes within: Twelve archetypes to help us find ourselves and transform our world*. HarperOne.
+- Ryan, R. M., & Deci, E. L. (2000). Self-determination theory and the facilitation of intrinsic motivation, social development, and well-being. *American Psychologist, 55*(1), 68-78.
+- Sauer, T. (2020). *Rehabilitating Jung’s cognitive function theory*.
+- Stein, R., & Swan, A. B. (2019). Evaluating the validity of the Myers-Briggs Type Indicator. *Social and Personality Psychology Compass, 13*(2).
+
+No pude escribirlo en `thesis/03-marco-teorico.md` porque el entorno está en modo solo lectura.
