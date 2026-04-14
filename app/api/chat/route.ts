@@ -14,6 +14,13 @@ export const runtime = 'edge';
 const ChatInputSchema = z.object({
   conversationId: z.string().uuid().optional(),
   message: z.string().min(1).max(2000),
+  /**
+   * Autonomy dial — controls how assertive Umbra should be during
+   * this turn. See lib/prompts/chat-context.ts ChatAutonomyMode.
+   * Default 'guide' matches the previous behavior, so existing clients
+   * keep working without change. Fase 3.6 del IMPLEMENTATION_PLAN.md.
+   */
+  mode: z.enum(['mirror', 'guide', 'challenge']).optional(),
 });
 
 const DAILY_TOKEN_CAP = Number(process.env.DAILY_TOKEN_CAP ?? 15000);
@@ -213,7 +220,7 @@ export async function POST(req: Request) {
     .map((m) => `${m.role === 'user' ? 'Usuario' : 'Umbra'}: ${m.content}`)
     .join('\n\n');
 
-  const system = buildChatSystemPrompt(profile);
+  const system = buildChatSystemPrompt(profile, body.mode ?? 'guide');
   const fullPrompt = `${historyText ? `## Historia de la conversación\n\n${historyText}\n\n` : ''}## Nuevo mensaje del usuario\n\n${body.message}`;
 
   // Persist user message immediately
