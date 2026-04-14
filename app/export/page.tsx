@@ -11,6 +11,17 @@ import { ARCHETYPE_INFO } from '@/types';
 import type { Archetype, BigFive, JungFunctions, PsychologicalProfile } from '@/types';
 import './print.css';
 
+/**
+ * Minimal shape of the html2pdf.js chain — the library itself has no
+ * bundled TypeScript types, so we declare the subset we actually use.
+ * Keeps the call-site typed without pulling `any` into the codebase.
+ */
+interface Html2PdfChain {
+  set(options: Record<string, unknown>): Html2PdfChain;
+  from(element: HTMLElement): Html2PdfChain;
+  save(): Promise<void>;
+}
+
 const BIG_FIVE_LABELS: Record<keyof BigFive, string> = {
   openness: 'Apertura',
   conscientiousness: 'Responsabilidad',
@@ -253,8 +264,18 @@ export default function ExportPage() {
     if (!pdfRef.current || !data) return;
     setDownloading(true);
     try {
-      const html2pdfModule = await import('html2pdf.js');
-      const html2pdf = (html2pdfModule.default as any) ?? html2pdfModule;
+      // html2pdf.js exports its factory as default in ESM and as the
+      // module itself in CJS. We narrow the union to a callable without
+      // leaking `any` — cast through `unknown` so TypeScript accepts
+      // the dual shape. The library has no bundled types; this is the
+      // minimum viable type contract (no implicit any).
+      const html2pdfModule = (await import('html2pdf.js')) as unknown as
+        | { default: () => Html2PdfChain }
+        | (() => Html2PdfChain);
+      const html2pdf =
+        typeof html2pdfModule === 'function'
+          ? html2pdfModule
+          : html2pdfModule.default;
       await html2pdf()
         .set({
           margin: [10, 10, 10, 10],
