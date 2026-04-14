@@ -1,0 +1,26 @@
+---
+title: "Umbra: Una plataforma de autoconocimiento basada en la triangulación de Jung, Big Five y Positive Computing con validación computacional"
+subtitle: "Trabajo Final de Graduación"
+author: "Matías Vélez"
+institute: "Universidad Siglo 21 — Ingeniería en Software"
+date: "2026"
+lang: es-AR
+papersize: a4
+fontsize: 11pt
+documentclass: article
+geometry:
+  - margin=2.5cm
+linestretch: 1.25
+mainfont: "Source Serif Pro"
+monofont: "JetBrains Mono"
+toc: true
+toc-depth: 3
+number-sections: true
+bibliography: 14-referencias.bib
+csl: https://www.zotero.org/styles/apa
+link-citations: true
+colorlinks: true
+linkcolor: violet
+urlcolor: violet
+citecolor: violet
+---
