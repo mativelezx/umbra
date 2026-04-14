@@ -5,8 +5,12 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { GlassCard } from '@/components/ui/Card';
 import { t } from '@/lib/i18n/dict';
-
-const CONSENT_VERSION = '2026-04-13-v1';
+import {
+  CONSENT_VERSION_V1,
+  CONSENT_LOCALE_V1,
+  CONSENT_TEXT_V1_ES_AR,
+  computeConsentTextHash,
+} from '@/lib/consent/text-v1-es-AR';
 
 export default function ConsentPage() {
   const router = useRouter();
@@ -21,10 +25,20 @@ export default function ConsentPage() {
     setLoading(true);
     setError(null);
 
+    // Compute SHA-256 of the verbatim consent text at submit time.
+    // The text is imported from a versioned, immutable constant
+    // (ADR-024) so the hash is stable across reloads.
+    const consentTextHash = await computeConsentTextHash(CONSENT_TEXT_V1_ES_AR);
+
     const res = await fetch('/api/consent', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ consentVersion: CONSENT_VERSION, researchOptIn }),
+      body: JSON.stringify({
+        consentVersion: CONSENT_VERSION_V1,
+        researchOptIn,
+        consentTextHash,
+        locale: CONSENT_LOCALE_V1,
+      }),
     });
 
     if (!res.ok) {
