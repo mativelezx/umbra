@@ -37,26 +37,42 @@ Arquetipo secundario: ${archetypeSecondary}
 
 ## Tarea
 
-Escribí una narrativa en SEGUNDA PERSONA (voseo argentino) de 800-1200 palabras que cumpla estos puntos, en este orden:
+Escribí una narrativa en SEGUNDA PERSONA (voseo argentino) de 800-1200 palabras, ORGANIZADA en 5 secciones con headers markdown. Cada sección es prosa fluida de 2-3 párrafos.
 
-1. **Apertura**: una metáfora o imagen evocadora que capture la esencia del perfil. No empieces con "vos sos" o "tu perfil muestra". Empezá con una escena, una imagen, un momento.
-2. **Funciones dominantes**: describí las 2 funciones dominantes como capacidades vivas, no como etiquetas. Usá ejemplos concretos de cómo se manifiestan en la vida cotidiana.
-3. **Big Five**: conectá 2-3 dimensiones con el ritmo interno de la persona. No recites los puntajes — traducilos a experiencia.
-4. **Tensión**: explorá la tensión entre las funciones fuertes y las en desarrollo como oportunidad de integración, no como defecto.
-5. **Arquetipo**: conectá el arquetipo dominante con la historia personal de forma narrativa. No digas "sos El Héroe" — mostrá lo que significa serlo.
-6. **Cierre**: una reflexión sobre el camino que queda por explorar. Honesta, sin promesas mágicas. Termina con una pregunta o una imagen, no con una conclusión cerrada.
+Usá EXACTAMENTE estos 5 headers, en este orden:
+
+## Apertura
+
+Una metáfora o imagen evocadora que capture la esencia del perfil. No empieces con "vos sos" o "tu perfil muestra". Empezá con una escena, una imagen, un momento. 1-2 párrafos.
+
+## Cómo te movés por el mundo
+
+Describí las 2 funciones dominantes como capacidades vivas, no como etiquetas. Usá ejemplos concretos de cómo se manifiestan en la vida cotidiana. Conectá con 1-2 dimensiones de Big Five relevantes. 2-3 párrafos.
+
+## Lo que te cuesta
+
+Explorá la tensión entre las funciones fuertes y las en desarrollo como oportunidad de integración, no como defecto. Si hay neuroticism alto, traducilo a experiencia (no al score). 2 párrafos.
+
+## Lo que te mueve
+
+Conectá el arquetipo dominante con la historia personal de forma narrativa. No digas "sos El Héroe" — mostrá lo que significa serlo. Apertura a la experiencia + valores profundos. 2 párrafos.
+
+## Lo que queda por explorar
+
+Una reflexión sobre el camino por explorar. Honesta, sin promesas mágicas. Terminá con una pregunta o una imagen, no con una conclusión cerrada. 1 párrafo.
 
 ## Reglas
 
 - **Voseo argentino natural**: "vos tenés", "te das cuenta", "sos".
 - **Tono**: reflexivo, cálido, como un mentor que te conoce. Ni clínico ni motivacional vacío.
 - **NO uses**: diagnósticos ("tendés a la ansiedad"), etiquetas rígidas ("sos un Tipo 4"), o terminología MBTI.
-- **NO uses**: emojis, bullets, listas, headers. Solo prosa fluida.
-- **Extensión**: 800-1200 palabras. Más corto pierde profundidad, más largo pierde fuerza.
+- **NO uses**: emojis, bullets, listas numéricas, o headers que no sean los 5 pedidos. Solo prosa fluida dentro de cada sección.
+- **SÍ usá**: los 5 headers markdown \`##\` EXACTOS arriba. Umbra los renderiza con iconografía en el dashboard.
+- **Extensión**: 800-1200 palabras totales. Más corto pierde profundidad, más largo pierde fuerza.
 - **Evitá**: "tu perfil muestra...", "según los resultados...", "tu mente funciona como...". Evitá la distancia clínica.
 - **Buscá**: ver a la persona. Escribí como si te importara.
 
-Devolvé SOLO la narrativa, sin preámbulo ni comentarios.`;
+Devolvé SOLO la narrativa (con los 5 headers markdown), sin preámbulo ni comentarios.`;
 
   return { system: SYSTEM, prompt };
 }

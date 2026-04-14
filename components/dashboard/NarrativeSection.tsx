@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { ArrowClockwise } from '@phosphor-icons/react';
+import { ArrowClockwise, BookOpen } from '@phosphor-icons/react';
 import { Skeleton } from '@/components/ui/LoadingDimension';
+import { SectionedNarrative } from './SectionedNarrative';
 
 interface NarrativeSectionProps {
   profileId: string;
@@ -66,11 +67,14 @@ export function NarrativeSection({ profileId, initialContent }: NarrativeSection
   }, [initialContent, generate, profileId]);
 
   return (
-    <section className="card-glow rounded-lg p-8 md:p-10">
-      <div className="mb-6 flex items-center justify-between">
-        <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-text-3">
-          Tu narrativa
-        </p>
+    <section className="card-glow rounded-lg p-8 md:p-12">
+      <div className="mb-8 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <BookOpen size={20} weight="duotone" className="text-violet-300" />
+          <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-text-3">
+            Tu narrativa
+          </p>
+        </div>
         {content && !streaming && (
           <button
             onClick={() => generate(true)}
@@ -83,13 +87,14 @@ export function NarrativeSection({ profileId, initialContent }: NarrativeSection
       </div>
 
       {streaming && !content && (
-        <div className="flex flex-col gap-3">
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-[95%]" />
-          <Skeleton className="h-4 w-[90%]" />
-          <Skeleton className="h-4 w-[93%]" />
-          <Skeleton className="h-4 w-[88%]" />
-          <Skeleton className="h-4 w-[92%]" />
+        <div className="flex flex-col gap-4">
+          <Skeleton className="h-3 w-24" />
+          <Skeleton className="h-5 w-full" />
+          <Skeleton className="h-5 w-[95%]" />
+          <Skeleton className="h-5 w-[90%]" />
+          <Skeleton className="mt-6 h-3 w-32" />
+          <Skeleton className="h-5 w-[93%]" />
+          <Skeleton className="h-5 w-[88%]" />
         </div>
       )}
 
@@ -99,16 +104,7 @@ export function NarrativeSection({ profileId, initialContent }: NarrativeSection
         </p>
       )}
 
-      {content && (
-        <article className="font-display text-xl italic leading-relaxed text-text-1 md:text-2xl md:leading-[1.7]">
-          {content.split('\n\n').map((paragraph, i) => (
-            <p key={i} className={i > 0 ? 'mt-5' : ''}>
-              {paragraph}
-            </p>
-          ))}
-          {streaming && <span className="ml-1 inline-block h-5 w-0.5 animate-pulse bg-violet-400" />}
-        </article>
-      )}
+      {content && <SectionedNarrative content={content} streaming={streaming} />}
     </section>
   );
 }
