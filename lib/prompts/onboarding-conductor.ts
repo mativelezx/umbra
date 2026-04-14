@@ -57,6 +57,14 @@ IMPORTANTE sobre el campo "probe":
 - Si kind="open"      → probe = { "kind": "open" }
 - NUNCA mezclés kinds, NUNCA omitás el campo obligatorio del kind elegido.
 
+IMPORTANTE sobre polarity.axis.dimension:
+- Es UNA sola dimensión, NO una etiqueta compuesta tipo "Ti_vs_Fe" o "Ne/Si".
+- Los valores válidos son exactamente los mismos del enum de probe: openness, conscientiousness, extraversion, agreeableness, neuroticism, Se, Si, Ne, Ni, Te, Ti, Fe, Fi.
+- El "contraste" entre dos polos se expresa en leftPole.meaning y rightPole.meaning, no en el nombre de la dimensión.
+
+IMPORTANTE sobre signalsCaptured[].dimension:
+- Solo acepta los 13 valores del enum anterior. NUNCA pongas nombres de arquetipo ("sage", "hero") ni etiquetas MBTI. Los arquetipos viven en updatedProfile.archetypeCandidates, no en signals.
+
 {
   "updatedProfile": {
     "bigFive": {
@@ -457,9 +465,9 @@ export const OnboardingSignalSchema = z.object({
   direction: z.enum(['high', 'low']),
   strength: z.number().min(0).max(100),
   source: z.object({
-    questionId: z.string().min(1).max(64),
+    questionId: z.string().min(1).max(96),
     quote: z.string().max(600).optional(),
-    choiceId: z.string().max(16).optional(),
+    choiceId: z.string().max(96).optional(),
   }),
 });
 
@@ -488,18 +496,54 @@ export type ConductorResponse = z.infer<typeof ConductorResponseSchema>;
  *   - nextQuestion.turnIndex missing.
  * Everything else still fails loudly through Zod so we can see it.
  */
+const VALID_DIMENSIONS = new Set<string>([
+  'openness',
+  'conscientiousness',
+  'extraversion',
+  'agreeableness',
+  'neuroticism',
+  'Se',
+  'Si',
+  'Ne',
+  'Ni',
+  'Te',
+  'Ti',
+  'Fe',
+  'Fi',
+]);
+
+function coerceDimension(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  if (VALID_DIMENSIONS.has(value)) return value;
+  // Claude sometimes invents MBTI-style axes like "Ti_vs_Fe" or "Ne/Si".
+  // Pick the first token that matches a real dimension.
+  const parts = value.split(/[_\/\-\s]+/);
+  for (const p of parts) {
+    if (VALID_DIMENSIONS.has(p)) return p;
+  }
+  return null;
+}
+
 export function normalizeConductorJson(raw: unknown, turnNumber: number): unknown {
   if (!raw || typeof raw !== 'object') return raw;
   const obj = raw as Record<string, unknown>;
 
-  // signalsCaptured — Claude sometimes emits direction:"moderate" / "neutral".
-  // Drop anything that isn't a clean high|low instead of failing the whole turn.
+  // signalsCaptured — Claude sometimes emits direction:"moderate" / "neutral"
+  // or puts an archetype key ("sage") in the dimension field. Drop anything
+  // that doesn't match the strict schema instead of failing the whole turn.
   if (Array.isArray(obj.signalsCaptured)) {
-    obj.signalsCaptured = obj.signalsCaptured.filter((s: unknown) => {
-      if (!s || typeof s !== 'object') return false;
-      const dir = (s as Record<string, unknown>).direction;
-      return dir === 'high' || dir === 'low';
-    });
+    obj.signalsCaptured = obj.signalsCaptured
+      .map((s: unknown) => {
+        if (!s || typeof s !== 'object') return null;
+        const rec = s as Record<string, unknown>;
+        const dir = rec.direction;
+        if (dir !== 'high' && dir !== 'low') return null;
+        const dim = coerceDimension(rec.dimension);
+        if (!dim) return null;
+        rec.dimension = dim;
+        return rec;
+      })
+      .filter(Boolean);
   }
 
   // insights[].id — sometimes missing. Synthesize a stable one from text.
@@ -523,6 +567,29 @@ export function normalizeConductorJson(raw: unknown, turnNumber: number): unknow
   const nq = obj.nextQuestion as Record<string, unknown> | null | undefined;
   if (nq && typeof nq === 'object') {
     if (typeof nq.turnIndex !== 'number') nq.turnIndex = turnNumber - 1;
+
+    // polarity axis dimension — reject invented composite labels like "Ti_vs_Fe"
+    // and coerce to a real dimension. If we can't recover one, demote the whole
+    // question to an open_text fallback so the turn still lands.
+    if (nq.type === 'polarity') {
+      const axis = nq.axis as Record<string, unknown> | undefined;
+      if (axis && typeof axis === 'object') {
+        const dim = coerceDimension(axis.dimension);
+        if (dim) {
+          axis.dimension = dim;
+        } else {
+          nq.type = 'open_text';
+          nq.minWords = 20;
+          nq.maxWords = 200;
+          nq.placeholder = 'Contame con tus palabras...';
+          delete nq.axis;
+          delete nq.leftPole;
+          delete nq.rightPole;
+          nq.probe = { kind: 'open' };
+        }
+      }
+    }
+
     const probe = nq.probe as Record<string, unknown> | undefined;
     if (probe && typeof probe === 'object') {
       const kind = probe.kind;
