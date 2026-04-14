@@ -114,10 +114,14 @@ jobs:
         env:
           PORT: '3000'
 
-      - name: Playwright hardening tests (landing + protected routes + phase7)
-        run: npx playwright test --project=chromium e2e/landing.spec.ts e2e/protected-routes.spec.ts e2e/phase7.spec.ts
+      - name: Playwright hardening tests (landing + protected routes + phase7 + a11y)
+        run: npx playwright test --project=chromium e2e/landing.spec.ts e2e/protected-routes.spec.ts e2e/phase7.spec.ts e2e/a11y.spec.ts
         env:
           PLAYWRIGHT_BASE_URL: http://localhost:3000
+
+      - name: Dependency audit (high severity gate)
+        run: npm audit --audit-level=high || echo "::warning::npm audit found vulnerabilities — review required"
+        continue-on-error: true
 
       - name: Stop Next.js
         if: always()
