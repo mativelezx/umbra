@@ -5,6 +5,38 @@
 
 ## High-level topology
 
+```mermaid
+flowchart TB
+  subgraph Client["USER BROWSER — Next.js App Router"]
+    B[Pages + Components]
+  end
+  subgraph Vercel["VERCEL"]
+    M[Next.js middleware<br/>Supabase session]
+    E[Edge Runtime<br/>/api/analyze /api/narrative<br/>/api/chat /api/plan]
+    N[Node Runtime<br/>/api/account/*<br/>service role ops]
+  end
+  subgraph External["External services"]
+    S[(SUPABASE<br/>Auth · Postgres · RLS · Storage)]
+    A[ANTHROPIC Claude API<br/>sonnet-4-6 pinned<br/>haiku-4-5 pinned]
+    R[RESEND<br/>delete magic links]
+  end
+
+  B -->|HTTPS| M
+  M --> E
+  M --> N
+  E -->|auth.uid via RLS| S
+  E -->|prompts + streaming| A
+  N -->|service role| S
+  N -->|transactional| R
+
+  classDef ext fill:#1a1a2e,stroke:#b466ff,color:#f0ecff
+  classDef vrc fill:#0e0e2a,stroke:#b466ff,color:#f0ecff
+  class S,A,R ext
+  class M,E,N vrc
+```
+
+ASCII fallback (for environments that do not render Mermaid):
+
 ```
                             ┌─────────────────────────┐
                             │      USER BROWSER       │
