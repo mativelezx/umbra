@@ -2,6 +2,14 @@
 
 > The academic dimension of Umbra. Thesis structure, OSF preregistration,
 > paper draft, defense preparation.
+>
+> **Validation decision (ADR-023, 2026-04-14)**: el TFG adopta validación
+> mixed-methods con dos pilares: **Branch B (computacional) como primary
+> evidence** (H1/H2/H3 preregistradas en OSF) + **M3 think-aloud como
+> secondary user validation** (n=8-10 con reclutamiento controlado). Ver
+> [VALIDATION.md](VALIDATION.md) para el plan completo de hipótesis,
+> instrumentos y protocolos, y [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)
+> para la ejecución fase por fase.
 
 ## Context
 
@@ -26,10 +34,10 @@ share.
 3. **Introducción** — problem statement, motivation, research questions
 4. **Marco teórico** — Jung's cognitive functions (Jung 1921 + Sauer 2025), Big Five (Goldberg IPIP 1999), Pearson archetypes (Pearson 1991), Positive Computing (Calvo & Peters 2014)
 5. **Estado del arte** — landscape review: 16personalities, Deep Personality, Truity, academic literature on AI personality assessment
-6. **Metodología** — the eval suite (H1 + H2), OSF preregistration, knowledge base construction from primary sources
+6. **Metodología** — the eval suite (H1 determinismo + H2 robustez paráfrasis + H3 safety empírico del crisis classifier), OSF preregistration, knowledge base construction from primary sources, **protocolo M3 de think-aloud con n=8-10 (SUS + coding temático)**. Ver [VALIDATION.md](VALIDATION.md) para detalles completos.
 7. **Arquitectura del sistema** — Next.js App Router, Supabase, Anthropic Claude, decisiones arquitecturales (synthesized from `docs/DECISIONS.md`)
 8. **Implementación** — phase-by-phase breakdown, key technical challenges, trade-offs
-9. **Validación** — H1 determinism results, H2 cross-model paraphrase results, limitations
+9. **Validación** — H1 determinism results, H2 cross-model paraphrase results, **H3 crisis classifier precision/recall sobre dataset n=100**, **M3 think-aloud results (SUS scores + temas cualitativos con citas)**, limitations
 10. **Discusión** — findings, implications, limitations, threats to validity
 11. **Conclusiones** — contributions, future work
 12. **Referencias** — APA format, full bibliography
@@ -72,9 +80,22 @@ of the same input?
 
 **RQ3**: Can a self-knowledge product built on this methodology ship with
 ethical and legal safeguards compliant with Ley 25.326 and Calvo & Peters'
-Positive Computing principles?
+Positive Computing principles, and is its crisis detection pipeline
+empirically safe?
 - Operationalized as the compliance matrix in [SYSTEM_SPEC.md](../SYSTEM_SPEC.md)
 - Validated by the chat safety pipeline and consent flow implementations
+- **Quantified as H3**: precision/recall del crisis classifier sobre
+  dataset etiquetado n=100 (target recall ≥ 0.95, precision ≥ 0.85). Ver
+  [VALIDATION.md H3](VALIDATION.md#h3--precision-y-recall-del-pipeline-de-crisis).
+
+**RQ4**: ¿Es Umbra percibido como usable y alineado con autonomía y
+competencia del Positive Computing por usuarios reales de perfil similar
+al target (estudiantes universitarios argentinos, 18-30 años)?
+- Operationalized as **M3 think-aloud** with n=8-10 participants,
+  structured SUS questionnaire (Spanish rioplatense), and thematic coding
+  of session recordings. See [VALIDATION.md M3](VALIDATION.md#m3--think-aloud-con-reclutamiento-controlado-secondary-validation).
+- NOT preregistered in OSF (M3 is qualitative secondary validation, not
+  confirmatory hypothesis).
 
 ## Preregistration (OSF Standard Prereg)
 
@@ -93,6 +114,7 @@ with a computational-study framing paragraph.)
 #### Hypotheses
 - **H1 — Determinism**: Given temperature=0 and pinned model SKU (`claude-sonnet-4-6-20260301`), analyzing the same input text produces Big Five scores with standard deviation < 2.5 points (equivalent to < 5-point range) across 5 consecutive runs on all 50 eval cases.
 - **H2 — Cross-model paraphrase consistency**: Given 3 semantic-preserving paraphrases produced by Claude Sonnet and Claude Haiku rewriters, the Big Five scores for the paraphrased texts deviate < 10 points (max pairwise delta) from the original on all 50 eval cases.
+- **H3 — Crisis classifier safety**: The 2-stage crisis detection pipeline (regex with Argentine idiom guards + Claude classifier with fail-closed semantics) achieves recall ≥ 0.95 and precision ≥ 0.85 on a balanced labeled dataset of n=100 messages (25 real crisis + 25 Argentine idioms + 25 borderline + 25 safe). Recall threshold is higher than precision because false negatives (missing a real crisis) are costlier than false positives (blocking a safe conversation). See [VALIDATION.md H3](VALIDATION.md#h3--precision-y-recall-del-pipeline-de-crisis).
 
 #### Design Plan
 - **Type**: observational computational study, no manipulation
@@ -127,8 +149,10 @@ with a computational-study framing paragraph.)
 - **Limitations**:
   - H2 uses intra-vendor rewriters (Sonnet + Haiku), not cross-vendor. Documented in ADR-020
   - IPIP-NEO vs NEO-PI-R substitution documented in ADR-015
-  - No test-retest with real users (requires ethics review, deferred to future work)
-- **Ethics statement**: Branch A (if cleared) uses pseudonymized user data with informed consent. Branch B uses only computational evaluation. Either way, H1/H2 are purely computational.
+  - **No hay test-retest longitudinal con usuarios reales** (requires ethics review + multi-sesión); user validation se cubre con M3 think-aloud single-session, documentado como secondary validation en ADR-023
+  - **M3 n=8-10 es bajo** para afirmaciones con poder estadístico fuerte sobre usabilidad; defensible por la regla de Nielsen & Landauer (1993) pero se declara explícitamente como limitación
+  - **Self-selection bias en M3**: reclutamiento por red personal del autor; mitigado por inclusión de participantes con exposición variable al producto
+- **Ethics statement**: **Branch B adoptada por ADR-023 (2026-04-14)**. Validación computacional (H1/H2/H3) como primary evidence; M3 think-aloud con n=8-10 como secondary user validation sin comité de ética formal (usability testing informal con consentimiento escrito simple). H1, H2 y H3 son puramente computacionales. M3 sigue principios de Helsinki + Calvo & Peters (ver [ETHICS.md](ETHICS.md)).
 - **Data availability**: committed cache snapshots in repo. Raw Claude API responses are NOT published (privacy). All eval code open source.
 
 ### Timing
@@ -222,14 +246,32 @@ paper strong for any of these.
 
 ## References
 
+### Academic
+
 - Sauer, T. (2025). Rehabilitating Jung's Cognitive Function Theory.
 - Jung, C.G. (1921). Tipos Psicológicos.
 - Goldberg, L. R. (1999). A broad-bandwidth, public domain, personality inventory measuring the lower-level facets of several five-factor models. In I. Mervielde et al. (Eds.), *Personality Psychology in Europe*, Vol. 7 (pp. 7-28). Tilburg University Press.
 - Pearson, C. S. (1991). *Awakening the Heroes Within*.
 - Calvo, R. A., & Peters, D. (2014). *Positive Computing: Technology for Wellbeing and Human Potential*. MIT Press.
 - Stein, R., & Swan, A. B. (2019). Evaluating the Validity of the Myers-Briggs Type Indicator. *Social and Personality Psychology Compass*, 13(2).
+- Brooke, J. (1996). SUS: A quick and dirty usability scale. In P. W. Jordan et al. (Eds.), *Usability evaluation in industry*. Taylor & Francis.
+- Nielsen, J., & Landauer, T. K. (1993). A mathematical model of the finding of usability problems. *Proceedings of ACM INTERCHI 93*, 206-213.
+- Sauro, J. (2011). *A Practical Guide to the System Usability Scale*. Measuring Usability LLC.
+- Braun, V., & Clarke, V. (2006). Using thematic analysis in psychology. *Qualitative Research in Psychology*, 3(2), 77-101.
+
+### External
+
 - [OSF preregistration guidelines](https://www.cos.io/initiatives/prereg)
+- [Ley 25.326 (Protección de Datos Personales, Argentina)](https://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/texact.htm)
+- [People + AI Guidebook (Google PAIR)](https://pair.withgoogle.com/guidebook/)
+
+### Internal (repo)
+
+- [biz/IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) — plan de ejecución por fases con QA Gate
+- [biz/VALIDATION.md](VALIDATION.md) — hipótesis H1/H2/H3 + protocolo M3 completo
 - [biz/LEGAL.md](LEGAL.md)
 - [biz/ETHICS.md](ETHICS.md)
+- [DECISIONS.md](../DECISIONS.md) — ADRs 001-024
 - [tech/EVALS.md](../tech/EVALS.md)
+- [tech/CHAT_SAFETY.md](../tech/CHAT_SAFETY.md) — objeto de H3
 - [PROMPT_ARCHITECTURE.md](../PROMPT_ARCHITECTURE.md)

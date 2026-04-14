@@ -336,3 +336,104 @@ without the research section in the consent form. The paper's validation
 evidence rests solely on eval H1 + H2 in Branch B.
 **Consequences**: 30-min gate protects weeks of rework. Branch B is still a
 defensible TFG — the eval suite is the primary evidence regardless.
+
+## ADR-023 — Validación mixed-methods: Branch B (computacional) + M3 think-aloud (n=8-10)
+**Status**: Accepted (2026-04-14)
+**Context**: ADR-017 dejó abierta la elección entre Branch A (dataset de
+investigación con usuarios reales pseudonimizados) y Branch B (validación
+puramente computacional). Con la decisión del autor de optimizar para
+aprobación del TFG con mínimo riesgo, se evaluaron tres modalidades de
+validación con usuarios: M1 (estudio formal n≥30 con sesiones controladas y
+posible comité de ética), M2 (instrumentación in-app opt-in dependiente de
+tráfico), M3 (think-aloud con reclutamiento controlado de amigos y
+compañeros, n=8-10). M1 tiene alta varianza por dropout y burocracia ética;
+M2 depende de tráfico que el autor no controla (riesgo de n=0 a dos semanas
+de defensa); M3 es controlable de punta a punta y es defendible
+académicamente por la regla de Nielsen (n=5 detecta 85% de problemas de
+usabilidad; Nielsen & Landauer 1993). Adicionalmente, el audit de Fase 0
+reveló que `lib/evals/` no existe todavía — H1/H2 deben ser escritos, no
+solo corridos.
+**Decision**: El TFG adopta un enfoque mixed-methods con dos pilares:
+(1) **Branch B computacional como primary validation evidence** con tres
+hipótesis preregistradas en OSF: H1 (determinismo, stddev<2.5 a temp=0),
+H2 (robustez a paráfrasis intra-vendor, max pairwise delta<10 — ADR-020),
+H3 (safety empírico del crisis classifier, recall≥0.95 y precision≥0.85
+sobre un dataset etiquetado n=100).
+(2) **M3 think-aloud como secondary user validation** con reclutamiento
+controlado de 8-10 amigos y compañeros de Siglo 21, protocolo fijo (SUS en
+español + 3 preguntas abiertas + grabación con consentimiento), análisis
+cuanti (SUS promedio + stddev) y cuali (coding temático con citas textuales
+anonimizadas). Sin comité de ética formal — es usability testing informal
+con consentimiento escrito simple, práctica estándar en HCI aplicada.
+El código `lib/evals/` se escribe en Fase 5 del IMPLEMENTATION_PLAN.md
+antes de correr H1/H2. La tesis presenta Branch B como primary y M3 como
+secondary en la sección de Validación.
+**Consequences**:
+- **Ganancia**: control total sobre variables, cero dependencia de tráfico
+  externo, cero burocracia ética, timeline defendible (~6-7 semanas),
+  mixed-methods convincente para tribunal de Ingeniería en Software.
+- **Costo**: no podemos afirmar usabilidad con poder estadístico de n≥30;
+  el coding temático cualitativo depende de la calidad de las 8-10
+  sesiones.
+- **Plan B documentado**: si M3 no llega a n=8 por dropout, pivotamos a
+  reporte honest con el n obtenido y nos apoyamos en H1/H2/H3 como evidencia
+  primary. El tribunal no puede objetar si el pivot está documentado desde
+  antes de la recolección.
+- **Scope cut explícito**: UMUX-Lite/METUX in-app, shipeo a producción,
+  framer-motion, chat persistente, y todos los items estructurales del
+  research de UX quedan fuera del TFG y pasan a "Trabajo futuro" en la
+  tesis. Ver IMPLEMENTATION_PLAN.md sección "Scope explícitamente FUERA del
+  TFG".
+- **Timeline realista**: 6-7 semanas calendario con 3-4 hs/día; 4-5 semanas
+  full-time. Ver IMPLEMENTATION_PLAN.md timeline.
+- **Supersedes**: reemplaza la ambigüedad de ADR-017 sobre qué branch
+  adoptar. ADR-017 sigue vigente para la estructura de Migration 002.
+
+## ADR-024 — Parche Ley 25.326: consent_text_hash + locale en consent_records
+**Status**: Accepted (2026-04-14)
+**Context**: El audit de Fase 0 (2026-04-14) identificó que
+`supabase/migrations/002_core_tables.sql` crea la tabla `consent_records`
+con `consent_version TEXT`, `accepted_at`, `ip_hash + pepper_version`, y
+`user_agent`, pero **no almacena un hash verificable del texto consentido
+verbatim ni el locale**. Para datos psicológicos sensibles bajo Ley 25.326
+(datos sensibles — art. 2 y art. 7), la autoridad de aplicación (AAIP)
+exige que el consentimiento sea "preciso e informado", lo cual requiere
+poder demostrar qué texto específico vio el usuario al aceptar. El campo
+`consent_version TEXT` alone no es suficiente: si mañana se corrige una
+tipografía o una frase del texto de consentimiento manteniendo la versión
+(o incluso cambiando la versión retroactivamente por error), no hay forma
+de auditar qué vio históricamente el usuario X. Adicionalmente, el
+`consent_records` schema no captura `locale`, lo cual en un contexto
+multi-idioma futuro (next-intl ya está instalado — ADR-010) puede hacer
+imposible distinguir a un usuario que consintió en español vs inglés.
+**Decision**: Se agregan dos columnas a `consent_records` vía migration 004:
+```sql
+ALTER TABLE public.consent_records
+  ADD COLUMN consent_text_hash TEXT NOT NULL DEFAULT '',
+  ADD COLUMN locale TEXT NOT NULL DEFAULT 'es-AR';
+```
+`consent_text_hash` es SHA-256 del texto de consentimiento verbatim tal como
+fue renderizado al usuario (computado client-side o server-side
+deterministicamente). `locale` es BCP-47 (`es-AR`, `en`, etc.).
+[app/api/consent/route.ts](../app/api/consent/route.ts) se actualiza para
+aceptar ambos campos en el `ConsentSchema` Zod y persistirlos. El texto
+verbatim de cada versión se mantiene en archivos versionados bajo
+`content/consent/<version>-<locale>.md` para poder verificar hashes a
+posteriori. El test `consent-text-integrity.test.ts` valida que el hash
+computado sobre el archivo coincide con el que el cliente envía.
+Esta migration es parte de Fase 5 del IMPLEMENTATION_PLAN.md (task T5.8).
+**Consequences**:
+- **Ganancia**: auditabilidad completa del consentimiento bajo Ley 25.326;
+  capacidad de probar ante la AAIP o ante el usuario mismo qué texto
+  consintió; preparación para multi-idioma futuro.
+- **Costo**: una migration adicional + actualización de copy en consent
+  flow + mantenimiento de archivos verbatim en repo (`content/consent/`).
+- **Migración de datos existentes**: los registros anteriores a la
+  migration quedan con `consent_text_hash=''` y `locale='es-AR'` (defaults).
+  Se documenta en LEGAL.md como "consentimientos pre-migración 004
+  auditables solo por `consent_version`".
+- **Dependencia**: [docs/features/CONSENT.md](../features/CONSENT.md) y
+  [docs/biz/LEGAL.md](biz/LEGAL.md) deben actualizarse para reflejar el
+  nuevo schema.
+- **Linked to**: IMPLEMENTATION_PLAN.md T5.8, ADR-021 (pepper versioning —
+  mismo patrón de immutable audit trail).
