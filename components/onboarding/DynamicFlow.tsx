@@ -79,6 +79,40 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
     [pushInsights],
   );
 
+  const undoLastTurn = useCallback(async () => {
+    const api = useOnboardingStore.getState();
+    if (!api.sessionId) return;
+    if (api.turns.filter((t) => t.answer !== null).length === 0) return;
+    setThinking(true);
+    try {
+      const res = await fetch('/api/onboarding/undo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: api.sessionId }),
+      });
+      if (!res.ok) {
+        setError({ kind: 'generic', message: 'undo_failed' });
+        return;
+      }
+      // Reset local turn state; re-fetch next so the conductor rebuilds
+      // the question from the truncated session.
+      api.setTurns([]);
+      setCurrentQuestion(null);
+      await fetchNextRef.current?.(null);
+    } catch (e) {
+      setError({
+        kind: 'generic',
+        message: e instanceof Error ? e.message : 'undo_network',
+      });
+    } finally {
+      setThinking(false);
+    }
+  }, []);
+
+  const fetchNextRef = useRef<
+    ((previousAnswer: OnboardingAnswer | null) => Promise<OnboardingNextResponse | null>) | null
+  >(null);
+
   const fetchNext = useCallback(
     async (previousAnswer: OnboardingAnswer | null): Promise<OnboardingNextResponse | null> => {
       setError(null);
@@ -122,6 +156,10 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
     },
     [applyResponse],
   );
+
+  // Keep fetchNextRef in sync so undoLastTurn (defined earlier) can
+  // invoke it without creating a circular callback dependency.
+  fetchNextRef.current = fetchNext;
 
   const advanceDemo = useCallback(() => {
     const step = DEMO_ONBOARDING_SCRIPT[demoStep.current];
@@ -198,10 +236,18 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
         setSynthesizing(false);
         return;
       }
+      // Pass the sessionId so the analyze route can recover the original
+      // ChatGPT-seeded portrait (if present in session flags) and
+      // prepend it to the texts. Fixes codex P1 finding on seeded flows.
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mode: 'dynamic', texts, areas }),
+        body: JSON.stringify({
+          mode: 'dynamic',
+          texts,
+          areas,
+          sessionId: api.sessionId ?? undefined,
+        }),
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
@@ -267,17 +313,30 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
       {error && <ErrorBanner error={error} onRetry={() => fetchNext(null)} />}
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,340px)]">
-        <div className="min-h-[420px]">
+        <div className="flex min-h-[420px] flex-col gap-3">
           {synthesizing ? (
             <SynthesisReveal />
           ) : thinking || !currentQuestion ? (
             <ThinkingIndicator />
           ) : (
-            <QuestionCard
-              question={currentQuestion}
-              onSubmit={handleAnswer}
-              submitting={submitting}
-            />
+            <>
+              <QuestionCard
+                question={currentQuestion}
+                onSubmit={handleAnswer}
+                submitting={submitting}
+              />
+              {turnNumber > 1 && (
+                <button
+                  type="button"
+                  onClick={undoLastTurn}
+                  disabled={submitting || thinking}
+                  className="self-start font-mono text-[10px] uppercase tracking-[0.22em] text-text-3 underline-offset-4 transition-colors hover:text-violet-200 hover:underline disabled:opacity-40"
+                  aria-label="Revisar la respuesta anterior"
+                >
+                  ← revisar la anterior
+                </button>
+              )}
+            </>
           )}
         </div>
 

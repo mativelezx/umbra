@@ -21,6 +21,16 @@ const AnalyzeInputSchema = z.object({
   texts: z.array(z.string().min(1).max(15000)).min(1).max(16),
   mode: z.enum(['dynamic']),
   areas: z.array(z.string().min(1).max(100)).optional(),
+  /**
+   * Optional onboarding session id. When provided and the session has
+   * `flags.seedText` (seeded from ChatGPT import per Fase 3 ChatGPT
+   * seed flow), the analyzer prepends that raw text to `texts` so the
+   * final profile is grounded in BOTH the imported portrait AND the
+   * refinement turns. Without this, seeded users would get analysis
+   * based only on 2-3 refinement answers (codex P1 finding, see
+   * commit f185d25 known-issue note).
+   */
+  sessionId: z.string().uuid().optional(),
 });
 
 const AnalyzeResponseSchema = z.object({
@@ -94,8 +104,33 @@ export const POST = withErrorHandler(async (req) => {
   const today = new Date().toISOString().slice(0, 10);
   const model = getModelId();
 
+  // ChatGPT seed flow — if the client sent a sessionId that belongs to
+  // a seeded session, recover the original pasted portrait from flags
+  // and prepend it to `texts` as the first element labelled "Retrato
+  // importado". Refinement answers follow as subsequent elements so the
+  // final analysis is grounded in the full corpus the user provided.
+  const augmentedTexts = [...body.texts];
+  const augmentedAreas = body.areas ? [...body.areas] : undefined;
+  if (body.sessionId) {
+    const { data: seedRow } = await service
+      .from('onboarding_sessions')
+      .select('flags')
+      .eq('id', body.sessionId)
+      .eq('user_id', user.id)
+      .maybeSingle();
+    const flags = (seedRow?.flags ?? null) as
+      | { seeded?: boolean; seedText?: string }
+      | null;
+    if (flags?.seeded && typeof flags.seedText === 'string' && flags.seedText.length > 0) {
+      augmentedTexts.unshift(flags.seedText);
+      if (augmentedAreas) {
+        augmentedAreas.unshift('Retrato importado desde ChatGPT');
+      }
+    }
+  }
+
   // Estimate tokens + cost
-  const estInput = 3000 + Math.ceil(body.texts.join('\n').length / 4);
+  const estInput = 3000 + Math.ceil(augmentedTexts.join('\n').length / 4);
   const estOutput = 1200;
   const estCostCents = costUsdCents(model, estInput, estOutput);
 
@@ -119,8 +154,13 @@ export const POST = withErrorHandler(async (req) => {
     throw new RateLimitError(86400);
   }
 
-  // Build analyze prompt (Pass 1)
-  const { system, prompt } = buildAnalyzeProfilePrompt(body);
+  // Build analyze prompt (Pass 1). Uses augmentedTexts (includes seed
+  // text when the session was seeded) and augmentedAreas.
+  const { system, prompt } = buildAnalyzeProfilePrompt({
+    texts: augmentedTexts,
+    mode: body.mode,
+    areas: augmentedAreas,
+  });
 
   let claudeResult;
   let actualInput = 0;
@@ -185,7 +225,7 @@ export const POST = withErrorHandler(async (req) => {
           archetype_secondary: profile.archetypeSecondary,
           analysis_raw: rawJson,
           input_mode: body.mode,
-          input_texts: body.texts,
+          input_texts: augmentedTexts,
           updated_at: new Date().toISOString(),
         },
         { onConflict: 'user_id,version' },
@@ -211,7 +251,7 @@ export const POST = withErrorHandler(async (req) => {
       .single();
 
     if (profileRow?.research_opt_in) {
-      const combinedText = body.texts.join('\n\n');
+      const combinedText = augmentedTexts.join('\n\n');
       const userHash = await computeHash('research', user.id);
       await service.from('research_dataset').insert({
         user_hash: userHash,
@@ -222,7 +262,7 @@ export const POST = withErrorHandler(async (req) => {
     }
 
     // Pass 2: evidence highlights (fire-and-forget, don't block response)
-    const originalText = body.texts.join('\n\n');
+    const originalText = augmentedTexts.join('\n\n');
     runEvidencePass2({
       profileId,
       originalText,

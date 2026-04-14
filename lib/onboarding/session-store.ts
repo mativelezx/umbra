@@ -79,6 +79,13 @@ export async function createSeededSession(
         seeded: true,
         seedSource: 'chatgpt',
         seedLength: rawSeedText.length,
+        // Persist the full pasted text inside the session flags so the
+        // downstream analyze route can recover the retrato and prepend
+        // it to the final texts array. Without this, seeded users end
+        // up with analysis grounded only in the 2-3 refinement turns,
+        // losing the whole imported portrait (codex P1 finding, commit
+        // f185d25). Size bounded by SeedRequestSchema.max(14000).
+        seedText: rawSeedText,
       },
     })
     .select('*')
@@ -213,6 +220,36 @@ export async function markCompleted(svc: Svc, sessionId: string): Promise<void> 
       updated_at: new Date().toISOString(),
     })
     .eq('id', sessionId);
+}
+
+/**
+ * Removes the most recent answered turn (and any pending turn queued
+ * after it), restoring the session to the state it was in before the
+ * user's last answer. Used by `POST /api/onboarding/undo` to let the
+ * user revise their previous answer.
+ *
+ * The working profile is NOT re-derived here — the next conductor
+ * call will regenerate `workingProfile` from the truncated turns
+ * array, which is the correct behavior since the conductor rebuilds
+ * the profile from evidence on every turn.
+ *
+ * No-op if there is no answered turn to undo (empty session or only
+ * a pending first question).
+ */
+export async function undoLastAnsweredTurn(
+  svc: Svc,
+  session: OnboardingSessionState,
+): Promise<OnboardingSessionState> {
+  const turns = [...session.turns];
+  // Drop any trailing pending (unanswered) turn first so we don't lose
+  // an ongoing conductor question — we only undo the last COMMITTED
+  // answer. Then drop the most recent answered turn.
+  while (turns.length > 0 && turns[turns.length - 1].answer === null) {
+    turns.pop();
+  }
+  if (turns.length === 0) return session;
+  turns.pop();
+  return updateSession(svc, session.sessionId, { turns });
 }
 
 export async function markAbandoned(svc: Svc, sessionId: string): Promise<void> {
