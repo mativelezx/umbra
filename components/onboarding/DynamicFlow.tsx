@@ -18,10 +18,17 @@ import type {
   OnboardingTurn,
 } from '@/types';
 
-const MAX_TURNS = 8;
+const DEFAULT_maxTurns = 8;
 
 interface DynamicFlowProps {
   onComplete: (profileId: string) => void;
+  /**
+   * If provided, the flow resumes an existing (usually just-seeded)
+   * onboarding_session instead of creating a fresh one. Used by the
+   * ChatGPT seed entry to pipe the seeded working_profile into the
+   * normal conductor flow for refinement turns.
+   */
+  seededSessionId?: string;
 }
 
 type FlowError =
@@ -30,7 +37,7 @@ type FlowError =
   | { kind: 'consent' }
   | { kind: 'generic'; message: string };
 
-export function DynamicFlow({ onComplete }: DynamicFlowProps) {
+export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
   const sessionId = useOnboardingStore((s) => s.sessionId);
   const workingProfile = useOnboardingStore((s) => s.workingProfile);
 
@@ -40,6 +47,7 @@ export function DynamicFlow({ onComplete }: DynamicFlowProps) {
   const [thinking, setThinking] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [turnNumber, setTurnNumber] = useState(1);
+  const [maxTurns, setMaxTurns] = useState(DEFAULT_maxTurns);
   const [localInsights, setLocalInsights] = useState<InsightPingType[]>([]);
   const [synthesizing, setSynthesizing] = useState(false);
   const [error, setError] = useState<FlowError | null>(null);
@@ -65,6 +73,7 @@ export function DynamicFlow({ onComplete }: DynamicFlowProps) {
       if (res.insights.length > 0) pushInsights(res.insights);
       setCurrentQuestion(res.turn.question);
       setTurnNumber(res.turnNumber);
+      if (res.maxTurns) setMaxTurns(res.maxTurns);
       if (res.done) api.markDone();
     },
     [pushInsights],
@@ -150,6 +159,17 @@ export function DynamicFlow({ onComplete }: DynamicFlowProps) {
       api.applyProfileUpdate(emptyWorkingProfile());
       demoStep.current = 0;
       advanceDemo();
+      return;
+    }
+
+    // Seeded entry: a fresh onboarding_session was just created from a
+    // ChatGPT retrato. Hydrate the store with that sessionId and ask the
+    // conductor for the first (refinement) question.
+    if (seededSessionId) {
+      const api = useOnboardingStore.getState();
+      api.reset();
+      api.startSession(seededSessionId);
+      fetchNext(null);
       return;
     }
 
@@ -265,7 +285,7 @@ export function DynamicFlow({ onComplete }: DynamicFlowProps) {
           workingProfile={workingProfile}
           insights={localInsights}
           turnNumber={turnNumber}
-          maxTurns={MAX_TURNS}
+          maxTurns={maxTurns}
           onExpireInsight={expireInsight}
         />
       </div>

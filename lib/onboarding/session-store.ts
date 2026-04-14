@@ -32,6 +32,7 @@ function rowToState(row: DbRow): OnboardingSessionState {
     status: row.status,
     turns: row.turns,
     workingProfile: row.working_profile,
+    flags: row.flags ?? {},
     startedAt: row.started_at,
     updatedAt: row.updated_at,
     completedAt: row.completed_at ?? undefined,
@@ -52,6 +53,40 @@ export async function createSession(svc: Svc, userId: string): Promise<Onboardin
     .single();
   if (error || !data) {
     throw new Error(`[session-store] createSession failed: ${error?.message ?? 'unknown'}`);
+  }
+  return rowToState(data as DbRow);
+}
+
+/**
+ * Creates a seeded session from an external retrato (ChatGPT output). The
+ * working profile is pre-populated from the parser output; flags mark the
+ * session so the conductor knows to run in refinement mode.
+ */
+export async function createSeededSession(
+  svc: Svc,
+  userId: string,
+  workingProfile: WorkingProfile,
+  rawSeedText: string,
+): Promise<OnboardingSessionState> {
+  const { data, error } = await svc
+    .from('onboarding_sessions')
+    .insert({
+      user_id: userId,
+      status: 'in_progress',
+      turns: [],
+      working_profile: workingProfile,
+      flags: {
+        seeded: true,
+        seedSource: 'chatgpt',
+        seedLength: rawSeedText.length,
+      },
+    })
+    .select('*')
+    .single();
+  if (error || !data) {
+    throw new Error(
+      `[session-store] createSeededSession failed: ${error?.message ?? 'unknown'}`,
+    );
   }
   return rowToState(data as DbRow);
 }

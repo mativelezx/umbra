@@ -140,13 +140,18 @@ export const POST = withErrorHandler(async (req) => {
   if (!chargeRow?.allowed) throw new RateLimitError(86400);
 
   const turnNumber = session.turns.length + 1;
+  const isSeeded = session.flags?.seeded === true;
+  // Seeded sessions run shorter (3 refinement turns) since the baseline
+  // profile is already pre-populated from the external retrato.
+  const sessionMaxTurns = isSeeded ? 3 : DEFAULT_MAX_TURNS;
   const { system, prompt } = buildOnboardingConductorPrompt({
     priorTurns: session.turns,
     workingProfile: session.workingProfile,
     previousAnswer: body.previousAnswer,
     turnNumber,
-    maxTurns: DEFAULT_MAX_TURNS,
+    maxTurns: sessionMaxTurns,
     confidenceThreshold: DEFAULT_CONFIDENCE_THRESHOLD,
+    seeded: isSeeded,
   });
 
   let actualInput = 0;
@@ -197,7 +202,7 @@ export const POST = withErrorHandler(async (req) => {
       insights: cleanInsights,
       done: parsed.done,
       turnNumber: updated.turns.length,
-      maxTurns: DEFAULT_MAX_TURNS,
+      maxTurns: sessionMaxTurns,
     };
 
     return envelope;
@@ -214,7 +219,7 @@ export const POST = withErrorHandler(async (req) => {
     const fallback = buildFallbackOpenTextQuestion(turnNumber - 1, exclude);
     const updated = await commitFallbackTurn(service, session, fallback);
 
-    const done = updated.turns.length >= DEFAULT_MAX_TURNS;
+    const done = updated.turns.length >= sessionMaxTurns;
     if (done) await markCompleted(service, updated.sessionId);
 
     const envelope: OnboardingNextResponse = {
@@ -224,7 +229,7 @@ export const POST = withErrorHandler(async (req) => {
       insights: [],
       done,
       turnNumber: updated.turns.length,
-      maxTurns: DEFAULT_MAX_TURNS,
+      maxTurns: sessionMaxTurns,
     };
     return envelope;
   } finally {

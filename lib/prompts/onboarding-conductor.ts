@@ -16,9 +16,16 @@ export interface ConductorPromptParams {
   turnNumber: number;
   maxTurns: number;
   confidenceThreshold: number;
+  /**
+   * When true, the session was seeded externally (e.g. from a ChatGPT
+   * retrato). The conductor should treat turn 1 as a refinement question
+   * on the lowest-confidence dimension, not the default open_text opener.
+   */
+  seeded?: boolean;
 }
 
 export const DEFAULT_MAX_TURNS = 8;
+export const DEFAULT_SEEDED_MAX_TURNS = 3;
 export const DEFAULT_CONFIDENCE_THRESHOLD = 75;
 
 const SYSTEM = `Sos un entrevistador conductor para Umbra, una herramienta de autoconocimiento. Tu tarea es guiar una conversación corta (6 a 8 turnos) donde, en cada turno, elegís UNA interacción que maximice la información sobre el perfil psicológico del usuario, triangulando Big Five (IPIP-NEO), funciones cognitivas de Jung (1921) y arquetipos aplicados de Pearson (1991).
@@ -32,12 +39,23 @@ Después de cada respuesta, hacés tres cosas:
 
 Devolvés SOLO JSON estricto con la estructura especificada. Sin markdown, sin texto fuera del JSON.`;
 
-const DECISION_RULES = (maxTurns: number, threshold: number): string => `
+const DECISION_RULES = (
+  maxTurns: number,
+  threshold: number,
+  seeded: boolean,
+): string => `
 ## Reglas de decisión
 - Elegí el tipo de interacción que maximiza information gain dada la incertidumbre actual. Mirá las dimensiones con MENOR confianza primero.
-- NO repitas el mismo tipo en turnos consecutivos.
-- El primer turno SIEMPRE es open_text (apertura, baseline).
-- Variá entre los 6 tipos disponibles (open_text, multi_choice, scenario, ranking, polarity, metaphor). Buscá al menos 4 tipos distintos en ${maxTurns} turnos.
+- NO repitas el mismo tipo en turnos consecutivos.${
+  seeded
+    ? '\n- La sesión ya viene SEMBRADA con un retrato externo (working profile pre-cargado). NO arranques con open_text baseline — el baseline ya existe. Elegí un tipo interactivo (scenario, polarity, ranking, metaphor, multi_choice) que VERIFIQUE la dimensión con MENOR confianza actual. Buscá evidencia que confirme o contradiga lo que el retrato externo dice.\n- El objetivo de esta sesión seeded es refinar, no descubrir desde cero. ${maxTurns} turnos totales, enfocados en bajar incertidumbre de las dimensiones más débiles.'
+    : '\n- El primer turno SIEMPRE es open_text (apertura, baseline).'
+}
+- Variá entre los 6 tipos disponibles (open_text, multi_choice, scenario, ranking, polarity, metaphor). ${
+  seeded
+    ? 'En sesión seeded priorizá los tipos interactivos por encima de open_text.'
+    : `Buscá al menos 4 tipos distintos en ${maxTurns} turnos.`
+}
 - Para multi_choice / scenario / ranking / metaphor: cada opción DEBE tener un campo "meaning" privado que describa qué señal codifica (ej: "alta Ne + baja Si"). NUNCA se muestran al usuario.
 - polarity: dos polos REALES de un eje psicológico, no falsos opuestos.
 - Marcá done=true si:
@@ -212,6 +230,7 @@ export function buildOnboardingConductorPrompt(params: ConductorPromptParams): {
     turnNumber,
     maxTurns,
     confidenceThreshold,
+    seeded = false,
   } = params;
 
   const sections: string[] = [];
@@ -262,13 +281,15 @@ export function buildOnboardingConductorPrompt(params: ConductorPromptParams): {
     );
   }
 
-  sections.push(DECISION_RULES(maxTurns, confidenceThreshold));
+  sections.push(DECISION_RULES(maxTurns, confidenceThreshold, seeded));
   sections.push(OUTPUT_SCHEMA_DESCRIPTION);
   sections.push(
-    `## Tu tarea ahora\n\nEstás en el turno ${turnNumber} de un máximo de ${maxTurns}. ${
-      turnNumber === 1
-        ? 'Este es el turno de apertura — nextQuestion DEBE ser open_text. No evalúes respuesta previa (no hay).'
-        : 'Procesá la respuesta más reciente, actualizá el perfil y decidí la próxima interacción (o marcá done).'
+    `## Tu tarea ahora\n\nEstás en el turno ${turnNumber} de un máximo de ${maxTurns}.${
+      seeded && turnNumber === 1
+        ? ' La sesión está SEMBRADA por un retrato externo (ChatGPT). El working profile ya tiene datos iniciales. Tu job es verificar/refinar: elegí un tipo interactivo (scenario, polarity, ranking, metaphor o multi_choice) que pruebe la dimensión con MENOR confianza. NO uses open_text para este primer turno — el baseline ya existe.'
+        : turnNumber === 1
+          ? ' Este es el turno de apertura — nextQuestion DEBE ser open_text. No evalúes respuesta previa (no hay).'
+          : ' Procesá la respuesta más reciente, actualizá el perfil y decidí la próxima interacción (o marcá done).'
     }\n\nDevolvé SOLO el JSON.`,
   );
 
