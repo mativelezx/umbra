@@ -98,9 +98,17 @@ test.describe('QA screenshots (visual evidence)', () => {
     await page.locator('input[type="checkbox"]').first().check();
     await page.getByRole('button', { name: /^Continuar$/i }).click();
 
-    // 4. Onboarding — dynamic flow, screenshot each turn
+    // 4. Mode selector → pick dynamic flow
     await page.waitForURL('**/onboarding', { timeout: 15_000 });
-    await expect(page.getByRole('heading', { name: /Conversemos/i }))
+    await expect(page.getByRole('heading', { name: /Por dónde te gusta entrar/i }))
+      .toBeVisible({ timeout: 15_000 });
+    await shot(page, '03b-mode-selector');
+    await page
+      .getByRole('button', { name: /Opción A/i })
+      .click();
+
+    // 5. Dynamic flow — screenshot each turn
+    await expect(page.getByRole('heading', { name: /^Conversemos$/i }))
       .toBeVisible({ timeout: 15_000 });
     await shot(page, '04-onboarding-start');
 
