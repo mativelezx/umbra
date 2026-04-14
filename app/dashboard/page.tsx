@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { LayoutShell } from '@/components/layout/LayoutShell';
 import { ArchetypeCard } from '@/components/dashboard/ArchetypeCard';
 import { NarrativeSection } from '@/components/dashboard/NarrativeSection';
+import { NarrativeTOC } from '@/components/dashboard/NarrativeTOC';
 import { BigFiveRadar } from '@/components/dashboard/BigFiveRadar';
 import { JungAxisView } from '@/components/dashboard/JungAxisView';
 import { QuickGlance } from '@/components/dashboard/QuickGlance';
@@ -34,6 +35,8 @@ interface DashboardData {
   secondary: string;
   profileId: string;
   narrativeContent: string | null;
+  confidence: number | null;
+  turnsCount: number | null;
   letter: {
     id: string;
     content: string;
@@ -65,20 +68,30 @@ function DashboardView({ data }: { data: DashboardData }) {
         </div>
 
         {/* ARCHETYPE HERO */}
-        <ArchetypeCard archetype={data.archetype} secondary={data.secondary} />
+        <ArchetypeCard
+          archetype={data.archetype}
+          secondary={data.secondary}
+          confidence={data.confidence}
+          turnsCount={data.turnsCount}
+        />
 
         {/* QUICK GLANCE — 3 cards above the fold */}
         <QuickGlance
           bigFive={data.bigFive}
           jungFunctions={data.jungFunctions}
           archetypeName={archetypeName}
+          confidence={data.confidence}
+          turnsCount={data.turnsCount}
         />
 
-        {/* NARRATIVA — sectioned with iconography */}
-        <NarrativeSection
-          profileId={data.profileId}
-          initialContent={data.narrativeContent}
-        />
+        {/* NARRATIVA — sectioned with iconography + sticky TOC on desktop */}
+        <div className="lg:grid lg:grid-cols-[180px_1fr] lg:gap-10">
+          <NarrativeTOC />
+          <NarrativeSection
+            profileId={data.profileId}
+            initialContent={data.narrativeContent}
+          />
+        </div>
 
         {/* DATA VIZ — 2 columns */}
         <div className="grid gap-6 md:grid-cols-2">
@@ -123,6 +136,8 @@ export default async function DashboardPage() {
           secondary: DEMO_ARCHETYPE_SECONDARY,
           profileId: DEMO_PROFILE_ID,
           narrativeContent: DEMO_NARRATIVE,
+          confidence: 82,
+          turnsCount: 14,
           letter: {
             id: DEMO_CARTA_LETTER.id,
             content: DEMO_CARTA_LETTER.content,
@@ -174,6 +189,19 @@ export default async function DashboardPage() {
   const archetype = (profileRow.archetype ?? 'sage') as Archetype;
   const secondary = profileRow.archetype_secondary ?? '';
 
+  // Extract confidence from analysis_raw (Claude analyzer output).
+  // Stored as JSONB; narrow with a typed view rather than `any`.
+  const analysisRaw = profileRow.analysis_raw as
+    | { confidence?: number }
+    | null;
+  const confidence =
+    typeof analysisRaw?.confidence === 'number' ? analysisRaw.confidence : null;
+
+  // Number of introspective text inputs that backed the analysis. Surfaced as
+  // transparency ("basado en N respuestas") per PAIR Explainability heuristics.
+  const inputTextsRaw = profileRow.input_texts as string[] | null;
+  const turnsCount = Array.isArray(inputTextsRaw) ? inputTextsRaw.length : null;
+
   const { data: profileMeta } = await supabase
     .from('profiles')
     .select('full_name, created_at')
@@ -207,6 +235,8 @@ export default async function DashboardPage() {
         secondary,
         profileId: profileRow.id,
         narrativeContent: narrativeRow?.content ?? null,
+        confidence,
+        turnsCount,
         letter: letterRow ?? null,
       }}
     />

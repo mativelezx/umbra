@@ -5,15 +5,20 @@ import {
   Heart,
   Path,
 } from '@phosphor-icons/react/dist/ssr';
+import { slugFromHeading } from '@/lib/dimensions/narrative-sections';
 
 interface SectionedNarrativeProps {
   content: string;
   streaming?: boolean;
 }
 
+type Block =
+  | { kind: 'paragraph'; text: string }
+  | { kind: 'quote'; text: string };
+
 interface Section {
   heading: string;
-  body: string;
+  blocks: Block[];
   icon: React.ReactNode;
 }
 
@@ -33,6 +38,49 @@ function iconForHeading(heading: string): React.ReactNode {
 }
 
 /**
+ * Splits a section body into blocks: regular paragraphs and blockquote
+ * "pull quotes" (lines prefixed with `> ` in the source markdown). Pull
+ * quotes are rendered as large visual callouts that break the prose flow.
+ */
+function parseBlocks(body: string): Block[] {
+  const trimmed = body.trim();
+  if (trimmed.length === 0) return [];
+
+  // Split on double newlines to get logical paragraphs; each chunk is
+  // either a blockquote (every line starts with `> `) or a paragraph.
+  const chunks = trimmed.split(/\n{2,}/);
+  const blocks: Block[] = [];
+
+  for (const chunk of chunks) {
+    const lines = chunk.split('\n');
+    const allQuote = lines.every((line) => /^>\s*/.test(line));
+    if (allQuote) {
+      const text = lines
+        .map((line) => line.replace(/^>\s?/, ''))
+        .join(' ')
+        .trim();
+      if (text.length > 0) {
+        blocks.push({ kind: 'quote', text });
+      }
+      continue;
+    }
+    // Mixed or pure paragraph — join contiguous non-quote lines as a single
+    // paragraph. Any embedded quote line within a paragraph-looking chunk
+    // is unusual; for robustness, we strip the leading `> ` and keep it as
+    // part of the paragraph.
+    const text = lines
+      .map((line) => (line.startsWith('> ') ? line.replace(/^>\s?/, '') : line))
+      .join(' ')
+      .trim();
+    if (text.length > 0) {
+      blocks.push({ kind: 'paragraph', text });
+    }
+  }
+
+  return blocks;
+}
+
+/**
  * Parses narrative markdown into sections. Expects the narrative to start
  * with `## Heading` lines. If the narrative has no markdown headers (legacy
  * format or streaming partial), falls back to rendering the whole thing as
@@ -48,7 +96,7 @@ function parseSections(content: string): Section[] {
     if (currentHeading !== null) {
       sections.push({
         heading: currentHeading,
-        body: currentBody.join('\n').trim(),
+        blocks: parseBlocks(currentBody.join('\n')),
         icon: iconForHeading(currentHeading),
       });
     }
@@ -73,7 +121,7 @@ function parseSections(content: string): Section[] {
   if (sections.length === 0 && content.trim().length > 0) {
     sections.push({
       heading: '',
-      body: content.trim(),
+      blocks: parseBlocks(content),
       icon: <Sparkle size={22} weight="duotone" />,
     });
   }
@@ -92,7 +140,8 @@ export function SectionedNarrative({
       {sections.map((section, i) => (
         <section
           key={`${i}-${section.heading}`}
-          className="relative border-l border-violet-400/15 pl-6 md:pl-8"
+          id={section.heading ? slugFromHeading(section.heading) : undefined}
+          className="relative scroll-mt-24 border-l border-violet-400/15 pl-6 md:pl-8"
         >
           <div className="absolute -left-[11px] top-1 flex h-5 w-5 items-center justify-center rounded-full border border-violet-400/40 bg-umbra-void text-violet-300">
             {section.icon}
@@ -105,22 +154,36 @@ export function SectionedNarrative({
           <div
             className={`font-display italic text-text-1 ${
               section.heading ? 'mt-3' : ''
-            } text-lg leading-[1.85] md:text-xl md:leading-[1.75]`}
+            } max-w-[68ch] text-lg leading-[1.85] md:text-xl md:leading-[1.75]`}
           >
-            {section.body.split(/\n{2,}/).map((paragraph, idx) => (
-              <p key={idx} className={idx > 0 ? 'mt-4' : ''}>
-                {idx === 0 && i === 0 && paragraph.length > 0 ? (
-                  <>
-                    <span className="float-left mr-2 mt-1 font-display text-5xl leading-none italic text-violet-300 md:text-6xl">
-                      {paragraph.charAt(0)}
-                    </span>
-                    {paragraph.slice(1)}
-                  </>
-                ) : (
-                  paragraph
-                )}
-              </p>
-            ))}
+            {section.blocks.map((block, idx) => {
+              if (block.kind === 'quote') {
+                return (
+                  <blockquote
+                    key={idx}
+                    className="my-6 border-l-2 border-violet-400/50 pl-5 font-display text-xl not-italic text-text-1/95 md:pl-6 md:text-2xl"
+                  >
+                    <span className="italic">{block.text}</span>
+                  </blockquote>
+                );
+              }
+              const isFirstParagraphOfOpener =
+                idx === 0 && i === 0 && block.text.length > 0;
+              return (
+                <p key={idx} className={idx > 0 ? 'mt-4' : ''}>
+                  {isFirstParagraphOfOpener ? (
+                    <>
+                      <span className="float-left mr-2 mt-1 font-display text-5xl leading-none italic text-violet-300 md:text-6xl">
+                        {block.text.charAt(0)}
+                      </span>
+                      {block.text.slice(1)}
+                    </>
+                  ) : (
+                    block.text
+                  )}
+                </p>
+              );
+            })}
           </div>
         </section>
       ))}

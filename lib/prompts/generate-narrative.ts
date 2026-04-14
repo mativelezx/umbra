@@ -72,7 +72,35 @@ Una reflexión sobre el camino por explorar. Honesta, sin promesas mágicas. Ter
 - **Evitá**: "tu perfil muestra...", "según los resultados...", "tu mente funciona como...". Evitá la distancia clínica.
 - **Buscá**: ver a la persona. Escribí como si te importara.
 
-Devolvé SOLO la narrativa (con los 5 headers markdown), sin preámbulo ni comentarios.`;
+## Frases destacadas (pull quotes)
+
+Dentro de CADA sección, marcá entre 1 y 2 frases esenciales con \`> \` al
+inicio de línea (sintaxis blockquote markdown). Umbra las renderiza como
+pull quotes — citas visuales grandes que rompen la prosa. Reglas:
+
+- La frase marcada debe sintetizar el párrafo, ser la imagen más fuerte,
+  o la verdad incómoda. Debe poder leerse sola.
+- Formato: línea separada, empieza con \`> \` y un espacio. Sin comillas,
+  sin negritas. Solo la frase en su propio renglón, con un párrafo antes
+  y otro después.
+- NO marques frases genéricas ni afirmaciones vagas ("todo cambia cuando
+  te conocés"). Marcá solo frases específicas a ESTE perfil.
+- NO marques la primera línea de una sección. Marcá la frase clave del
+  cuerpo.
+- Si no hay una frase realmente digna de destacar en alguna sección, no
+  marques ninguna. Mejor omitir que forzar.
+
+Ejemplo dentro de "Lo que te cuesta":
+
+La tensión entre tu pensamiento estructurado y tu intuición flotante no es
+un defecto: es el lugar donde todavía estás aprendiendo a moverte.
+
+> No estás roto, estás en proceso de integrar dos maneras distintas de ver el mundo.
+
+Eso significa que cuando tu planificación choca con tu apertura...
+
+Devolvé SOLO la narrativa (con los 5 headers markdown y los pull quotes
+marcados con \`> \`), sin preámbulo ni comentarios.`;
 
   return { system: SYSTEM, prompt };
 }

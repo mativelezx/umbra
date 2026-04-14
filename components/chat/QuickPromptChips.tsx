@@ -12,6 +12,14 @@ import type { ChatShellProfile } from './ChatShell';
 interface QuickPromptChipsProps {
   profile: ChatShellProfile;
   onPick: (prompt: string) => void;
+  /**
+   * Compact mode: horizontal scroll strip of small chips, meant to sit
+   * above the ChatInput during an active conversation. Non-compact is
+   * the hero layout used when the chat is empty. PAIR Feedback + Control:
+   * prompts remain accessible mid-conversation so the user never runs out
+   * of entry points into the mirror.
+   */
+  compact?: boolean;
 }
 
 interface QuickPrompt {
@@ -28,8 +36,35 @@ interface QuickPrompt {
  * the technical Jung/Big Five hint so Claude grounds the conversation
  * in the user's real profile.
  */
-export function QuickPromptChips({ profile, onPick }: QuickPromptChipsProps) {
+export function QuickPromptChips({
+  profile,
+  onPick,
+  compact = false,
+}: QuickPromptChipsProps) {
   const prompts = buildPrompts(profile);
+
+  if (compact) {
+    return (
+      <div
+        className="mb-3 flex gap-2 overflow-x-auto pb-1"
+        aria-label="Sugerencias de prompts basadas en tu perfil"
+      >
+        {prompts.map((p, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => onPick(p.prompt)}
+            className="group inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-violet-400/15 bg-umbra-shadow/40 px-3 py-1.5 font-body text-xs text-text-2 transition-all duration-200 hover:border-violet-400/40 hover:bg-violet-400/5 hover:text-text-1"
+          >
+            <span className="text-violet-300 transition-transform duration-200 group-hover:scale-110">
+              {p.icon}
+            </span>
+            <span>{p.label}</span>
+          </button>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="mb-6 flex flex-col gap-3">

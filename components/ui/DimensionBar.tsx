@@ -1,6 +1,13 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { InfoPopover } from '@/components/ui/InfoPopover';
+
+interface DimensionInfo {
+  title: string;
+  body: string;
+  example?: string;
+}
 
 interface DimensionBarProps {
   label: string;
@@ -8,6 +15,14 @@ interface DimensionBarProps {
   maxValue?: number;
   emphasized?: boolean;
   className?: string;
+  /**
+   * Optional InfoPopover content. When provided, a small "?" button is
+   * rendered next to the label that reveals a plain-spanish explanation
+   * of the dimension. Core PAIR Explainability heuristic — every
+   * technical term on screen should be one click from a friendly
+   * explanation.
+   */
+  info?: DimensionInfo;
 }
 
 export function DimensionBar({
@@ -16,20 +31,24 @@ export function DimensionBar({
   maxValue = 100,
   emphasized = false,
   className,
+  info,
 }: DimensionBarProps) {
   const percent = Math.min(100, Math.max(0, (value / maxValue) * 100));
 
   return (
     <div className={cn('flex flex-col gap-1.5', className)}>
       <div className="flex items-center justify-between">
-        <span
-          className={cn(
-            'font-heading text-sm',
-            emphasized ? 'text-violet-300 font-semibold' : 'text-text-2',
-          )}
-        >
-          {label}
-        </span>
+        <div className="flex items-center gap-1.5">
+          <span
+            className={cn(
+              'font-heading text-sm',
+              emphasized ? 'text-violet-300 font-semibold' : 'text-text-2',
+            )}
+          >
+            {label}
+          </span>
+          {info && <InfoPopover {...info} />}
+        </div>
         <span
           className={cn(
             'font-mono text-xs tabular-nums',

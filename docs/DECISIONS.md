@@ -437,3 +437,104 @@ Esta migration es parte de Fase 5 del IMPLEMENTATION_PLAN.md (task T5.8).
   nuevo schema.
 - **Linked to**: IMPLEMENTATION_PLAN.md T5.8, ADR-021 (pepper versioning —
   mismo patrón de immutable audit trail).
+
+## ADR-025 — Aplicación de heurísticas Google PAIR en Fase 1 Dashboard/Chat/Onboarding
+**Status**: Accepted (2026-04-14)
+**Context**: El IMPLEMENTATION_PLAN.md Fase 1 introduce 7 cambios de UX
+(confidence surface, pull quotes, line-length 65ch, sticky TOC con
+scroll-spy, InfoPopover en dimensiones Big Five/Jung, InsightPing
+colapsable, QuickPromptChips siempre visibles). Para un TFG de Ingeniería
+en Software estas mejoras necesitan estar fundamentadas como decisiones
+técnicas defendibles, no como preferencia estética. Sin una fundamentación
+explícita, un tribunal puede objetar "son solo cambios de estilo". La
+literatura de HCI aplicada a IA tiene un marco establecido y citable: el
+**People + AI Guidebook** de Google PAIR (pair.withgoogle.com/guidebook),
+con 6 capítulos de heurísticas que cubren todo el ciclo de vida de un
+producto human-centered AI: (1) User Needs + Success Definition,
+(2) Data Collection + Evaluation, (3) Mental Models, (4) Explainability +
+Trust, (5) Feedback + Control, (6) Errors + Graceful Failure.
+**Decision**: Cada tarea de Fase 1 se mapea explícitamente a uno de los
+capítulos del PAIR Guidebook y se documenta el racional:
+
+- **T1.1 Confidence surface** (ArchetypeCard + QuickGlance) → PAIR cap. 4
+  Explainability + Trust. Fundamento: "the user should be able to see
+  the model's confidence in its output and the basis for that
+  confidence". Implementación: se lee `analysis_raw.confidence` del
+  profileRow, se renderiza como barra + porcentaje + "basado en N
+  respuestas" con InfoPopover que explica qué significa certeza baja vs
+  alta. El usuario entiende que un valor bajo no es "falla" sino
+  "refinable con más contexto".
+- **T1.2 Pull quotes** (SectionedNarrative parser + prompt) → PAIR cap. 3
+  Mental Models. Fundamento: los modelos mentales se construyen mejor
+  con anclas memorables, no con texto plano. Implementación: el prompt
+  de generación de narrativa ahora instruye a Claude a marcar 1-2
+  frases esenciales por sección con \`> \` (markdown blockquote); el
+  parser reconoce esos blockquotes y los renderiza como callouts
+  italic grandes. La prosa gana ritmo y el usuario recuerda las frases
+  destacadas mucho más que un muro de texto.
+- **T1.3 Line-length 65ch** → PAIR cap. 3 Mental Models (cognitive load
+  reduction). Fundamento: la investigación en tipografía (Bringhurst
+  2005, Smashing 2022) establece que líneas de 60-80 caracteres son
+  óptimas para comprensión. Implementación: la columna interna de
+  SectionedNarrative se restringe a \`max-w-[68ch]\`, lo cual deja ~65ch
+  para la prosa y aproxima los pull quotes dentro del mismo ritmo.
+- **T1.4 Sticky TOC con scroll-spy** (NarrativeTOC nuevo) → PAIR cap. 5
+  Feedback + Control. Fundamento: el usuario necesita saber dónde está
+  y poder navegar un documento largo sin perder contexto. Implementación:
+  nuevo componente client-side que usa IntersectionObserver para spy la
+  sección visible y resaltar su anchor. Los 5 headers (Apertura, Cómo
+  te movés, Lo que te cuesta, Lo que te mueve, Lo que queda por explorar)
+  son fijos por el prompt de narrativa, así que la fuente de verdad está
+  en \`lib/dimensions/narrative-sections.ts\` con regex + slugs. Visible
+  solo en \`lg:\` (desktop) para no crowdear el scroll en mobile.
+- **T1.5 InfoPopover en dimensiones** (DimensionBar + LiveProfilePanel +
+  QuickGlance + JungAxisView) → PAIR cap. 4 Explainability + Trust y
+  cap. 3 Mental Models. Fundamento: toda etiqueta técnica que ve el
+  usuario (openness, conscientiousness, Ni, Ti, etc.) debe estar a un
+  click de una explicación en español plano con ejemplo. Implementación:
+  \`DimensionBar\` gana un prop opcional \`info\` con title/body/example;
+  si está presente, renderiza un botón "?" al lado del label que abre
+  un popover. Se aplica a las 5 Big Five + 8 funciones Jung en
+  LiveProfilePanel y QuickGlance; JungAxisView ya lo tenía desde antes.
+- **T1.6 InsightPing colapsable** (InsightPing simplificado +
+  LiveProfilePanel con botón toggle) → PAIR cap. 5 Feedback + Control.
+  Fundamento: los insights generados durante el onboarding son
+  discoveries del usuario sobre sí mismo; hacerlos auto-expire en 4.2s
+  los vuelve efímeros, el usuario los pierde si está leyendo la pregunta.
+  Implementación: InsightPing ya no tiene setTimeout; LiveProfilePanel
+  renderiza los insights como una lista colapsable con header
+  "Descubrimientos · N" + caret que toggle expand/collapse. Por default
+  expandido; el usuario puede contraer para reducir clutter visual.
+- **T1.7 QuickPromptChips siempre visibles** (QuickPromptChips con prop
+  \`compact\` + ChatShell siempre renderiza) → PAIR cap. 5 Feedback +
+  Control y cap. 1 User Needs + Success. Fundamento: los prompts
+  sugeridos son entry-points al mirror; limitarlos al empty state
+  significa que una vez que la conversación arranca, el usuario no tiene
+  forma de volver a descubrir qué preguntas puede hacer. Implementación:
+  QuickPromptChips ahora acepta \`compact?: boolean\`; el ChatShell los
+  renderiza siempre que haya profile, con \`compact={!isEmpty}\` —
+  horizontal scroll strip de 4 pills pequeñas arriba del ChatInput cuando
+  hay mensajes, hero full-size cuando el chat está vacío.
+
+**Consequences**:
+- **Ganancia académica**: cada cambio de UX está citable en el capítulo
+  de Implementación de la tesis con una referencia al PAIR Guidebook,
+  transformando "mejoras de estilo" en "aplicación de heurísticas HCI
+  validadas". El tribunal no puede objetar "son solo cambios estéticos".
+- **Ganancia de producto**: las decisiones son internamente consistentes
+  (todas las partes del sistema reducen jerga via InfoPopover, todas
+  refuerzan mental models via pull quotes + TOC, todas dan control al
+  usuario via collapsible + chips) — el producto se siente más pensado.
+- **Costo**: los cambios se deben describir uno a uno en la tesis (no
+  agrupar como "polish"). Agrega ~2 páginas al capítulo de
+  Implementación pero son páginas defendibles.
+- **Positive Computing alignment**: los 7 cambios respetan autonomía
+  (el usuario navega, no el sistema), competencia (entiende lo que ve
+  sin jerga clínica), y relación (el mirror sigue sintiéndose cercano,
+  no clínico). Linkea directamente con [ETHICS.md](biz/ETHICS.md) Calvo
+  & Peters principles.
+- **Linked to**: IMPLEMENTATION_PLAN.md Fase 1, [VALIDATION.md](biz/VALIDATION.md)
+  RQ4, [biz/TFG.md](biz/TFG.md) Metodología, PAIR Guidebook
+  (https://pair.withgoogle.com/guidebook/).
+- **Superseded by**: future ADRs if PAIR Guidebook is updated or if the
+  narrative structure changes.

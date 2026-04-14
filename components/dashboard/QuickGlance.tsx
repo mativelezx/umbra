@@ -19,7 +19,8 @@ interface QuickGlanceProps {
   bigFive: BigFive;
   jungFunctions: JungFunctions;
   archetypeName: string;
-  confidence?: number;
+  confidence?: number | null;
+  turnsCount?: number | null;
 }
 
 const BIG_FIVE_ICON: Record<keyof BigFive, React.ReactNode> = {
@@ -35,6 +36,7 @@ export function QuickGlance({
   jungFunctions,
   archetypeName,
   confidence,
+  turnsCount,
 }: QuickGlanceProps) {
   // Big Five: pick the dimension that deviates most from 50 — most
   // informative for a quick glance.
@@ -54,44 +56,85 @@ export function QuickGlance({
   const [topJungKey, topJungVal] = jungSorted[0];
   const topJungLabel = JUNG_LABELS[topJungKey];
 
+  const showCertaintyBanner = typeof confidence === 'number';
+
   return (
-    <section
-      aria-label="Perfil en un vistazo"
-      className="grid grid-cols-1 gap-4 md:grid-cols-3"
-    >
-      <GlanceCard
-        label="Tu mayor fuerza Big Five"
-        icon={BIG_FIVE_ICON[topBf.key]}
-        title={topBfLabel.label}
-        value={topBf.value}
-        caption={topBfPos.phrase}
-        popover={{
-          title: topBfLabel.label,
-          body: topBfLabel.long,
-          example: topBf.value >= 50 ? topBfLabel.highExample : topBfLabel.lowExample,
-        }}
-      />
-      <GlanceCard
-        label="Cómo tu mente capta el mundo"
-        icon={<Lightbulb size={18} weight="duotone" />}
-        title={topJungLabel.label}
-        value={topJungVal}
-        caption="tu función dominante"
-        technicalCode={topJungLabel.code}
-        popover={{
-          title: `${topJungLabel.label} · ${topJungLabel.code}`,
-          body: topJungLabel.long,
-          example: topJungLabel.example,
-        }}
-      />
-      <GlanceCard
-        label="Arquetipo dominante"
-        icon={<Mountains size={18} weight="duotone" />}
-        title={archetypeName}
-        subtitleValue={confidence != null ? `${confidence}%` : 'confirmado'}
-        caption="confianza en el retrato"
-        accent
-      />
+    <section aria-label="Perfil en un vistazo" className="flex flex-col gap-4">
+      {showCertaintyBanner && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-violet-400/10 bg-umbra-shadow/30 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-text-3">
+              Vistazo rápido
+            </p>
+            <InfoPopover
+              title="¿Qué mido en el vistazo rápido?"
+              body="Elegimos automáticamente tu dimensión Big Five más distintiva, tu función cognitiva dominante y tu arquetipo. Son tres puntos de entrada — no un resumen completo del perfil."
+            />
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-[10px] uppercase tracking-wider text-text-3">
+              Certeza
+            </span>
+            <div
+              className="relative h-1 w-24 overflow-hidden rounded-full bg-umbra-shadow/70"
+              role="progressbar"
+              aria-label="Certeza del retrato"
+              aria-valuenow={confidence ?? 0}
+              aria-valuemin={0}
+              aria-valuemax={100}
+            >
+              <div
+                className="absolute inset-y-0 left-0 bg-gradient-to-r from-violet-500 to-violet-200"
+                style={{ width: `${Math.min(100, Math.max(0, confidence ?? 0))}%` }}
+              />
+            </div>
+            <span className="font-mono text-xs tabular-nums text-violet-200">
+              {confidence}%
+            </span>
+            {typeof turnsCount === 'number' && turnsCount > 0 && (
+              <span className="font-mono text-[10px] text-text-3">
+                · {turnsCount}{' '}
+                {turnsCount === 1 ? 'respuesta' : 'respuestas'}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <GlanceCard
+          label="Tu mayor fuerza Big Five"
+          icon={BIG_FIVE_ICON[topBf.key]}
+          title={topBfLabel.label}
+          value={topBf.value}
+          caption={topBfPos.phrase}
+          popover={{
+            title: topBfLabel.label,
+            body: topBfLabel.long,
+            example: topBf.value >= 50 ? topBfLabel.highExample : topBfLabel.lowExample,
+          }}
+        />
+        <GlanceCard
+          label="Cómo tu mente capta el mundo"
+          icon={<Lightbulb size={18} weight="duotone" />}
+          title={topJungLabel.label}
+          value={topJungVal}
+          caption="tu función dominante"
+          technicalCode={topJungLabel.code}
+          popover={{
+            title: `${topJungLabel.label} · ${topJungLabel.code}`,
+            body: topJungLabel.long,
+            example: topJungLabel.example,
+          }}
+        />
+        <GlanceCard
+          label="Arquetipo dominante"
+          icon={<Mountains size={18} weight="duotone" />}
+          title={archetypeName}
+          subtitleValue={confidence != null ? `${confidence}%` : 'confirmado'}
+          caption="confianza en el retrato"
+          accent
+        />
+      </div>
     </section>
   );
 }

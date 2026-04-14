@@ -174,10 +174,11 @@ export function ChatShell({ profile }: ChatShellProps) {
                 hideDefaultGreeting={profile != null}
               />
             </div>
-            {isEmpty && profile && (
+            {profile && (
               <QuickPromptChips
                 profile={profile}
                 onPick={(prompt) => handleSend(prompt)}
+                compact={!isEmpty}
               />
             )}
             {error && (
