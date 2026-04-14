@@ -13,9 +13,13 @@ interface ChatMessage {
 
 interface ChatThreadProps {
   messages: ChatMessage[];
+  hideDefaultGreeting?: boolean;
 }
 
-export function ChatThread({ messages }: ChatThreadProps) {
+export function ChatThread({
+  messages,
+  hideDefaultGreeting = false,
+}: ChatThreadProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -23,8 +27,8 @@ export function ChatThread({ messages }: ChatThreadProps) {
   }, [messages]);
 
   return (
-    <div className="flex flex-col gap-5 pb-6">
-      {messages.length === 0 && (
+    <div className="flex flex-col gap-5">
+      {messages.length === 0 && !hideDefaultGreeting && (
         <MessageBubble
           role="assistant"
           content="Hola. ¿En qué estás pensando hoy?"
