@@ -41,7 +41,7 @@ export interface PsychologicalProfile {
   archetype: Archetype;
   archetypeSecondary: string;
   analysisRaw?: Record<string, unknown>;
-  inputMode: 'guided' | 'freetext';
+  inputMode: OnboardingMode;
   inputTexts: string[];
   createdAt: string;
   updatedAt: string;
@@ -114,58 +114,234 @@ export interface UserProfile {
   updatedAt: string;
 }
 
-// ─── Onboarding ───
-export type OnboardingMode = 'guided' | 'freetext' | 'hybrid';
+// ─── Onboarding (Dynamic) ───
+export type OnboardingMode = 'dynamic';
 
-export interface OnboardingArea {
-  key: string;
-  label: string;
-  question: string;
-  placeholder: string;
-  icon: string;
+export type InteractionType =
+  | 'open_text'
+  | 'multi_choice'
+  | 'scenario'
+  | 'ranking'
+  | 'polarity'
+  | 'metaphor';
+
+export type BigFiveDimension =
+  | 'openness'
+  | 'conscientiousness'
+  | 'extraversion'
+  | 'agreeableness'
+  | 'neuroticism';
+
+export type JungFunctionKey =
+  | 'Se'
+  | 'Si'
+  | 'Ne'
+  | 'Ni'
+  | 'Te'
+  | 'Ti'
+  | 'Fe'
+  | 'Fi';
+
+export type ProfileDimension = BigFiveDimension | JungFunctionKey;
+
+export type ProbeTarget =
+  | { kind: 'big_five'; dimension: BigFiveDimension }
+  | { kind: 'jung'; func: JungFunctionKey }
+  | { kind: 'archetype'; candidate: Archetype }
+  | { kind: 'open' };
+
+interface OnboardingQuestionBase {
+  id: string;
+  turnIndex: number;
+  type: InteractionType;
+  prompt: string;
+  helper?: string;
+  probe: ProbeTarget;
 }
 
-export const ONBOARDING_AREAS: OnboardingArea[] = [
-  {
-    key: 'valores',
-    label: 'Valores y creencias',
-    question:
-      '¿Qué principios guían tus decisiones más importantes? ¿Qué es innegociable para vos?',
-    placeholder: 'Contame sobre lo que realmente te importa...',
-    icon: 'Compass',
-  },
-  {
-    key: 'fortalezas',
-    label: 'Fortalezas y talentos',
-    question:
-      '¿En qué actividades sentís que entrás en flow? ¿Qué te sale naturalmente?',
-    placeholder: 'Pensá en momentos donde todo fluye...',
-    icon: 'Lightning',
-  },
-  {
-    key: 'relaciones',
-    label: 'Relaciones y conexión',
-    question:
-      '¿Cómo te relacionás con los demás? ¿Te energiza la gente o necesitás recargarte a solas?',
-    placeholder: 'Describí tu forma de conectar...',
-    icon: 'User',
-  },
-  {
-    key: 'desafios',
-    label: 'Desafíos y sombras',
-    question:
-      '¿Qué patrones repetís que te gustaría cambiar? ¿Qué te cuesta reconocer de vos?',
-    placeholder: 'Sé honesto, esto es para vos...',
-    icon: 'Eye',
-  },
-  {
-    key: 'aspiraciones',
-    label: 'Aspiraciones y futuro',
-    question: '¿Quién querés ser en 5 años? ¿Qué versión de vos te inspira?',
-    placeholder: 'Imaginá tu mejor versión...',
-    icon: 'Path',
-  },
-];
+export interface OpenTextQuestion extends OnboardingQuestionBase {
+  type: 'open_text';
+  minWords: number;
+  maxWords: number;
+  placeholder: string;
+}
+
+export interface MultiChoiceOption {
+  id: string;
+  label: string;
+  meaning: string;
+  iconHint?: string;
+}
+
+export interface MultiChoiceQuestion extends OnboardingQuestionBase {
+  type: 'multi_choice';
+  options: MultiChoiceOption[];
+  allowMultiple: boolean;
+}
+
+export interface ScenarioQuestion extends OnboardingQuestionBase {
+  type: 'scenario';
+  scene: string;
+  options: MultiChoiceOption[];
+}
+
+export interface RankingItem {
+  id: string;
+  label: string;
+  meaning: string;
+}
+
+export interface RankingQuestion extends OnboardingQuestionBase {
+  type: 'ranking';
+  items: RankingItem[];
+  instruction: string;
+}
+
+export interface PolarityQuestion extends OnboardingQuestionBase {
+  type: 'polarity';
+  axis: { dimension: ProfileDimension; invert?: boolean };
+  leftPole: { label: string; meaning: string };
+  rightPole: { label: string; meaning: string };
+}
+
+export interface MetaphorCard {
+  id: string;
+  title: string;
+  description: string;
+  iconHint: string;
+  meaning: string;
+}
+
+export interface MetaphorQuestion extends OnboardingQuestionBase {
+  type: 'metaphor';
+  cards: MetaphorCard[];
+  instruction: string;
+}
+
+export type OnboardingQuestion =
+  | OpenTextQuestion
+  | MultiChoiceQuestion
+  | ScenarioQuestion
+  | RankingQuestion
+  | PolarityQuestion
+  | MetaphorQuestion;
+
+interface AnswerBase {
+  questionId: string;
+  type: InteractionType;
+  answeredAt: string;
+}
+
+export interface OpenTextAnswer extends AnswerBase {
+  type: 'open_text';
+  text: string;
+}
+export interface MultiChoiceAnswer extends AnswerBase {
+  type: 'multi_choice';
+  selectedIds: string[];
+}
+export interface ScenarioAnswer extends AnswerBase {
+  type: 'scenario';
+  selectedId: string;
+}
+export interface RankingAnswer extends AnswerBase {
+  type: 'ranking';
+  orderedIds: string[];
+}
+export interface PolarityAnswer extends AnswerBase {
+  type: 'polarity';
+  value: number;
+}
+export interface MetaphorAnswer extends AnswerBase {
+  type: 'metaphor';
+  selectedId: string;
+}
+
+export type OnboardingAnswer =
+  | OpenTextAnswer
+  | MultiChoiceAnswer
+  | ScenarioAnswer
+  | RankingAnswer
+  | PolarityAnswer
+  | MetaphorAnswer;
+
+export interface DimensionEstimate {
+  value: number;
+  confidence: number;
+}
+
+export interface ArchetypeCandidate {
+  key: Archetype;
+  confidence: number;
+  rationale: string;
+}
+
+export interface EvidenceQuote {
+  text: string;
+  source: 'user_text' | 'choice';
+  questionId: string;
+}
+
+export interface WorkingProfile {
+  bigFive: Record<BigFiveDimension, DimensionEstimate>;
+  jungFunctions: Record<JungFunctionKey, DimensionEstimate>;
+  archetypeCandidates: ArchetypeCandidate[];
+  evidence: EvidenceQuote[];
+  turnsAnswered: number;
+  overallConfidence: number;
+}
+
+export interface OnboardingSignal {
+  dimension: ProfileDimension;
+  direction: 'high' | 'low';
+  strength: number;
+  source: { questionId: string; quote?: string; choiceId?: string };
+}
+
+export interface OnboardingTurn {
+  question: OnboardingQuestion;
+  answer: OnboardingAnswer | null;
+  signals: OnboardingSignal[];
+  insights: string[];
+}
+
+export type InsightTone = 'discovery' | 'tension' | 'resonance';
+
+export interface InsightPing {
+  id: string;
+  text: string;
+  tone: InsightTone;
+}
+
+export type OnboardingSessionStatus =
+  | 'in_progress'
+  | 'completed'
+  | 'abandoned';
+
+export interface OnboardingSessionState {
+  sessionId: string;
+  status: OnboardingSessionStatus;
+  turns: OnboardingTurn[];
+  workingProfile: WorkingProfile;
+  startedAt: string;
+  updatedAt: string;
+  completedAt?: string;
+}
+
+export interface OnboardingNextRequest {
+  sessionId: string | null;
+  previousAnswer: OnboardingAnswer | null;
+}
+
+export interface OnboardingNextResponse {
+  sessionId: string;
+  turn: OnboardingTurn;
+  workingProfile: WorkingProfile;
+  insights: InsightPing[];
+  done: boolean;
+  turnNumber: number;
+  maxTurns: number;
+}
 
 // ─── Archetype descriptions (UI reference) ───
 export const ARCHETYPE_INFO: Record<
@@ -215,6 +391,10 @@ export interface AnalyzeRequest {
   texts: string[];
   mode: OnboardingMode;
   areas?: string[];
+}
+
+export interface AnalyzeSuccess extends AnalyzeResponse {
+  profileId: string;
 }
 
 export interface AnalyzeResponse {

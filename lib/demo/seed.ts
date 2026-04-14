@@ -55,7 +55,7 @@ export const DEMO_PROFILE: PsychologicalProfile = {
   jungFunctions: DEMO_JUNG_FUNCTIONS,
   archetype: DEMO_ARCHETYPE,
   archetypeSecondary: DEMO_ARCHETYPE_SECONDARY,
-  inputMode: 'guided',
+  inputMode: 'dynamic',
   inputTexts: ['demo input text para visualización'],
   createdAt: '2026-04-13T00:00:00Z',
   updatedAt: '2026-04-13T00:00:00Z',

@@ -7,6 +7,39 @@ Format: one line per TODO. Priority: P1 (soon) / P2 (next quarter) / P3 (someday
 
 ---
 
+## Resolved on 2026-04-13 (dynamic onboarding refactor — shipped)
+
+The guided/freetext/hybrid onboarding was replaced by a single conductor-driven
+adaptive flow. 6–8 turns, Haiku conductor picks the next interaction type
+(open_text, multi_choice, scenario, ranking, polarity, metaphor), the live
+profile updates next to the question card, and the whole transcript is serialized
+into the existing `/api/analyze` synthesis step.
+
+- [x] **Migration 003 onboarding_sessions + widened input_mode** — applied
+  against the local Supabase stack. `psychological_profiles.input_mode` now
+  accepts `'dynamic'` alongside the legacy `'guided' | 'freetext'`.
+- [x] **Conductor prompt hardening** — dropped the 6.5k-token knowledge blocks
+  from the conductor (they belong in the analyzer), added explicit probe-shape
+  rules, and wrote a `normalizeConductorJson` repair step that tolerates the
+  three observed LLM misses: `direction: "moderate"` signals, insights with
+  missing `id`/`tone`, and `probe.kind` variants without their required field.
+- [x] **Robust JSON extractor** — replaced the greedy `/\{[\s\S]*\}/` regex in
+  `/api/onboarding/next` with a brace-matched extractor that also strips
+  markdown code fences. Bumped conductor `maxTokens` 2000 → 4096.
+- [x] **E2E happy path** — `e2e/full-flow.spec.ts` rewritten to drive the
+  dynamic flow (structural card detection, 10-turn loop, synthesis wait).
+  Chromium suite runs 21/21 green including the full real-Claude happy path
+  (register → consent → 8-turn conductor → analyze → dashboard narrative
+  stream → plan generation in ~2.9 min).
+- [x] **Unblock tangential e2e regressions** — removed HTML5 `minLength={8}`
+  on the register password input (was blocking the JS weak-password error
+  test), and fixed the strict-mode violation on the /privacy "Ley 25.326"
+  locator.
+- [x] **Rate limit env bump** — `DAILY_TOKEN_CAP` 80k → 400k and
+  `DAILY_COST_CAP_CENTS` 500 → 1500 in `.env.local.example` to reflect
+  realistic conductor usage (~13k tokens/turn × 8 turns + analyze + narrative
+  + plan per user).
+
 ## Resolved on 2026-04-13 (QA + Phase 7 completeness sprint)
 
 These items moved from open to resolved in the 2026-04-13 session. Kept in the

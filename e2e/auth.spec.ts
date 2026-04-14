@@ -29,10 +29,10 @@ test.describe('Auth flow', () => {
   test('privacy and terms pages render', async ({ page }) => {
     await page.goto('/privacy');
     await expect(page.getByRole('heading', { name: /Política de privacidad/i })).toBeVisible();
-    await expect(page.getByText(/Ley 25.326/)).toBeVisible();
+    await expect(page.getByText(/Ley 25\.326/).first()).toBeVisible();
 
     await page.goto('/terms');
     await expect(page.getByRole('heading', { name: /Términos de uso/i })).toBeVisible();
-    await expect(page.getByText(/Umbra NO es terapia/i)).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Umbra NO es terapia/i })).toBeVisible();
   });
 });

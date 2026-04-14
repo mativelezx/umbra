@@ -18,8 +18,8 @@ import type { AnalyzeResponse } from '@/types';
 export const runtime = 'edge';
 
 const AnalyzeInputSchema = z.object({
-  texts: z.array(z.string().min(1).max(5000)).min(1).max(5),
-  mode: z.enum(['guided', 'freetext', 'hybrid']),
+  texts: z.array(z.string().min(1).max(5000)).min(1).max(16),
+  mode: z.enum(['dynamic']),
   areas: z.array(z.string().min(1).max(100)).optional(),
 });
 

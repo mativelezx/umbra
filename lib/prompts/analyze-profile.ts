@@ -4,7 +4,7 @@ import { buildArchetypesBlock } from '@/lib/knowledge/archetypes';
 
 export interface AnalyzeProfileParams {
   texts: string[];
-  mode: 'guided' | 'freetext' | 'hybrid';
+  mode: 'dynamic';
   areas?: string[];
 }
 
@@ -80,7 +80,7 @@ export function buildAnalyzeProfilePrompt(params: AnalyzeProfileParams): {
   const { texts, mode, areas } = params;
 
   const textBlock =
-    mode === 'guided' && areas
+    areas && areas.length === texts.length
       ? areas.map((area, i) => `### ${area}\n${texts[i] ?? ''}`).join('\n\n')
       : texts.join('\n\n');
 

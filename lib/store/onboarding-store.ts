@@ -2,42 +2,61 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { OnboardingMode } from '@/types';
+import type {
+  InsightPing,
+  OnboardingTurn,
+  WorkingProfile,
+} from '@/types';
 
 interface OnboardingStore {
-  mode: OnboardingMode | null;
-  currentStep: number;
-  texts: Record<string, string>;
-  freeText: string;
-  setMode: (mode: OnboardingMode) => void;
-  setStep: (step: number) => void;
-  setAreaText: (key: string, text: string) => void;
-  setFreeText: (text: string) => void;
+  sessionId: string | null;
+  turns: OnboardingTurn[];
+  workingProfile: WorkingProfile | null;
+  insights: InsightPing[];
+  done: boolean;
+
+  startSession: (sessionId: string) => void;
+  setTurns: (turns: OnboardingTurn[]) => void;
+  applyProfileUpdate: (wp: WorkingProfile) => void;
+  pushInsights: (pings: InsightPing[]) => void;
+  clearInsights: () => void;
+  markDone: () => void;
   reset: () => void;
 }
 
 export const useOnboardingStore = create<OnboardingStore>()(
   persist(
     (set) => ({
-      mode: null,
-      currentStep: 0,
-      texts: {},
-      freeText: '',
-      setMode: (mode) => set({ mode, currentStep: 0 }),
-      setStep: (step) => set({ currentStep: step }),
-      setAreaText: (key, text) =>
-        set((state) => ({ texts: { ...state.texts, [key]: text } })),
-      setFreeText: (text) => set({ freeText: text }),
+      sessionId: null,
+      turns: [],
+      workingProfile: null,
+      insights: [],
+      done: false,
+
+      startSession: (sessionId) =>
+        set({ sessionId, turns: [], insights: [], done: false }),
+      setTurns: (turns) => set({ turns }),
+      applyProfileUpdate: (wp) => set({ workingProfile: wp }),
+      pushInsights: (pings) =>
+        set((state) => ({ insights: [...state.insights, ...pings].slice(-6) })),
+      clearInsights: () => set({ insights: [] }),
+      markDone: () => set({ done: true }),
       reset: () =>
-        set({ mode: null, currentStep: 0, texts: {}, freeText: '' }),
+        set({
+          sessionId: null,
+          turns: [],
+          workingProfile: null,
+          insights: [],
+          done: false,
+        }),
     }),
     {
       name: 'umbra-onboarding',
       partialize: (state) => ({
-        mode: state.mode,
-        currentStep: state.currentStep,
-        texts: state.texts,
-        freeText: state.freeText,
+        sessionId: state.sessionId,
+        turns: state.turns,
+        workingProfile: state.workingProfile,
+        done: state.done,
       }),
     },
   ),
