@@ -26,8 +26,11 @@ function LoginContent() {
     const supabase = createClient();
     const { error: err } = await supabase.auth.signInWithPassword({ email, password });
     if (err) {
-      const msg = err.message ?? '';
-      const isEmailNotConfirmed = /email not confirmed/i.test(msg);
+      // Prefer the stable AuthError.code from @supabase/auth-js, fall back to
+      // message regex only if the runtime is older and code isn't populated.
+      const code = (err as { code?: string }).code;
+      const isEmailNotConfirmed =
+        code === 'email_not_confirmed' || /email not confirmed/i.test(err.message ?? '');
       setError(isEmailNotConfirmed ? t('auth.email_not_confirmed') : t('auth.invalid_credentials'));
       setLoading(false);
       return;
