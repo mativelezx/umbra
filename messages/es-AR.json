@@ -39,7 +39,9 @@
     "sign_up": "Registrarte",
     "invalid_credentials": "Email o contraseña incorrectos.",
     "email_exists": "Ya existe una cuenta con ese email.",
-    "weak_password": "La contraseña tiene que tener al menos 8 caracteres."
+    "weak_password": "La contraseña tiene que tener al menos 8 caracteres.",
+    "email_not_confirmed": "Tu email todavía no está confirmado. Revisá tu casilla (incluso spam) y hacé clic en el link que te mandamos.",
+    "check_email": "Te mandamos un link de confirmación a tu email. Abrilo para activar tu cuenta y seguir con el onboarding."
   },
   "consent": {
     "title": "Antes de empezar",

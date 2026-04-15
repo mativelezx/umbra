@@ -46,3 +46,6 @@ next-env.d.ts.bak
 # TFG academic deliverables (kept locally, not versioned)
 UMBRA_TP*.docx
 .build/
+
+# eval cache snapshots (committed selectively via ADR-014 process)
+lib/evals/.cache/

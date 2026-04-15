@@ -17,6 +17,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmSent, setConfirmSent] = useState(false);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -29,12 +30,12 @@ export default function RegisterPage() {
 
     setLoading(true);
     const supabase = createClient();
-    const { error: err } = await supabase.auth.signUp({
+    const { data, error: err } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: { full_name: name },
-        emailRedirectTo: `${window.location.origin}/consent`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/consent`,
       },
     });
 
@@ -47,6 +48,17 @@ export default function RegisterPage() {
       setLoading(false);
       return;
     }
+
+    // When Supabase has email confirmation enabled, signUp returns a user
+    // but no session. The user must click the link in their email, which
+    // hits /auth/callback and exchanges the PKCE code for a real session.
+    // Redirecting to /consent now would leave them unauthenticated there.
+    if (!data.session) {
+      setConfirmSent(true);
+      setLoading(false);
+      return;
+    }
+
     router.push('/consent');
     router.refresh();
   }
@@ -57,6 +69,7 @@ export default function RegisterPage() {
         <div className="mb-8">
           <Link
             href="/"
+            prefetch={false}
             className="font-display text-3xl text-text-1 hover:text-violet-300 transition-colors"
           >
             Umbra
@@ -66,6 +79,26 @@ export default function RegisterPage() {
           </h1>
         </div>
 
+        {confirmSent ? (
+          <div className="flex flex-col gap-5">
+            <div
+              role="status"
+              className="rounded-md border border-violet-400/30 bg-violet-400/10 px-4 py-4 font-body text-sm text-text-1"
+            >
+              {t('auth.check_email')}
+            </div>
+            <p className="text-center font-body text-sm text-text-3">
+              {t('auth.switch_to_login')}{' '}
+              <Link
+                href="/login"
+                prefetch={false}
+                className="text-violet-300 hover:text-violet-200 transition-colors"
+              >
+                {t('auth.sign_in')}
+              </Link>
+            </p>
+          </div>
+        ) : (
         <form onSubmit={onSubmit} className="flex flex-col gap-5">
           <Input
             type="text"
@@ -105,13 +138,20 @@ export default function RegisterPage() {
             {t('auth.register_cta')}
           </Button>
         </form>
+        )}
 
-        <p className="mt-6 text-center font-body text-sm text-text-3">
-          {t('auth.switch_to_login')}{' '}
-          <Link href="/login" className="text-violet-300 hover:text-violet-200 transition-colors">
-            {t('auth.sign_in')}
-          </Link>
-        </p>
+        {!confirmSent && (
+          <p className="mt-6 text-center font-body text-sm text-text-3">
+            {t('auth.switch_to_login')}{' '}
+            <Link
+              href="/login"
+              prefetch={false}
+              className="text-violet-300 hover:text-violet-200 transition-colors"
+            >
+              {t('auth.sign_in')}
+            </Link>
+          </p>
+        )}
       </GlassCard>
     </main>
   );

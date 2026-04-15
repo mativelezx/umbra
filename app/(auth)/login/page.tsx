@@ -26,7 +26,9 @@ function LoginContent() {
     const supabase = createClient();
     const { error: err } = await supabase.auth.signInWithPassword({ email, password });
     if (err) {
-      setError(t('auth.invalid_credentials'));
+      const msg = err.message ?? '';
+      const isEmailNotConfirmed = /email not confirmed/i.test(msg);
+      setError(isEmailNotConfirmed ? t('auth.email_not_confirmed') : t('auth.invalid_credentials'));
       setLoading(false);
       return;
     }
@@ -39,6 +41,7 @@ function LoginContent() {
       <div className="mb-8">
         <Link
           href="/"
+          prefetch={false}
           className="font-display text-3xl text-text-1 hover:text-violet-300 transition-colors"
         >
           Umbra
@@ -82,7 +85,11 @@ function LoginContent() {
 
       <p className="mt-6 text-center font-body text-sm text-text-3">
         {t('auth.switch_to_register')}{' '}
-        <Link href="/register" className="text-violet-300 hover:text-violet-200 transition-colors">
+        <Link
+          href="/register"
+          prefetch={false}
+          className="text-violet-300 hover:text-violet-200 transition-colors"
+        >
           {t('auth.sign_up')}
         </Link>
       </p>
