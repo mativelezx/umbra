@@ -228,10 +228,12 @@ export default async function DashboardPage() {
     | null;
   const rawConfidence =
     typeof analysisRaw?.confidence === 'number' ? analysisRaw.confidence : null;
+  // Strict `< 1` so a legitimate integer `1` (meaning 1%) does not get
+  // conflated with a legacy `1.0` decimal and multiplied to `100`.
   const confidence =
     rawConfidence == null
       ? null
-      : rawConfidence <= 1
+      : rawConfidence < 1
         ? Math.round(rawConfidence * 100)
         : Math.round(rawConfidence);
 

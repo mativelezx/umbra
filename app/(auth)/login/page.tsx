@@ -9,10 +9,20 @@ import { Input } from '@/components/ui/Input';
 import { GlassCard } from '@/components/ui/Card';
 import { t } from '@/lib/i18n/dict';
 
+// Reject protocol-relative `//evil.com` and anything that's not a plain
+// same-origin path. Middleware only writes safe values here, but the param
+// is user-controlled so it still has to be sanitized at the sink.
+function safeRedirectPath(raw: string | null): string {
+  if (!raw) return '/dashboard';
+  if (!raw.startsWith('/')) return '/dashboard';
+  if (raw.startsWith('//') || raw.startsWith('/\\')) return '/dashboard';
+  return raw;
+}
+
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectedFrom = searchParams.get('redirectedFrom') ?? '/dashboard';
+  const redirectedFrom = safeRedirectPath(searchParams.get('redirectedFrom'));
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

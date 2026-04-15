@@ -27,6 +27,16 @@ export async function GET(request: Request) {
     if (!error) {
       return NextResponse.redirect(new URL(redirectTo, url.origin));
     }
+    // The exchange is one-shot: the first click consumes the code and sets
+    // the session cookie, a second click (or a browser retry) fails. Treat
+    // "already logged in" as success so the user does not bounce to /login
+    // after an accidental double-click on the confirmation email link.
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      return NextResponse.redirect(new URL(redirectTo, url.origin));
+    }
   }
 
   return NextResponse.redirect(new URL('/login', url.origin));
