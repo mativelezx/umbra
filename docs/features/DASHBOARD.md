@@ -2,6 +2,13 @@
 
 > Profile visualization hub. Big Five radar + Jung function bars + archetype
 > card + narrative section + carta al futuro card.
+>
+> **Actualizado 2026-04-14**: este documento describe la spec original
+> de Fase 4 del master build. La implementación actual añade elementos
+> de las fases 1, 2 y 3 (confidence surface, pull quotes, sticky TOC,
+> progressive disclosure, link a PDF export, framer-motion). Ver la
+> sección final **"Post-implementación (2026-04-14)"** para el estado
+> actual completo.
 
 ## Phase
 4
@@ -271,3 +278,159 @@ If the profile is ready but narrative is still streaming:
 - [NARRATIVE.md](NARRATIVE.md) — narrative streaming
 - [CARTA_AL_FUTURO.md](CARTA_AL_FUTURO.md) — locked/unlocked card
 - [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md) — tokens + typography
+
+## Post-implementación (2026-04-14)
+
+Estas secciones documentan las mejoras agregadas después del master
+build original, en las fases 1-3 del [IMPLEMENTATION_PLAN.md](../biz/IMPLEMENTATION_PLAN.md).
+La spec arriba sigue siendo válida como descripción conceptual;
+los cambios a continuación reflejan lo que el usuario ve hoy en
+producción (https://umbra-sigma.vercel.app/dashboard).
+
+### Nueva jerarquía visual (Fase 1 + 3.1)
+
+El layout actual es más claro que el original y tiene dos "capas"
+de profundidad:
+
+```
+┌────────────────────────────────────────────────────────┐
+│  Greeting + "Descargar PDF" button (top right)         │
+├────────────────────────────────────────────────────────┤
+│  ArchetypeCard con confidence footer                   │
+│  (barra + % + "basado en N respuestas")                │
+├────────────────────────────────────────────────────────┤
+│  QuickGlance — 3 cards con top Big Five, top Jung,     │
+│  y archetype. Banner superior con overall confidence.  │
+├────────────────────────────────────────────────────────┤
+│  NarrativeSection (columna principal)                  │
+│  ┌───────────────┬───────────────────────────────────┐ │
+│  │ NarrativeTOC  │  5 secciones con pull quotes,     │ │
+│  │ (sticky, lg:) │  max-w-[68ch], drop caps, icons.  │ │
+│  │ scroll-spy    │  Markdown blockquotes `> ` se     │ │
+│  │               │  renderizan como callouts grandes.│ │
+│  └───────────────┴───────────────────────────────────┘ │
+├────────────────────────────────────────────────────────┤
+│  [ Ver perfil completo ▾ ]  ← DashboardDepth toggle    │
+│  (progressive disclosure)                              │
+├════════════════════════════════════════════════════════┤
+│  CONTENIDO COLAPSABLE por default:                     │
+│  - BigFiveRadar (Recharts)                             │
+│  - JungAxisView (4 ejes, InfoPopover por función)      │
+│  - ArchetypeMap (grilla de 6 con comparador)           │
+│  - CartaFuturaCard                                     │
+│  (Animación de apertura con framer-motion + spring)    │
+└────────────────────────────────────────────────────────┘
+```
+
+### Componentes nuevos (no existían en master build)
+
+- **`components/dashboard/QuickGlance.tsx`** — 3 cards con
+  InfoPopover por tarjeta. Recibe `confidence` y `turnsCount`
+  como props y muestra el banner superior con la certeza global.
+- **`components/dashboard/NarrativeTOC.tsx`** — sidebar sticky con
+  IntersectionObserver scroll-spy. Visible solo en `lg:`.
+  Fuente de verdad: `lib/dimensions/narrative-sections.ts`.
+- **`components/dashboard/SectionedNarrative.tsx`** — parser del
+  markdown con 5 `## headers`, detecta blockquotes `> ` como
+  pull quotes, renderiza con border-left violeta y `font-display`.
+  Primer letra de la narrativa es drop cap.
+- **`components/dashboard/JungAxisView.tsx`** — reemplaza al
+  `JungFunctions.tsx` del master build. 4 ejes en lugar de 8
+  barras, con `InfoPopover` por función y por eje.
+- **`components/dashboard/ArchetypeMap.tsx`** — grilla de los 6
+  arquetipos con comparación al seleccionado.
+- **`components/dashboard/DashboardDepth.tsx`** — wrapper colapsable
+  con botón "Ver perfil completo" + animación
+  `AnimatePresence` + `m.div` de framer-motion (spring damping=28
+  stiffness=280).
+
+### Confidence surface (Fase 1 — ADR-025 PAIR cap. 4)
+
+`ArchetypeCard` y `QuickGlance` ahora reciben `confidence` y
+`turnsCount` leídos server-side desde `psychological_profiles.analysis_raw.confidence`
+(PAIR cap. 4 Explainability + Trust). El usuario ve una barra de
+progreso + porcentaje + "basado en N respuestas". El `InfoPopover`
+explica que certeza baja significa "refinable con más contexto", no
+"análisis incorrecto".
+
+### Pull quotes en la narrativa (Fase 1)
+
+El prompt de `lib/prompts/generate-narrative.ts` instruye a Claude
+a marcar 1-2 frases por sección con `> `. El parser de
+`SectionedNarrative.tsx` detecta bloques que empiezan con `> ` y
+los renderiza como callouts `text-xl md:text-2xl` italic con
+`border-l-2 border-violet-400/50`. Mejora legibilidad de los
+800-1200 palabras de prosa.
+
+### Line length 65ch (Fase 1)
+
+La columna de prosa está acotada a `max-w-[68ch]` (~65 caracteres
+por línea) siguiendo Bringhurst 2005. Los pull quotes pueden
+extenderse ligeramente.
+
+### InfoPopover en dimensiones (Fase 1)
+
+`DimensionBar` ahora acepta un prop opcional `info: { title, body,
+example }`. En `LiveProfilePanel.tsx` (onboarding) y en los
+componentes del dashboard, cada dimensión Big Five y cada función
+Jung tiene un botón "?" que abre un popover con explicación en
+español plano y ejemplo. Aplica PAIR cap. 3 Mental Models +
+cap. 4 Explainability.
+
+### Link a PDF export (Fase 3.5)
+
+En el header del dashboard, junto al título "Tu perfil interior",
+hay un link a `/export` con el texto "Descargar PDF". El
+componente `/export/page.tsx` existía desde antes (master build
+Fase 6) pero no tenía entrada desde el dashboard. Ver
+[PDF_EXPORT.md](PDF_EXPORT.md) para el detalle.
+
+### Progressive disclosure de 2 capas (Fase 3.1)
+
+La spec original mostraba toda la data viz del dashboard en una
+sola vista larga. El layout actual parte en dos:
+
+- **Capa 1** (siempre visible): ArchetypeCard + QuickGlance +
+  NarrativeSection + NarrativeTOC.
+- **Capa 2** (colapsada por default): BigFiveRadar + JungAxisView +
+  ArchetypeMap + CartaFuturaCard.
+
+El usuario revela la capa 2 con un click explícito en el botón
+"Ver perfil completo". Reduce carga cognitiva inicial y crea un
+momento de exploración elegida. ADR-025 y PAIR cap. 3 Mental
+Models. Fundamento de Loom + Smashing Mag pattern.
+
+### framer-motion spring animations (Fase 3.2)
+
+El `DashboardDepth.tsx` anima la expansión/colapso con
+`<AnimatePresence initial={false}>` y `<m.div>` con transition
+`{ type: 'spring', damping: 28, stiffness: 280 }`. El provider
+global `components/motion/MotionProvider.tsx` usa `LazyMotion` con
+`domAnimation` features (tree-shaking, ~17kb gzip) y `MotionConfig
+reducedMotion="user"` para respetar preferencias de accesibilidad.
+
+### Confidence data flow (datos server-side)
+
+El server component `app/dashboard/page.tsx` ahora extrae:
+
+```ts
+const analysisRaw = profileRow.analysis_raw as { confidence?: number } | null;
+const confidence = typeof analysisRaw?.confidence === 'number' ? analysisRaw.confidence : null;
+
+const inputTextsRaw = profileRow.input_texts as string[] | null;
+const turnsCount = Array.isArray(inputTextsRaw) ? inputTextsRaw.length : null;
+```
+
+Y los pasa a `DashboardView` para que `QuickGlance` y
+`ArchetypeCard` puedan renderizar la certeza. Los valores vienen
+de la respuesta original del prompt `analyze-profile.ts` (campo
+`confidence`).
+
+### Impacto en métricas
+
+Con el hallazgo empírico de H1 (Big Five estable, Jung functions
+inestables) documentado en VALIDATION.md, el confidence surface
+tiene justificación metodológica concreta: el usuario debería
+poder ver un indicador de qué tan certero es el análisis, y la
+certeza que reporta el prompt está ahora empíricamente calibrada
+contra la variance observada en el experimento H1.

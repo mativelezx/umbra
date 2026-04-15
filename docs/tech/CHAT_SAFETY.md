@@ -515,6 +515,71 @@ of the TFG (see [biz/TFG.md](../biz/TFG.md) sección 9). The tesis references
 the commit hash of the eval-results file so reviewers can verify
 reproducibility.
 
+### Empirical results (2026-04-14)
+
+La evaluación se ejecutó en dos configuraciones. Los archivos completos
+viven en `eval-results/` y los números exactos están reproducidos en
+[biz/VALIDATION.md](../biz/VALIDATION.md#resultados-emp%C3%ADricos-h3).
+
+**Configuración A — Producción (sampleRate=0.01, regex short-circuit activo)**
+
+Archivo: `eval-results/crisis-2026-04-14_22-01-32-332.json`
+
+| Métrica | Valor | Umbral |
+|---|---|---|
+| Precision | 1.000 | ≥ 0.85 ✅ |
+| **Recall** | **0.520** | **≥ 0.95 ❌** |
+| F1 | 0.684 | — |
+| Overall pass | false | — |
+
+Confusion: TP=13, TN=75, FP=0, FN=12.
+
+**Configuración B — Clasificador forzado (sampleRate=1.0, regex se mantiene como hint pero no short-circuit)**
+
+Archivo: `eval-results/crisis-2026-04-14_22-06-34-640.json`
+
+| Métrica | Valor | Umbral |
+|---|---|---|
+| Precision | 0.862 | ≥ 0.85 ✅ |
+| **Recall** | **1.000** | **≥ 0.95 ✅** |
+| F1 | 0.926 | — |
+| Overall pass | **true** ✅ | — |
+
+Confusion: TP=25, TN=71, FP=4, FN=0.
+
+**Finding central**: el clasificador Claude es completamente capaz de
+detectar los 25 casos de crisis reales cuando se lo invoca. El cuello
+de botella es la política de sampling. Los 12 false negatives de la
+configuración A son todos crisis reales con lenguaje indirecto
+("apagarme", "no despertarme", "mezclar cosas", "mensajes de
+despedida", "miedo de hacerme daño") que no matchean los patrones
+regex en `crisis-lexicon.ts`.
+
+**Recomendación operacional**: cambiar la política de sampling en
+producción a `sampleRate: 1.0`. Costo adicional aproximado con
+Haiku: ~US$0.003 por mensaje. Para el TFG o un MVP con bajo volumen,
+este costo es despreciable y el beneficio en términos de recall es
+completo (0.520 → 1.000). El regex pre-filter se mantiene para
+short-circuit en casos obviamente positivos (ahorra latencia cuando
+sí dispara), pero ya no filtra los casos negativos fuera del
+clasificador.
+
+**Aceptación de los 4 false positives**: son todos casos borderline
+con pensamientos oscuros transitorios y factores protectores claros
+(ej. "se me cruza que todos estarían mejor sin mí cuando me peleo,
+aunque después se me pasa"). El crisis card no es dañino — solo
+ofrece recursos y bloquea la conversación temporalmente —, así que
+la preferencia ética recall > precision es correcta.
+
+### Limitaciones del resultado
+
+- Dataset draft generado por codex, **revisión humana con criterio
+  clínico formal pendiente** (T4.0 del IMPLEMENTATION_PLAN.md).
+- No se estratificó por severidad low/med/high en el análisis.
+- La configuración B tiene latencia más alta (promedio 2.55 s por
+  mensaje). En producción con usuarios reales podría requerir
+  paralelización o caching.
+
 ## References
 
 - [DECISIONS.md ADR-008](../DECISIONS.md) — `crisis_events` observability trade-off

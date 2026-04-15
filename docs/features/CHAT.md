@@ -230,3 +230,97 @@ Generated from the top 2 Jung functions. Updates as the user's profile updates
 - [tech/RATE_LIMITING.md](../tech/RATE_LIMITING.md) — budget enforcement
 - [PROMPT_ARCHITECTURE.md](../PROMPT_ARCHITECTURE.md) — system prompt
 - [DECISIONS.md ADR-008](../DECISIONS.md) — crisis event observability
+
+## Post-implementación (2026-04-14)
+
+Mejoras agregadas después del master build, en las fases 1 y 3 del
+[IMPLEMENTATION_PLAN.md](../biz/IMPLEMENTATION_PLAN.md). La spec arriba
+describe el chat en su forma básica (fase 5 del master build). Lo
+que sigue documenta el estado actual en producción.
+
+### Layout nuevo con sidebar de historial (Fase 3.3)
+
+El chat ahora tiene un **sidebar de conversaciones** a la izquierda
+en `lg:` (≥1024px), oculto en mobile. Grid layout:
+`lg:grid-cols-[260px_minmax(0,1fr)]`.
+
+El sidebar muestra:
+- Header "Tus conversaciones" + botón "nueva" con icono Plus
+- Lista de hasta 50 conversaciones del usuario ordenadas por
+  timestamp descendente
+- Cada ítem: título (primera frase del user truncada a 60 chars),
+  timestamp relativo ("hace 2h", "hace 3d"), contador de mensajes
+- Click en un item → carga la conversación vía
+  `GET /api/chat/conversations/[id]`, reemplaza los mensajes
+  en el ChatThread
+- Click en "nueva" → resetea conversationId + messages + errors
+
+El componente es `components/chat/ConversationsSidebar.tsx`. Hace
+refetch cuando `activeConversationId` cambia (captura conversaciones
+recién creadas).
+
+### API routes para persistencia (Fase 3.3)
+
+Dos nuevas rutas Edge runtime:
+
+- **`GET /api/chat/conversations`** — lista hasta 50 conversaciones
+  del usuario autenticado, con title + preview + createdAt +
+  lastMessageAt + messageCount. Query en 2 pasos: primero
+  `conversations`, luego `messages` agregadas en memoria via Map.
+- **`GET /api/chat/conversations/[id]`** — carga una conversación
+  específica con todos sus mensajes ordenados. El UUID se extrae
+  del pathname. Ownership enforced via `auth.uid() = user_id` +
+  RLS policies existentes (migration 001).
+
+Las tablas `conversations` y `messages` ya existían en migration
+001; la persistencia no requiere schema nuevo.
+
+### Autonomy dial — modos espejo / guía / reto (Fase 3.6)
+
+Un radiogroup pequeño con 3 opciones arriba del chat:
+
+- **Espejo**: Umbra refleja, no opina. Preguntas abiertas, mínimas
+  sugerencias, 100% indagatorio.
+- **Guía**: acompaña con criterio. Mezcla ~60/40 reflexión y
+  observaciones. Default, coincide con el comportamiento previo.
+- **Reto**: cuestiona supuestos, pide especificidad, señala
+  contradicciones. Termina con pregunta, no con juicio. Baja
+  intensidad si el usuario pide.
+
+Implementación:
+- `lib/prompts/chat-context.ts` — tipo `ChatAutonomyMode` y
+  `autonomyModeInstructions(mode)` que inyecta al system prompt.
+- `app/api/chat/route.ts` — `ChatInputSchema` con `mode?` opcional.
+- `components/chat/ChatShell.tsx` — state `autonomyMode` +
+  `AutonomyDial` component interno.
+
+Inspirado en "Designing Agentic AI" (Smashing Magazine, Feb 2026),
+referenciado en ADR-025.
+
+### QuickPromptChips siempre visibles (Fase 1 T1.7)
+
+Originalmente los 4 prompts solo aparecían en empty state. Ahora
+`QuickPromptChips.tsx` acepta `compact?: boolean`. ChatShell los
+renderiza siempre con `compact={!isEmpty}`:
+
+- **isEmpty=true**: hero layout 2x2 con cards grandes
+- **isEmpty=false**: strip horizontal scroll con pills chicas
+  arriba del `ChatInput`
+
+PAIR cap. 1 User Needs + cap. 5 Feedback + Control.
+
+### ContextualGreeting + ProfileContextPill
+
+- **ContextualGreeting**: aparece solo cuando el chat está vacío.
+  Saluda con nombre + arquetipo + función Jung dominante + Big Five
+  top en lenguaje plano (sin jerga Ni/Ti).
+- **ProfileContextPill**: pill persistente en el top con arquetipo
+  + top Jung + top Big Five. Señala "esta conversación sabe quién
+  sos".
+
+### H3 crisis pipeline — resultado empírico
+
+Ver [CHAT_SAFETY.md sección "Empirical results"](../tech/CHAT_SAFETY.md#empirical-results-2026-04-14)
+para los números reales. Key finding: recall=1.0 en modo forzado
+(sampleRate=1.0), recall=0.52 en producción default. La
+recomendación operacional concreta es subir sampleRate a 1.0.

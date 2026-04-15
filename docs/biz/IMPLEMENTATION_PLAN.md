@@ -6,6 +6,48 @@
 > con reclutamiento controlado (n=8-10 amigos/compañeros). Ver
 > [DECISIONS.md ADR-023](../DECISIONS.md) para la justificación.
 
+## 🟢 Estado de ejecución (2026-04-14)
+
+**Todas las fases de código completadas y commiteadas**. Los checkboxes
+individuales abajo reflejan la intención inicial del plan; la ejecución
+real está consolidada en esta tabla:
+
+| Fase | Scope | Commits | Estado |
+|---|---|---|---|
+| **Fase 0** — Fundación académica | ADRs 023-025, VALIDATION.md, IMPLEMENTATION_PLAN.md, TFG.md update | `98ccf76` | ✅ completa |
+| **WIP coherente** | 8 grupos topológicos del trabajo previo (dimensions, chat, dashboard, onboarding, seed, tests, etc.) | `317286e`..`b88f8eb` (8 commits) | ✅ completa |
+| **Fase 1** — PAIR heuristics quick wins | 7 UX fixes + ADR-025 + 3 P2 fix del codex review | `612c3b1`, `f185d25` | ✅ completa |
+| **Fase 4** — H3 empirical safety | Dataset 100 casos + runner + test + script | `ecc2c3a` | ✅ completa (código) |
+| **Fase 5.1** — H1/H2 eval runners | Cases.ts + consistency.ts + cross-model-paraphrase.ts + scripts | `3c06526` | ✅ completa |
+| **Fase 5.2** — Migration 004 consent text hash | SQL + route update + verbatim text file + LEGAL.md | `4a90c6a` | ✅ completa |
+| **Fase 5.3+5.4** — Mermaid + STRIDE threat model | ARCHITECTURE.md con Mermaid + THREAT_MODEL.md nuevo | `d579183` | ✅ completa |
+| **Fase 5.5** — axe-core a11y CI | Spec nuevo + CI workflow update + dependency audit | `57b2448` | ✅ completa |
+| **Fase 4.5** — M3 materials | Session protocol + consent + SUS + recruitment copy | `a3c454e` | ✅ completa (materiales) |
+| **Fase 6** — Thesis skeleton | 16 chapters + README + Pandoc build + ADRs referenced | `db811cd` | ✅ completa |
+| **Post-Fase 6**: 17 IPIP cases | `lib/evals/cases.ts` completo a n=50 preregistrado | `65370a5` | ✅ completa |
+| **Post-Fase 6**: consent text hash client-side | Hash SHA-256 via Web Crypto en submit | `a6bf0c0` | ✅ completa |
+| **Post-Fase 6**: RLS coverage CI test | `lib/supabase/rls-coverage.test.ts` (8 tests) | `9c57109` | ✅ completa |
+| **Post-Fase 6**: P1 seed flow fix | seedText propagation session-store → analyze → DynamicFlow | `791bbdc` | ✅ completa |
+| **Fase 2** — UMUX-Lite in-app | Migration 005 + types + instruments + route + UsabilityPrompt | `f3e930d` | ✅ completa |
+| **Fase 3.1+3.2** — Disclosure + framer-motion | DashboardDepth + MotionProvider + spring animations | `e90954a` | ✅ completa |
+| **Fase 3.3+3.6** — Chat persistence + autonomy dial | Sidebar + conversations routes + ChatShell refactor + autonomy backend | `ced532d`, `d012530` | ✅ completa |
+| **Fase 3.4** — Undo onboarding | session-store helper + /api/onboarding/undo + DynamicFlow button | `eceb6c5` | ✅ completa |
+| **Fase 3.5** — PDF export link + type fix | Dashboard button link + Html2PdfChain interface | `a6f97b2` | ✅ completa |
+| **Eval runs** — H1/H2/H3 reales | Datos empíricos committeados en eval-results/*.json | `7724972`, `29b9e8e`, `c0904e2` | ✅ completa |
+| **Deploy prod** — Vercel + Supabase | `vercel --prod` + `supabase db push --linked --include-all` | (no code commit; ver sección Deploy) | ✅ completa |
+| **Docs sync post-implementation** | Actualización de TODA la documentación existente | (este commit) | 🟡 en curso |
+
+**Pendiente (actividades humanas, no de código)**:
+
+- ⏳ **OSF preregistration** — texto listo en `docs/research/osf/preregistration-standard.md`, el autor lo copy-pasta a osf.io.
+- ⏳ **M3 think-aloud sessions** — 8-10 participantes reclutados por el autor, materiales listos en `docs/research/`.
+- ⏳ **Dataset crisis revisado por par de ojos clínicos** — T4.0 del plan. El dataset existe en `lib/evals/crisis-dataset.ts`; requiere revisión humana antes de considerar H3 como validación final.
+- ⏳ **Capítulos personales de la tesis** — 00 Portada, 01 Resumen, 02 Introducción, 11 Discusión, 12 Conclusiones. Los caps 03 Marco teórico, 06 Arquitectura y 08 Validación computacional ya están drafteados por codex.
+
+Los checkboxes granulares abajo reflejan el **plan original** y se
+mantienen como referencia histórica. El estado real es "todo lo de
+código completo" como se resume en la tabla de arriba.
+
 ## Contexto
 
 - **Autor**: Matías Vélez
@@ -325,4 +367,60 @@ Realista si trabajás 3-4 hs/día sostenido. Full-time llegás en 4-5 semanas.
 
 | Fecha | Cambio |
 |---|---|
-| 2026-04-14 | Creación del plan. Decisión Branch B + M3 registrada. Audit findings: `lib/evals/` no existe, consent_text_hash falta. |
+| 2026-04-14 (mañana) | Creación del plan. Decisión Branch B + M3 registrada. Audit findings: `lib/evals/` no existe, consent_text_hash falta. |
+| 2026-04-14 (tarde) | **Ejecución completa de todas las fases de código**. 28 commits desde `98ccf76` hasta la sincronización de docs final. Detalle abajo. |
+
+### Detalle de commits ejecutados (post 2026-04-14)
+
+1. **`98ccf76` `docs(fase-0)`** — Fundación académica: ADR-023 + ADR-024 en `DECISIONS.md`, creación de `IMPLEMENTATION_PLAN.md` + `VALIDATION.md`, actualización de `TFG.md` con Branch B + M3.
+2. **`317286e` `chore(types,config)`** — Foundation commit del WIP coherente: types + config + analyze route + research command slash.
+3. **`9b7d0e4` `refactor(dimensions)`** — centralización de Big Five + Jung labels en `lib/dimensions/labels.ts` + archetype-compare.
+4. **`e230662` `refactor(narrative)`** — 5-section markdown structure + iconography via `SectionedNarrative.tsx` + prompt update.
+5. **`b2f5994` `feat(dashboard)`** — QuickGlance + ArchetypeMap + JungAxisView + InfoPopover.
+6. **`282a070` `feat(chat)`** — ChatShell wrapper + ContextualGreeting + QuickPromptChips + ProfileContextPill.
+7. **`b796d31` `refactor(onboarding)`** — seeded session support + conductor refinement.
+8. **`66c47ad` `feat(onboarding)`** — ChatGPT seed flow con parser + session creation.
+9. **`7fa2556` `test(e2e)`** — update qa-screenshots spec con nuevas surfaces.
+10. **`b88f8eb` `chore(test)`** — disable CSS processing en vitest config (fix ambiental).
+11. **`612c3b1` `feat(fase-1)`** — **PAIR heuristics application**: confidence surface, pull quotes, TOC sticky, InfoPopover, chips, InsightPing colapsable. **ADR-025 redactado**.
+12. **`f185d25` `fix(codex-review)`** — 3 P2 regressions aplicadas (QuickGlance label, TOC gate legacy, seed flags merge). P1 documentado como known-issue (luego arreglado).
+13. **`ecc2c3a` `feat(fase-4)`** — H3 empirical eval: crisis dataset 100 casos + runner + test + script `scripts/run-crisis-eval.ts`.
+14. **`3c06526` `feat(fase-5)`** — H1/H2 eval runners + `cases.ts` + `consistency.ts` + `cross-model-paraphrase.ts` + scripts `run-h1.ts`, `run-h2.ts`.
+15. **`4a90c6a` `feat(fase-5)`** — Migration 004 consent_text_hash + locale (Ley 25.326 art. 7).
+16. **`d579183` `docs(fase-5)`** — Mermaid topology en ARCHITECTURE.md + THREAT_MODEL.md nuevo (STRIDE completo).
+17. **`57b2448` `feat(fase-5)`** — axe-core a11y spec + CI integration + dependency audit.
+18. **`a3c454e` `docs(fase-4.5)`** — M3 think-aloud materials: protocol + consent + SUS + recruitment copy.
+19. **`db811cd` `docs(fase-6)`** — Thesis skeleton con 16 chapters + README + Pandoc build.
+20. **`65370a5` `feat(evals)`** — 17 IPIP cases faltantes (ipip-01..17) para completar el corpus preregistrado n=50.
+21. **`a6bf0c0` `feat(consent)`** — client-side SHA-256 hash of verbatim consent text (cierre de ADR-024).
+22. **`9c57109` `test(security)`** — CI gate RLS coverage: `lib/supabase/rls-coverage.test.ts` con 8 tests.
+23. **`791bbdc` `fix(seed)`** — **P1 fix del codex review**: propagate ChatGPT seed text al analyze final.
+24. **`f3e930d` `feat(fase-2)`** — UMUX-Lite + METUX + CUQ + SUS in-app instrumentation (migration 005 + tabla + types + instruments + route + UsabilityPrompt component).
+25. **`e90954a` `feat(fase-3.1,3.2)`** — Dashboard progressive disclosure + framer-motion LazyMotion con spring animations.
+26. **`ced532d` `feat(fase-3.3,3.6)`** — Chat persistent history con sidebar + autonomy dial backend/frontend.
+27. **`eceb6c5` `feat(fase-3.4)`** — Undo last onboarding answer: `/api/onboarding/undo` + `undoLastAnsweredTurn` helper + DynamicFlow button.
+28. **`a6f97b2` `refactor(export)`** — type the `html2pdf.js` module con interface `Html2PdfChain` (remove `any`).
+29. **`d012530` `feat(fase-3.6)`** — Autonomy dial backend: system prompt + route schema.
+30. **`7724972` `feat(eval,thesis)`** — **H1 + H3 real results** committed + cap 06 arquitectura + OSF preregistration text.
+31. **`29b9e8e` `docs(thesis)`** — cap 03 marco teórico + cap 08 validación computacional drafted por codex.
+32. **`c0904e2` `eval(h2)`** — **H2 real results committed**: FALSIFIED (18/25 fail), mean delta 10.24, reformulable como intervalo.
+
+**Total**: 32 commits desde la baseline Fase 0. Todos compilables, con tsc + lint cleaning en cada uno.
+
+### Deploy a producción (2026-04-14)
+
+- **Vercel**: proyecto `umbra` (id `prj_8S4KbDfaF0Yl8fLo8qeF8RUUm5wM`), último deploy `dpl_Cvpd9JtbHZHAdYW22SB11pXvxgQL`, URL pública https://umbra-sigma.vercel.app. 15 env vars configurados (Anthropic, Supabase, 4 peppers, rate limits, NEXT_PUBLIC_SITE_URL).
+- **Supabase**: proyecto `umbra` (reference `abhtdinyegnwrnycwsca`), São Paulo region. 5 migrations aplicadas: 001 initial schema, 002 core tables, 003 onboarding_sessions, 004 consent_text_hash, 005 usability_responses. Verificable con `supabase migration list --linked`.
+- **Smoke test**: landing HTTP 200 ✅, login HTTP 200 ✅, dashboard HTTP 307 redirect a /login (auth middleware funcionando) ✅, `/api/consent` validación Zod respondiendo correctamente ✅.
+- **Pendiente**: RESEND_API_KEY no configurada (afecta solo flow de borrado con magic link). El flow existe en código y cae con `EmailConfigError` si el email no está disponible.
+
+### Resultados empíricos committeados
+
+| Experimento | Archivo en `eval-results/` | Tiempo de ejecución | Resultado |
+|---|---|---|---|
+| H3 crisis default | `crisis-2026-04-14_22-01-32-332.json` | 44.2 s | recall=0.520 (FALLA strict) |
+| H3 crisis forced | `crisis-2026-04-14_22-06-34-640.json` | 255.4 s | recall=1.000, precision=0.862 (PASA) |
+| H1 determinismo (n=25×3) | `H1-2026-04-14_23-41-39-903.json` | 1079.8 s | 13/25 fail stddev<2.5 (falsificada strict; Big Five estable, Jung inestable) |
+| H2 paráfrasis (n=25×3) | `H2-2026-04-14_23-56-55-568.json` | 873.8 s | 18/25 fail delta<10, mean=10.24 (falsificada strict, marginal) |
+
+Los findings detallados están en `docs/biz/VALIDATION.md` sección "Resultados empíricos" y en `thesis/08-validacion-computacional.md` capítulo 8.

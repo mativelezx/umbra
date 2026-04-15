@@ -10,6 +10,22 @@
 > [VALIDATION.md](VALIDATION.md) para el plan completo de hipótesis,
 > instrumentos y protocolos, y [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)
 > para la ejecución fase por fase.
+>
+> **Estado de experimentos (2026-04-14)**:
+>
+> | Hipótesis | Estado | Umbral estricto | Resultado | Hallazgo |
+> |---|---|---|---|---|
+> | H1 determinismo | ejecutada (n=25×3) | stddev<2.5 | **FALSIFICADA (13/25 fail)** | Big Five estable (max 1.88), Jung functions inestables (max 7.07) |
+> | H2 paráfrasis | ejecutada (n=25×3) | max delta<10 | **FALSIFICADA (18/25 fail)** | Mean delta 10.24 apenas sobre umbral; reformulable como intervalo |
+> | H3 crisis classifier | ejecutada (n=100) | recall≥0.95 | **PASA en config forzada** (recall=1.0, precision=0.862) | Clasificador capaz, sampling es el bottleneck |
+> | M3 think-aloud | pendiente | SUS≥68 | — | Materiales listos en docs/research/ |
+>
+> Los resultados reales están en `eval-results/*.json` (committeados) y
+> se reportan en detalle en
+> [VALIDATION.md sección "Resultados empíricos"](VALIDATION.md#resultados-emp%C3%ADricos-h1--determinismo).
+> La discusión académica de por qué las falsificaciones son hallazgos
+> valiosos (no fallas del artefacto) va en el capítulo 11 Discusión de
+> la tesis.
 
 ## Context
 

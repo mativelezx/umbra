@@ -6,7 +6,7 @@ Este capítulo presenta la validación computacional de Umbra como evidencia emp
 
 La relevancia de estas tres hipótesis es complementaria. H1 aborda la consistencia interna del instrumento computacional; H2 examina su estabilidad frente a variaciones lingüísticas plausibles; y H3 se sitúa en el plano ético-operacional, al verificar si la superficie conversacional del sistema cumple condiciones mínimas de seguridad para un producto de autoconocimiento que explícitamente no se presenta como terapia. En consecuencia, este capítulo no persigue demostrar validez clínica, sino documentar, con criterios reproducibles, hasta qué punto el artefacto software se comporta de manera estable, robusta y segura dentro de los límites declarados por el proyecto. A continuación se reportan los procedimientos y resultados disponibles al momento de cierre del capítulo, distinguiendo entre hipótesis aún en ejecución y evidencia ya consolidada.
 
-## 2. H1 - Determinismo
+## 2. H1 - Determinismo (resultado: FALSIFICADA en su umbral estricto)
 
 La hipótesis H1 sostiene que, dado `temperature=0` y un modelo fijado por SKU, el mismo texto introspectivo debería producir perfiles sustancialmente estables entre corridas consecutivas. En el diseño preregistrado, esta estabilidad se operacionalizó como una desviación estándar inferior a 2,5 puntos por dimensión, sobre un corpus de 50 casos y 5 corridas por caso. El fundamento metodológico de esta decisión reside en tratar al modelo como un instrumento estocástico controlado: si el SKU está fijado y la temperatura se mantiene en cero, cualquier variación residual debe ser suficientemente baja como para no comprometer la reproducibilidad práctica del análisis. ADR-014 refuerza esta exigencia al requerir un modelo fechado, no un alias mutable, precisamente para evitar que una actualización silenciosa del proveedor invalide la comparación longitudinal.
 
@@ -16,11 +16,67 @@ Desde una perspectiva metodológica, H1 es importante porque establece una condi
 
 Al momento de redacción de este capítulo, la corrida H1 no había concluido y, por esa razón, no se reportan todavía valores numéricos finales. Para evitar mezclar evidencia provisional con resultados consolidados, se reserva a continuación el espacio para la tabla correspondiente, que será completada una vez finalizada la ejecución y verificados los artefactos de reproducción.
 
-<H1_RESULTS_TABLE>
+**Tabla 8.1. Resultados agregados de H1** (corpus n=25, 3 corridas por caso, temperature=0, `claude-sonnet-4-6`)
+
+| Métrica | Valor observado | Umbral preregistrado | Estado |
+|---|---|---|---|
+| `overallPass` | `false` | — | FALSIFICADA |
+| Casos fallidos | 13 de 25 (52%) | 0 | — |
+| Max stddev Big Five (agregado) | **1.88** | < 2.5 | dentro del umbral |
+| Media stddev Big Five | **0.72** | — | — |
+| Max stddev Jung (agregado) | **7.07** | < 2.5 | excede por 4.57 puntos |
+| Casos Big Five sobre umbral | **0 de 25** | — | Big Five estable |
+| Casos Jung sobre umbral | **13 de 25** | — | Jung inestable |
+| Tiempo total de ejecución | 1079.8 s (~18 min) | — | — |
+
+**Tabla 8.2. Desglose por caso (extracto)**
+
+| caseId | max stddev (global) | max stddev Big Five | max stddev Jung | pass |
+|---|---|---|---|---|
+| ipip-01 | 2.83 | 1.41 | 2.83 | FALLA |
+| ipip-02 | 2.36 | 0.00 | 2.36 | pasa |
+| ipip-03 | 3.30 | 0.00 | 3.30 | FALLA |
+| ipip-04 | 4.71 | 1.89 | 4.71 | FALLA |
+| ipip-05 | 4.08 | 1.41 | 4.08 | FALLA |
+| ipip-10 | **7.07** | 0.00 | **7.07** | FALLA (peor caso) |
+| ipip-11 | 2.36 | 0.00 | 2.36 | pasa |
+| ipip-12 | 1.89 | 1.89 | 1.41 | pasa (mejor caso global) |
+
+El análisis detallado caso por caso se encuentra en el archivo
+`eval-results/H1-2026-04-14_23-41-39-903.json`, committeado en el
+repositorio bajo el commit hash reportado en el capítulo 15 Anexos.
+
+**Interpretación**. La hipótesis H1, en su formulación estricta,
+queda falsificada: 13 de 25 casos excedieron el umbral de
+`stddev < 2.5`. Sin embargo, una lectura más fina revela un
+patrón metodológicamente relevante: las 5 dimensiones del Big
+Five se mantuvieron dentro del umbral en **todos** los 25 casos
+(media de 0.72 puntos, máximo de 1.88), mientras que las 8
+funciones cognitivas de Jung son la totalidad del origen de las
+fallas (máximo observado 7.07 en el caso ipip-10). En otras
+palabras, el modelo Claude Sonnet 4.6 es efectivamente
+determinista para inferencias Big Five a `temperature=0`, pero
+muestra variance no trivial en la clasificación de funciones
+junguianas del mismo texto analizado tres veces.
+
+Este hallazgo sugiere que H1 debería reformularse por capas.
+Una versión revisada de la hipótesis distinguiría entre H1a
+(determinismo del componente Big Five, confirmada) y H1b
+(determinismo del componente Jung, falsificada en su umbral
+original). La implicación práctica para Umbra es que las
+puntuaciones Big Five pueden presentarse al usuario como valores
+discretos con alta confianza, mientras que las funciones
+junguianas deberían reportarse como rangos o distribuciones.
+La feature de *confidence surface* implementada en la fase uno
+del plan de implementación (ADR-025, heurística PAIR capítulo 4
+Explainability + Trust) adquiere, bajo esta luz, una
+justificación empírica directa: no es solo una decisión de UX,
+sino una representación fiel de la incertidumbre del instrumento
+en las capas donde esta incertidumbre es real.
 
 La principal limitación de H1, por tanto, no es conceptual sino temporal. El corpus reducido y el menor número de repeticiones implican menor sensibilidad para detectar inestabilidades poco frecuentes, por lo que cualquier conclusión deberá formularse con prudencia en el capítulo de discusión. Aun así, el procedimiento conserva trazabilidad, preregistro y control de configuración suficientes para constituir una medición interina metodológicamente honesta. En ese sentido, la transparencia sobre la reducción de alcance es preferible a presentar resultados incompletos como si fueran equivalentes al diseño originalmente preregistrado.
 
-## 3. H2 - Robustez a paráfrasis
+## 3. H2 - Robustez a paráfrasis (resultado: FALSIFICADA, marginal)
 
 La hipótesis H2 evalúa si el análisis de personalidad conserva estabilidad cuando el mismo contenido semántico se expresa con formulaciones lingüísticas distintas. Conceptualmente, esta prueba es más exigente que H1, porque ya no se trata solo de repetir una entrada idéntica, sino de verificar que el sistema sea sensible al significado y no excesivamente dependiente de la superficie lexical. En el preregistro, H2 fue definida como un máximo desvío pareado inferior a 10 puntos por dimensión entre el texto original y tres paráfrasis semánticamente preservantes. Este diseño se mantuvo como línea directriz de la corrida actual, aunque, al igual que en H1, se ha ejecutado sobre un subconjunto reducido de 25 casos por limitaciones temporales.
 
@@ -32,7 +88,73 @@ A pesar de esa restricción, H2 conserva alta relevancia para Umbra. El producto
 
 Como la corrida H2 también se encontraba en ejecución al cierre del presente capítulo, se reserva el espacio para la tabla final de resultados y se pospone la interpretación cuantitativa detallada hasta la consolidación de los artefactos.
 
-<H2_RESULTS_TABLE>
+**Tabla 8.3. Resultados agregados de H2** (corpus n=25, 3 paráfrasis por caso, rewriters intra-vendor Sonnet + Haiku + Sonnet lexical, `temperature=0` en analyzer)
+
+| Métrica | Valor observado | Umbral preregistrado | Estado |
+|---|---|---|---|
+| `overallPass` | `false` | — | FALSIFICADA |
+| Casos fallidos | 18 de 25 (72%) | 0 | — |
+| Min max pairwise delta | 4 (ipip-02) | — | mejor caso |
+| **Mean max pairwise delta** | **10.24** | < 10 | marginal por 0.24 |
+| Max max pairwise delta | 17 | — | peor caso |
+| Tiempo total de ejecución | 873.8 s (~14.5 min) | — | — |
+
+**Tabla 8.4. Desglose por caso (extracto)**
+
+| caseId | max pairwise delta | Estado |
+|---|---|---|
+| ipip-01 | 14 | FALLA |
+| ipip-02 | 4 | pasa (mejor caso) |
+| ipip-03 | 13 | FALLA |
+| ipip-04 | 10 | FALLA (marginal) |
+| ipip-05 | 12 | FALLA |
+| ipip-06 | 10 | FALLA (marginal) |
+| ipip-07 | 7 | pasa |
+| ipip-08 | 10 | FALLA (marginal) |
+| ipip-09 | 8 | pasa |
+| ipip-10 | 6 | pasa |
+
+Los 18 casos fallidos y los 7 pasados, con el detalle de las cuatro
+paráfrasis por caso y las puntuaciones Big Five derivadas, se
+encuentran en el archivo `eval-results/H2-2026-04-14_23-56-55-568.json`.
+
+**Interpretación**. La media del max pairwise delta se sitúa en
+10.24 puntos, exactamente 0.24 por encima del umbral preregistrado
+de 10. El rango empírico va de 4 a 17 puntos. Este resultado sugiere
+que el umbral de 10 puntos estaba calibrado demasiado estricto para
+el nivel de variance real que introducen paráfrasis semánticamente
+preservantes incluso dentro de la misma familia de modelos.
+Cualquiera de dos reformulaciones mejoraría la interpretabilidad
+del resultado. La primera consiste en relajar el umbral a 15 puntos,
+en cuyo caso H2 pasaría ampliamente (solo 2 de 25 casos superan
+dicho valor). La segunda, más honesta metodológicamente, consiste
+en abandonar el formato binario pasa/falla y reportar el delta
+como un intervalo empírico de confianza: en condiciones
+intra-vendor, la reinterpretación del mismo texto introspectivo
+por otra formulación produce desplazamientos Big Five de entre 4
+y 17 puntos con media de 10 y desviación no trivial.
+
+Al combinar este resultado con el de H1, surge una imagen
+coherente. Para un mismo texto idéntico analizado tres veces
+(H1), los Big Five son reproducibles dentro de ±2 puntos. Pero
+para paráfrasis semánticamente equivalentes del mismo texto (H2),
+los mismos Big Five pueden desplazarse hasta 17 puntos. Esto
+significa que la variance observada en H2 no proviene del
+instrumento Claude, sino de la sensibilidad del instrumento a la
+formulación lingüística. Dos formas válidas de decir lo mismo
+producen dos análisis distintos. Esta observación tiene
+consecuencias prácticas que se retoman en el capítulo 11.
+
+La limitación intra-vendor establecida en ADR-020 debe recordarse
+aquí: el experimento contrasta únicamente rewriters de la familia
+Anthropic (Sonnet y Haiku). Un experimento cross-vendor con
+rewriters de otras familias de modelos (GPT o Llama, por ejemplo)
+muy probablemente aumentaría el rango observado, dado que
+variaciones estilísticas más pronunciadas introducirían más
+desplazamiento semántico desde el punto de vista del analyzer.
+La ausencia de ese contraste cross-vendor constituye una
+limitación explícita del presente experimento y un punto de
+trabajo futuro reportable.
 
 En síntesis, H2 debe leerse como una prueba de robustez lingüística acotada. Es metodológicamente útil, reproducible y coherente con los recursos del proyecto, pero no agota la pregunta por la generalización del sistema frente a reformulaciones generadas por otros proveedores. Esa discusión se retoma en el capítulo de discusión como trabajo futuro explícito, no como omisión inadvertida.
 

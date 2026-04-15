@@ -148,3 +148,55 @@ function generatePdf(element: HTMLElement, filename: string) {
 - [DASHBOARD.md](DASHBOARD.md) — source of visible data
 - [NARRATIVE.md](NARRATIVE.md) — narrative included in PDF
 - [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md) — plan included in PDF
+
+## Post-implementación (2026-04-14)
+
+Cambios de Fase 3.5 del [IMPLEMENTATION_PLAN.md](../biz/IMPLEMENTATION_PLAN.md).
+
+### Link desde el dashboard
+
+Originalmente `/export` existía pero no había una entrada clara
+desde el dashboard — el usuario tenía que conocer la URL. Ahora el
+header del `app/dashboard/page.tsx` tiene un botón pill estilo
+"Descargar PDF" a la derecha del título "Tu perfil interior", como
+un link simple a `/export`:
+
+```tsx
+<a
+  href="/export"
+  className="group inline-flex shrink-0 items-center gap-2 rounded-full border border-violet-400/20 bg-umbra-shadow/30 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-text-2 transition-all duration-200 hover:border-violet-400/50 hover:bg-violet-400/10 hover:text-text-1"
+  aria-label="Descargar perfil en PDF"
+>
+  <span>Descargar PDF</span>
+</a>
+```
+
+### Type fix — removed `any` cast
+
+Originalmente `downloadPdf()` hacía `const html2pdf = (html2pdfModule.default as any)`, violando la regla de CLAUDE.md "no any en TypeScript". El fix (commit `a6f97b2`) introduce una interface `Html2PdfChain` que declara el subset de la API que usamos (`.set()`, `.from()`, `.save()`) y narrow el tipo sin escapes:
+
+```ts
+interface Html2PdfChain {
+  set(options: Record<string, unknown>): Html2PdfChain;
+  from(element: HTMLElement): Html2PdfChain;
+  save(): Promise<void>;
+}
+
+const html2pdfModule = (await import('html2pdf.js')) as unknown as
+  | { default: () => Html2PdfChain }
+  | (() => Html2PdfChain);
+const html2pdf =
+  typeof html2pdfModule === 'function'
+    ? html2pdfModule
+    : html2pdfModule.default;
+```
+
+El library html2pdf.js no tiene bundled types, así que declaramos
+el contrato mínimo nosotros. `tsc --noEmit` queda clean.
+
+### No otros cambios
+
+La lógica de PDF generation, el print stylesheet, y el flujo
+cliente-only siguen siendo los de la Fase 6 del master build.
+Ver `app/export/page.tsx` y `app/export/print.css`.
+

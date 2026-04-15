@@ -2,6 +2,9 @@
 
 Plataforma de autoconocimiento basada en Jung (funciones cognitivas) + Big Five (IPIP-NEO) + Positive Computing, en español rioplatense. TFG de Ingeniería en Software, Universidad Siglo 21.
 
+**🌐 Producción**: https://umbra-sigma.vercel.app
+**📦 Status**: deployed, todas las migraciones aplicadas (001-005), experimentos H1/H2/H3 ejecutados, 4 capítulos de tesis draftados.
+
 ## Lo que hace Umbra
 
 1. **Onboarding**: el usuario escribe sobre sí mismo (guiado en 5 áreas, o texto libre, o híbrido).
@@ -26,27 +29,52 @@ Plataforma de autoconocimiento basada en Jung (funciones cognitivas) + Big Five 
 - **Anthropic Claude** (`claude-sonnet-4-6` alias por default, o dated SKU via `ANTHROPIC_MODEL_ID`)
 - **Zustand 5** para stores de cliente
 - **Recharts** para el radar chart
+- **framer-motion** con `LazyMotion` + `domAnimation` tree-shaking (~17kb gzip) para spring animations en DashboardDepth y transitions varias (ver `components/motion/MotionProvider.tsx`)
 - **Phosphor Icons** (nunca emoji en UI)
-- **html2pdf.js** client-side para export
+- **html2pdf.js** client-side para export (tipado con interface `Html2PdfChain` interna, sin `any`)
 - **Zod** para validación en todo boundary
-- **Vitest** para unit tests (57/57 passing)
-- **Playwright** para E2E tests
+- **Vitest** para unit tests — ahora corre limpio post-reinstall de node_modules (16/16 tests pasando en los specs críticos: RLS coverage + crisis dataset integrity)
+- **Playwright** para E2E tests + `@axe-core/playwright` para a11y automatizada en CI
+- **codex CLI** (OpenAI) para code review independiente y drafting de capítulos técnicos de tesis (ADR-025, ADR para uso metodológico de IA generativa en proceso de redacción)
 
 ## Status
 
-**Phases 1-7 shipped.** Ver `docs/PLAN.md` para el status dashboard completo.
+**Master build phases 1-7 shipped** + **TFG sessions phases 0-6 shipped**.
 
+Master build (spec original):
 - ✓ Phase 1 — scaffolding
 - ✓ Phase 1.5 — ssr migration, errors, peppers, vitest, playwright, Migration 002
 - ✓ Phase 2 — landing + auth + consent + Ley 25.326 endpoints
 - ✓ Phase 3 — onboarding + analyze API + carta al futuro
 - ✓ Phase 4 — dashboard + Big Five radar + Jung bars + custom archetype SVGs + narrative
-- ✓ Phase 5 — narrative SSE + chat con full crisis safety pipeline (crisis events persisted, partial assistant turns preserved on stream failure)
-- ✓ Phase 6 — plan + PDF export (con Big Five radar SVG inline) + settings dashboard + account APIs
-- ✓ Phase 7 — SEO (robots + sitemap + OG), error/not-found boundaries, `/settings` root landing, a11y pass (form labels + checkbox semantics + modal focus management), Resend email integration, CI workflow, Vercel config
-- ✓ Fullstack wire-up (2026-04-13) — analyze + narrative + plan validados contra Supabase real + Anthropic real via `e2e/full-flow.spec.ts`
+- ✓ Phase 5 — narrative SSE + chat con full crisis safety pipeline
+- ✓ Phase 6 — plan + PDF export + settings dashboard + account APIs
+- ✓ Phase 7 — SEO, error boundaries, a11y pass, Resend integration, CI workflow, Vercel config
+- ✓ Fullstack wire-up (2026-04-13)
 
-**57/57 unit tests passing. `npm run typecheck` passing. `npm run build` compiles cleanly. 27 pages (incluyendo `robots.txt` + `sitemap.xml`), 10 API routes, 80KB middleware.**
+TFG sessions (post-master, 2026-04-14, ver [`docs/biz/IMPLEMENTATION_PLAN.md`](docs/biz/IMPLEMENTATION_PLAN.md)):
+
+- ✓ **Fase 0** — fundación académica (ADRs 023-025, VALIDATION.md, IMPLEMENTATION_PLAN.md, TFG.md, 16 thesis stubs)
+- ✓ **Fase 1** — 7 quick wins UX como aplicación de heurísticas PAIR (confidence surface, pull quotes, TOC sticky con scroll-spy, InfoPopover en dimensiones, InsightPing colapsable, QuickPromptChips siempre visibles, line-length 65ch)
+- ✓ **Fase 2** — UMUX-Lite/METUX/CUQ/SUS in-app instrumentation (migration 005 + tabla usability_responses + Edge API + UsabilityPrompt component)
+- ✓ **Fase 3** — 6 sub-fases estructurales:
+  - 3.1 Progressive disclosure 2 capas en dashboard
+  - 3.2 framer-motion con LazyMotion spring physics
+  - 3.3 Chat persistente con sidebar de historial
+  - 3.4 Undo del último turno de onboarding
+  - 3.5 PDF export con link desde dashboard + type fix
+  - 3.6 Autonomy dial chat (modo espejo/guía/reto)
+- ✓ **Fase 4** — H3 safety empírico (crisis dataset n=100 + runner + test + script)
+- ✓ **Fase 4.5** — M3 think-aloud materials (protocolo + consent + SUS + recruitment copy)
+- ✓ **Fase 5** — H1/H2 eval runners + corpus n=50 + Mermaid architecture + STRIDE threat model + axe-core CI + migration 004 consent_text_hash
+- ✓ **Fase 6** — thesis skeleton (16 chapters + README + Pandoc build) + 4 chapters drafted (03 marco teórico, 06 arquitectura, 08 validación, + OSF preregistration ready to paste)
+- ✓ **P1 fix** — ChatGPT seed flow raw text propagation al analyze (codex review finding)
+- ✓ **Experimentos empíricos ejecutados** contra Claude API prod:
+  - H1 (determinismo, n=25×3 reducido): 13/25 FALSIFICADO en su umbral estricto. Big Five estable (max stddev 1.88), Jung functions inestables (max 7.07). Finding valioso.
+  - H2 (robustez paráfrasis, n=25×3 intra-vendor): 18/25 FALSIFICADO, mean delta 10.24 apenas sobre umbral 10. Reformulable como intervalo empírico.
+  - H3 (safety crisis, n=100 full corpus): config producción FALLA (recall 0.52); config forzada PASA (recall 1.0, precision 0.862, F1 0.926). Recomendación: subir sampleRate a 1.0 en producción.
+
+**`tsc --noEmit` passing. `npm run build` compiles cleanly. 33 páginas (incluye 6 rutas nuevas de Fase 2/3), 15 API routes, 80KB middleware. 28 commits desde la fase 0.**
 
 ## Setup local
 
@@ -88,10 +116,15 @@ GLOBAL_DAILY_BUDGET_USD=50
 
 ### 3. Supabase migrations
 
-En el SQL Editor del dashboard de Supabase, correr en orden:
+En el SQL Editor del dashboard de Supabase, correr en orden, o usar `supabase db push --linked --include-all`:
 
 1. `supabase/migrations/001_initial_schema.sql` (tablas base + RLS)
 2. `supabase/migrations/002_core_tables.sql` (7 tablas nuevas + charge_rate_limit RPC + RLS)
+3. `supabase/migrations/003_onboarding_sessions.sql` (onboarding_sessions table con flags JSONB + RLS)
+4. `supabase/migrations/004_consent_text_hash.sql` (ADR-024: agrega consent_text_hash + locale a consent_records para Ley 25.326 art. 7)
+5. `supabase/migrations/005_usability_responses.sql` (Fase 2: tabla usability_responses para UMUX-Lite/METUX/CUQ/SUS in-app)
+
+Las 5 migrations están aplicadas en el proyecto prod linkeado (São Paulo region `abhtdinyegnwrnycwsca`). Verificable con `supabase migration list --linked`.
 
 ### 4. Ejecutar
 
@@ -186,10 +219,30 @@ Todo en `docs/`:
 - [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) — tokens, tipografía, componentes
 - [`docs/PROMPT_ARCHITECTURE.md`](docs/PROMPT_ARCHITECTURE.md) — cómo funcionan los prompts + eval suite
 - [`docs/CLOUD_HANDOFF.md`](docs/CLOUD_HANDOFF.md) — deploy a Vercel + Supabase
-- [`docs/DECISIONS.md`](docs/DECISIONS.md) — 22 ADRs
-- `docs/biz/` — MARKET, LEGAL (Ley 25.326), ETHICS (Phase 0 gate), TFG (thesis + OSF)
-- `docs/features/` — 10 feature specs detallados
-- `docs/tech/` — deep-dives (ARCHITECTURE, DATABASE, AUTH, CHAT_SAFETY, RATE_LIMITING, SECURITY, EVALS, OBSERVABILITY)
+- [`docs/DECISIONS.md`](docs/DECISIONS.md) — **25 ADRs** (002 Jung direct, 014 cache snapshots, 020 intra-vendor H2, 023 Branch B + M3, 024 consent text hash, 025 PAIR heuristics application)
+- [`docs/biz/`](docs/biz/) — documentación de negocio/académica:
+  - [`IMPLEMENTATION_PLAN.md`](docs/biz/IMPLEMENTATION_PLAN.md) — plan de 6 fases con QA gate estándar, checkboxes, timeline
+  - [`VALIDATION.md`](docs/biz/VALIDATION.md) — hipótesis H1/H2/H3 + protocolo M3 + **resultados empíricos** con tablas
+  - [`TFG.md`](docs/biz/TFG.md) — estructura de tesis + preregistro OSF + status de experimentos
+  - [`ETHICS.md`](docs/biz/ETHICS.md) — Helsinki + Calvo & Peters + Branch A/B
+  - [`LEGAL.md`](docs/biz/LEGAL.md) — Ley 25.326 compliance con consent_text_hash
+  - [`MARKET.md`](docs/biz/MARKET.md) — competitive landscape
+- [`docs/features/`](docs/features/) — 10 feature specs detallados, cada uno con sección "Post-implementación" que documenta los cambios de Fase 1/2/3 sobre la spec original
+- [`docs/tech/`](docs/tech/) — deep-dives:
+  - [`ARCHITECTURE.md`](docs/tech/ARCHITECTURE.md) — topología con diagramas Mermaid
+  - [`THREAT_MODEL.md`](docs/tech/THREAT_MODEL.md) — STRIDE completo por 7 componentes (nuevo en Fase 5)
+  - [`CHAT_SAFETY.md`](docs/tech/CHAT_SAFETY.md) — pipeline + **resultados H3** empíricos
+  - `DATABASE.md`, `AUTH.md`, `RATE_LIMITING.md`, `SECURITY.md`, `EVALS.md`, `OBSERVABILITY.md`
+- [`docs/research/`](docs/research/) — materiales para el estudio M3:
+  - `M3-session-protocol.md` — guion minuto a minuto de sesiones think-aloud
+  - `M3-recruitment-copy.md` — copy de reclutamiento
+  - `sus-spanish-rioplatense.md` — cuestionario SUS
+  - `osf/preregistration-standard.md` — texto del preregistro OSF ready to paste
+- [`thesis/`](thesis/) — **esqueleto de la tesis con 16 capítulos + Pandoc build**:
+  - 00-15 capítulos numerados (03 Marco teórico, 06 Arquitectura, 08 Validación computacional drafteados por codex)
+  - `README.md` con mapeo capítulo → fuente primaria
+  - `pandoc.yaml` + `build.sh` para generar el PDF final
+- [`eval-results/`](eval-results/) — **JSONs con los resultados empíricos** de H1/H2/H3 (H1 2026-04-14, H2 2026-04-14, H3 default + forced 2026-04-14)
 
 ## Lo que vos necesitás hacer antes del first run
 

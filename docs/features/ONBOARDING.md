@@ -151,3 +151,137 @@ See [features/ANALYSIS.md](ANALYSIS.md) for the Pass 2 spec.
 - [CONSENT.md](CONSENT.md) — consent flow (blocks this)
 - [CARTA_AL_FUTURO.md](CARTA_AL_FUTURO.md) — optional final step
 - `types/index.ts` → `ONBOARDING_AREAS` constant
+
+## Post-implementación (2026-04-14)
+
+Mejoras agregadas después del master build. La spec arriba describe
+el onboarding conversacional dinámico base. Lo que sigue documenta
+tres cambios concretos que están en producción.
+
+### Modo ChatGPT seed (nuevo flujo paralelo)
+
+Umbra tiene ahora dos modos de entrada al onboarding, seleccionables
+en un `ModeSelector` inicial:
+
+1. **Conversemos (dinámico)** — el flujo conversacional original,
+   descrito arriba.
+2. **Traelo desde ChatGPT (seed)** — el usuario pega un retrato
+   que ChatGPT le escribió sobre sí mismo. Umbra lo parsea con un
+   prompt dedicado (`lib/prompts/chatgpt-seed-parser.ts`), crea
+   una sesión "seeded" con el `WorkingProfile` pre-populado, y
+   después corre 2-3 turnos de refinamiento dinámico para
+   validar/ajustar.
+
+Archivos clave:
+- `components/onboarding/ModeSelector.tsx` — selector de modo.
+- `components/onboarding/SeedFromChatgptFlow.tsx` — UI multi-step
+  del flujo seed (copiar prompt → pegar respuesta → seeding
+  reveal → hand-off a DynamicFlow para refinamiento).
+- `lib/prompts/chatgpt-seed-prompt.ts` — el prompt que el usuario
+  copia a ChatGPT. Es self-contained: define Big Five + Jung +
+  arquetipos + estructura de respuesta.
+- `lib/prompts/chatgpt-seed-parser.ts` — prompt Claude que extrae
+  un `WorkingProfile` tipado desde el texto pegado por el usuario.
+- `app/api/onboarding/seed/route.ts` — Edge route con Zod + pipeline
+  de safety sobre el texto pegado + rate limit + creación de
+  sesión seeded.
+
+### Fix del P1 regression (propagación de seed text al analyze)
+
+Originalmente la feature ChatGPT seed tenía un bug documentado por
+codex review (commit `f185d25`): el texto pegado por el usuario se
+usaba solo para crear el `WorkingProfile` inicial, pero NO se
+propagaba al `/api/analyze` final cuando el usuario terminaba el
+refinamiento. Como consecuencia, el análisis final se construía
+sobre 2-3 respuestas de refinamiento en lugar del retrato completo.
+
+Fix aplicado en commit `791bbdc`:
+
+- `lib/onboarding/session-store.ts` — `createSeededSession()` ahora
+  persiste el full `rawSeedText` en `flags.seedText` (JSONB).
+- `app/api/analyze/route.ts` — `AnalyzeInputSchema` acepta
+  `sessionId` opcional. Cuando está presente, lee
+  `flags.seedText` del session row y lo prepends al texts array
+  como primer elemento con area "Retrato importado desde ChatGPT".
+- `components/onboarding/DynamicFlow.tsx` —
+  `synthesizeAndComplete()` pasa `sessionId: api.sessionId` en el
+  POST body al `/api/analyze`.
+
+Resultado: los perfiles seeded se construyen sobre el corpus
+completo (retrato ChatGPT + turnos de refinamiento). El bug queda
+documentado en el capítulo 11 Discusión como ejemplo de disciplina
+de codex review en el proyecto.
+
+### Undo del último turno (Fase 3.4)
+
+El usuario ahora puede revisar su respuesta anterior. Debajo de
+cada `QuestionCard` aparece un botón discreto "← revisar la
+anterior" cuando `turnNumber > 1`. Al click:
+
+1. POST a `/api/onboarding/undo` con el `sessionId`.
+2. El endpoint llama a `undoLastAnsweredTurn(svc, session)` en
+   `session-store.ts`, que elimina el último turno respondido
+   (y cualquier turno pending que haya quedado).
+3. El cliente resetea el store local (`api.setTurns([])`,
+   `setCurrentQuestion(null)`) y llama a `fetchNext(null)`.
+4. El conductor regenera la próxima pregunta desde el estado
+   truncado. El `workingProfile` se recompone automáticamente
+   porque el conductor lo reconstruye desde los turns en cada
+   iteración.
+
+Backend:
+
+- `app/api/onboarding/undo/route.ts` — POST Edge route con Zod
+  (`{ sessionId }`), consent gate, llama a `undoLastAnsweredTurn`,
+  devuelve `{ sessionId, turns, workingProfile, flags }`.
+- `lib/onboarding/session-store.ts` — `undoLastAnsweredTurn()`
+  helper que elimina el último turn respondido y cualquier pending
+  trailing.
+
+UI:
+
+- `components/onboarding/DynamicFlow.tsx` — nuevo callback
+  `undoLastTurn()` + botón condicional. Usa un `fetchNextRef` para
+  evitar dependencia circular entre callbacks. El botón está
+  deshabilitado durante `submitting` o `thinking`.
+
+Edge cases:
+- No hay `sessionId` activa: el botón no aparece.
+- No hay turn answered: el botón no aparece (sale en `turnNumber > 1`).
+- Sesión seeded: mantiene `flags.seeded` + `flags.seedText` intactos
+  gracias al merge fix del commit `f185d25`.
+
+### InfoPopover en dimensiones del LiveProfilePanel (Fase 1)
+
+El `LiveProfilePanel.tsx` ahora muestra un botón "?" al lado de
+cada dimensión Big Five y cada función Jung. Al click, abre un
+popover con:
+- Título: nombre de la dimensión/función
+- Body: descripción en español plano desde
+  `lib/dimensions/labels.ts`
+- Example: caso concreto de cómo se manifiesta un valor alto/bajo
+
+Implementación:
+- `components/ui/DimensionBar.tsx` gana un prop opcional
+  `info: { title, body, example }`. Si está presente, renderiza
+  `<InfoPopover>` al lado del label.
+- `LiveProfilePanel.tsx` importa `BIG_FIVE_LABELS` y `JUNG_LABELS`
+  de `lib/dimensions/labels.ts` y pasa el info correspondiente a
+  cada bar.
+
+PAIR cap. 3 Mental Models + cap. 4 Explainability.
+
+### InsightPing colapsable (Fase 1 T1.6)
+
+Los insights que el conductor emite durante el onboarding ya no
+se auto-expiran a los 4.2 segundos. Ahora se acumulan en una lista
+colapsable con botón toggle "Descubrimientos · N ▸" en
+`LiveProfilePanel`. Default expanded, el usuario puede contraer
+para reducir clutter.
+
+- `components/onboarding/InsightPing.tsx` — simplificado: se
+  eliminaron los `setTimeout` de hide/remove. El prop `onExpire`
+  queda deprecated/opcional para backward compat pero no se invoca.
+- `LiveProfilePanel.tsx` — lista colapsable con `max-h-80 overflow-y-auto`
+  y caret animado.
+

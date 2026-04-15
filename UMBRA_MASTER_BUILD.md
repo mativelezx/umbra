@@ -1,10 +1,26 @@
 # UMBRA — Master Build Document
 
-> **Qué es esto**: La fuente de verdad para construir Umbra de cero. Claude Code (en VS Code) lee este documento y ejecuta fase por fase. El developer supervisa y valida.
+> **Qué es esto**: La fuente de verdad ORIGINAL para construir Umbra de cero. Describe las fases 1-7 del master build inicial. Claude Code (en VS Code) leyó este documento al principio y ejecutó fase por fase.
+>
+> **⚠️ NOTA IMPORTANTE — 2026-04-14**:
+>
+> **Este documento describe el scope original del proyecto (master build fases 1-7, shipeado el 2026-04-13)**. El proyecto evolucionó después con **7 fases adicionales específicas del TFG** (Fase 0 a 6) que no están descritas acá. Para el estado actual completo del proyecto y las decisiones posteriores, ver:
+>
+> - **[`docs/biz/IMPLEMENTATION_PLAN.md`](docs/biz/IMPLEMENTATION_PLAN.md)** — plan maestro de las fases TFG con checkboxes, QA gate, timeline
+> - **[`docs/biz/VALIDATION.md`](docs/biz/VALIDATION.md)** — hipótesis H1/H2/H3 + protocolo M3 + **resultados empíricos reales**
+> - **[`docs/biz/TFG.md`](docs/biz/TFG.md)** — estructura de tesis + preregistro OSF + status de experimentos
+> - **[`docs/DECISIONS.md`](docs/DECISIONS.md)** — 25 ADRs (incluyendo ADR-023 Branch B + M3, ADR-024 consent_text_hash, ADR-025 PAIR heuristics)
+> - **[`docs/features/*.md`](docs/features/)** — cada feature doc tiene una sección "Post-implementación" que documenta los cambios de Fase 1/2/3 sobre la spec original
+> - **[`README.md`](README.md)** — status actualizado con ambas tracks (master build + TFG)
+> - **[`thesis/`](thesis/)** — esqueleto de tesis con 16 capítulos
+>
+> Las features agregadas post-master build incluyen: confidence surface, pull quotes en narrativa, sticky TOC con scroll-spy, InfoPopover en dimensiones, progressive disclosure 2 capas, framer-motion, chat persistente con sidebar, autonomy dial (espejo/guía/reto), undo de turnos en onboarding, UMUX-Lite/METUX/CUQ/SUS in-app instrumentation, y el eval suite computacional completo (H1/H2/H3 runners + scripts + committed cache snapshots).
+>
+> Este documento sigue siendo útil como **referencia histórica** del scope original y como archivo del pensamiento inicial del proyecto, pero no refleja el estado actual del código en producción (https://umbra-sigma.vercel.app).
 >
 > **Ubicación del proyecto**: `~/Desktop/Umbra`
 >
-> **Modelo de ejecución**: Claude Code (Opus 4.6) como builder principal. Codex como copiloto opcional para tareas aisladas.
+> **Modelo de ejecución**: Claude Code (Opus 4.6) como builder principal. Codex como copiloto opcional para tareas aisladas — que en las fases TFG posteriores se convirtió en **core colaborativo** para code review independiente + drafting de capítulos de tesis técnicos.
 
 ---
 
