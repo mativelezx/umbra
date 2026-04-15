@@ -220,11 +220,20 @@ export default async function DashboardPage() {
 
   // Extract confidence from analysis_raw (Claude analyzer output).
   // Stored as JSONB; narrow with a typed view rather than `any`.
+  // Defensive normalization: the analyzer stores 0-100 after clamp(), but
+  // legacy or seeded rows may hold a 0-1 decimal. Anything <= 1 is treated
+  // as a decimal and multiplied, so the UI never renders "0.68%".
   const analysisRaw = profileRow.analysis_raw as
     | { confidence?: number }
     | null;
-  const confidence =
+  const rawConfidence =
     typeof analysisRaw?.confidence === 'number' ? analysisRaw.confidence : null;
+  const confidence =
+    rawConfidence == null
+      ? null
+      : rawConfidence <= 1
+        ? Math.round(rawConfidence * 100)
+        : Math.round(rawConfidence);
 
   // Number of introspective text inputs that backed the analysis. Surfaced as
   // transparency ("basado en N respuestas") per PAIR Explainability heuristics.
