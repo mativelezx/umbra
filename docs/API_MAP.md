@@ -1,7 +1,13 @@
-# Umbra — API Map
+# Umbra — API Map (post-pivot ML, 2026-04-27)
 
 > Every API route in Umbra with method, runtime, input schema, output schema,
 > error codes, and links to the route implementation.
+>
+> **Banner pivot ML (ADR-002 v2 + ADR-026)**: `POST /api/analyze` ahora
+> infiere Big Five vía **módulo ML propio** (`/ml/`, FastAPI en
+> `process.env.ML_API_URL`) y delega solo Jung + arquetipo + razonamiento
+> a Claude (Pass 1.5, `lib/prompts/interpret-narrative.ts`). El prompt
+> viejo `analyze-profile.ts` queda deprecated.
 
 ## Conventions
 
@@ -15,16 +21,27 @@
 
 ### `POST /api/analyze`
 **Runtime**: Edge
-**Purpose**: Pass 1 — analyze user introspective text and produce psychological profile.
+**Purpose**: Pass 1 (módulo ML propio para Big Five) + Pass 1.5 (Claude
+para Jung + arquetipo + razonamiento). Produce el perfil psicológico
+completo.
 **Auth**: required
 **Phase**: 3
+
+**Pipeline post-pivot ML (ADR-026)**:
+1. `inferBigFive(combinedText)` → módulo ML en `process.env.ML_API_URL`
+   devuelve los 5 scores Big Five + `per_dimension_status` por dimensión.
+2. `buildInterpretNarrativePrompt({bigFive, perDimensionStatus, texts})`
+   → Claude (temperatura 0) devuelve Jung functions + archetype +
+   confidence + reasoning como **lectura interpretativa**.
+3. Persistencia + Pass 2 evidence (sin cambios).
 
 **Request body**:
 ```ts
 {
-  texts: string[],           // 1-5 entries (5 for guided, 1 for freetext)
-  mode: 'guided' | 'freetext',
-  areas?: string[],          // required if mode='guided', length matches texts
+  texts: string[],           // 1-16 entries (modo único 'dynamic' tras refactor)
+  mode: 'dynamic',
+  areas?: string[],          // labels opcionales por entrada
+  sessionId?: string,        // UUID del onboarding session (seed flow ChatGPT)
 }
 ```
 
@@ -55,7 +72,11 @@
 - `401 unauthenticated` — no session
 - `403 consent_required` — user has not accepted consent
 - `429 rate_limited` — daily token or cost cap hit
-- `503 ai_unavailable` — Claude API failed after retries
+- `503 ai_unavailable` — **módulo ML caído O Claude API failed**. Por
+  defecto NO hay fallback automático a Claude para Big Five (re-abriría
+  la brecha del pivot). Si `ANALYZE_BIG_FIVE_SOURCE=claude` está set,
+  el route hace fallback a un mini-prompt Claude para Big Five y marca
+  `bigFiveSource="claude_fallback"` en `analysis_raw` para auditoría.
 - `503 budget_exceeded` — global daily budget exceeded
 
 **Side effects**:

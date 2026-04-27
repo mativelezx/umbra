@@ -1,5 +1,15 @@
 # Marco teórico
 
+> **NOTA POST-PIVOT ML (2026-04-27)**: este capítulo se redactó antes
+> del pivot ML aplicado al código (ADR-002 v2 + ADR-026). La articulación
+> teórica vigente para el TFG entregado es: **Big Five como única teoría
+> medida automáticamente** (vía IPIP-NEO, módulo ML propio); Jung,
+> arquetipos Pearson y Positive Computing son **decisiones de diseño
+> narrativo**, no dimensiones inferidas. La versión final entregada del
+> capítulo (en `umbra-tesis/TP1_Ingenieria_Velez_SOF01994.docx`) ya
+> refleja esta separación. Este draft local se conserva como registro
+> intermedio del proceso de redacción.
+
 ## 1. Introducción
 
 Umbra se sitúa en la intersección entre tres tradiciones que, consideradas por separado, resultan valiosas pero insuficientes para sostener una experiencia de autoconocimiento digital con pretensión académica y criterio ético. La primera tradición es el modelo de los Big Five, particularmente en su operacionalización mediante IPIP-NEO, que aporta un lenguaje empírico y dimensional para describir diferencias individuales observables en el comportamiento. La segunda es la teoría de las funciones cognitivas de Jung, que ofrece una lectura más profunda de la arquitectura cognitiva desde la cual esas tendencias conductuales pueden emerger. La tercera es Positive Computing, que no constituye una teoría de la personalidad, sino un marco normativo de diseño orientado al bienestar humano, indispensable para traducir el análisis psicológico en una interacción tecnológica responsable (Calvo & Peters, 2014; Goldberg, 1999; Jung, 1921; Sauer, 2020).

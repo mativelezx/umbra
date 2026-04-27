@@ -1,7 +1,15 @@
-# Umbra — Architecture Deep Dive
+# Umbra — Architecture Deep Dive (post-pivot ML, 2026-04-27)
 
 > System architecture, component topology, dependency graph, and production
 > failure scenarios.
+>
+> **Banner pivot ML (ADR-002 v2 + ADR-026)**: el componente analítico
+> (Big Five) corre como **módulo Python independiente** en `/ml/`,
+> servido por FastAPI. El frontend Next.js lo consume vía HTTP usando
+> `process.env.ML_API_URL`. Vercel solo expone Next.js; el módulo ML
+> corre en `localhost:8000` durante desarrollo y en Render/Fly.io en
+> producción opcional. Capa Claude se reserva para narrativa,
+> interpretación Jung+arquetipo, plan, chat y crisis classifier.
 
 ## High-level topology
 
@@ -10,29 +18,35 @@ flowchart TB
   subgraph Client["USER BROWSER — Next.js App Router"]
     B[Pages + Components]
   end
-  subgraph Vercel["VERCEL"]
-    M[Next.js middleware<br/>Supabase session]
+  subgraph Vercel["VERCEL (Next.js)"]
+    M[Middleware<br/>Supabase session]
     E[Edge Runtime<br/>/api/analyze /api/narrative<br/>/api/chat /api/plan]
     N[Node Runtime<br/>/api/account/*<br/>service role ops]
   end
-  subgraph External["External services"]
+  subgraph MlService["MÓDULO ML PROPIO (Python, FastAPI)"]
+    ML[POST /infer<br/>DistilBERT congelado +<br/>5 Ridge multi-output]
+  end
+  subgraph External["Servicios externos"]
     S[(SUPABASE<br/>Auth · Postgres · RLS · Storage)]
-    A[ANTHROPIC Claude API<br/>sonnet-4-6 pinned<br/>haiku-4-5 pinned]
+    A[ANTHROPIC Claude API<br/>sonnet-4-6 pinned<br/>haiku-4-5 pinned<br/>SOLO capa narrativa]
     R[RESEND<br/>delete magic links]
   end
 
   B -->|HTTPS| M
   M --> E
   M --> N
+  E -->|Big Five vía ML_API_URL| ML
+  E -->|Pass 1.5 narrativo + chat + plan| A
   E -->|auth.uid via RLS| S
-  E -->|prompts + streaming| A
   N -->|service role| S
   N -->|transactional| R
 
   classDef ext fill:#1a1a2e,stroke:#b466ff,color:#f0ecff
   classDef vrc fill:#0e0e2a,stroke:#b466ff,color:#f0ecff
+  classDef ml fill:#0e2a1a,stroke:#66ffb4,color:#ecfff0
   class S,A,R ext
   class M,E,N vrc
+  class ML ml
 ```
 
 ASCII fallback (for environments that do not render Mermaid):

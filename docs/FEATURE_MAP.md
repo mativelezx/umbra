@@ -1,7 +1,13 @@
-# Umbra — Feature Map
+# Umbra — Feature Map (post-pivot ML, 2026-04-27)
 
 > Every user-visible feature in Umbra with status, phase, dependencies,
 > success criteria, and link to its deep-dive spec.
+>
+> **Banner pivot ML (ADR-002 v2 + ADR-026)**: la feature "AI analysis
+> (Pass 1)" pasa a llamarse "Componente analítico — módulo ML propio
+> + Pass 1.5 narrativo Claude". El stack del análisis cambió; las
+> features de UX (dashboard, narrativa, plan, chat, PDF, exportación,
+> consent, settings) NO cambian.
 
 ## Legend
 - **Status**: `SHIPPED` · `PLANNED` · `DEFERRED` · `SKIPPED`
@@ -19,8 +25,9 @@
 | Onboarding — mode selector | PLANNED | 3 | [features/ONBOARDING.md](features/ONBOARDING.md) |
 | Onboarding — guided flow | PLANNED | 3 | [features/ONBOARDING.md](features/ONBOARDING.md) |
 | Onboarding — freetext flow | PLANNED | 3 | [features/ONBOARDING.md](features/ONBOARDING.md) |
-| AI analysis (Pass 1) | PLANNED | 3 | [features/ANALYSIS.md](features/ANALYSIS.md) |
-| Evidence highlights (Pass 2) | PLANNED | 3 | [features/ANALYSIS.md](features/ANALYSIS.md) |
+| Componente analítico (módulo ML — Big Five) | SHIPPED | 3 | [features/ANALYSIS.md](features/ANALYSIS.md) + `/ml/README.md` |
+| Pass 1.5 narrativo (Jung + arquetipo + razonamiento) | SHIPPED | 3 | [features/ANALYSIS.md](features/ANALYSIS.md) |
+| Evidence highlights (Pass 2) | SHIPPED | 3 | [features/ANALYSIS.md](features/ANALYSIS.md) |
 | Progressive load animation | PLANNED | 3 | [features/ONBOARDING.md](features/ONBOARDING.md) |
 | Dashboard — Big Five radar | PLANNED | 4 | [features/DASHBOARD.md](features/DASHBOARD.md) |
 | Dashboard — Jung function bars | PLANNED | 4 | [features/DASHBOARD.md](features/DASHBOARD.md) |

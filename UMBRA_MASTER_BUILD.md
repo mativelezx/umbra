@@ -2,6 +2,17 @@
 
 > **Qué es esto**: La fuente de verdad ORIGINAL para construir Umbra de cero. Describe las fases 1-7 del master build inicial. Claude Code (en VS Code) leyó este documento al principio y ejecutó fase por fase.
 >
+> **⚠️ NOTA POST-PIVOT ML (2026-04-27)**: este documento describe el
+> Pass 1 monolítico Claude (`analyze-profile.ts`) que está **descontinuado**
+> tras el pivot ML del TFG. La inferencia Big Five ahora la realiza el
+> módulo ML propio en `/ml/` (DistilBERT congelado + Ridge multi-output,
+> ADR-026); Claude solo se reserva para lectura interpretativa
+> Jung+arquetipo+razonamiento (Pass 1.5, ver `lib/prompts/interpret-narrative.ts`)
+> + narrativa + plan + chat + crisis classifier. Para entender el
+> sistema actual, ver `README.md`, `docs/DECISIONS.md` (ADR-002 v2,
+> ADR-026, ADR-027, ADR-028) y `/ml/README.md`. Este Master Build
+> queda como **registro histórico** del diseño inicial.
+>
 > **⚠️ NOTA IMPORTANTE — 2026-04-14**:
 >
 > **Este documento describe el scope original del proyecto (master build fases 1-7, shipeado el 2026-04-13)**. El proyecto evolucionó después con **7 fases adicionales específicas del TFG** (Fase 0 a 6) que no están descritas acá. Para el estado actual completo del proyecto y las decisiones posteriores, ver:

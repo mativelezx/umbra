@@ -423,8 +423,12 @@ const turnsCount = Array.isArray(inputTextsRaw) ? inputTextsRaw.length : null;
 
 Y los pasa a `DashboardView` para que `QuickGlance` y
 `ArchetypeCard` puedan renderizar la certeza. Los valores vienen
-de la respuesta original del prompt `analyze-profile.ts` (campo
-`confidence`).
+de la respuesta del Pass 1.5 narrativo
+`lib/prompts/interpret-narrative.ts` (campo `confidence`,
+self-reported por Claude). Adicionalmente, `analysis_raw.perDimensionStatus`
+contiene flags `"ok"` / `"low_confidence"` por dimensión Big Five
+producidos por el módulo ML propio (ADR-027). La política UI sobre
+qué mostrar bajo umbral queda diferida (ver ADR-027).
 
 ### Impacto en métricas
 

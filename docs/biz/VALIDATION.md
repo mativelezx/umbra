@@ -1,32 +1,40 @@
-# Umbra — Plan de Validación TFG
+# Umbra — Plan de Validación TFG (post-pivot ML, 2026-04-27)
 
 > Documento maestro de la sección de Validación de la tesis. Define
 > hipótesis, instrumentos, protocolos, datasets, umbrales de aceptación y
 > análisis. Es la fuente primaria del capítulo "Metodología" y "Validación"
 > del TFG.
 >
-> **Decisión adoptada**: Branch B (computacional) + M3 (think-aloud n=8-10).
-> Ver [DECISIONS.md ADR-023](../DECISIONS.md) y [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
+> **Banner pivot ML (ADR-002 v2 + ADR-023 amendado + ADR-026 + ADR-028)**:
+> la decisión adoptada es validación mixed-methods con tres pilares:
+> (1) **PRIMARY computational** = métricas estándar de regresión por
+> dimensión Big Five (MSE / R² / r de Pearson) sobre el regresor del
+> módulo ML propio (`/ml/eval_metrics.json`); (2) **SAFETY computational**
+> = H3 precision/recall del crisis classifier (mantiene); (3)
+> **SECONDARY user** = M3 think-aloud n=8-10 con SUS rioplatense
+> (mantiene). H1 (determinismo) y H2 (paráfrasis) quedaron deprecadas
+> con el pivot (ADR-011 + ADR-020 SUPERSEDED). La preregistración OSF
+> se descartó (ADR-012 SUPERSEDED): la auditabilidad la cubren DVC +
+> MLflow + commits del repo público.
 >
-> **Estado de ejecución (2026-04-14)**:
-> - H1 — ejecutada con corpus reducido n=25×3 (subset del preregistrado
->   50×5). **Resultado: FALSIFICADA en su umbral estricto** (13 de 25
->   casos excedieron stddev<2.5). Hallazgo clave: Big Five es estable
->   (max stddev=1.88), Jung functions inestables (max stddev=7.07).
->   Ver sección "Resultados empíricos H1" más abajo.
-> - H2 — ejecutada con corpus reducido n=25×3 rewriters. **Resultado:
->   FALSIFICADA** (18 de 25 casos excedieron max pairwise delta<10,
->   mean delta=10.24, max=17). Ver sección "Resultados empíricos H2".
-> - H3 — ejecutada con corpus completo n=100 en dos configuraciones.
->   **Config producción (sampleRate=0.01): FALLA recall (0.520)**.
->   **Config forzada (sampleRate=1.0): PASA** recall=1.000 precision=0.862.
->   Ver sección "Resultados empíricos H3".
-> - M3 — **pendiente** (materiales listos en docs/research/, sesiones
->   por ejecutar por el autor).
+> **Estado de ejecución (2026-04-27)**:
+> - **Módulo ML — Big Five por dimensión** (PRIMARY): pipeline
+>   reproducible end-to-end committeado (`cd ml && make all`).
+>   Resultados en `/ml/eval_metrics.json`. Métricas reales se obtienen
+>   al integrar Essays (ver `/ml/data/essays/README.md`); el corpus
+>   rioplatense propio (n=20 IPIP etiquetado) ya está disponible.
+> - **H3 — crisis classifier** (SAFETY): ejecutada con corpus completo
+>   n=100 en dos configuraciones. **Config producción (sampleRate=0.01):
+>   FALLA recall (0.520)**. **Config forzada (sampleRate=1.0): PASA**
+>   recall=1.000 precision=0.862. Ver sección "Resultados empíricos H3".
+> - **M3 — think-aloud** (SECONDARY): pendiente. Materiales listos en
+>   `docs/research/`, sesiones por ejecutar TP3-TP4.
 >
-> Los archivos fuente de los resultados están committeados en
-> `eval-results/`. Los tres JSONs se referencian más abajo con sus
-> commit hashes y números exactos.
+> Los resultados pre-pivot de H1 y H2 (era Claude monolítico) quedan
+> preservados en `eval-results/legacy/` como histórico, NO son evidencia
+> primary del TFG entregado. Las secciones "Resultados empíricos H1" y
+> "Resultados empíricos H2" más abajo se mantienen como **discusión
+> retrospectiva del aprendizaje que motivó el pivot**.
 
 ## Resumen ejecutivo
 

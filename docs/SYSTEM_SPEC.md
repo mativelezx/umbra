@@ -1,7 +1,14 @@
-# Umbra — System Specification
+# Umbra — System Specification (post-pivot ML, 2026-04-27)
 
 > Top-level technical contract. What the system IS, what it DOES, what it
 > DOES NOT do, and what it promises to its users and to the academic tribunal.
+>
+> **Banner pivot ML (ADR-002 v2 + ADR-026, 2026-04-27)**: la inferencia
+> Big Five la realiza un módulo ML propio en `/ml/` (DistilBERT
+> congelado + Ridge multi-output, FastAPI). Jung, arquetipos y Positive
+> Computing son **lectura interpretativa** de la capa Claude, no
+> mediciones. La validación primary del componente analítico son
+> métricas estándar de regresión por dimensión Big Five (ADR-028).
 
 ## 1. System identity
 
@@ -15,13 +22,24 @@
 
 Umbra takes a user's introspective written text (either through guided 5-area prompts or a single freetext block) and produces:
 
-1. A **psychological profile** with:
-   - Big Five scores (5 dimensions, 0-100 each)
-   - Jung cognitive function scores (8 functions, 0-100 each)
-   - Dominant archetype (Pearson applied: Hero / Sage / Explorer / Creator / Caregiver / Rebel)
-   - Secondary archetype
-   - Confidence score (self-reported by Claude)
-   - Reasoning trace citing evidence from the user's text
+1. A **psychological profile** con:
+   - **Big Five scores** (5 dimensiones, 0-100 cada una) — **medidos por
+     el módulo ML propio en `/ml/`** (DistilBERT congelado + Ridge
+     multi-output entrenado sobre Essays + corpus rioplatense propio).
+     Las dimensiones que caen bajo el umbral mínimo de aceptación
+     (R² > 0.20 y r > 0.30) se reportan como `low_confidence` por
+     dimensión (ADR-027).
+   - **Jung cognitive function scores** (8 funciones, 0-100 cada una) —
+     **lectura interpretativa de Claude (Pass 1.5)**, NO medición.
+     Derivada del Big Five inferido + texto del usuario.
+   - **Arquetipo dominante** (Pearson aplicado: Hero / Sage / Explorer /
+     Creator / Caregiver / Rebel) — **lectura interpretativa de Claude**,
+     NO medición.
+   - Arquetipo secundario.
+   - Confianza global de la lectura interpretativa (self-reported por
+     Claude para Pass 1.5; ortogonal al `per_dimension_status` del
+     módulo ML).
+   - Razonamiento citando evidencia textual del usuario.
 
 2. A **personalized narrative** (800-1200 words, Spanish rioplatense, second-person voseo) that interprets the profile as a story rather than diagnosis.
 
@@ -40,7 +58,8 @@ Optional (user opt-in during consent flow):
 ## 3. What the system does NOT do
 
 - **Not therapy.** Explicit non-goal. Permanent banner. Crisis detection routes users to professional resources.
-- **Not MBTI.** Uses Jung cognitive functions directly, cites Jung (1921) + Sauer (2025). No 16-personality labels.
+- **Not MBTI.** Cita a Jung (1921) directamente para vocabulario interpretativo de la capa narrativa. No 16-personality labels.
+- **No infiere Jung ni arquetipos como medición psicométrica.** Solo Big Five se mide automáticamente; el resto es lectura interpretativa de la capa narrativa (ADR-002 v2 + ADR-007 amendado).
 - **Not a diagnostic tool.** No DSM codes, no clinical language, no "disorder" framing.
 - **Not multi-user.** Single-user product; no teams, no organizations, no shared profiles.
 - **Not real-time.** No collaborative editing, no presence, no websockets.
@@ -49,23 +68,37 @@ Optional (user opt-in during consent flow):
 
 ## 4. Stack
 
+### Capa web
+
 | Layer | Technology | Version | Notes |
 |---|---|---|---|
-| Framework | Next.js (App Router) | `14.2.35+` | Edge runtime for Claude routes |
+| Framework | Next.js (App Router) | `14.2.35+` | Edge runtime para rutas Claude |
 | Language | TypeScript | `5.5.4+` | strict mode |
-| Styling | Tailwind CSS | `3.4.13` | Tokens in [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) |
+| Styling | Tailwind CSS | `3.4.13` | Tokens en [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) |
 | Fonts | Instrument Serif, Space Grotesk, Inter, JetBrains Mono | via Google Fonts | |
-| Icons | @phosphor-icons/react | `2.1.7` | NO emoji in UI |
-| State | Zustand | `5.0.0` | One store per domain |
-| Auth | Supabase Auth | latest | Via `@supabase/ssr` |
-| Database | Supabase PostgreSQL | 15+ | RLS on every table |
-| AI | Anthropic Claude SDK | `0.30.1` | Sonnet 4.6 pinned SKU |
+| Icons | @phosphor-icons/react | `2.1.7` | NO emoji en UI |
+| State | Zustand | `5.0.0` | Un store por dominio |
+| Auth | Supabase Auth | latest | Vía `@supabase/ssr` |
+| Database | Supabase PostgreSQL | 15+ | RLS en cada tabla |
+| Capa narrativa AI | Anthropic Claude SDK | `0.30.1` | Sonnet 4.6 pinned SKU. Pass 1.5 narrativo + chat + plan + crisis classifier. |
 | Charts | Recharts | `2.13.0` | Radar + bars |
-| PDF | html2pdf.js | `0.10.2` | Client-side only |
-| Validation | Zod | `3.23.8` | All API inputs |
-| i18n | next-intl | `^3` | es-AR primary, en stub |
-| Testing | Vitest + Playwright | latest | Vitest for units, Playwright for E2E |
-| Deploy | Vercel | — | Git-connected CI/CD |
+| PDF | html2pdf.js | `0.14.0` | Client-side only |
+| Validation | Zod | `3.23.8` | Todos los inputs de API |
+| Testing | Vitest + Playwright | latest | Vitest unit, Playwright E2E |
+| Deploy | Vercel | — | Git-connected CI/CD (Edge runtime) |
+
+### Capa analítica (módulo ML propio, ADR-026)
+
+| Layer | Technology | Notes |
+|---|---|---|
+| Lenguaje | Python 3.11 | Servicio independiente, fuera del bundle Next.js |
+| Etapa 1 — embeddings | DistilBERT base multilingual cased (Sanh et al. 2019) | Frozen, CLS pooling, sin fine-tuning |
+| Etapa 2 — regresor | scikit-learn Ridge (Hoerl y Kennard 1970) | 5 regresores independientes, GridSearchCV alpha |
+| Tracking | MLflow (Zaharia et al. 2018) | Local file store, runs por dimensión |
+| Versionado de datos | DVC | Corpus Essays + rioplatense versionados |
+| Serialización | joblib | `models/ridge_v1.joblib` |
+| Servir | FastAPI + uvicorn | `localhost:8000` (dev) / Render-Fly.io (prod) |
+| Cliente desde Next.js | `lib/ml-client.ts` | Vía `ML_API_URL` env var |
 
 ## 5. Component inventory
 

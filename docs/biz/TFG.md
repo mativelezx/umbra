@@ -1,31 +1,34 @@
-# Umbra — TFG (Trabajo Final de Grado) Deliverables
+# Umbra — TFG (Trabajo Final de Grado) Deliverables (post-pivot ML, 2026-04-27)
 
-> The academic dimension of Umbra. Thesis structure, OSF preregistration,
-> paper draft, defense preparation.
+> The academic dimension of Umbra. Thesis structure, defensa preparation,
+> componente analítico propio (módulo ML).
 >
-> **Validation decision (ADR-023, 2026-04-14)**: el TFG adopta validación
-> mixed-methods con dos pilares: **Branch B (computacional) como primary
-> evidence** (H1/H2/H3 preregistradas en OSF) + **M3 think-aloud como
-> secondary user validation** (n=8-10 con reclutamiento controlado). Ver
-> [VALIDATION.md](VALIDATION.md) para el plan completo de hipótesis,
-> instrumentos y protocolos, y [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)
-> para la ejecución fase por fase.
+> **Banner pivot ML (ADR-002 v2 + ADR-026 + ADR-028)**: la validación
+> primary del TFG entregado es el reporte de **MSE / R² / r de Pearson
+> por dimensión Big Five** sobre el regresor entrenado del módulo ML
+> propio (`/ml/`). H1 (determinismo Claude) y H2 (paráfrasis intra-vendor
+> Claude) quedaron deprecadas (ADR-011 + ADR-020 SUPERSEDED) porque la
+> inferencia Big Five ya no la hace Claude. La preregistración OSF se
+> descartó (ADR-012 SUPERSEDED): la auditabilidad la cubren DVC + MLflow
+> + commits del repo público + métricas committeadas. H3
+> (crisis classifier) se mantiene como validación adicional del pipeline
+> de seguridad. M3 (think-aloud n=8-10 con SUS rioplatense) sigue como
+> secondary user validation.
 >
-> **Estado de experimentos (2026-04-14)**:
+> **Estado del eval post-pivot (2026-04-27)**:
 >
-> | Hipótesis | Estado | Umbral estricto | Resultado | Hallazgo |
-> |---|---|---|---|---|
-> | H1 determinismo | ejecutada (n=25×3) | stddev<2.5 | **FALSIFICADA (13/25 fail)** | Big Five estable (max 1.88), Jung functions inestables (max 7.07) |
-> | H2 paráfrasis | ejecutada (n=25×3) | max delta<10 | **FALSIFICADA (18/25 fail)** | Mean delta 10.24 apenas sobre umbral; reformulable como intervalo |
-> | H3 crisis classifier | ejecutada (n=100) | recall≥0.95 | **PASA en config forzada** (recall=1.0, precision=0.862) | Clasificador capaz, sampling es el bottleneck |
-> | M3 think-aloud | pendiente | SUS≥68 | — | Materiales listos en docs/research/ |
+> | Componente | Estado | Métrica primary | Reporte |
+> |---|---|---|---|
+> | Módulo ML — Big Five por dimensión | pipeline reproducible end-to-end (`make all`); métricas committeadas en `/ml/eval_metrics.json` (umbrales R²>0.20, r>0.30 por dimensión) | MSE, R², r de Pearson por dimensión × bloque (english_only / rioplatense_only / combined) | el bloque `rioplatense_only` sustenta la narrativa del TFG |
+> | H3 — crisis classifier | ejecutada n=100 dos configs | recall≥0.95, precision≥0.85 | config forzada PASA (recall=1.0, precision=0.862); sampling=0.01 producción es bottleneck honesto |
+> | M3 — think-aloud n=8-10 | pendiente | SUS≥68 + coding temático | materiales en `docs/research/`; ejecución TP3-TP4 |
 >
-> Los resultados reales están en `eval-results/*.json` (committeados) y
-> se reportan en detalle en
-> [VALIDATION.md sección "Resultados empíricos"](VALIDATION.md#resultados-emp%C3%ADricos-h1--determinismo).
-> La discusión académica de por qué las falsificaciones son hallazgos
-> valiosos (no fallas del artefacto) va en el capítulo 11 Discusión de
-> la tesis.
+> Los resultados reales del módulo ML viven en `/ml/eval_metrics.json`
+> (committeado). Los resultados pre-pivot de H1/H2 quedan preservados
+> como `eval-results/legacy/*.json` (ver COMMIT_PLAN.md), no son
+> evidencia primary del TFG entregado. La discusión académica sobre el
+> pivot y por qué los hallazgos pre-pivot motivan la migración va en
+> los capítulos 06 (Arquitectura) y 11 (Discusión) de la tesis.
 
 ## Context
 

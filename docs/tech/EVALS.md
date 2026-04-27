@@ -1,20 +1,66 @@
-# Umbra — Eval Suite (H1 + H2)
+# Umbra — Eval Suite (post-pivot ML, 2026-04-27)
 
-> Golden test cases, H1 determinism hypothesis, H2 cross-model paraphrase
-> consistency hypothesis, committed cache snapshots, CI integration.
+> **Banner pivot ML (ADR-011 + ADR-012 + ADR-020 SUPERSEDED, ADR-026 +
+> ADR-028)**: H1 (determinismo) y H2 (paráfrasis intra-vendor) quedaron
+> deprecadas. La validación primary del componente analítico ahora son
+> **MSE / R² / r de Pearson por dimensión Big Five** sobre el regresor
+> entrenado del módulo ML propio (`/ml/`), no sobre prompts Claude.
+> H3 (precision/recall del crisis classifier) se mantiene como
+> validación adicional del pipeline de seguridad (ortogonal al pivot).
+> M3 (think-aloud n=8-10) sigue como secondary user validation.
 
-## Purpose
+## Estado de la suite
 
-The eval suite is the **primary validation evidence** for the TFG paper. It is:
-1. Runnable by any reviewer who clones the repo (`npm run eval -- --from-cache`)
-2. Reproducible offline via committed cache snapshots (no API cost)
-3. Preregistered on OSF before first run (H1 and H2 as falsifiable hypotheses)
-4. The CI gate that catches prompt drift and KB changes
+| Componente | Estado | Reemplazo / Rol |
+|---|---|---|
+| H1 (`lib/evals/consistency.ts` + `scripts/run-h1.ts`) | DEPRECATED | Reemplazado por `/ml/eval_metrics.json` (ADR-028). Stub que arroja error. |
+| H2 (`lib/evals/cross-model-paraphrase.ts` + `scripts/run-h2.ts`) | DEPRECATED | Idem. |
+| H3 (`lib/evals/crisis-eval.ts` + `crisis-dataset.ts` + `crisis-eval.test.ts`) | VIGENTE | Validación pipeline crisis classifier, ortogonal al pivot ML. |
+| M3 (think-aloud n=8-10) | VIGENTE | Documentado en `docs/research/`, ejecución en TP3-TP4. |
+| Resultados pre-pivot (`eval-results/H1-*.json`, `H2-*.json`) | LEGACY | Mover a `eval-results/legacy/` (ver COMMIT_PLAN.md). |
 
-The eval suite is NOT:
-- A replacement for real-world testing (Phase 7 has Playwright E2E)
-- A claim about construct validity of the psychological frameworks themselves (that's philosophy, not code)
-- A general benchmark (it's specific to Umbra's prompts + KB)
+## Validación primary del componente analítico (ADR-028)
+
+Vive en `/ml/`, no en `lib/evals/`. Reproducible:
+
+```bash
+cd ml
+make all          # prepare_data + baseline_tfidf + train_ridge + evaluate
+cat eval_metrics.json
+```
+
+Estructura del reporte:
+
+```json
+{
+  "model_type": "distilbert_ridge",
+  "thresholds": {"r2": 0.20, "r": 0.30},
+  "blocks": {
+    "combined": {"per_dimension_status": {...}, "metrics": {...}},
+    "english_only": {"per_dimension_status": {...}, "metrics": {...}},
+    "rioplatense_only": {"per_dimension_status": {...}, "metrics": {...}}
+  },
+  "dataset_status": { "essays_integrated": true, ... }
+}
+```
+
+Métricas por dimensión: MSE, R², r de Pearson. **Umbral mínimo de
+aceptación**: R² > 0.20 y r > 0.30. Las dimensiones por debajo se
+reportan como `low_confidence` y quedan fuera del componente
+cuantitativo del perfil (ADR-027).
+
+## Eval suite legacy (deprecada, conservada por compatibilidad)
+
+Los archivos de la suite Claude pre-pivot quedan en el árbol como stubs
+que arrojan error en runtime. Cualquier intento de invocarlos sale con
+mensaje informativo apuntando al módulo ML.
+
+El corpus de 50 casos (`lib/evals/cases.ts`) se conserva porque el
+crisis classifier (H3) lo sigue usando y porque sirve como
+**dataset de inspección cualitativa** de la inferencia. La parte IPIP
+del corpus (20 casos) se migró a `/ml/data/rioplatense/cases.csv` con
+scores Big Five etiquetados por la rúbrica documentada en
+`/ml/data/rioplatense/rubrica_validacion.md`.
 
 ## Directory structure
 

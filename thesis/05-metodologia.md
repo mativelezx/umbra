@@ -1,7 +1,22 @@
 # Metodología
 
-<!-- FUENTE PRIMARIA: docs/biz/VALIDATION.md, ADR-011, ADR-012, ADR-014,
-     ADR-020, ADR-023. -->
+<!-- POST-PIVOT ML (2026-04-27): la metodología vigente del TFG entregado
+     es la del módulo ML propio (Big Five por dimensión: MSE / R² / r de
+     Pearson) + H3 crisis classifier + M3 think-aloud. Las hipótesis H1
+     (determinismo Claude) y H2 (paráfrasis intra-vendor Claude) quedaron
+     descontinuadas (ADR-011 + ADR-020 SUPERSEDED). La preregistración
+     OSF se descartó (ADR-012 SUPERSEDED). FUENTE PRIMARIA actual:
+     docs/biz/VALIDATION.md (post-pivot), ADR-002 v2, ADR-023 amendado,
+     ADR-026, ADR-028, /ml/README.md, /ml/eval_metrics.json. -->
+
+> **NOTA POST-PIVOT ML (2026-04-27)**: este draft se redactó cuando la
+> validación primary del TFG eran las hipótesis H1/H2/H3 preregistradas
+> en OSF. Tras el pivot ML, la validación primary del componente
+> analítico son las **métricas estándar de regresión por dimensión Big
+> Five** (ADR-028) sobre el regresor entrenado del módulo ML propio.
+> H3 (crisis classifier) y M3 (think-aloud) se mantienen. La versión
+> final del capítulo entregado en TP1 ya refleja la metodología
+> vigente; este draft queda como registro intermedio.
 
 ## 1. Introducción
 

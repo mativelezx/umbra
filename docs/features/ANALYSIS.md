@@ -1,55 +1,95 @@
-# Feature — AI Analysis (Pass 1 + Pass 2)
+# Feature — Análisis (post-pivot ML, 2026-04-27)
 
-> The heart of Umbra. Two-pass Claude analysis producing psychological profile
-> and phrase-level evidence highlights.
+> El corazón analítico de Umbra. Pipeline de tres pasos: módulo ML
+> propio para Big Five, Pass 1.5 narrativo en Claude para Jung +
+> arquetipo + razonamiento, y Pass 2 evidence highlights.
+
+> **Banner pivot ML (ADR-002 v2 + ADR-026)**: el Pass 1 monolítico que
+> antes pedía a Claude inferir Big Five + Jung + arquetipo + razonamiento
+> en una sola llamada está descontinuado. La inferencia Big Five la hace
+> el módulo ML propio (`/ml/`); Claude se reserva exclusivamente para la
+> lectura interpretativa narrativa.
 
 ## Phase
 3
 
 ## Routes
-- `POST /api/analyze` — Pass 1 (Edge runtime)
-- `POST /api/analyze/evidence` — Pass 2 (Edge runtime)
+- `POST /api/analyze` — Pass 1 (módulo ML) + Pass 1.5 (Claude). Edge runtime.
+- `POST /api/analyze/evidence` — Pass 2 (Claude). Edge runtime.
 
-See [API_MAP.md](../API_MAP.md) for request/response schemas and error codes.
+Ver [API_MAP.md](../API_MAP.md) para schemas y error codes.
 
-## Why two passes
+## Por qué pipeline en tres pasos
 
-Asking Claude to both produce profile scores AND cite evidence in one call
-reduces profile quality. Evidence extraction is a lighter task that benefits
-from a slightly higher temperature (0.3) and shorter prompt. Splitting lets
-us:
-- Pin Pass 1 to temperature=0 for H1 determinism
-- Let Pass 2 explore phrase selection creatively
-- Fail Pass 2 gracefully without blocking the core profile
-- Cache Pass 1 for H1 evaluation independently of Pass 2
+Separar inferencia psicométrica (Big Five, módulo ML) de lectura
+interpretativa (Jung + arquetipo + razonamiento, Claude) y de evidence
+extraction (Claude) permite:
+- **Pass 1 (módulo ML)**: respaldo psicométrico con instrumento de
+  dominio público (IPIP-NEO, ADR-015), reproducible, auditable
+  (DVC + MLflow), y barato en runtime (cero costo Anthropic por
+  inferencia). El TFG se sostiene técnicamente acá (ADR-026 + ADR-028).
+- **Pass 1.5 (Claude)**: lectura interpretativa Jung + arquetipo +
+  razonamiento como vocabulario narrativo (ADR-002 v2 + ADR-007
+  amendado), no como medición. Temperatura 0 por consistencia.
+- **Pass 2 (Claude)**: evidence highlights, ortogonal al perfil. Falla
+  fire-and-forget sin bloquear la respuesta al usuario.
 
-## Pass 1 — Profile analysis
+## Pass 1 — Big Five (módulo ML propio)
+
+### Cliente TS
+`lib/ml-client.ts` → `inferBigFive(text)`
+
+### Endpoint
+`POST {ML_API_URL}/infer` (default `http://localhost:8000`).
+Implementación: `/ml/src/api_server.py`.
+
+### Pipeline interno (ver `/ml/README.md`)
+1. DistilBERT base multilingual cased congelado → embedding ℝ⁷⁶⁸
+   (CLS pooling).
+2. Cinco regresores Ridge (uno por dimensión Big Five), entrenados con
+   GridSearchCV alpha sobre Essays + corpus rioplatense (corpus
+   versionado con DVC).
+3. Devuelve `big_five` + `per_dimension_status` (`ok` / `low_confidence`
+   por dimensión, según umbrales R² > 0.20 y r > 0.30, ADR-027).
+
+### Errores
+- `MlApiUnavailableError` → API route devuelve `503 ai_unavailable`. Por
+  defecto NO hay fallback a Claude (ADR-026). Activable con
+  `ANALYZE_BIG_FIVE_SOURCE=claude` para contingencia operativa breve.
+
+## Pass 1.5 — Lectura interpretativa Jung + arquetipo (Claude)
 
 ### Prompt
-`lib/prompts/analyze-profile.ts` → `buildAnalyzeProfilePrompt(params)`
+`lib/prompts/interpret-narrative.ts` → `buildInterpretNarrativePrompt(params)`
 
-Injects all 4 knowledge blocks (Big Five, Jung, archetypes, Positive Computing)
-conditionally (skipped if empty per ADR-018).
+Inyecta:
+- Big Five inferido por el módulo ML (como contexto, no como input
+  para inferir).
+- Knowledge blocks de Jung (Jung 1921) y arquetipos Pearson (Pearson
+  1991), con header explícito de "insumo narrativo, NO taxonomía de
+  medición" (ADR-002 v2).
+- Textos introspectivos del usuario.
 
-### Model
-- `ANTHROPIC_MODEL_ID` (pinned SKU like `claude-sonnet-4-6-20260301`)
-- `temperature=0` (deterministic for H1)
+### Modelo
+- `ANTHROPIC_MODEL_ID` (pinned SKU como `claude-sonnet-4-6-20260301`)
+- `temperature=0`
 - JSON mode
-- `max_tokens: 1500`
+- `max_tokens: 1200`
 
-### Output schema
-See [API_MAP.md](../API_MAP.md) for full zod schema. Key fields:
-- `bigFive` — 5 dimensions 0-100
-- `jungFunctions` — 8 functions 0-100
-- `archetype` — one of 6 Pearson types
+### Output schema (Zod, sin `bigFive` — ese viene del Pass 1)
+- `jungFunctions` — 8 funciones 0-100 (lectura interpretativa)
+- `archetype` — uno de los 6 Pearson (lectura interpretativa)
 - `archetypeSecondary` — string
-- `confidence` — 0-100 self-reported
-- `reasoning` — short narrative
+- `confidence` — 0-100 self-reported para la articulación interpretativa
+- `reasoning` — narrativa corta en voseo, citando evidencia textual
 
-### Side effects
-- INSERT `psychological_profiles` (version=1)
+### Side effects (sin cambios)
+- UPSERT `psychological_profiles` (version=1) — el `analysis_raw` JSONB
+  ahora incluye `bigFiveSource` ("ml" o "claude_fallback") y
+  `mlModelVersion` para auditoría.
 - UPDATE `profiles.onboarding_completed = true`
-- If `research_opt_in=true`: INSERT `research_dataset` with HMAC user_hash
+- Si `research_opt_in=true`: INSERT `research_dataset` con HMAC
+  user_hash + `generated_profile.bigFiveSource` + `mlModelVersion`
 
 ## Pass 2 — Evidence highlights
 

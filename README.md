@@ -1,17 +1,23 @@
 # Umbra
 
-Plataforma de autoconocimiento basada en Jung (funciones cognitivas) + Big Five (IPIP-NEO) + Positive Computing, en español rioplatense. TFG de Ingeniería en Software, Universidad Siglo 21.
+Plataforma de autoconocimiento. **Big Five (IPIP-NEO) como única teoría medida automáticamente** por un módulo ML propio (DistilBERT congelado + Ridge multi-output, FastAPI). Funciones cognitivas Jung (Jung 1921) + arquetipos Pearson aplicados (Pearson 1991) + Positive Computing (Calvo y Peters 2014) son **lectura interpretativa narrativa** producida por Claude. Todo en español rioplatense. TFG de Ingeniería en Software, Universidad Siglo 21.
 
-**🌐 Producción**: https://umbra-sigma.vercel.app
-**📦 Status**: deployed, todas las migraciones aplicadas (001-005), experimentos H1/H2/H3 ejecutados, 4 capítulos de tesis draftados.
+**Producción**: https://umbra-sigma.vercel.app
+**Estado**: deployed, migraciones 001-005 aplicadas. Pivot ML aplicado al código (2026-04-27): componente analítico independiente bajo `/ml/` con DVC + MLflow + métricas committeadas. Ver `docs/DECISIONS.md` (ADR-002 v2, ADR-026, ADR-027, ADR-028).
 
 ## Lo que hace Umbra
 
-1. **Onboarding**: el usuario escribe sobre sí mismo (guiado en 5 áreas, o texto libre, o híbrido).
-2. **Análisis**: Claude (Sonnet 4.6 pinneado) genera un perfil psicológico completo usando una base de conocimiento académica estructurada:
-   - Big Five (IPIP-NEO) con 5 dimensiones × 6 facets
-   - 8 funciones cognitivas Jung (Tipos Psicológicos 1921, directo, NO MBTI)
-   - 6 arquetipos Pearson aplicados
+1. **Onboarding**: el usuario escribe sobre sí mismo (flujo dinámico adaptativo).
+2. **Componente analítico (módulo ML propio en `/ml/`)**: infiere los 5 scores Big Five desde el texto introspectivo. Etapa 1: DistilBERT base multilingual cased congelado (CLS pooling). Etapa 2: cinco regresores Ridge independientes (uno por dimensión), entrenados con GridSearchCV alpha sobre Essays + corpus rioplatense propio (n=50, validado con rúbrica documentada). Pipeline reproducible con DVC + MLflow. Servido por FastAPI en `localhost:8000` (dev) o Render/Fly.io (prod opcional).
+3. **Capa narrativa Claude (Sonnet 4.6 pinneado)**:
+   - Pass 1.5 — lectura interpretativa de funciones cognitivas Jung + arquetipo + razonamiento (recibe Big Five inferido como contexto).
+   - Pass 2 — evidence highlights (frase-a-frase).
+   - Narrativa personalizada 800-1200 palabras en voseo argentino (SSE).
+   - Plan de desarrollo (3 áreas + acciones + micro-objetivos).
+   - Chat contextualizado con safety pipeline.
+4. **Dashboard**: Big Five radar + 8 Jung function bars (lectura interpretativa) + arquetipo card.
+5. **Chat con safety pipeline**: banner "no es terapia", regex lexicon + idiom pre-filter + classifier Claude fail-closed + crisis card con 135/911/Salud Mental Responde.
+6. **PDF export** + **Carta al futuro** + **Ley 25.326 compliance** (consent + export + delete + opt-out).
 3. **Narrativa**: 800-1200 palabras en voseo argentino, streameada vía SSE, escrita como un mentor que te conoce.
 4. **Dashboard**: arquetipo con SVG custom, Big Five radar, 8 Jung function bars, carta al futuro.
 5. **Chat con safety pipeline crítica**: banner permanente "no es terapia" + regex lexicon de 14 patrones + idiom pre-filter de 16 expresiones argentinas + classifier Claude fail-closed + crisis card con 135/911/Salud Mental Responde. 45min session timeout. Rate limits atomic.
@@ -22,20 +28,26 @@ Plataforma de autoconocimiento basada en Jung (funciones cognitivas) + Big Five 
 
 ## Stack
 
+### Capa web (Vercel)
 - **Next.js 14.2.35** (App Router, Edge + Node runtimes)
 - **TypeScript strict**
-- **Tailwind CSS 3.4** con tokens custom (`umbra-*`, `violet-*`, `accent-*`, `text-*`)
+- **Tailwind CSS 3.4** con tokens custom
 - **Supabase** (Auth + PostgreSQL + RLS) via `@supabase/ssr`
-- **Anthropic Claude** (`claude-sonnet-4-6` alias por default, o dated SKU via `ANTHROPIC_MODEL_ID`)
-- **Zustand 5** para stores de cliente
-- **Recharts** para el radar chart
-- **framer-motion** con `LazyMotion` + `domAnimation` tree-shaking (~17kb gzip) para spring animations en DashboardDepth y transitions varias (ver `components/motion/MotionProvider.tsx`)
-- **Phosphor Icons** (nunca emoji en UI)
-- **html2pdf.js** client-side para export (tipado con interface `Html2PdfChain` interna, sin `any`)
-- **Zod** para validación en todo boundary
-- **Vitest** para unit tests — ahora corre limpio post-reinstall de node_modules (16/16 tests pasando en los specs críticos: RLS coverage + crisis dataset integrity)
-- **Playwright** para E2E tests + `@axe-core/playwright` para a11y automatizada en CI
-- **codex CLI** (OpenAI) para code review independiente y drafting de capítulos técnicos de tesis (ADR-025, ADR para uso metodológico de IA generativa en proceso de redacción)
+- **Anthropic Claude SDK** (Sonnet 4.6 pinned vía `ANTHROPIC_MODEL_ID` — usado solo para capa narrativa post-pivot)
+- **Zustand 5** para stores
+- **Recharts** + **Phosphor Icons** + **framer-motion**
+- **html2pdf.js** client-side para export
+- **Zod** para validación
+- **Vitest** + **Playwright** + **@axe-core/playwright**
+- **Cliente HTTP del módulo ML** (`lib/ml-client.ts`) — punto único de contacto con el componente analítico
+
+### Componente analítico — módulo ML propio (`/ml/`, ADR-026)
+- **Python 3.11**, FastAPI + uvicorn
+- **DistilBERT base multilingual cased** (transformers, congelado, CLS pooling)
+- **scikit-learn Ridge** (5 regresores multi-output, GridSearchCV alpha)
+- **MLflow** para tracking + **DVC** para versionado de datasets + **joblib** para serialización
+- Servido en `localhost:8000` (dev) o Render/Fly.io (prod opcional, Dockerfile + render.yaml committeados)
+- Pipeline reproducible: `cd ml && make all`
 
 ## Status
 
