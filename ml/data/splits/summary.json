@@ -1,0 +1,12 @@
+{
+  "seed": 42,
+  "total": 2487,
+  "train": 1989,
+  "val": 248,
+  "test": 250,
+  "by_origin": {
+    "essays": 2467,
+    "latinoamericano": 20
+  },
+  "essays_available": true
+}
