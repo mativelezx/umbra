@@ -173,10 +173,12 @@ Umbra/
 │   │   ├── archetypes.ts           # Arquetipos + criterios de asignación
 │   │   └── positive-computing.ts   # Principios y reglas de bienestar
 │   ├── prompts/
-│   │   ├── analyze-profile.ts
+│   │   ├── interpret-narrative.ts  # Pass 1.5: lectura interpretativa Jung + arquetipo a partir del Big Five medido por el módulo ML
+│   │   ├── analyze-evidence.ts     # Pass 2: highlights de evidencia textual
 │   │   ├── generate-narrative.ts
 │   │   ├── chat-context.ts
 │   │   └── development-plan.ts
+│   ├── ml-client.ts                # Cliente HTTP del módulo analítico (lib → ml/)
 │   ├── providers/
 │   │   ├── auth-context.tsx
 │   │   └── theme.tsx
@@ -872,127 +874,107 @@ export function positiveComputingBlock(): string {
 
 ### 5.5 Cómo se conecta con los prompts
 
-Los prompts en `lib/prompts/` importan los helpers de knowledge y los inyectan:
+La capa narrativa (`lib/prompts/`) importa los helpers de knowledge y los inyecta. La inferencia Big Five se delega al módulo ML propio (ADR-026); la capa narrativa solo produce la lectura interpretativa Jung + arquetipo a partir de los Big Five medidos:
 
 ```typescript
-// Ejemplo en analyze-profile.ts
-import { bigFiveKnowledgeBlock } from '@/lib/knowledge/big-five';
-import { jungFunctionsKnowledgeBlock } from '@/lib/knowledge/jung-functions';
-import { archetypesKnowledgeBlock } from '@/lib/knowledge/archetypes';
+// Ejemplo en interpret-narrative.ts (Pass 1.5)
+import { buildJungBlock } from '@/lib/knowledge/jung-functions';
+import { buildArchetypesBlock } from '@/lib/knowledge/archetypes';
 
-export function buildAnalyzeProfilePrompt(params: AnalyzeProfileParams): string {
-  return `Sos un psicólogo analítico. Analizá los textos usando EXCLUSIVAMENTE
-los criterios teóricos provistos abajo. No uses conocimiento externo.
+export function buildInterpretNarrativePrompt(params: InterpretNarrativeParams) {
+  // params.bigFive viene del módulo ML (lib/ml-client.inferBigFive)
+  return {
+    system: '...intérprete narrativo de perfiles...',
+    prompt: `## Big Five (medido por módulo ML propio — DistilBERT congelado + Ridge)
+- Apertura: ${params.bigFive.openness}/100
+...
 
-## Marco teórico: Big Five (NEO-PI-R)
-${bigFiveKnowledgeBlock()}
+## Marco teórico — Funciones cognitivas Jung (insumo narrativo)
+${buildJungBlock()}
 
-## Marco teórico: Funciones cognitivas de Jung
-${jungFunctionsKnowledgeBlock()}
+## Marco teórico — Arquetipos Pearson aplicados (insumo narrativo)
+${buildArchetypesBlock()}
 
-## Marco teórico: Arquetipos
-${archetypesKnowledgeBlock()}
-
-## Textos del usuario
+## Textos introspectivos del usuario
 ${textBlock}
 
-## Instrucciones de análisis
-...`;
+## Tarea: lectura interpretativa Jung + arquetipo + reasoning
+...`,
+  };
 }
 ```
 
 > **Workflow del developer**:
-> 1. Investigar en NotebookLM → extraer datos estructurados
-> 2. Llenar los `/* COMPLETAR */` en cada archivo de lib/knowledge/
-> 3. Los prompts se enriquecen automáticamente
-> 4. Testear el análisis con textos de prueba y ajustar indicadores
+> 1. Investigar fuentes primarias (Goldberg 1999, Jung 1921, Pearson 1991, Calvo & Peters 2014).
+> 2. Llenar los `lib/knowledge/*.ts` con citas + indicadores.
+> 3. Los prompts (`interpret-narrative.ts`, `generate-narrative.ts`, `chat-context.ts`, `development-plan.ts`) consumen los helpers automáticamente.
+> 4. La inferencia cuantitativa Big Five vive en `ml/` (Python), no en prompts. Para iterar el modelo: `cd ml && make all`.
 
 ---
 
 ## 6. PROMPTS — lib/prompts/
 
-### 5.1 analyze-profile.ts
+### 5.1 Pipeline de inferencia: Pass 1 (módulo ML) + Pass 1.5 (interpret-narrative.ts)
+
+La inferencia psicológica se reparte entre dos componentes con responsabilidades disjuntas (ADR-002 + ADR-026):
+
+#### Pass 1 — `lib/ml-client.ts` → módulo analítico propio
 
 ```typescript
-import { type AnalyzeProfileParams } from '@/types';
+import { inferBigFive, MlApiUnavailableError } from '@/lib/ml-client';
 
-export function buildAnalyzeProfilePrompt(params: AnalyzeProfileParams): string {
-  const { texts, mode, areas } = params;
+// En app/api/analyze/route.ts
+const mlResult = await inferBigFive(combinedText);
+// mlResult = {
+//   bigFive: { openness, conscientiousness, extraversion, agreeableness, neuroticism },
+//   perDimensionStatus: { openness: 'ok' | 'low_confidence', ... },  // ADR-027
+//   modelVersion: 'ridge_v1',
+//   elapsedMs: 412,
+// }
+```
 
-  const textBlock = mode === 'guided'
-    ? areas!.map((area, i) => `### ${area}\n${texts[i]}`).join('\n\n')
-    : texts[0];
+El cliente HTTP pega contra `POST /infer` del FastAPI servido desde `ml/src/api_server.py`. La URL viene de `ML_API_URL` (default `http://localhost:8000`). Si el servicio cae, `MlApiUnavailableError` se propaga como `503 ml_unavailable` al frontend; **no se degrada a Claude** para Big Five (ADR-026 explícito).
 
-  return `Sos un psicólogo experto en psicología analítica junguiana y el modelo Big Five (OCEAN).
+#### Pass 1.5 — `lib/prompts/interpret-narrative.ts`
 
-Tu tarea: analizar los textos que escribió una persona sobre sí misma y generar un perfil psicológico completo.
+```typescript
+import { buildInterpretNarrativePrompt } from '@/lib/prompts/interpret-narrative';
+import { claudeText } from '@/lib/claude/client';
 
-## Textos del usuario (modo: ${mode})
+const { system, prompt } = buildInterpretNarrativePrompt({
+  texts: augmentedTexts,
+  areas: augmentedAreas,
+  bigFive: mlResult.bigFive,                     // medido por ML
+  perDimensionStatus: mlResult.perDimensionStatus, // bandera por dimensión
+});
 
-${textBlock}
+const claudeResult = await claudeText({ system, prompt, temperature: 0, maxTokens: 1500 });
+// Devuelve JSON con: jungFunctions, archetype, archetypeSecondary, confidence, reasoning
+```
 
-## Instrucciones de análisis
+La capa narrativa **no** infiere Big Five — los recibe como insumo. Su tarea es producir la lectura interpretativa Jung + arquetipo Pearson + razonamiento citando evidencia textual del usuario, en español latinoamericano con voseo. Si alguna dimensión Big Five vino marcada `low_confidence`, el prompt instruye al modelo a moderar explícitamente esa parte de la lectura.
 
-1. **Big Five (OCEAN)**: Asigná un puntaje de 0-100 a cada dimensión basándote en los indicadores textuales:
-   - Openness: curiosidad, imaginación, apertura a nuevas experiencias
-   - Conscientiousness: organización, disciplina, orientación a metas
-   - Extraversion: energía social, asertividad, búsqueda de estimulación
-   - Agreeableness: empatía, cooperación, confianza
-   - Neuroticism: reactividad emocional, ansiedad, inestabilidad
+#### Pass 2 — `lib/prompts/analyze-evidence.ts` (fire-and-forget)
 
-2. **Funciones cognitivas de Jung**: Asigná un puntaje de 0-100 a cada una de las 8 funciones:
-   - Se (Sensing Extravertido): conexión sensorial con el presente
-   - Si (Sensing Introvertido): memoria detallada, tradiciones
-   - Ne (Intuition Extravertido): generación de posibilidades, conexiones
-   - Ni (Intuition Introvertido): visión interna, patrones profundos
-   - Te (Thinking Extravertido): lógica externa, eficiencia, sistemas
-   - Ti (Thinking Introvertido): lógica interna, frameworks, análisis
-   - Fe (Feeling Extravertido): armonía social, empatía interpersonal
-   - Fi (Feeling Introvertido): valores internos, autenticidad
+Después de persistir el perfil, se dispara un Pass 2 paralelo que extrae frases textuales del usuario que sustenten cada rasgo del perfil. Se guardan en `evidence_highlights` para mostrar como pull quotes en la narrativa. No bloquea la respuesta.
 
-3. **Arquetipo dominante**: Asigná uno de estos arquetipos junguianos:
-   - hero: orientado a superar desafíos, probar su valor
-   - sage: búsqueda de verdad y sabiduría
-   - explorer: necesidad de descubrimiento y libertad
-   - creator: impulso de crear algo con significado
-   - caregiver: cuidado y servicio a los demás
-   - rebel: desafío al status quo, transformación
+#### Resultado final persistido en `psychological_profiles`
 
-4. **Arquetipo secundario**: El segundo arquetipo más presente.
-
-5. **Confianza**: 0-100, qué tan seguro estás del análisis basándote en la calidad/cantidad del texto.
-
-6. **Razonamiento**: Breve explicación de cómo llegaste a estas conclusiones.
-
-## Formato de respuesta (JSON estricto)
-
-Respondé ÚNICAMENTE con un JSON válido, sin texto adicional:
-
+```ts
 {
-  "bigFive": {
-    "openness": <number>,
-    "conscientiousness": <number>,
-    "extraversion": <number>,
-    "agreeableness": <number>,
-    "neuroticism": <number>
+  // ── del módulo ML
+  openness: number, conscientiousness: number, extraversion: number, agreeableness: number, neuroticism: number,
+  analysis_raw: {
+    ml: { modelVersion, elapsedMs, perDimensionStatus },
+    ...rawJsonOfClaudePass1_5,
   },
-  "jungFunctions": {
-    "Se": <number>, "Si": <number>,
-    "Ne": <number>, "Ni": <number>,
-    "Te": <number>, "Ti": <number>,
-    "Fe": <number>, "Fi": <number>
-  },
-  "archetype": "<string>",
-  "archetypeSecondary": "<string>",
-  "confidence": <number>,
-  "reasoning": "<string>"
-}
-
-IMPORTANTE:
-- No uses lenguaje diagnóstico ni clínico.
-- Los puntajes deben reflejar matices, no extremos. Evitá poner todo en 50.
-- El razonamiento debe citar evidencia textual específica.
-- Si el texto es insuficiente, bajá la confianza pero generá el perfil igual.`;
+  // ── de la capa narrativa
+  jung_functions: { Se, Si, Ne, Ni, Te, Ti, Fe, Fi },
+  archetype: 'hero' | 'sage' | 'explorer' | 'creator' | 'caregiver' | 'rebel',
+  archetype_secondary: string,
+  // ── original del usuario
+  input_mode: 'dynamic',
+  input_texts: string[],
 }
 ```
 
@@ -1343,28 +1325,33 @@ TAREAS:
    - Visualización progresiva mientras Claude analiza
    - Animación: dimensiones aparecen una por una
    - Fake progress con revelación de datos reales
-6. Copiar prompt analyze-profile.ts de sección 5.1
+6. Importar `lib/ml-client.inferBigFive` y `lib/prompts/interpret-narrative.buildInterpretNarrativePrompt` (sección 5.1)
 7. Crear app/api/analyze/route.ts
    - Validar input con Zod
-   - Llamar a Claude con el prompt
-   - Parsear JSON response
-   - Guardar en psychological_profiles
-   - Marcar onboarding_completed = true
-   - Retornar perfil
+   - Pass 1: `await inferBigFive(text)` → módulo ML propio
+   - Pass 1.5: `claudeText({ system, prompt })` con `buildInterpretNarrativePrompt({ bigFive, perDimensionStatus, texts })`
+   - Parsear JSON de Pass 1.5
+   - Persistir en `psychological_profiles` con `analysis_raw.ml.{modelVersion, elapsedMs, perDimensionStatus}`
+   - Marcar `onboarding_completed = true`
+   - Pass 2 fire-and-forget: evidence highlights
+   - Manejar `MlApiUnavailableError` → 503 `ml_unavailable` (NO degradar a Claude)
+   - Retornar perfil con `perDimensionStatus`
 8. Crear app/onboarding/page.tsx
    - Orquestar: ModeSelector → Flow → ProgressiveLoad → redirect a /dashboard
 9. Commit: "feat: dynamic onboarding with AI analysis"
 ```
 
 **QA FASE 3**:
-- [ ] Modo guiado: 5 pasos se completan correctamente
-- [ ] Modo texto libre: validación de 200 palabras funciona
-- [ ] API /api/analyze responde con JSON válido
-- [ ] Perfil se guarda en Supabase con datos correctos
-- [ ] onboarding_completed se actualiza a true
-- [ ] ProgressiveLoad muestra animación
-- [ ] Redirect a /dashboard después del onboarding
-- [ ] Error handling: qué pasa si Claude falla
+- [ ] Modo `dynamic`: el flujo conversacional adapta preguntas correctamente
+- [ ] Modo `chatgpt-seed`: el seed text se prepende a `texts` antes de Pass 1
+- [ ] API `/api/analyze` Pass 1 devuelve Big Five del módulo ML con `perDimensionStatus`
+- [ ] API `/api/analyze` Pass 1.5 devuelve `jungFunctions + archetype + reasoning`
+- [ ] Perfil se guarda en Supabase con `analysis_raw.ml.modelVersion` poblado
+- [ ] `onboarding_completed` se actualiza a `true`
+- [ ] ProgressiveLoad muestra animación durante los dos passes
+- [ ] Redirect a `/dashboard` después del onboarding
+- [ ] Error handling: módulo ML caído → 503 `ml_unavailable` (UI muestra "probá de nuevo")
+- [ ] Error handling: Claude caído → 503 `ai_unavailable`
 - [ ] `npx tsc --noEmit` sin errores
 
 ---
