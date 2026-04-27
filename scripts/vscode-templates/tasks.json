@@ -1,0 +1,154 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "ML Pivot: 1 — Apply commits (stash + branch + 9 commits)",
+      "type": "shell",
+      "command": "bash scripts/apply-ml-pivot.sh",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Aisla cambios uncommitted previos, crea branch feat/ml-module-pivot desde main, aplica los 9 commits granulares del refactor pivot ML."
+    },
+    {
+      "label": "ML Pivot: 2 — Verify (typecheck + pytest + pipeline ML)",
+      "type": "shell",
+      "command": "bash scripts/verify-ml-pivot.sh",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "npx tsc --noEmit + setup venv + pip install + pytest + pipeline DVC (prepare + baseline + evaluate) + check_thresholds."
+    },
+    {
+      "label": "ML Pivot: 3 — Serve FastAPI (background)",
+      "type": "shell",
+      "command": "bash scripts/serve-ml.sh",
+      "isBackground": true,
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": false
+      },
+      "problemMatcher": [],
+      "detail": "Levanta uvicorn con FastAPI en localhost:8000. Mantenelo corriendo en una terminal aparte."
+    },
+    {
+      "label": "ML Pivot: 4 — Smoke test API",
+      "type": "shell",
+      "command": "bash scripts/test-ml-curl.sh",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "curl /health + /version + POST /infer con texto de prueba. Requiere que la task 3 esté corriendo."
+    },
+    {
+      "label": "ML Pivot: 5 — Push branch a origin",
+      "type": "shell",
+      "command": "git push -u origin feat/ml-module-pivot",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Publica feat/ml-module-pivot en GitHub. NO mergea a main — vos abrís el PR cuando estés listo."
+    },
+    {
+      "label": "ML Pivot: 6 — Open PR en GitHub (gh CLI)",
+      "type": "shell",
+      "command": "gh pr create --base main --head feat/ml-module-pivot --title 'feat: refactor pivot ML — alinear código con TFG entregado' --body-file COMMIT_PLAN.md --draft",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Crea PR en draft con el COMMIT_PLAN como cuerpo. Requiere gh CLI instalado y autenticado (gh auth login)."
+    },
+    {
+      "label": "ML Pivot: 7 — Train DistilBERT (post-Essays)",
+      "type": "shell",
+      "command": "cd ml && source .venv/bin/activate && make train && make evaluate",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": [],
+      "detail": "Descarga DistilBERT (~500MB primera vez), entrena 5 Ridges sobre embeddings, evalúa. Toma 10-20 min en CPU. Para correr DESPUÉS de meter Essays en ml/data/essays/essays.csv."
+    },
+    {
+      "label": "Umbra: Dev server Next.js (con módulo ML)",
+      "type": "shell",
+      "command": "npm run dev",
+      "isBackground": true,
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "ML_API_URL": "http://localhost:8000",
+          "ANALYZE_BIG_FIVE_SOURCE": "ml"
+        }
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "problemMatcher": [],
+      "detail": "next dev con ML_API_URL apuntando al FastAPI local. Requiere task 3 corriendo en otra terminal."
+    }
+  ]
+}

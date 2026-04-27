@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "github.vscode-github-actions",
+    "github.vscode-pull-request-github",
+    "iterative.dvc"
+  ],
+  "unwantedRecommendations": []
+}
