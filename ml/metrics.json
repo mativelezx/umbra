@@ -1,0 +1,64 @@
+{
+  "model": "baseline_tfidf_ridge",
+  "alphas_grid": [
+    0.1,
+    1.0,
+    10.0,
+    100.0,
+    1000.0
+  ],
+  "n_train": 16,
+  "n_val": 2,
+  "n_test": 2,
+  "evaluation_method": "leave_one_out",
+  "loo_metrics": {
+    "openness": {
+      "n": 4,
+      "method": "leave_one_out",
+      "mse": 1570.872597186057,
+      "r2": -0.7454139968733966,
+      "r": -0.9908442148977403,
+      "alpha_median": 0.1
+    },
+    "conscientiousness": {
+      "n": 4,
+      "method": "leave_one_out",
+      "mse": 1532.9949467056913,
+      "r2": -0.7033277185618791,
+      "r": -0.9996523637887327,
+      "alpha_median": 0.1
+    },
+    "extraversion": {
+      "n": 5,
+      "method": "leave_one_out",
+      "mse": 1288.8946370972612,
+      "r2": -0.49177620034405223,
+      "r": -0.9785154992378481,
+      "alpha_median": 0.1
+    },
+    "agreeableness": {
+      "n": 4,
+      "method": "leave_one_out",
+      "mse": 1422.625526252019,
+      "r2": -0.8505697902465288,
+      "r": -0.996337784150126,
+      "alpha_median": 0.1
+    },
+    "neuroticism": {
+      "n": 3,
+      "method": "leave_one_out",
+      "mse": 1707.5295245130328,
+      "r2": -1.134411905641291,
+      "r": -0.9984421909330643,
+      "alpha_median": 0.1
+    }
+  },
+  "n_full": 20,
+  "best_alpha_per_dim": {
+    "openness": 0.1,
+    "conscientiousness": 0.1,
+    "extraversion": 0.1,
+    "agreeableness": 0.1,
+    "neuroticism": 0.1
+  }
+}

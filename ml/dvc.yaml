@@ -1,0 +1,50 @@
+# Umbra — Pipeline DVC del módulo ML propio (ADR-026).
+# Reproducible end-to-end con `dvc repro`.
+
+stages:
+  prepare_data:
+    cmd: python -m src.prepare_data
+    deps:
+      - src/prepare_data.py
+      - data/rioplatense/cases.csv
+    outs:
+      - data/splits/train.csv
+      - data/splits/val.csv
+      - data/splits/test.csv
+      - data/splits/summary.json
+
+  baseline_tfidf:
+    cmd: python -m src.baseline_tfidf
+    deps:
+      - src/baseline_tfidf.py
+      - data/splits/train.csv
+      - data/splits/val.csv
+      - data/splits/test.csv
+    outs:
+      - models/baseline_tfidf.joblib
+    metrics:
+      - metrics.json:
+          cache: false
+
+  train:
+    cmd: python -m src.train_ridge
+    deps:
+      - src/train_ridge.py
+      - src/extract_embeddings.py
+      - data/splits/train.csv
+      - data/splits/val.csv
+    outs:
+      - models/ridge_v1.joblib
+    metrics:
+      - metrics.json:
+          cache: false
+
+  evaluate:
+    cmd: python -m src.evaluate
+    deps:
+      - src/evaluate.py
+      - models/ridge_v1.joblib
+      - data/splits/test.csv
+    metrics:
+      - eval_metrics.json:
+          cache: false

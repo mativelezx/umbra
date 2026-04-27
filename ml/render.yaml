@@ -1,0 +1,28 @@
+# Umbra — Módulo ML propio
+# Deploy en Render.com. Listo para activar; no se hace deploy automático
+# por defecto (defensa académica corre en localhost). Si se activa, el
+# frontend en Vercel debe tener `ML_API_URL` apuntando a la URL pública
+# de Render.
+#
+# Uso:
+#   1. Subir este archivo + Dockerfile a la rama main.
+#   2. En Render: New > Blueprint > apuntar a este repo.
+#   3. Render detecta render.yaml y crea el servicio.
+#   4. Configurar `ML_API_URL` en Vercel project settings con la URL
+#      pública de Render (ej: https://umbra-ml.onrender.com).
+
+services:
+  - type: web
+    name: umbra-ml
+    runtime: docker
+    dockerfilePath: ./ml/Dockerfile
+    dockerContext: ./ml
+    plan: starter  # 7 USD/mes; free tiene cold starts de 30-60s
+    region: oregon
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: ML_LOG_LEVEL
+        value: info
+    autoDeploy: false  # deploy manual por defecto

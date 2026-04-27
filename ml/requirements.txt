@@ -1,0 +1,37 @@
+# Umbra — Módulo ML propio
+# Stack reducido por ADR-026 (post-pivot ML, 2026-04-27).
+# NO incluir: pytorch como motor de entrenamiento, onnx, huggingface_hub,
+# huggingface datasets, sentence-transformers. Esas dependencias quedan
+# explícitamente fuera del alcance del TFG.
+
+# Etapa 1 — embeddings congelados
+transformers==4.44.2
+# torch entra como dependencia transitiva de transformers; lo necesitamos
+# solo para forward pass sin gradientes (frozen embeddings).
+torch==2.4.1
+# tokenizadores rápidos
+tokenizers==0.19.1
+
+# Etapa 2 — regresor lineal regularizado + utils clásicas
+scikit-learn==1.5.2
+numpy==2.1.1
+scipy==1.14.1
+pandas==2.2.3
+joblib==1.4.2
+
+# MLOps
+mlflow==2.16.2
+dvc==3.55.2
+
+# Servir
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+
+# Visualización mínima (notebooks de exploración)
+matplotlib==3.9.2
+
+# Tests
+pytest==8.3.3
+pytest-cov==5.0.0
+httpx==0.27.2  # para test del FastAPI

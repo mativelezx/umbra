@@ -1,0 +1,33 @@
+# Virtualenv
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+
+# MLflow tracking local (los runs viven en ml/mlruns/, las métricas
+# finales se serializan a metrics.json + eval_metrics.json que SÍ se
+# committean por reproducibilidad).
+mlruns/
+
+# DVC cache local — los datasets versionados se manejan con `dvc pull`
+.dvc/cache/
+.dvc/tmp/
+.dvc/config.local
+
+# HuggingFace cache (descargas de DistilBERT)
+.hf_cache/
+.cache/
+
+# Notebooks checkpoint
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
