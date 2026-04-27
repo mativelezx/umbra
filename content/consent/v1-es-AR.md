@@ -1,7 +1,7 @@
 # Umbra — Consentimiento informado (v1, es-AR)
 
 > Este es el texto verbatim de la versión `2026-04-14-v1` del
-> consentimiento informado para Umbra, en español rioplatense. Es la
+> consentimiento informado para Umbra, en español latinoamericano. Es la
 > fuente única de verdad que la página `/consent` renderiza. Cualquier
 > cambio material bumpea la versión a `2026-04-14-v2` (o equivalente)
 > y crea un nuevo archivo `v2-es-AR.md` — **esta archivo nunca se edita

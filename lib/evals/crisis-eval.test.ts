@@ -1,7 +1,7 @@
 /**
- * H3 eval — dataset integrity + metrics computation tests.
+ * Crisis classifier eval — dataset integrity + metrics computation tests.
  *
- * This test file does NOT call Claude. The actual recall/precision run
+ * This test file does NOT call the LLM. The actual recall/precision run
  * lives in `scripts/run-crisis-eval.ts` and is invoked manually via
  * `npx tsx scripts/run-crisis-eval.ts`, which writes a JSON report to
  * `eval-results/crisis-YYYYMMDD.json`.
@@ -14,7 +14,7 @@
  *   3. Severity consistency — only real_crisis has non-null severity;
  *      other categories have severity=null.
  *
- * The hypothesis pass criterion (recall >= 0.95, precision >= 0.85) is
+ * The operational pass criterion (recall >= 0.95, precision >= 0.85) is
  * checked against the committed JSON report in `eval-results/` in a
  * separate CI job, not here — this file is fast and deterministic.
  */
@@ -25,7 +25,7 @@ import {
   type CrisisEvalCase,
 } from './crisis-dataset';
 
-describe('crisis-dataset integrity (H3 eval)', () => {
+describe('crisis-dataset integrity', () => {
   it('has exactly 100 cases', () => {
     expect(CRISIS_EVAL_CASES).toHaveLength(100);
   });

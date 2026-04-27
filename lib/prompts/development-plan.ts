@@ -1,7 +1,7 @@
 import type { PsychologicalProfile } from '@/types';
 
 const SYSTEM =
-  'Sos un coach de desarrollo personal basado en Jung y Big Five. Escribís planes de crecimiento en español rioplatense, concretos, accionables, sin lenguaje motivacional vacío. Tu output es JSON estricto.';
+  'Sos un coach de desarrollo personal basado en Jung y Big Five. Escribís planes de crecimiento en español latinoamericano, concretos, accionables, sin lenguaje motivacional vacío. Tu output es JSON estricto.';
 
 export function buildDevelopmentPlanPrompt(profile: PsychologicalProfile): {
   system: string;
@@ -36,7 +36,7 @@ Generá un plan de desarrollo personalizado con EXACTAMENTE 3 áreas de crecimie
 3. Tensión entre el arquetipo dominante y las funciones en sombra
 
 Cada área debe tener:
-- **name**: nombre claro y motivador (español rioplatense, 3-6 palabras)
+- **name**: nombre claro y motivador (español latinoamericano, 3-6 palabras)
 - **rationale**: fundamento breve conectado al perfil específico (1-2 oraciones)
 - **actions**: 2-3 acciones concretas y practicables. Cada una:
   - **title**: título corto
@@ -68,7 +68,7 @@ Cada área debe tener:
 - Acciones realistas que se puedan hacer en 1-4 semanas.
 - Micro-objetivos específicos, medibles, con tiempo. NO vagos.
 - Tono motivador PERO NO vacío. NO uses "vos podés", "creé en vos", "el límite es el cielo".
-- Español rioplatense (voseo).
+- Español latinoamericano (voseo).
 - Conectá explícitamente cada área con algún aspecto del perfil.
 - Devolvé SOLO JSON, sin markdown, sin comentarios.`;
 

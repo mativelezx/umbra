@@ -1,8 +1,8 @@
 
-# Consentimiento informado para estudio de usabilidad M3
+# Consentimiento informado para estudio de usabilidad
 **Proyecto:** Umbra  
 **Carrera:** Ingeniería en Software, Universidad Siglo 21  
-**Versión:** M3-v1-es-AR  
+**Versión:** usabilidad-v1-es-AR  
 **Fecha:** ____ / ____ / ______
 
 ## 1. De qué se trata este estudio

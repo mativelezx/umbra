@@ -80,7 +80,7 @@ Reglas:
 - "occurrence" es 1-indexed: si la frase aparece 3 veces en el texto y querés la segunda, ponés 2.
 - Si la frase aparece solo una vez, ponés 1.
 - No inventes frases. Si la frase exacta no está en el texto, no la incluyas.
-- Español rioplatense tal como lo escribe el usuario.`;
+- Español latinoamericano tal como lo escribe el usuario.`;
 
   return { system: SYSTEM, prompt };
 }

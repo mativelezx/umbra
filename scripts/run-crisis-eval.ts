@@ -1,5 +1,5 @@
 /**
- * Standalone script to run the H3 crisis classifier eval and write a
+ * Standalone script to run the crisis classifier eval and write a
  * JSON report to eval-results/.
  *
  * Usage:
@@ -30,7 +30,7 @@ async function main() {
   const forceClassifierOnSafe = args.has('--force-classifier');
 
   // eslint-disable-next-line no-console
-  console.log('[crisis-eval] starting H3 run');
+  console.log('[crisis-eval] starting run');
   // eslint-disable-next-line no-console
   console.log(
     `[crisis-eval] model=${process.env.ANTHROPIC_MODEL_ID ?? 'default'} forceClassifier=${forceClassifierOnSafe}`,

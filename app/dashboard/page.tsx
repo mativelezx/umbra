@@ -114,7 +114,7 @@ function DashboardView({ data }: { data: DashboardData }) {
           />
         )}
 
-        {/* VISTA PROFUNDA — opt-in progressive disclosure (Fase 3.1 + ADR-025).
+        {/* VISTA PROFUNDA — opt-in progressive disclosure.
             El usuario ve el archetype hero + quick glance + narrativa por
             default. Los datos más densos (radar Big Five, 4 ejes Jung,
             mapa comparativo de arquetipos, carta futura) se revelan al

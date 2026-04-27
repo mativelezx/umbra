@@ -42,7 +42,7 @@ El segundo arquetipo más presente (nombre, no key).
 0-100. Qué tan seguro estás del análisis basándote en la calidad y cantidad del texto.
 
 ### 6. Razonamiento
-Breve explicación (2-3 párrafos) que cite evidencia textual específica del usuario. NO uses lenguaje diagnóstico ni clínico. Español rioplatense.
+Breve explicación (2-3 párrafos) que cite evidencia textual específica del usuario. NO uses lenguaje diagnóstico ni clínico. Español latinoamericano.
 
 ## Formato de respuesta (JSON estricto — solo el JSON, nada más)
 
@@ -70,7 +70,7 @@ Breve explicación (2-3 párrafos) que cite evidencia textual específica del us
 - NO uses lenguaje diagnóstico ("tiene síntomas de...", "sufre de...")
 - NO uses términos MBTI (INFJ, INTP, etc.) — usá las funciones de Jung directamente
 - NO inventes — si el texto es muy corto, bajá la confianza
-- Español rioplatense (voseo) en el razonamiento
+- Español latinoamericano (voseo) en el razonamiento
 - Devolvé SOLO el JSON, sin markdown, sin explicaciones previas`;
 
 export function buildAnalyzeProfilePrompt(params: AnalyzeProfileParams): {

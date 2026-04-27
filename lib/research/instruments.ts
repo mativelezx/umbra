@@ -40,7 +40,7 @@ export const LIKERT_7_LABELS = {
   max: 'Muy de acuerdo',
 } as const;
 
-// Lewis (2013), traducido al español rioplatense para uso in-app.
+// Lewis (2013), traducido al español latinoamericano para uso in-app.
 export const UMUX_LITE_ITEMS = [
   {
     itemKey: 'umux_01_requirements',
@@ -203,7 +203,7 @@ export const CUQ_ITEMS = [
   },
 ] as const satisfies readonly ResearchInstrumentItem[];
 
-// Brooke (1996), versión en español rioplatense tomada del plan de validación.
+// Brooke (1996), versión en español latinoamericano tomada del plan de validación.
 export const SUS_ITEMS = [
   {
     itemKey: 'sus_01_frequent_use',

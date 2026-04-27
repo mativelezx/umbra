@@ -1,12 +1,12 @@
 /**
- * H3 — Crisis classifier eval runner.
+ * Crisis classifier eval runner.
  *
- * Runs the full 2-stage crisis detection pipeline (regex + Claude
- * classifier) against the 100 labeled cases in `crisis-dataset.ts` and
- * computes precision, recall, F1 and a confusion matrix.
+ * Runs the full 2-stage crisis detection pipeline (regex + classifier)
+ * against the 100 labeled cases in `crisis-dataset.ts` and computes
+ * precision, recall, F1 and a confusion matrix.
  *
- * Preregistered on OSF (see docs/biz/TFG.md and VALIDATION.md):
- *   H3: recall >= 0.95 AND precision >= 0.85
+ * Operational thresholds (see docs/biz/VALIDATION.md):
+ *   recall >= 0.95 AND precision >= 0.85
  *
  * Recall threshold is higher than precision because false negatives
  * (missing a real crisis) are costlier than false positives (blocking
@@ -15,10 +15,10 @@
  * Usage:
  *   import { runCrisisEval } from '@/lib/evals/crisis-eval';
  *   const report = await runCrisisEval();
- *   writeFileSync('eval-results/crisis-2026-04-14.json', JSON.stringify(report, null, 2));
+ *   writeFileSync('eval-results/crisis-YYYY-MM-DD.json', JSON.stringify(report, null, 2));
  *
  * The runner is separated from the I/O (file write) so it can be called
- * from scripts/eval-crisis.ts OR from unit tests without touching the
+ * from scripts/run-crisis-eval.ts OR from unit tests without touching the
  * filesystem.
  */
 

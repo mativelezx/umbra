@@ -22,7 +22,7 @@ test.describe('Landing page', () => {
       page.getByRole('heading', { name: /^Positive Computing$/i }),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: /Español rioplatense/i }),
+      page.getByRole('heading', { name: /Español latinoamericano/i }),
     ).toBeVisible();
   });
 

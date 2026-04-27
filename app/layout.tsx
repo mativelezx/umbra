@@ -8,7 +8,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 const SITE_NAME = 'Umbra';
 const SITE_TAGLINE = 'Conocé tu sombra. Iluminá tu camino.';
 const SITE_DESCRIPTION =
-  'Plataforma de autoconocimiento que triangula Jung, Big Five y Positive Computing para generar perfiles profundos y narrativas personalizadas en español rioplatense.';
+  'Plataforma de autoconocimiento que triangula Jung, Big Five y Positive Computing para generar perfiles profundos y narrativas personalizadas en español latinoamericano.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

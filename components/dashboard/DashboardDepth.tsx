@@ -31,11 +31,10 @@ interface DashboardDepthProps {
  * + narrative; the user clicks this toggle to reveal the deeper
  * visualizations.
  *
- * Fase 3.1 del IMPLEMENTATION_PLAN.md. Rationale: AI products with
- * many features benefit from revealing complexity gradually — the
- * first load presents the 10% that anchors the mental model, and
- * exploration is opt-in. See ADR-025 (PAIR heuristics) and the
- * Progressive Disclosure pattern from People + AI Guidebook cap. 3.
+ * Rationale: los productos asistidos por IA con muchas features se
+ * benefician de revelar la complejidad gradualmente — la primera
+ * carga muestra el 10 % que ancla el modelo mental del usuario, y
+ * la exploración del detalle queda como acción opt-in.
  */
 export function DashboardDepth({
   children,

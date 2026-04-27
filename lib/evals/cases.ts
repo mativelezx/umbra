@@ -1,38 +1,27 @@
 /**
- * H1 + H2 — Eval case corpus.
+ * Eval case corpus en español latinoamericano.
  *
- * Fixed stimuli for the computational evaluation of the Umbra analyzer.
- * Used by:
- *   - `lib/evals/consistency.ts` — H1 determinism runner
- *   - `lib/evals/cross-model-paraphrase.ts` — H2 robustness runner
+ * Casos fijos en voseo argentino utilizables como referencia
+ * cualitativa de viñetas etiquetadas por dimensión Big Five y por
+ * función cognitiva Jung. Se mantienen en este archivo como insumo
+ * complementario al corpus latinoamericano del módulo analítico
+ * (`ml/data/latinoamericano/`, ADR-028) y como conjunto fijo de
+ * estímulos para tests cualitativos del frontend.
  *
- * Corpus composition (preregistered on OSF, see biz/TFG.md + biz/VALIDATION.md):
- *   - ipip — 20 cases adapted from IPIP-NEO vignettes (public domain,
- *     Goldberg 1999, ADR-015). Each case targets a specific Big Five
- *     dimension with plausible introspective text in voseo rioplatense.
- *   - jung — 20 cases adapted from Tipos Psicológicos (Jung 1921, public
- *     domain). Each case targets a specific cognitive function or
- *     combination.
- *   - adversarial — 10 cases synthesized by the developer to probe edge
- *     behavior: ambivalence, contradiction, very short input, mixed
- *     voseo/tuteo, atypical length.
- *
- * **CORPUS STATUS (2026-04-14)**: Corpus completo con 50 casos — 20 ipip
- * (distribuidos a través de los 5 factores Big Five con direcciones
- * alto/bajo balanceadas), 20 jung (distribuidos a través de las 8
- * funciones cognitivas), 10 adversarial (edge cases).
- *
- * La mayoría de los casos fueron draftados por codex (OpenAI gpt-5.4,
- * reasoning high, 2026-04-14) siguiendo un prompt que especificó
- * targets por dimensión, restricciones éticas y voz en voseo rioplatense.
- * Los casos ipip-01..17 fueron completados manualmente por el autor
- * (2026-04-14) para cubrir las dimensiones Big Five restantes
- * (apertura, responsabilidad, extraversión, amabilidad) que el draft
- * inicial de codex no alcanzó por truncamiento del output.
+ * Composición (n=50):
+ *   - ipip — 20 casos adaptados de viñetas IPIP-NEO (Goldberg 1999,
+ *     dominio público, ADR-015). Cada caso apunta a una dimensión
+ *     Big Five con dirección alta o baja.
+ *   - jung — 20 casos adaptados de *Tipos Psicológicos* (Jung 1921,
+ *     dominio público). Cada caso apunta a una función cognitiva o
+ *     combinación.
+ *   - adversarial — 10 casos sintéticos del autor para probar edge
+ *     behavior: ambivalencia, contradicción, input muy corto, mezcla
+ *     voseo/tuteo, longitud atípica.
  *
  * Cases are immutable once committed. Do NOT edit existing entries —
- * append new ones at the end to preserve reproducibility against older
- * eval-results snapshots.
+ * append new ones at the end para preservar reproducibilidad contra
+ * snapshots anteriores.
  */
 
 export type EvalSource = 'ipip' | 'jung' | 'adversarial';

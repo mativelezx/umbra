@@ -16,7 +16,7 @@
  *    (not to invent from nothing).
  * 4. Output is a mix of prose (for the analyzer) + structured JSON (for
  *    optional future parsing). Both blocks feed the analyzer as one text.
- * 5. Rioplatense voseo, warm, non-clinical — matches Umbra's voice.
+ * 5. Latinoamericano voseo, warm, non-clinical — matches Umbra's voice.
  */
 
 export const CHATGPT_SEED_PROMPT = `Necesito que me ayudes a armar un retrato psicológico de mí mismo para empezar un proceso de autoconocimiento en una plataforma que se llama Umbra. Umbra triangula tres marcos: Big Five (IPIP-NEO), funciones cognitivas de Jung (1921), y arquetipos aplicados de Pearson (1991).
@@ -59,7 +59,7 @@ Escribime una respuesta en DOS partes. Copiá la estructura exacta.
 
 ### PARTE 1 — Retrato en prosa
 
-3 a 5 párrafos en voseo rioplatense, cálido, de descubrimiento (nunca diagnóstico). Integrá las tres lentes (Big Five + funciones Jung dominantes + arquetipo principal) en un solo texto fluido que describa:
+3 a 5 párrafos en voseo latinoamericano, cálido, de descubrimiento (nunca diagnóstico). Integrá las tres lentes (Big Five + funciones Jung dominantes + arquetipo principal) en un solo texto fluido que describa:
 - Cómo me muevo por el mundo (extraversion + Se/Ne vs Si/Ni)
 - Cómo decido (Ti/Te vs Fi/Fe + conscientiousness)
 - Qué me duele y qué me cuesta (neuroticism + tensiones entre funciones)
@@ -109,6 +109,6 @@ Después del retrato, pegame ESTE JSON relleno con tus estimaciones. Seguí el f
 - Incluí al menos 5 quotes en \`evidence\` (parafraseadas, con la señal que ilustran).
 - El rationale de cada arquetipo debe ser UNA frase concreta, no genérica.
 - Nunca uses MBTI, Eneagrama ni lenguaje clínico.
-- Español rioplatense (voseo) en toda la prosa.
+- Español latinoamericano (voseo) en toda la prosa.
 
 Ahora mirá todo lo que sabés de mí y devolveme las dos partes.`;

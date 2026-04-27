@@ -24,7 +24,7 @@ export function cn(
 }
 
 /**
- * Format a date for Spanish display (rioplatense).
+ * Format a date for Spanish display (latinoamericano).
  */
 export function formatDateEs(date: Date | string): string {
   const d = typeof date === 'string' ? new Date(date) : date;
