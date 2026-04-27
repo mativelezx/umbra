@@ -26,29 +26,29 @@ const ENTRIES: SettingsEntry[] = [
   {
     href: '/settings/profile',
     icon: UserCircle,
-    title: 'Perfil',
-    description: 'Tu nombre visible y email.',
+    title: 'Tu perfil',
+    description: 'Tu nombre visible y tu email.',
   },
   {
     href: '/settings/export',
     icon: DownloadSimple,
-    title: 'Exportar mis datos',
+    title: 'Bajar todos mis datos',
     description:
-      'Descargar todo lo que Umbra tiene sobre vos en JSON. Cumple con tu derecho de acceso bajo la Ley 25.326.',
+      'Un JSON con todo lo que Umbra tiene sobre vos. Cumple con tu derecho de acceso bajo Ley 25.326.',
   },
   {
     href: '/settings/research-opt-out',
     icon: Flask,
     title: 'Modo investigación',
     description:
-      'Activar o desactivar la contribución seudonimizada al dataset de investigación académica.',
+      'Activar o desactivar la contribución seudonimizada al dataset de investigación académica. Es reversible.',
   },
   {
     href: '/settings/delete',
     icon: Trash,
     title: 'Eliminar mi cuenta',
     description:
-      'Borra tu perfil, narrativa, conversaciones, plan y carta. Irreversible. Derecho de cancelación bajo Ley 25.326.',
+      'Borra tu perfil, narrativa, conversaciones, plan y carta al futuro. Irreversible. Derecho de cancelación bajo Ley 25.326.',
     accent: 'danger',
   },
 ];
@@ -56,17 +56,16 @@ const ENTRIES: SettingsEntry[] = [
 export default function SettingsPage() {
   return (
     <LayoutShell>
-      <div className="flex flex-col gap-10 max-w-3xl">
+      <div className="flex max-w-3xl flex-col gap-10">
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
             Tu espacio
           </p>
-          <h1 className="mt-2 font-display text-4xl italic text-text-1 md:text-5xl">
+          <h1 className="mt-2 text-balance font-display text-4xl italic text-text-1 md:text-5xl">
             Configuración
           </h1>
-          <p className="mt-4 max-w-2xl font-body text-text-2">
-            Gestioná tus datos, tu participación en investigación, y tu cuenta. Todo acá
-            está pensado para que vos tengas control total.
+          <p className="mt-4 max-w-2xl text-pretty font-body leading-relaxed text-text-2">
+            Tus datos, tu participación en investigación y tu cuenta. Todo está pensado para que tengas control. Cada acción se explica antes de ejecutarse.
           </p>
         </div>
 
@@ -79,16 +78,16 @@ export default function SettingsPage() {
                 <Card
                   className={
                     isDanger
-                      ? 'border-accent-rose/20 transition-colors group-hover:border-accent-rose/40'
-                      : 'transition-colors group-hover:border-violet-400/30'
+                      ? 'rounded-2xl border-accent-rose/20 transition-[border-color,box-shadow] duration-200 ease-out group-hover:border-accent-rose/40 group-hover:shadow-[0_0_0_1px_rgba(244,63,94,0.18),0_8px_28px_-12px_rgba(244,63,94,0.25)]'
+                      : 'rounded-2xl transition-[border-color,box-shadow] duration-200 ease-out group-hover:border-violet-400/30 group-hover:shadow-[0_0_0_1px_rgba(180,102,255,0.18),0_8px_28px_-12px_rgba(180,102,255,0.22)]'
                   }
                 >
                   <div className="flex items-start gap-4">
                     <div
                       className={
                         isDanger
-                          ? 'mt-1 shrink-0 rounded-md bg-accent-rose/10 p-2.5 text-accent-rose'
-                          : 'mt-1 shrink-0 rounded-md bg-violet-400/10 p-2.5 text-violet-300'
+                          ? 'mt-1 shrink-0 rounded-xl bg-accent-rose/10 p-2.5 text-accent-rose'
+                          : 'mt-1 shrink-0 rounded-xl bg-violet-400/10 p-2.5 text-violet-300'
                       }
                     >
                       <Icon size={22} />
@@ -97,19 +96,19 @@ export default function SettingsPage() {
                       <h2
                         className={
                           isDanger
-                            ? 'font-display text-xl text-accent-rose'
-                            : 'font-display text-xl text-text-1'
+                            ? 'text-balance font-display text-xl text-accent-rose'
+                            : 'text-balance font-display text-xl text-text-1'
                         }
                       >
                         {entry.title}
                       </h2>
-                      <p className="mt-1.5 font-body text-sm leading-relaxed text-text-2">
+                      <p className="mt-1.5 text-pretty font-body text-sm leading-relaxed text-text-2">
                         {entry.description}
                       </p>
                     </div>
                     <ArrowRight
                       size={18}
-                      className="mt-2 shrink-0 text-text-3 transition-transform group-hover:translate-x-0.5"
+                      className="mt-2 shrink-0 text-text-3 transition-transform duration-200 group-hover:translate-x-0.5"
                     />
                   </div>
                 </Card>
@@ -118,10 +117,8 @@ export default function SettingsPage() {
           })}
         </div>
 
-        <p className="max-w-2xl font-body text-xs text-text-4">
-          Umbra no es terapia. Si estás en crisis: 135 (Argentina) · 911. Si necesitás
-          ayuda con tu cuenta o querés ejercer otro derecho de la Ley 25.326, contactá al
-          responsable del tratamiento desde la página de privacidad.
+        <p className="max-w-2xl text-pretty font-body text-xs text-text-4">
+          Umbra no es terapia. Si estás en crisis, llamá al 135 (Argentina), al 911 o al 0800-999-0091 (Salud Mental Responde, Lun a Vie 8 a 20 h). Para otros derechos de la Ley 25.326, contactá al responsable del tratamiento desde la página de privacidad.
         </p>
       </div>
     </LayoutShell>

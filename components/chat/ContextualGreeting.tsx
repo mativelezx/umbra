@@ -29,20 +29,20 @@ export function ContextualGreeting({ profile }: ContextualGreetingProps) {
   const isHigh = topBf.v >= 50;
 
   return (
-    <div className="relative rounded-lg border border-violet-400/10 bg-umbra-shadow/30 p-6 md:p-7">
+    <div className="relative rounded-2xl border border-violet-400/10 bg-umbra-shadow/30 p-6 md:p-7">
       <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-text-3">
         {firstName ? `Hola, ${firstName}` : 'Hola'}
       </p>
-      <h2 className="mt-3 font-display text-2xl italic text-text-1 md:text-3xl">
+      <h2 className="mt-3 text-balance font-display text-2xl italic text-text-1 md:text-3xl">
         Tenemos un punto de partida, {archName.toLowerCase()}.
       </h2>
-      <p className="mt-3 max-w-xl font-body text-sm leading-relaxed text-text-2 md:text-base">
-        Tu mente funciona principalmente en modo{' '}
+      <p className="mt-3 max-w-xl text-pretty font-body text-sm leading-relaxed text-text-2 md:text-base">
+        Tu mente trabaja sobre todo en modo{' '}
         <span className="text-violet-200">{topJung.label.toLowerCase()}</span>{' '}
         — {topJung.short}. Y tu{' '}
         <span className="text-violet-200">{topBfLabel.label.toLowerCase()}</span>{' '}
-        es {isHigh ? 'alta' : 'baja'}: {isHigh ? topBfLabel.highExample : topBfLabel.lowExample}{' '}
-        ¿Desde dónde querés empezar hoy?
+        está {isHigh ? 'arriba' : 'abajo'}: {isHigh ? topBfLabel.highExample : topBfLabel.lowExample}{' '}
+        ¿Sobre qué querés pensar hoy?
       </p>
     </div>
   );

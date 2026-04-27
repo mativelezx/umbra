@@ -70,13 +70,16 @@ export default function RegisterPage() {
           <Link
             href="/"
             prefetch={false}
-            className="font-display text-3xl text-text-1 hover:text-violet-300 transition-colors"
+            className="font-display text-3xl text-text-1 transition-colors duration-150 hover:text-violet-300"
           >
             Umbra
           </Link>
-          <h1 className="mt-6 font-display text-4xl italic text-text-1">
+          <h1 className="mt-6 text-balance font-display text-4xl italic text-text-1">
             {t('auth.register_title')}
           </h1>
+          <p className="mt-2 text-pretty font-body text-sm text-text-3">
+            {t('auth.register_subtitle')}
+          </p>
         </div>
 
         {confirmSent ? (
@@ -103,6 +106,7 @@ export default function RegisterPage() {
           <Input
             type="text"
             label={t('auth.field_name')}
+            hint={t('auth.field_name_hint')}
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -111,6 +115,7 @@ export default function RegisterPage() {
           <Input
             type="email"
             label={t('auth.field_email')}
+            hint={t('auth.field_email_hint')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -119,6 +124,7 @@ export default function RegisterPage() {
           <Input
             type="password"
             label={t('auth.field_password')}
+            hint={t('auth.field_password_hint')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required

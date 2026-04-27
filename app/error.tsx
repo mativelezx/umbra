@@ -21,22 +21,23 @@ export default function GlobalError({
 
   return (
     <main className="relative mx-auto flex min-h-[80vh] max-w-2xl flex-col items-start justify-center px-6 py-24 md:px-10">
-      <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">Algo no salió como esperabas</p>
-      <h1 className="mt-4 font-display text-5xl italic text-text-1 md:text-6xl">
+      <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">
+        Algo se rompió de nuestro lado
+      </p>
+      <h1 className="mt-4 text-balance font-display text-5xl italic text-text-1 md:text-6xl">
         Tropezamos con un error.
       </h1>
-      <p className="mt-6 max-w-xl font-body text-lg text-text-2">
-        No es tu culpa. Algo del lado de Umbra falló. Probá reintentar o volvé al inicio.
-        Si el problema persiste, escribinos y lo revisamos.
+      <p className="mt-6 max-w-xl text-pretty font-body text-lg leading-relaxed text-text-2">
+        No es tu culpa. Lo registramos y lo estamos mirando. Volvé a intentar o regresá al inicio.
       </p>
       {error.digest && (
-        <p className="mt-4 font-mono text-xs text-text-4">
+        <p className="mt-4 font-mono text-xs tabular-nums text-text-4">
           Código de referencia: <span className="text-text-3">{error.digest}</span>
         </p>
       )}
-      <div className="mt-10 flex flex-wrap gap-4">
+      <div className="mt-10 flex flex-wrap gap-3">
         <Button onClick={reset} size="lg">
-          Reintentar
+          Volver a intentar
         </Button>
         <Link href="/">
           <Button variant="ghost" size="lg">
@@ -44,8 +45,8 @@ export default function GlobalError({
           </Button>
         </Link>
       </div>
-      <p className="mt-16 max-w-xl font-body text-xs text-text-4">
-        Umbra no es terapia. Si estás en crisis: 135 (Argentina) · 911
+      <p className="mt-16 max-w-xl text-pretty font-body text-xs text-text-4">
+        Umbra no es terapia. Si estás en crisis: 135 (Argentina), 911 o 0800-999-0091.
       </p>
     </main>
   );

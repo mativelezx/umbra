@@ -61,16 +61,20 @@ function DashboardView({ data }: { data: DashboardData }) {
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
               Hola{data.fullName ? `, ${data.fullName.split(' ')[0]}` : ''}
             </p>
-            <h1 className="mt-2 font-display text-4xl italic text-text-1 md:text-5xl">
-              Tu perfil interior
+            <h1 className="mt-2 text-balance font-display text-4xl italic text-text-1 md:text-5xl">
+              Tu retrato, en una sola página
             </h1>
-            <p className="mt-1 font-mono text-xs text-text-4">
-              Analizaste hace {createdDays} {createdDays === 1 ? 'día' : 'días'}
+            <p className="mt-2 max-w-xl text-pretty font-body text-sm text-text-3">
+              Esto que ves no es un diagnóstico. Es un espejo escrito a partir de lo que contaste.
+              Tomalo como punto de partida, no como veredicto.
+            </p>
+            <p className="mt-3 font-mono text-xs tabular-nums text-text-4">
+              Analizado hace {createdDays} {createdDays === 1 ? 'día' : 'días'}
             </p>
           </div>
           <a
             href="/export"
-            className="group inline-flex shrink-0 items-center gap-2 rounded-full border border-violet-400/20 bg-umbra-shadow/30 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-text-2 transition-all duration-200 hover:border-violet-400/50 hover:bg-violet-400/10 hover:text-text-1"
+            className="group inline-flex shrink-0 items-center gap-2 rounded-full border border-violet-400/20 bg-umbra-shadow/30 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-text-2 transition-[border-color,background-color,color] duration-200 ease-out hover:border-violet-400/50 hover:bg-violet-400/10 hover:text-text-1"
             aria-label="Descargar perfil en PDF"
           >
             <span>Descargar PDF</span>
@@ -124,16 +128,26 @@ function DashboardView({ data }: { data: DashboardData }) {
           {/* DATA VIZ — 2 columns */}
           <div className="grid gap-6 md:grid-cols-2">
             <Card>
-              <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
-                Big Five · radar
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+                Cinco grandes rasgos
               </p>
-              <BigFiveRadar bigFive={data.bigFive} />
+              <p className="mt-2 max-w-prose text-pretty font-body text-xs leading-relaxed text-text-3">
+                Las cinco dimensiones del modelo Big Five (también llamado OCEAN). Cada barra es una de tus inclinaciones generales sobre 100. No son percentiles ni diagnósticos.
+              </p>
+              <div className="mt-4">
+                <BigFiveRadar bigFive={data.bigFive} />
+              </div>
             </Card>
             <Card>
-              <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
-                Cómo tu mente trabaja · 4 ejes
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+                Cómo procesás la información
               </p>
-              <JungAxisView jungFunctions={data.jungFunctions} />
+              <p className="mt-2 max-w-prose text-pretty font-body text-xs leading-relaxed text-text-3">
+                Una lectura inspirada en las ocho funciones cognitivas que describió Jung en 1921. Lo usamos como espejo interpretativo, no como tipología cerrada.
+              </p>
+              <div className="mt-4">
+                <JungAxisView jungFunctions={data.jungFunctions} />
+              </div>
             </Card>
           </div>
 

@@ -21,24 +21,30 @@ export function ArchetypeCard({
   const showCertainty = typeof confidence === 'number';
 
   return (
-    <section className="card-glow relative overflow-hidden rounded-lg p-8 md:p-10">
-      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-text-3">
-        Tu arquetipo dominante
-      </p>
+    <section className="card-glow relative overflow-hidden rounded-2xl p-8 md:p-10">
+      <div className="flex items-center gap-2">
+        <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-text-3">
+          Tu arquetipo orientador
+        </p>
+        <InfoPopover
+          title="¿Qué es un arquetipo orientador?"
+          body="Una figura simbólica que organiza tu retrato escrito. No es un diagnóstico ni una etiqueta: es una lectura interpretativa que la capa narrativa propone a partir de tu perfil. Tomalo como punto de partida, no como destino."
+        />
+      </div>
       <div className="mt-6 flex flex-col items-start gap-8 md:flex-row md:items-center">
         <div className="shrink-0">
           <ArchetypeSvg archetype={archetype} size={140} />
         </div>
         <div className="flex-1">
-          <h2 className="font-display text-5xl italic text-text-1 md:text-6xl">
+          <h2 className="text-balance font-display text-5xl italic text-text-1 md:text-6xl">
             {info.name}
           </h2>
-          <p className="mt-4 max-w-md font-body text-base leading-relaxed text-text-2">
+          <p className="mt-4 max-w-md text-pretty font-body text-base leading-relaxed text-text-2">
             {info.description}
           </p>
           {secondary && (
             <div className="mt-5">
-              <Badge variant="violet">+ {secondary}</Badge>
+              <Badge variant="violet">Con un toque de {secondary}</Badge>
             </div>
           )}
         </div>

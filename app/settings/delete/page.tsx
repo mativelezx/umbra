@@ -51,14 +51,17 @@ export default function SettingsDeletePage() {
 
   return (
     <LayoutShell>
-      <div className="flex flex-col gap-8 max-w-2xl">
+      <div className="flex max-w-2xl flex-col gap-8">
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
             Configuración
           </p>
-          <h1 className="mt-2 font-display text-4xl italic text-text-1 md:text-5xl">
+          <h1 className="mt-2 text-balance font-display text-4xl italic text-text-1 md:text-5xl">
             Eliminar tu cuenta
           </h1>
+          <p className="mt-3 max-w-xl text-pretty font-body leading-relaxed text-text-2">
+            Te mandamos un link único de un solo uso a tu email. Confirmás vos haciendo clic, y desaparece todo en cascada. El link vence en 5 minutos para evitar borrados accidentales por email reenviado.
+          </p>
         </div>
 
         <nav className="flex flex-wrap gap-2">
@@ -88,42 +91,39 @@ export default function SettingsDeletePage() {
           </Link>
         </nav>
 
-        <Card className="border-accent-rose/30">
+        <Card className="rounded-2xl border-accent-rose/30">
           <div className="flex items-start gap-3">
-            <Warning size={24} className="shrink-0 text-accent-rose mt-1" />
+            <Warning size={24} className="mt-1 shrink-0 text-accent-rose" />
             <div>
-              <h2 className="font-display text-2xl italic text-text-1">Esta acción es irreversible</h2>
-              <p className="mt-3 font-body text-sm text-text-2 leading-relaxed">
-                Vamos a eliminar tu cuenta y todos tus datos personales: perfil psicológico,
-                narrativas, conversaciones, plan, carta al futuro, y tu historial de
-                consentimientos. Esto cumple con tu derecho de cancelación bajo la Ley 25.326.
+              <h2 className="text-balance font-display text-2xl italic text-text-1">Esto es irreversible</h2>
+              <p className="mt-3 text-pretty font-body text-sm leading-relaxed text-text-2">
+                Si confirmás, borramos tu cuenta y todos tus datos personales: perfil psicológico, narrativas, conversaciones, plan, carta al futuro y tu historial de consentimientos. Es tu derecho de cancelación bajo Ley 25.326.
               </p>
             </div>
           </div>
 
-          <div className="mt-6 flex flex-col gap-4">
-            <label className="flex items-start gap-3 cursor-pointer">
+          <div className="mt-6 flex flex-col gap-3">
+            <label className="group flex cursor-pointer items-start gap-3 rounded-xl border border-violet-400/15 bg-umbra-fog/30 p-4 transition-[border-color] duration-150 hover:border-violet-400/30">
               <input
                 type="checkbox"
                 checked={purgeResearch}
                 onChange={(e) => setPurgeResearch(e.target.checked)}
-                className="mt-1 h-5 w-5 accent-accent-rose cursor-pointer"
+                className="mt-1 h-5 w-5 cursor-pointer accent-accent-rose"
               />
-              <span className="font-body text-sm text-text-2">
-                También purgar mi contribución de investigación (si había optado por participar).
-                Esta opción borra mis datos del dataset científico de Umbra.
+              <span className="text-pretty font-body text-sm leading-relaxed text-text-2">
+                También quitar mi contribución del dataset de investigación (si había optado por participar). Sin esto, los datos de investigación quedan seudonimizados pero presentes.
               </span>
             </label>
 
-            <label className="flex items-start gap-3 cursor-pointer">
+            <label className="group flex cursor-pointer items-start gap-3 rounded-xl border border-accent-rose/25 bg-accent-rose/5 p-4 transition-[border-color] duration-150 hover:border-accent-rose/50">
               <input
                 type="checkbox"
                 checked={confirm}
                 onChange={(e) => setConfirm(e.target.checked)}
-                className="mt-1 h-5 w-5 accent-accent-rose cursor-pointer"
+                className="mt-1 h-5 w-5 cursor-pointer accent-accent-rose"
               />
-              <span className="font-body text-sm text-text-2">
-                Entiendo que esta acción es irreversible y quiero proceder.
+              <span className="text-pretty font-body text-sm leading-relaxed text-text-1">
+                Entiendo que es irreversible y quiero seguir adelante.
               </span>
             </label>
           </div>
@@ -157,7 +157,7 @@ export default function SettingsDeletePage() {
               onClick={handleRequest}
               size="lg"
             >
-              Enviar link de confirmación
+              Mandame el link de confirmación
             </Button>
           </div>
         </Card>

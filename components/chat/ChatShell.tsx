@@ -44,9 +44,9 @@ const AUTONOMY_OPTIONS: ReadonlyArray<{
   label: string;
   helper: string;
 }> = [
-  { value: 'mirror', label: 'Espejo', helper: 'Umbra refleja, no opina' },
-  { value: 'guide', label: 'Guía', helper: 'Acompaña con sugerencias' },
-  { value: 'challenge', label: 'Reto', helper: 'Te cuestiona con cuidado' },
+  { value: 'mirror', label: 'Espejo', helper: 'Te devuelvo lo que decís sin interpretar.' },
+  { value: 'guide', label: 'Guía', helper: 'Sumo preguntas para profundizar.' },
+  { value: 'challenge', label: 'Reto', helper: 'Cuestiono tus supuestos con cuidado.' },
 ];
 
 function AutonomyDial({
@@ -74,8 +74,8 @@ function AutonomyDial({
             onClick={() => onChange(opt.value)}
             className={
               active
-                ? 'rounded-full bg-violet-400/20 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-violet-200'
-                : 'rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-text-3 transition-colors hover:text-text-1'
+                ? 'rounded-full bg-violet-400/20 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-violet-200 transition-[scale] duration-150 ease-out active:scale-[0.96]'
+                : 'rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-text-3 transition-[color,scale] duration-150 ease-out hover:text-text-1 active:scale-[0.96]'
             }
           >
             {opt.label}

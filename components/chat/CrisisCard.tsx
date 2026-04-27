@@ -17,26 +17,25 @@ export function CrisisCard({ resources, severity, extraMessage }: CrisisCardProp
       className="relative rounded-lg border-2 border-accent-amber/40 bg-umbra-abyss/90 p-6 md:p-8 backdrop-blur-xl"
     >
       <div className="mb-6 flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-accent-amber/15">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent-amber/15">
           <Warning size={26} weight="regular" className="text-accent-amber" />
         </div>
         <div>
-          <h2 className="font-display text-3xl italic text-text-1 md:text-4xl">
-            Necesitás hablar con alguien ahora
+          <h2 className="text-balance font-display text-3xl italic text-text-1 md:text-4xl">
+            Lo que estás escribiendo me preocupa
           </h2>
-          <p className="mt-2 font-body text-text-2 max-w-xl">
-            Umbra no es terapia. Lo que estás sintiendo es importante y merece
-            acompañamiento profesional inmediato.
+          <p className="mt-2 max-w-xl text-pretty font-body leading-relaxed text-text-2">
+            Umbra no es terapia y no quiero que pases este momento solo con un sitio web. Hablá con alguien preparado para acompañarte ya.
           </p>
           {extraMessage && (
-            <p className="mt-3 font-body text-xs text-text-3 italic">{extraMessage}</p>
+            <p className="mt-3 text-pretty font-body text-xs italic text-text-3">{extraMessage}</p>
           )}
         </div>
       </div>
 
       <div className="flex flex-col gap-3">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
-          Llamá ya · son gratuitos
+          Líneas de escucha (Argentina, 24 h)
         </p>
         {resources.map((r) => (
           <a

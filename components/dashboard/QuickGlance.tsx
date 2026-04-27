@@ -164,10 +164,10 @@ function GlanceCard({
 }: GlanceCardProps) {
   return (
     <div
-      className={`relative overflow-hidden rounded-lg border p-5 transition-all duration-300 hover:-translate-y-0.5 ${
+      className={`relative overflow-hidden rounded-2xl border p-5 transition-[transform,border-color,box-shadow] duration-200 ease-out hover:-translate-y-0.5 ${
         accent
-          ? 'border-violet-400/30 bg-violet-400/5 shadow-[0_0_32px_rgba(180,102,255,0.15)]'
-          : 'border-violet-400/10 bg-umbra-shadow/40'
+          ? 'border-violet-400/30 bg-violet-400/5 shadow-[0_0_0_1px_rgba(180,102,255,0.18),0_8px_32px_-12px_rgba(180,102,255,0.25)] hover:shadow-[0_0_0_1px_rgba(180,102,255,0.28),0_12px_36px_-12px_rgba(180,102,255,0.32)]'
+          : 'border-violet-400/10 bg-umbra-shadow/40 hover:border-violet-400/25 hover:shadow-[0_0_0_1px_rgba(180,102,255,0.15),0_8px_24px_-12px_rgba(180,102,255,0.2)]'
       }`}
     >
       <div className="flex items-center justify-between text-text-3">
@@ -180,7 +180,7 @@ function GlanceCard({
         {popover && <InfoPopover {...popover} />}
       </div>
       <div className="mt-3 flex items-baseline gap-2">
-        <h3 className="font-display text-2xl italic text-text-1 md:text-3xl">
+        <h3 className="text-balance font-display text-2xl italic text-text-1 md:text-3xl">
           {title}
         </h3>
         {technicalCode && (

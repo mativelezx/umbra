@@ -151,13 +151,11 @@ export default function PlanPage() {
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
             Tu plan de desarrollo
           </p>
-          <h1 className="mt-2 font-display text-4xl italic text-text-1 md:text-5xl">
+          <h1 className="mt-2 text-balance font-display text-4xl italic text-text-1 md:text-5xl">
             Caminos para explorar
           </h1>
-          <p className="mt-3 max-w-2xl font-body text-text-2">
-            Tres áreas de crecimiento personalizadas para tu perfil. Pequeños
-            pasos concretos, medibles. Marcá cuando completes cada uno — el
-            progreso se guarda solo.
+          <p className="mt-3 max-w-2xl text-pretty font-body leading-relaxed text-text-2">
+            Tres áreas de crecimiento, pensadas a partir de tu perfil. Pequeños pasos chequeables. Ningún plazo te apura — el ritmo lo ponés vos. Tildá los pasos a medida que los hacés; se guardan solos.
           </p>
         </div>
 

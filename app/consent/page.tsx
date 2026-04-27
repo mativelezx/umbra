@@ -54,12 +54,12 @@ export default function ConsentPage() {
     <main className="relative mx-auto max-w-3xl px-6 py-16 md:px-10">
       <div className="mb-10">
         <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">
-          Antes de empezar
+          {t('consent.eyebrow')}
         </p>
-        <h1 className="mt-3 font-display text-5xl italic text-text-1 md:text-6xl">
+        <h1 className="mt-3 text-balance font-display text-5xl italic text-text-1 md:text-6xl">
           {t('consent.title')}
         </h1>
-        <p className="mt-4 max-w-2xl font-body text-lg text-text-2">
+        <p className="mt-4 max-w-2xl text-pretty font-body text-lg leading-relaxed text-text-2">
           {t('consent.subtitle')}
         </p>
       </div>
@@ -67,126 +67,69 @@ export default function ConsentPage() {
       <GlassCard className="mb-8 max-h-[60vh] overflow-y-auto">
         <article className="prose-sm prose-invert font-body text-sm leading-relaxed text-text-2">
           <section>
-            <h2 className="font-display text-2xl text-text-1 mt-0">¿Qué datos recolectamos?</h2>
+            <h2 className="mt-0 font-display text-2xl text-text-1">{t('consent.section_data_title')}</h2>
+            <p className="mt-2 text-pretty">{t('consent.section_data_intro')}</p>
             <ul className="mt-2 space-y-1.5">
-              <li>Email (para login y recuperación de cuenta)</li>
-              <li>Textos introspectivos del onboarding y el chat</li>
-              <li>Perfil psicológico generado por el análisis</li>
-              <li>Dirección IP (seudonimizada con HMAC, solo para auditoría)</li>
-              <li>User agent del navegador (para debugging)</li>
+              <li>{t('consent.section_data_email')}</li>
+              <li>{t('consent.section_data_text')}</li>
+              <li>{t('consent.section_data_profile')}</li>
+              <li>{t('consent.section_data_consent')}</li>
             </ul>
           </section>
 
           <section className="mt-6">
-            <h2 className="font-display text-2xl text-text-1">¿Dónde se almacenan?</h2>
-            <p className="mt-2">
-              Supabase PostgreSQL, servidor en US-East. Cifrado en tránsito (TLS) y en reposo.
-              Para el análisis con IA usamos Anthropic Claude, que según su política no usa
-              contenido de usuarios para entrenar modelos.
-            </p>
-          </section>
-
-          <section className="mt-6">
-            <h2 className="font-display text-2xl text-text-1">¿Quién accede?</h2>
-            <p className="mt-2">
-              Vos, a través de tu sesión autenticada. El sistema automatizado de Umbra. El
-              responsable del tratamiento (el desarrollador del TFG), únicamente para
-              mantenimiento. Nadie más.
-            </p>
-          </section>
-
-          <section className="mt-6">
-            <h2 className="font-display text-2xl text-text-1">¿Cuánto tiempo se retienen?</h2>
-            <p className="mt-2">
-              Indefinidamente hasta que solicites el borrado. Algunos payloads técnicos (debug
-              de análisis, eventos de seguridad del chat) se purgan automáticamente a los 30 días.
-            </p>
-          </section>
-
-          <section className="mt-6">
-            <h2 className="font-display text-2xl text-text-1">
-              Tus derechos (arts. 13-17 Ley 25.326)
-            </h2>
+            <h2 className="font-display text-2xl text-text-1">{t('consent.section_who_title')}</h2>
+            <p className="mt-2 text-pretty">{t('consent.section_who_intro')}</p>
             <ul className="mt-2 space-y-1.5">
-              <li>
-                <strong className="text-text-1">Acceso</strong>: podés descargar todos tus datos
-                desde Configuración.
-              </li>
-              <li>
-                <strong className="text-text-1">Rectificación</strong>: podés editar tu perfil
-                en cualquier momento.
-              </li>
-              <li>
-                <strong className="text-text-1">Cancelación</strong>: podés eliminar tu cuenta y
-                todos tus datos personales.
-              </li>
-              <li>
-                <strong className="text-text-1">Oposición</strong>: podés retirar el modo
-                investigación en cualquier momento.
-              </li>
+              <li>{t('consent.section_who_supabase')}</li>
+              <li>{t('consent.section_who_anthropic')}</li>
+              <li>{t('consent.section_who_ml')}</li>
             </ul>
           </section>
 
           <section className="mt-6">
-            <h2 className="font-display text-2xl text-text-1">Modo investigación (opcional)</h2>
-            <p className="mt-2">
-              Si activás el modo investigación, tus textos y perfil generado se guardan en un
-              dataset <strong className="text-text-1">seudonimizado</strong> (identificados por
-              una clave criptográfica). NO es anonimización irreversible: el administrador con
-              acceso a la clave secreta y a tu ID original podría técnicamente re-vincularlos.
-              En la práctica, ese acceso está limitado al responsable del tratamiento.
-            </p>
-            <p className="mt-2">
-              Si cancelás tu cuenta, tus datos de investigación permanecen salvo que marques
-              explícitamente "purgar también mi contribución de investigación" en el flujo de
-              borrado. Podés activar o desactivar este modo en cualquier momento desde
-              Configuración.
-            </p>
+            <h2 className="font-display text-2xl text-text-1">{t('consent.section_rights_title')}</h2>
+            <p className="mt-2 text-pretty">{t('consent.section_rights_intro')}</p>
+            <ul className="mt-2 space-y-1.5">
+              <li>{t('consent.section_rights_export')}</li>
+              <li>{t('consent.section_rights_delete')}</li>
+              <li>{t('consent.section_rights_optout')}</li>
+            </ul>
           </section>
 
           <section className="mt-6">
             <h2 className="font-display text-2xl text-text-1">Umbra no es terapia</h2>
-            <p className="mt-2">
-              Es una herramienta de autoconocimiento. Si estás en crisis emocional, contactá
-              inmediatamente a un profesional de salud mental o llamá al 135 (Centro de
-              Asistencia al Suicida, Argentina) o al 911.
-            </p>
-          </section>
-
-          <section className="mt-6">
-            <h2 className="font-display text-2xl text-text-1">Responsable del tratamiento</h2>
-            <p className="mt-2">
-              Matías Velez — TFG Ingeniería en Software, Universidad Siglo 21. Podés
-              contactarme por email para ejercer tus derechos o hacer una consulta. Para
-              reclamos formales tenés derecho a presentarte ante la Agencia de Acceso a la
-              Información Pública (AAIP).
+            <p className="mt-2 text-pretty">
+              Es una herramienta de autoconocimiento. Si en algún momento sentís crisis,
+              llamá al 135 (Centro de Asistencia al Suicida, Argentina), al 911 o al
+              0800-999-0091 (Salud Mental Responde).
             </p>
           </section>
         </article>
       </GlassCard>
 
       <form onSubmit={onSubmit} className="flex flex-col gap-5">
-        <label className="flex items-start gap-3 cursor-pointer group">
+        <label className="group flex cursor-pointer items-start gap-3 rounded-xl border border-violet-400/15 bg-umbra-fog/30 p-4 transition-[border-color,background-color] duration-150 hover:border-violet-400/30 hover:bg-umbra-fog/50">
           <input
             type="checkbox"
             checked={accepted}
             onChange={(e) => setAccepted(e.target.checked)}
             required
-            className="mt-1 h-5 w-5 accent-violet-400 cursor-pointer"
+            className="mt-1 h-5 w-5 cursor-pointer accent-violet-400"
           />
-          <span className="font-body text-sm text-text-1 group-hover:text-white transition-colors">
+          <span className="text-pretty font-body text-sm leading-relaxed text-text-1 transition-colors duration-150 group-hover:text-white">
             {t('consent.accept_label')}
           </span>
         </label>
 
-        <label className="flex items-start gap-3 cursor-pointer group">
+        <label className="group flex cursor-pointer items-start gap-3 rounded-xl border border-violet-400/15 bg-umbra-fog/30 p-4 transition-[border-color,background-color] duration-150 hover:border-violet-400/30 hover:bg-umbra-fog/50">
           <input
             type="checkbox"
             checked={researchOptIn}
             onChange={(e) => setResearchOptIn(e.target.checked)}
-            className="mt-1 h-5 w-5 accent-violet-400 cursor-pointer"
+            className="mt-1 h-5 w-5 cursor-pointer accent-violet-400"
           />
-          <span className="font-body text-sm text-text-2 group-hover:text-text-1 transition-colors">
+          <span className="text-pretty font-body text-sm leading-relaxed text-text-2 transition-colors duration-150 group-hover:text-text-1">
             {t('consent.research_label')}
           </span>
         </label>
