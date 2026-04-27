@@ -9,25 +9,6 @@
     color-scheme: dark;
   }
 
-  html {
-    /* Bump root size to scale all rem-based tokens at once.
-       Tailwind's text-sm/text-base/etc are rem-based, so a larger root
-       scales everything proportionally without retouching every component. */
-    font-size: 17.5px;
-  }
-
-  @media (min-width: 768px) {
-    html {
-      font-size: 19px;
-    }
-  }
-
-  @media (min-width: 1280px) {
-    html {
-      font-size: 20px;
-    }
-  }
-
   html,
   body {
     background-color: #050510;
