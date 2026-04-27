@@ -17,8 +17,8 @@
 | Variable | Scope | Required | Purpose |
 |---|---|---|---|
 | `ANTHROPIC_API_KEY` | **Server only** | ✓ | Claude API authentication |
-| `ANTHROPIC_MODEL_ID` | **Server only** | ✓ | Pinned SKU (e.g. `claude-sonnet-4-6-20260301`). Never use aliases. ADR-005 + ADR-014. |
-| `ANTHROPIC_HAIKU_MODEL_ID` | **Server only** | ✓ | Pinned SKU for H2 paraphrase rewriter. ADR-020. |
+| `ANTHROPIC_MODEL_ID` | **Server only** | ✓ | Identificador de modelo fijado (ej. `claude-sonnet-4-6-20260301`). ADR-005. |
+| `ANTHROPIC_HAIKU_MODEL_ID` | **Server only** | opcional | Modelo secundario fijado para rutas auxiliares. |
 
 ## Rate limiting + cost control (Phase 1.5 + Phase 5)
 
@@ -95,4 +95,4 @@ This is intentional: explicit failure is better than silent fallback.
 - `.env.local.example` (the canonical source in repo root)
 - [CLOUD_HANDOFF.md](../CLOUD_HANDOFF.md) — Vercel deployment of env vars
 - [tech/SECURITY.md](../tech/SECURITY.md) — pepper rotation
-- [DECISIONS.md](../DECISIONS.md) — ADR-005, ADR-014, ADR-021
+- [DECISIONS.md](../DECISIONS.md) — ADR-005, ADR-021

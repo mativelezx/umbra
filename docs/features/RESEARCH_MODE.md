@@ -1,17 +1,11 @@
 # Feature — Research Participant Mode
 
-> Opt-in pseudonymized dataset for the TFG paper. Gated on Phase 0 ethics
-> gate. Branch A = enabled, Branch B = deferred to future work.
+> Opt-in pseudonymized dataset que acompaña la dimensión académica del
+> proyecto (TFG y eventual paper). Pseudonimización con HMAC y pepper
+> versionado (ADR-013, ADR-021).
 
 ## Phase
-3 (schema + opt-in) + parallel with KB research
-
-## Status
-
-**CONDITIONAL**: gated on Phase 0 ethics gate outcome. See [biz/ETHICS.md](../biz/ETHICS.md).
-
-- **Branch A** (ethics cleared with consent-only): feature ships as specified below.
-- **Branch B** (ethics path unclear or blocked): feature is dropped, `research_dataset` table is NOT created, consent form does NOT mention research mode. Paper's validation rests solely on eval H1 + H2 (computational).
+3 (schema + opt-in)
 
 ## Honest framing
 
@@ -31,7 +25,7 @@ we preserve the user's right to delete while enabling the research use case.
 
 ### Place 1: Consent form (primary)
 During `/consent`, after the required Ley 25.326 checkbox, a second optional
-checkbox appears (Branch A only):
+checkbox appears:
 
 ```
 ☐ Permito que mis datos anonimizados sean usados para investigación de
@@ -55,7 +49,7 @@ Expandable text (inline or modal):
 > que marques explícitamente "purgar también mi contribución de
 > investigación" en el flujo de borrado.
 >
-> Tu contribución ayuda al paper: {OSF link}
+> Tu contribución acompaña la dimensión académica del proyecto.
 
 On check → `UPDATE profiles SET research_opt_in = true`.
 
@@ -126,24 +120,15 @@ If unchecked:
 
 ## Dashboard badge
 
-Branch A: users with `research_opt_in=true` see a subtle badge in their dashboard:
-
-```
-┌─────────────────────────────────┐
-│  🔬 Contribuís a la investigación│
-│      de Umbra                    │
-│      [Ver el preregistro →]      │
-└─────────────────────────────────┘
-```
-
-Small glass card with emerald accent. Links to OSF preregistration URL.
-Makes the contribution visible — users feel part of something.
+Los usuarios con `research_opt_in=true` ven un badge sutil en el dashboard
+indicando que su contribución acompaña la dimensión académica del
+proyecto. Glass card pequeña con accent emerald.
 
 ## Ethical safeguards summary
 
 - **Informed consent**: explicit opt-in in consent form
 - **Data minimization**: only text + profile, no identifiers
-- **Purpose limitation**: used only for preregistered H1/H2 + paper
+- **Purpose limitation**: used only for the academic deliverables of the TFG
 - **Pseudonymization**: HMAC with service-role pepper
 - **Access control**: service-role-only RLS, no client or user access
 - **Audit trail**: `research_dataset` writes are logged (TODO: access log for reads)
@@ -172,10 +157,10 @@ See [biz/ETHICS.md](../biz/ETHICS.md) for full ethics framing.
 
 ## See also
 
-- [biz/ETHICS.md](../biz/ETHICS.md) — Phase 0 gate + ethics framing
+- [biz/ETHICS.md](../biz/ETHICS.md) — ethics framing
 - [biz/LEGAL.md](../biz/LEGAL.md) — Ley 25.326 compliance
-- [biz/TFG.md](../biz/TFG.md) — OSF preregistration + paper
-- [DECISIONS.md ADR-013, ADR-017, ADR-021](../DECISIONS.md)
+- [biz/TFG.md](../biz/TFG.md) — estructura de tesis y cronograma
+- [DECISIONS.md ADR-013, ADR-021](../DECISIONS.md)
 - [tech/SECURITY.md](../tech/SECURITY.md) — HMAC peppers
 - [tech/DATABASE.md](../tech/DATABASE.md) — `research_dataset` schema
 - [CONSENT.md](CONSENT.md) — where opt-in happens

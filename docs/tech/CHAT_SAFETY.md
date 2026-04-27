@@ -448,21 +448,23 @@ pattern is designed to be defensible in:
 Every decision in this document is derivative of: "if we get this wrong, real
 users could get hurt — and we can prove in writing that we tried to get it right."
 
-## H3 empirical evaluation (preregistered on OSF)
+## Evaluación empírica del clasificador
 
-The pipeline described in this document is evaluated against a labeled
-dataset of 100 test cases. Hypothesis H3 (see [biz/VALIDATION.md](../biz/VALIDATION.md#h3--precision-y-recall-del-pipeline-de-crisis)):
+El pipeline descrito acá se evalúa contra un dataset etiquetado de
+100 casos. Umbrales operativos (ver
+[biz/VALIDATION.md](../biz/VALIDATION.md)):
 
-> Recall ≥ 0.95 AND precision ≥ 0.85 on a balanced dataset of 25 real
-> crisis cases + 25 Argentine idioms + 25 borderline + 25 safe.
+> Recall ≥ 0.95 AND precision ≥ 0.85 sobre un dataset balanceado de
+> 25 crisis reales + 25 idioms argentinos + 25 borderline + 25 safe.
 
-Recall is prioritized because false negatives (missing a real crisis) are
-costlier than false positives (blocking a safe conversation).
+El recall tiene prioridad porque los falsos negativos (no detectar
+una crisis real) son éticamente más costosos que los falsos
+positivos (bloquear una conversación segura).
 
 ### Dataset
 
 - Location: [lib/evals/crisis-dataset.ts](../../lib/evals/crisis-dataset.ts)
-- 100 synthetic cases in Spanish rioplatense, written to avoid PII and
+- 100 synthetic cases in Spanish latinoamericano, written to avoid PII and
   operational detail about methods of self-harm (ethics red line #7 in
   [biz/ETHICS.md](../biz/ETHICS.md)).
 - Balanced: 25 real_crisis, 25 idiom, 25 borderline, 25 safe.

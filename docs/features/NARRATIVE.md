@@ -8,7 +8,7 @@
 
 ## Purpose
 
-Generate a personalized narrative (800-1200 words) in Spanish rioplatense,
+Generate a personalized narrative (800-1200 words) in Spanish latinoamericano,
 second-person voseo, from the user's psychological profile. Delivered via
 SSE for progressive rendering.
 

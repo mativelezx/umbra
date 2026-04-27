@@ -16,7 +16,7 @@
 - `/settings/export` — trigger data export download
 - `/settings/delete` — request account deletion
 - `/settings/delete/confirm?token=...` — confirm via magic link
-- `/settings/research-opt-out` — toggle research mode (Branch A only)
+- `/settings/research-opt-out` — toggle research mode
 
 ### API
 - `POST /api/account/research-opt-out` (Node runtime)
@@ -32,7 +32,7 @@ UI:
 - Cosmic background + glass card centered
 - Full consent text in scrollable area
 - Required checkbox: "Entendí y acepto los términos de uso y el tratamiento de mis datos según Ley 25.326"
-- If Branch A: second optional checkbox: "Permito que mis datos anonimizados sean usados para investigación (podés cambiarlo después en settings)"
+- Second optional checkbox: "Permito que mis datos anonimizados sean usados para la dimensión académica del proyecto (podés cambiarlo después en settings)"
 - Continue button disabled until required checkbox is checked
 
 Submit → `POST` to internal action that:
@@ -89,7 +89,7 @@ See [API_MAP.md](../API_MAP.md) and [tech/DATABASE.md](../tech/DATABASE.md). Tra
 
 - Toggle in `/settings/research-opt-out`
 - Current state: "Research mode: ON / OFF"
-- Description: "Cuando está activo, tus textos anonimizados contribuyen a la investigación de Umbra. Más info: {OSF link}"
+- Description: "Cuando está activo, tus textos anonimizados acompañan la dimensión académica del proyecto. Más info: ver consent text completo."
 - Toggle calls `POST /api/account/research-opt-out { optIn: boolean }`
 - UPDATE `profiles.research_opt_in`
 
@@ -198,7 +198,7 @@ defaults del schema (`''` y `'es-AR'`).
 - `CONSENT_LOCALE_V1` — `"es-AR"`
 - `CONSENT_TEXT_V1_ES_AR` — el texto verbatim como constante
   inmutable. Contiene el texto completo del consentimiento en
-  voseo rioplatense que se muestra en la página `/consent`. Este
+  voseo latinoamericano que se muestra en la página `/consent`. Este
   archivo **nunca se edita in-place**; cambios materiales crean
   `text-v2-es-AR.ts`.
 - `computeConsentTextHash(text)` — async helper que usa
@@ -247,12 +247,15 @@ antes de deploy.
 
 ADR-024 documenta esta decisión completa.
 
-### Dataset de consent research M3 (Fase 4.5)
+### Consentimiento del estudio de usabilidad
 
-Paralelo a lo anterior, el estudio M3 tiene su propio formulario
-de consentimiento en `content/consent/research-m3-v1-es-AR.md`.
-Es texto separado del consentimiento del producto, específico
-para la investigación think-aloud con participantes reales. Está
-versionado en el repo y también puede hashearse si es necesario
-bajo el mismo patrón.
+Paralelo a lo anterior, el estudio de usabilidad SUS planificado
+para TP3/TP4 tiene su propio formulario de consentimiento en
+`content/consent/research-m3-v1-es-AR.md` (el identificador del
+archivo se preserva tal como quedó en el repo para mantener la
+integridad de cualquier hash precomputado). Es texto separado del
+consentimiento del producto, específico para las sesiones
+individuales de pensamiento en voz alta con participantes reales.
+Está versionado en el repo y puede hashearse bajo el mismo patrón
+si es necesario.
 

@@ -18,10 +18,9 @@ Asking Claude to both produce profile scores AND cite evidence in one call
 reduces profile quality. Evidence extraction is a lighter task that benefits
 from a slightly higher temperature (0.3) and shorter prompt. Splitting lets
 us:
-- Pin Pass 1 to temperature=0 for H1 determinism
+- Pin la lectura interpretativa a temperature=0 para reproducibilidad
 - Let Pass 2 explore phrase selection creatively
 - Fail Pass 2 gracefully without blocking the core profile
-- Cache Pass 1 for H1 evaluation independently of Pass 2
 
 ## Pass 1 — Profile analysis
 
@@ -33,7 +32,7 @@ conditionally (skipped if empty per ADR-018).
 
 ### Model
 - `ANTHROPIC_MODEL_ID` (pinned SKU like `claude-sonnet-4-6-20260301`)
-- `temperature=0` (deterministic for H1)
+- `temperature=0` (deterministic)
 - JSON mode
 - `max_tokens: 1500`
 
@@ -176,7 +175,7 @@ See [tech/ARCHITECTURE.md](../tech/ARCHITECTURE.md) production failure scenarios
 - Knowledge base complete (at least minimum viable thresholds per KB gate)
 - `charge_rate_limit` RPC (Phase 1.5.6)
 - `evidence_highlights` table (Migration 002)
-- Eval suite (for H1 determinism validation)
+- Módulo analítico ML (Big Five inferido por DistilBERT + Ridge)
 
 ## Testing
 
@@ -184,7 +183,7 @@ See [tech/ARCHITECTURE.md](../tech/ARCHITECTURE.md) production failure scenarios
 - `lib/prompts/analyze-evidence.test.ts` — evidence prompt builder
 - `app/api/analyze/route.test.ts` — integration with mocked Claude (happy path + all failure modes)
 - `app/api/analyze/evidence/route.test.ts` — integration
-- `lib/evals/run.test.ts` — H1 + H2 eval runners ([tech/EVALS.md](../tech/EVALS.md))
+- `lib/evals/crisis-eval.test.ts` — evaluación del clasificador de crisis ([tech/EVALS.md](../tech/EVALS.md))
 - `e2e/analyze-full-flow.spec.ts` — Playwright: onboarding input → dashboard with profile
 
 ## Design notes
@@ -198,5 +197,5 @@ See [tech/ARCHITECTURE.md](../tech/ARCHITECTURE.md) production failure scenarios
 - [ONBOARDING.md](ONBOARDING.md) — the flow that invokes analyze
 - [DASHBOARD.md](DASHBOARD.md) — visualizes the result
 - [PROMPT_ARCHITECTURE.md](../PROMPT_ARCHITECTURE.md) — prompt design
-- [tech/EVALS.md](../tech/EVALS.md) — H1 + H2 methodology
+- [tech/EVALS.md](../tech/EVALS.md) — métricas y evaluación
 - [tech/ARCHITECTURE.md](../tech/ARCHITECTURE.md) — data flow

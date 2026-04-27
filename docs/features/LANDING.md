@@ -56,7 +56,7 @@ Glass cards with Phosphor icons:
 1. **Brain** — "Base teórica real — extraída de fuentes académicas"
 2. **Compass** — "Jung directo, no MBTI — funciones cognitivas auténticas"
 3. **Sparkle** — "Positive Computing — diseño para bienestar, no engagement"
-4. **Path** — "Español rioplatense — en el tono que hablás"
+4. **Path** — "Español latinoamericano — en el tono que hablás"
 
 ## Typography hierarchy
 
@@ -71,7 +71,7 @@ Glass cards with Phosphor icons:
 ┌───────────────────────────────────────────────────┐
 │  Umbra · TFG Ingeniería en Software · Siglo 21    │
 │                                                   │
-│  [Privacidad] [Términos] [Github] [OSF]           │
+│  [Privacidad] [Términos] [Github]                 │
 │                                                   │
 │  Umbra no es terapia.                             │
 │  Si estás en crisis: 135 (Argentina) · 911        │
@@ -163,7 +163,7 @@ Submit:
 ## SEO
 
 - `<title>`: "Umbra — Conocé tu sombra. Iluminá tu camino."
-- `<meta description>`: "Plataforma de autoconocimiento con rigor académico. Jung, Big Five, Positive Computing. En español rioplatense."
+- `<meta description>`: "Plataforma de autoconocimiento con rigor académico. Jung, Big Five, Positive Computing. En español latinoamericano."
 - og:title, og:description, og:image (1200×630, cosmic branding)
 - Twitter card
 

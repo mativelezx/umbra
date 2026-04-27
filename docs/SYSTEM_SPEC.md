@@ -8,7 +8,7 @@
 **Name**: Umbra
 **Tagline**: Conocé tu sombra. Iluminá tu camino.
 **Project type**: TFG (Trabajo Final de Grado) — Ingeniería en Software, Universidad Siglo 21. Dual deliverable: academic thesis + functional product.
-**Target users**: Spanish-speaking (rioplatense) adults interested in self-knowledge, psychology, and personal development. Not a clinical population.
+**Target users**: Spanish-speaking (latinoamericano) adults interested in self-knowledge, psychology, and personal development. Not a clinical population.
 **Primary persona**: 25-40 year old Argentine, some university exposure to psychology, skeptical of MBTI but curious about personality frameworks, seeks depth over quick tests.
 
 ## 2. What the system does
@@ -23,7 +23,7 @@ Umbra takes a user's introspective written text (either through guided 5-area pr
    - Confidence score (self-reported by Claude)
    - Reasoning trace citing evidence from the user's text
 
-2. A **personalized narrative** (800-1200 words, Spanish rioplatense, second-person voseo) that interprets the profile as a story rather than diagnosis.
+2. A **personalized narrative** (800-1200 words, Spanish latinoamericano, second-person voseo) that interprets the profile as a story rather than diagnosis.
 
 3. A **contextualized chat** where the user can explore their profile with Claude, with full safety guardrails: crisis detection, session timeouts, token budgets, permanent "not therapy" banner.
 
@@ -40,7 +40,7 @@ Optional (user opt-in during consent flow):
 ## 3. What the system does NOT do
 
 - **Not therapy.** Explicit non-goal. Permanent banner. Crisis detection routes users to professional resources.
-- **Not MBTI.** Uses Jung cognitive functions directly, cites Jung (1921) + Sauer (2025). No 16-personality labels.
+- **Not MBTI.** Uses Jung cognitive functions directly as a narrative reading of the Big Five inferred by the analytical module. Cites Jung (1921). No 16-personality labels.
 - **Not a diagnostic tool.** No DSM codes, no clinical language, no "disorder" framing.
 - **Not multi-user.** Single-user product; no teams, no organizations, no shared profiles.
 - **Not real-time.** No collaborative editing, no presence, no websockets.
@@ -59,7 +59,8 @@ Optional (user opt-in during consent flow):
 | State | Zustand | `5.0.0` | One store per domain |
 | Auth | Supabase Auth | latest | Via `@supabase/ssr` |
 | Database | Supabase PostgreSQL | 15+ | RLS on every table |
-| AI | Anthropic Claude SDK | `0.30.1` | Sonnet 4.6 pinned SKU |
+| AI (capa narrativa) | Anthropic Claude SDK | `0.30.1` | Identificador de modelo fijado vía `ANTHROPIC_MODEL_ID` |
+| Capa analítica | Módulo propio en `ml/` | DistilBERT base multilingual cased congelado + Ridge multi-output (FastAPI + DVC + MLflow) | Ver ADR-026 |
 | Charts | Recharts | `2.13.0` | Radar + bars |
 | PDF | html2pdf.js | `0.10.2` | Client-side only |
 | Validation | Zod | `3.23.8` | All API inputs |
@@ -106,7 +107,7 @@ Optional (user opt-in during consent flow):
 - `consent_records` (Migration 002)
 - `crisis_events` (Migration 002)
 - `rate_limits` (Migration 002)
-- `research_dataset` (Migration 002, gated on Ethics Gate Branch A)
+- `research_dataset` (Migration 002, opt-in)
 - `future_letters` (Migration 002)
 - `delete_confirmations` (Migration 002)
 - `evidence_highlights` (Migration 002, from eng review E4)
@@ -129,12 +130,17 @@ All tables have explicit `ENABLE ROW LEVEL SECURITY` and `CREATE POLICY` DDL. Se
 - `development-plan.ts` — 3-area development plan
 
 ### Eval suite (`lib/evals/`)
-- `cases/` — 50 golden test cases (20 IPIP-NEO adapted + 20 Jung literature + 10 adversarial)
-- `run.ts` — Main eval runner
-- `consistency.ts` — H1 determinism runner (temperature=0, pinned SKU)
-- `cross-model-paraphrase.ts` — H2 paraphrase runner (Sonnet + Haiku)
-- `.cache/snapshot-*.json` — Committed cache snapshots for offline reproduction
-- `.cache/live/` — Local-only transient cache (gitignored)
+- `cases.ts` — corpus de casos golden derivados de IPIP-NEO + Jung + adversariales (utilizable por el módulo ML como fuente de viñetas etiquetadas en español latinoamericano).
+- `crisis-dataset.ts` — 100 casos etiquetados para evaluar el clasificador de crisis.
+- `crisis-eval.ts` — runner que computa precision/recall/F1/matriz de confusión.
+- `crisis-eval.test.ts` — CI gate (recall ≥ 0.95 sobre la corrida controlada).
+
+### Módulo analítico (`ml/`)
+- DistilBERT base multilingual cased congelado + 5 regresores Ridge.
+- Pipeline reproducible (`make all`, `dvc repro`).
+- Tracking en MLflow; datasets versionados con DVC.
+- Métricas reportadas por dimensión Big Five (MSE, R², r) en `eval_metrics.json`.
+- Ver [`ml/README.md`](../ml/README.md) y ADR-026.
 
 ## 6. Data flow (end-to-end)
 
@@ -151,14 +157,20 @@ consent check ──▶ [no consent] ──▶ /consent
 charge_rate_limit RPC (atomic) ──▶ [over budget] ──▶ 429
     │
     ▼
-Pass 1: analyze-profile prompt
-    │        (Claude Sonnet, temperature=0, pinned SKU)
+Capa analítica (módulo ML propio): DistilBERT congelado + Ridge → Big Five
+    │        ml/api_server.py via lib/ml-client.ts
+    │        retorna scores + per_dimension_status
+    │
+    ▼
+Capa narrativa (LLM externo, identificador de modelo fijado):
+    │        Pass 1.5 — interpret-narrative.ts
+    │        infiere funciones Jung + arquetipo Pearson
+    │        a partir de los Big Five medidos + textos del usuario
     │
     ├── parallel ──▶ INSERT psychological_profiles (version=1)
     │
     ▼
-Pass 2: analyze-evidence prompt
-    │        (Claude Sonnet, temperature=0.3, shorter prompt)
+Pass 2: analyze-evidence prompt (capa narrativa)
     │
     ▼
 INSERT evidence_highlights (RLS-policed)
@@ -228,7 +240,7 @@ Redirect to /dashboard
 |---|---|---|
 | Ley 25.326 consent | [biz/LEGAL.md](biz/LEGAL.md) | Spec complete |
 | Ley 25.326 data rights | [biz/LEGAL.md](biz/LEGAL.md) | Endpoints specified |
-| Research ethics (Siglo 21) | [biz/ETHICS.md](biz/ETHICS.md) | BLOCKED on Phase 0 |
+| Research ethics (Siglo 21) | [biz/ETHICS.md](biz/ETHICS.md) | Documented |
 | WCAG AA contrast | [tech/ARCHITECTURE.md](tech/ARCHITECTURE.md) | Phase 6 |
 | ARIA labels | [tech/ARCHITECTURE.md](tech/ARCHITECTURE.md) | Phase 6 |
 | Keyboard navigation | [tech/ARCHITECTURE.md](tech/ARCHITECTURE.md) | Phase 6 |
@@ -237,7 +249,7 @@ Redirect to /dashboard
 ## 12. Reference
 
 - [PLAN.md](PLAN.md) — Master plan + status
-- [DECISIONS.md](DECISIONS.md) — 22 ADRs
+- [DECISIONS.md](DECISIONS.md) — Architecture Decision Records
 - [API_MAP.md](API_MAP.md) — API surface
 - [FEATURE_MAP.md](FEATURE_MAP.md) — Feature inventory
 - [PROMPT_ARCHITECTURE.md](PROMPT_ARCHITECTURE.md) — Prompt design

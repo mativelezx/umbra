@@ -44,7 +44,7 @@
 - [ ] Add billing / credit cap (suggested: 50 USD/month for TFG dev + test)
 - [ ] Copy key → `ANTHROPIC_API_KEY`
 - [ ] Set `ANTHROPIC_MODEL_ID=claude-sonnet-4-6-20260301` (dated SKU, never alias)
-- [ ] Set `ANTHROPIC_HAIKU_MODEL_ID=claude-haiku-4-5-20251001` (H2 rewriter)
+- [ ] Set `ANTHROPIC_HAIKU_MODEL_ID=claude-haiku-4-5-20251001` (modelo secundario para rutas auxiliares)
 
 ### 3. Email provider (Resend recommended)
 
@@ -95,14 +95,14 @@ Copy from `.env.local.example` in the repo root.
 | `SUPABASE_SERVICE_ROLE_KEY` | Vercel + local | ✓ | **Server only** — never expose |
 | `ANTHROPIC_API_KEY` | Vercel + local | ✓ | **Server only** |
 | `ANTHROPIC_MODEL_ID` | Vercel + local | ✓ | Pinned SKU (not alias) |
-| `ANTHROPIC_HAIKU_MODEL_ID` | Vercel + local | ✓ | Pinned SKU for H2 rewriter |
+| `ANTHROPIC_HAIKU_MODEL_ID` | Vercel + local | opcional | Modelo secundario fijado |
 | `DAILY_TOKEN_CAP` | Vercel + local | ✓ | Default 15000 |
 | `DAILY_COST_CAP_CENTS` | Vercel + local | ✓ | Default 200 (USD 2/user/day) |
 | `GLOBAL_DAILY_BUDGET_USD` | Vercel + local | ✓ | Default 50 |
 | `ANTHROPIC_MAX_BUDGET_USD_PER_CI_RUN` | GitHub Actions | ✓ | Default 5 |
 | `CONSENT_IP_PEPPER_V1` | Vercel + local | ✓ | 32-byte random hex |
 | `CRISIS_PEPPER_V1` | Vercel + local | ✓ | 32-byte random hex |
-| `RESEARCH_PEPPER_V1` | Vercel + local | ✓ (Branch A) | 32-byte random hex |
+| `RESEARCH_PEPPER_V1` | Vercel + local | ✓ | 32-byte random hex |
 | `DELETE_TOKEN_PEPPER_V1` | Vercel + local | ✓ | 32-byte random hex |
 | `RESEND_API_KEY` | Vercel + local | ✓ | For delete magic link emails |
 | `EMAIL_FROM` | Vercel + local | ✓ | Verified sending domain |
@@ -119,10 +119,12 @@ Copy from `.env.local.example` in the repo root.
 4. Verify `conversations.last_activity_at` and `profiles.research_opt_in` columns added: `\d+ public.conversations` + `\d+ public.profiles`
 5. **Only then**: deploy new Next.js code to Vercel
 
-### Phase 0 gate (ethics) branching
+### Research dataset
 
-- **Branch A (ethics cleared)**: Migration 002 as specified, including `research_dataset` table.
-- **Branch B (ethics path unclear)**: Comment out `research_dataset` DDL in Migration 002, comment out `profiles.research_opt_in` column. Keep the research-related code disabled in app (commented-out consent checkbox, opt-out route disabled).
+`research_dataset` se incluye en Migration 002 con consent flow opt-in y endpoint
+de oposición operativos. La pseudonimización HMAC y la disclosure honesta del
+consentimiento están documentadas en ADR-013 y en
+[features/RESEARCH_MODE.md](features/RESEARCH_MODE.md).
 
 ## Rollback procedure
 

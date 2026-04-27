@@ -1,157 +1,117 @@
-# Umbra — Ethics Review & Research Participant Mode
+# Umbra — Ethics Review
 
-> How Umbra handles ethics for the research dataset, advisor meeting, and
-> the Branch A / Branch B decision tree.
+> Marco ético del proyecto: principios de Declaración de Helsinki
+> aplicados al diseño y a la validación con usuarios, principios de
+> Positive Computing (Calvo & Peters 2014) que regulan la voz del
+> producto, líneas rojas explícitas y disclosure de conflicto de
+> interés para la tesis.
 
-## Why this matters
+## Por qué importa
 
-The codex outside voice flagged this as a load-bearing risk: shipping a
-research dataset schema before confirming with the TFG advisor + ethics
-review path is a sequencing contradiction. The consent text, OSF preregistration,
-and delete/export semantics all depend on whether the research feature exists
-at all.
+Umbra procesa texto introspectivo sobre experiencia personal y emocional
+de usuarios reales. Aún sin pretensión clínica, el sistema recibe
+contenido sensible y debe diseñarse y validarse asumiendo esa
+sensibilidad. Las decisiones éticas se toman antes del código y se
+documentan con la misma disciplina que las decisiones arquitectónicas.
 
-See [DECISIONS.md ADR-017](../DECISIONS.md) for the full decision record.
-
-## Phase 0 — Ethics Gate
-
-**Before Migration 002 ships**, the developer runs a 30-min meeting with the
-TFG advisor. Output: binary decision (Branch A vs Branch B).
-
-### Questions to close in the meeting
-
-1. **Does Siglo 21's current policy allow a consented + pseudonymized dataset
-   from real Umbra users, via informed consent form only?**
-   - If YES → Branch A
-   - If NO (requires IRB-equivalent review) → ask 2
-
-2. **Can IRB review run in parallel with development?**
-   - If YES → Branch A, but research dataset feature stays behind a feature flag until IRB approves
-   - If NO (IRB blocks development) → Branch B
-
-3. **Does the tribunal accept "Model = instrument" framing?**
-   - This is the broader methodological question (codex finding 6)
-   - User chose to assume YES (acknowledged cathedral risk) — see [ceo plan](../../../.gstack/projects/Umbra/ceo-plans/2026-04-12-umbra-full-project.md) "Acknowledged Cathedral Risks"
-   - If the advisor rejects the framing, fallback to "Software Engineering thesis with rigorous eval as the primary validation evidence"
-
-### Outcome document
-
-Produce a short written summary of the meeting and save it to:
-`~/.gstack/projects/Umbra/phase-0-ethics-outcome-YYYY-MM-DD.md`
-
-Include:
-- Date of meeting
-- Who attended
-- Questions asked
-- Advisor's responses verbatim (or paraphrased if meeting wasn't recorded)
-- Decision: Branch A or Branch B
-- Any follow-ups (e.g. "advisor will check with department head and email confirmation")
-
-## Branch A — Research dataset allowed
-
-### Scope impact
-- Migration 002 ships `research_dataset` table
-- Migration 002 adds `profiles.research_opt_in BOOLEAN DEFAULT FALSE`
-- Consent form includes the full research section (see [features/RESEARCH_MODE.md](../features/RESEARCH_MODE.md))
-- `/settings/research-opt-out` endpoint is functional
-- `POST /api/account/export` recomputes HMAC and includes research rows when opt-in
-- `POST /api/account/delete/confirm` supports `purgeResearch=true` flag
-- Paper's validation evidence includes both eval H1/H2 AND user dataset analysis
-
-### Ethical safeguards
-
-- **Informed consent**: explicit section in consent form, honest about pseudonymization (not anonymization)
-- **Pseudonymization**: `user_hash = HMAC(user_id, RESEARCH_PEPPER)`. Not reversible without admin access to pepper + raw user_id
-- **Data minimization**: only the original text + generated profile are stored. No email, no name, no IP, no timestamps beyond `created_at` (day granularity could be aggregated for further anonymization if needed)
-- **Retention**: indefinite by default; user can explicitly purge on delete
-- **Access**: service-role-only RLS. No public queries. No client access.
-- **Purpose limitation**: data is used ONLY for the preregistered hypotheses H1/H2 and the TFG paper. Not sold. Not shared with third parties. Not used for model training.
-- **Audit trail**: every read of `research_dataset` should be logged (TODO: add an access log)
-
-## Branch B — Research dataset deferred
-
-### Scope impact
-- Migration 002 does NOT include `research_dataset` table
-- Migration 002 does NOT include `profiles.research_opt_in` column
-- Consent form does NOT mention research mode
-- `/settings/research-opt-out` endpoint is not implemented
-- `POST /api/account/export` has no research branch
-- `POST /api/account/delete/confirm` has no `purgeResearch` flag
-- Paper's validation evidence rests solely on eval H1/H2 (computational)
-- Research dataset reframed in paper as "future work, pending IRB approval"
-
-### Why this is still a defensible TFG
-
-- The eval suite (H1 determinism + H2 cross-model paraphrase) is the primary validation evidence
-- These are falsifiable preregistered hypotheses that don't need human subjects
-- A tribunal reviewing the thesis clones the repo, runs `npm run eval -- --from-cache`, and sees the results
-- The code quality, methodology, and product surface are all intact
-- The "open research" claim is weakened but the "verifiable rigor" claim is not
-
-## Ethical principles (applicable regardless of branch)
+## Principios éticos aplicables
 
 ### Declaración de Helsinki (research ethics)
 
-- **Beneficence**: Umbra aims to benefit users through self-knowledge; does not exploit
-- **Non-maleficence**: crisis guardrails, "not therapy" disclaimers, fail-closed classifier
-- **Autonomy**: informed consent, opt-in for research, right to withdraw
-- **Justice**: free to use (no pay-to-participate), Spanish-language accessibility
+- **Beneficencia**: Umbra busca beneficiar al usuario aportando una
+  lectura útil de sí mismo; no extrae valor a costa del usuario.
+- **No maleficencia**: guardrails de crisis, disclaimer "no es
+  terapia", clasificador fail-closed, líneas de ayuda visibles.
+- **Autonomía**: consentimiento informado con mecanismo de retiro
+  (cancelación con magic link); opt-in explícito para investigación.
+- **Justicia**: acceso gratuito al producto, accesibilidad a11y
+  verificada con axe-core en CI, español latinoamericano nativo.
 
-### Calvo & Peters (2014) Positive Computing principles
+### Positive Computing (Calvo & Peters 2014)
 
-Umbra is built ON these principles, not just about them:
+Umbra está construido **sobre** estos principios, no solo informado
+por ellos:
 
-- **Autonomy**: user controls their data, can delete anytime, opt-in for research
-- **Competence**: the profile helps users understand their patterns, not pathologize them
-- **Relatedness**: the chat feels like a mirror, not an authority
-- **Mindfulness**: no dark patterns, no streak-based retention, no gamification
-- **Positive emotion**: narrative is reflective and warm, not clinical
-- **Engagement**: depth over breadth, quality over quantity
-- **Resilience**: development plan focuses on growth, not fixing deficits
-- **Self-compassion**: no shaming language, no "your weakness is..."
+- **Autonomía**: el usuario controla sus datos, puede borrar en
+  cualquier momento, opta o no por investigación.
+- **Competencia**: el perfil ayuda al usuario a entender sus patrones,
+  no a patologizarlos.
+- **Relación**: el chat se siente como un espejo, no como una
+  autoridad.
+- **Atención plena**: no hay dark patterns, ni streaks, ni
+  gamificación.
+- **Emoción positiva**: la narrativa es reflexiva y cálida, no
+  clínica.
+- **Engagement**: profundidad sobre amplitud, calidad sobre cantidad.
+- **Resiliencia**: el plan de desarrollo enfoca crecimiento, no
+  arreglar déficits.
+- **Autocompasión**: no hay lenguaje vergonzante ni "tu debilidad
+  es...".
 
-The Positive Computing knowledge block (`lib/knowledge/positive-computing.ts`)
-encodes these as do/don't rules that the chat system prompt references.
+El bloque de conocimiento `lib/knowledge/positive-computing.ts`
+codifica estos ocho factores como reglas de "hacer" y "no hacer" que
+el system prompt del chat referencia.
 
-## Specific ethical red lines (Umbra will NEVER)
+## Líneas rojas explícitas (Umbra NUNCA)
 
-1. Use the product to identify individuals beyond their consent
-2. Sell, rent, or share user data with third parties for profit
-3. Expose individual data in the paper (only aggregates, only with opt-in)
-4. Use the chat to extract more data than necessary for the experience
-5. Add advertising, tracking pixels, or behavioral analytics beyond Vercel defaults
-6. Store crisis event content (only salted hashes — see ADR-008)
-7. Make clinical claims ("you have depression")
-8. Diagnose, prescribe, or recommend medical interventions
-9. Replace professional therapy; always route to human resources in crisis
-10. Use dark patterns to prevent account deletion
+1. Usa el producto para identificar individuos más allá de su consentimiento.
+2. Vende, alquila o comparte datos de usuarios con terceros con fines comerciales.
+3. Expone datos individuales en la tesis (solo agregados, solo con opt-in).
+4. Usa el chat para extraer más datos de los necesarios para la experiencia.
+5. Agrega advertising, tracking pixels o behavioral analytics más allá de los defaults de Vercel.
+6. Almacena el contenido de eventos de crisis (solo hashes salteados, ADR-008).
+7. Hace afirmaciones clínicas ("vos tenés depresión").
+8. Diagnostica, prescribe o recomienda intervenciones médicas.
+9. Reemplaza terapia profesional; siempre dirige a recursos humanos en crisis.
+10. Usa dark patterns para impedir el borrado de cuenta.
 
-## Conflict of interest disclosure (for paper)
+## Validación con usuarios (SUS en TP3/TP4)
 
-The developer is a TFG student at Siglo 21. The product is both the research
-instrument AND the object of study. This is a conflict of interest that the
-paper must disclose:
+Las sesiones SUS planificadas para TP3/TP4 (n=8-15, materiales en
+`docs/research/`) son **usability testing**, no investigación clínica.
+Las salvaguardas son:
 
-> "The primary author developed Umbra both as software artifact and research
-> instrument for this study. Eval methodology (H1 + H2) was preregistered on
-> OSF before first data collection to mitigate researcher degrees of freedom.
-> Committed cache snapshots allow external replication without requiring API
-> access or further data collection."
+- **Consentimiento informado** firmado antes de cada sesión, con
+  texto verbatim disponible en `content/consent/research-m3-v1-es-AR.md`.
+- **Voluntariedad** — el participante puede retirarse en cualquier
+  momento; las grabaciones se borran a su pedido.
+- **Anonimización** — las transcripciones se anonimizan (P1, P2…)
+  antes de cualquier análisis o cita en la tesis.
+- **Retención acotada** — grabaciones en carpeta privada fuera del
+  repo; borrado a los 7 años post-defensa.
+- **Riesgo mínimo** — el ejercicio es interactuar con un producto web
+  consumer, no una intervención clínica.
+- **Protocolo si surge malestar** — pausar, ofrecer terminar la
+  sesión, entregar recursos de ayuda (135, 911, Salud Mental
+  Responde, Centros de Salud Mental Comunitaria).
+- **Conflicto de interés declarado** — el autor es desarrollador y, en
+  la práctica, tiene relación previa con varios participantes
+  potenciales. Se declara en la tesis y en el consentimiento.
 
-## Research dataset ethical mitigations (Branch A only)
+## Pseudonimización del research dataset
 
-- Opt-in is explicit and visible (not buried in settings)
-- Purge-on-delete option is visible in the delete flow
-- Consent text is honest about pseudonymization being reversible with admin access
-- Access is service-role-only — not even the developer can query it casually from the app
-- Retention is documented in consent with 3 clear scenarios (default keep, purge on delete, future policy changes)
+Si el research opt-in está activado, los datos se pseudonimizan vía
+HMAC con pepper versionado (ADR-013, ADR-021). El consentimiento
+declara honestamente que la pseudonimización es reversible por quien
+tenga acceso al pepper, y que los datos pueden ser borrados a pedido
+del usuario.
 
-## References
+## Conflict of interest disclosure (para la tesis)
+
+> "El autor desarrolló Umbra como artefacto de software y como
+> instrumento de la presente investigación. Las métricas reportadas
+> (MSE, R², r por dimensión Big Five) se calculan sobre el split test
+> definido determinísticamente en `ml/src/prepare_data.py`, y los
+> artefactos serializados se commiteanen `ml/models/` junto con el
+> commit hash usado para reproducir las métricas, con el objetivo de
+> mitigar grados de libertad del investigador."
+
+## Referencias
 
 - [Declaración de Helsinki (WMA)](https://www.wma.net/policies-post/wma-declaration-of-helsinki-ethical-principles-for-medical-research-involving-human-subjects/)
-- [AAIP ethics guidance for research with personal data](https://www.argentina.gob.ar/aaip)
-- [OSF preregistration guidelines](https://www.cos.io/initiatives/prereg)
-- Calvo & Peters (2014) *Positive Computing: Technology for Wellbeing and Human Potential*
+- Calvo, R. A., & Peters, D. (2014). *Positive Computing*. MIT Press.
+- Ryan, R. M., & Deci, E. L. (2000). Self-determination theory.
 - [features/RESEARCH_MODE.md](../features/RESEARCH_MODE.md)
 - [biz/LEGAL.md](LEGAL.md)
 - [biz/TFG.md](TFG.md)
+- [biz/VALIDATION.md](VALIDATION.md)

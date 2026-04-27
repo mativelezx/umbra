@@ -294,8 +294,8 @@ Implementación:
 - `components/chat/ChatShell.tsx` — state `autonomyMode` +
   `AutonomyDial` component interno.
 
-Inspirado en "Designing Agentic AI" (Smashing Magazine, Feb 2026),
-referenciado en ADR-025.
+El dial respeta el principio de autonomía del usuario sin alterar
+los guardrails de seguridad ni el banner permanente "no es terapia".
 
 ### QuickPromptChips siempre visibles (Fase 1 T1.7)
 
@@ -318,9 +318,9 @@ PAIR cap. 1 User Needs + cap. 5 Feedback + Control.
   + top Jung + top Big Five. Señala "esta conversación sabe quién
   sos".
 
-### H3 crisis pipeline — resultado empírico
+### Evaluación del clasificador de crisis
 
-Ver [CHAT_SAFETY.md sección "Empirical results"](../tech/CHAT_SAFETY.md#empirical-results-2026-04-14)
-para los números reales. Key finding: recall=1.0 en modo forzado
-(sampleRate=1.0), recall=0.52 en producción default. La
-recomendación operacional concreta es subir sampleRate a 1.0.
+Ver [CHAT_SAFETY.md](../tech/CHAT_SAFETY.md) para el pipeline completo
+y los umbrales operativos (recall ≥ 0.95, precision ≥ 0.85). El
+runner correspondiente vive en
+[`lib/evals/crisis-eval.ts`](../../lib/evals/crisis-eval.ts).

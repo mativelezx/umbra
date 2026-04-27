@@ -115,7 +115,7 @@
 
 ### `POST /api/narrative`
 **Runtime**: Edge
-**Purpose**: Generate personalized narrative (800-1200 words, Spanish rioplatense) from profile.
+**Purpose**: Generate personalized narrative (800-1200 words, Spanish latinoamericano) from profile.
 **Auth**: required
 **Phase**: 5
 
@@ -342,7 +342,7 @@
 **Runtime**: Node
 **Purpose**: Toggle research participant mode.
 **Auth**: required
-**Phase**: 3 (gated on Phase 0 Ethics Gate Branch A)
+**Phase**: 3
 
 **Request body**:
 ```ts

@@ -15,7 +15,7 @@ CREATE TABLE public.profiles (
   full_name TEXT,
   email TEXT,
   onboarding_completed BOOLEAN DEFAULT FALSE,
-  research_opt_in BOOLEAN DEFAULT FALSE,  -- Added in Migration 002 (Branch A only)
+  research_opt_in BOOLEAN DEFAULT FALSE,  -- Added in Migration 002
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -205,7 +205,7 @@ CREATE POLICY "rate_limits_select_own" ON public.rate_limits
 -- Writes via service_role through charge_rate_limit RPC
 ```
 
-#### `research_dataset` (Branch A only — pseudonymized)
+#### `research_dataset` (pseudonymized — opt-in)
 ```sql
 CREATE TABLE public.research_dataset (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

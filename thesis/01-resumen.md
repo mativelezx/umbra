@@ -1,27 +1,33 @@
 # Resumen
 
 <!-- PENDIENTE: redactar en ~250 palabras (ES), seguido de Abstract (EN)
-     del mismo largo. Estructura sugerida (Kairos / Smith 2018):
+     del mismo largo. Estructura sugerida:
 
      1. Problema (1 oración): "Los productos comerciales de autoconocimiento
-        basados en IA carecen de transparencia metodológica y validación
-        empírica..."
-     2. Approach (2-3 oraciones): "Umbra es una plataforma web que triangula
-        Jung (funciones cognitivas), Big Five (OCEAN) y Positive Computing,
-        con una base de conocimiento trazable y prompts versionados."
-     3. Metodología (1-2 oraciones): "Se evaluó con tres hipótesis
-        preregistradas (H1 determinismo, H2 robustez a paráfrasis intra-vendor,
-        H3 safety empírico del clasificador de crisis) y un estudio
-        think-aloud con n=8-10 participantes."
-     4. Resultados (1-2 oraciones): "H1 pasó con stddev=X; H2 pasó con
-        delta máximo=Y; H3 alcanzó recall=Z y precision=W; el SUS promedio
-        fue V."
-     5. Contribución (1 oración): "El aporte principal es la metodología
-        de evaluación aplicable a otros productos de análisis de personalidad
-        basados en LLMs."
+        basados en IA carecen de transparencia metodológica y trazabilidad
+        de la inferencia psicológica..."
+     2. Approach (2-3 oraciones): "Umbra es una plataforma web que combina
+        un módulo analítico propio (DistilBERT congelado + Ridge multi-output)
+        para inferir las cinco dimensiones Big Five con una capa narrativa
+        externa que produce la lectura interpretativa de funciones cognitivas
+        Jung y arquetipo Pearson."
+     3. Metodología (1-2 oraciones): "Se adoptó Scrum semanal, ADRs (Nygard
+        2011) y validación multi-pilar: métricas MSE/R²/r por dimensión Big
+        Five sobre el corpus combinado Essays + corpus latinoamericano
+        propio, tests automatizados con axe-core en CI, evaluación del
+        clasificador de crisis y SUS (Brooke 1996) adaptado al español
+        latinoamericano para TP3/TP4."
+     4. Resultados (1-2 oraciones): describir las métricas obtenidas tras
+        el cierre de los sprints ML, sin reportar valores que aún no se
+        midieron.
+     5. Contribución (1 oración): "El aporte principal es la arquitectura
+        híbrida auditable y el pipeline reproducible que combina capa
+        analítica propia con capa narrativa LLM externa, aplicable como
+        plantilla a otros productos de análisis de personalidad asistidos
+        por IA."
 
-     Palabras clave: autoconocimiento, Big Five, Jung, Positive Computing,
-     Large Language Models, validación preregistrada.
+     Palabras clave: autoconocimiento, Big Five, IPIP-NEO, Jung, Positive
+     Computing, DistilBERT, Ridge regression, Ley 25.326.
 -->
 
 ## Abstract (EN)

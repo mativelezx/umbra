@@ -1,5 +1,5 @@
 
-# System Usability Scale (SUS) — español rioplatense
+# System Usability Scale (SUS) — español latinoamericano
 
 ## Instrucciones para la persona participante
 Marcá cuánto estás de acuerdo con cada afirmación sobre tu experiencia usando Umbra.
@@ -60,4 +60,4 @@ Según el benchmark de Sauro (2011):
 | **SUS = suma × 2.5** |  |  |
 
 ## Nota metodológica
-Esta versión mantiene la estructura canónica de Brooke (1996) y adapta la redacción al español rioplatense para que suene natural en Argentina sin cambiar el sentido original de los ítems.
+Esta versión mantiene la estructura canónica de Brooke (1996) y adapta la redacción al español latinoamericano para que suene natural en Argentina sin cambiar el sentido original de los ítems.

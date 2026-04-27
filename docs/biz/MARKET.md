@@ -27,14 +27,14 @@ Umbra is NOT trying to compete on breadth (number of assessments) or price
 ($19 one-time is hard to beat). Umbra differentiates on three axes:
 
 ### 1. Language + voice
-- Spanish **rioplatense** (voseo, vocabulario argentino, no castellano neutro)
-- No existing product in the landscape has native rioplatense output
+- Spanish **latinoamericano** (voseo, vocabulario argentino, no castellano neutro)
+- No existing product in the landscape has native latinoamericano output
 - The narrative tone is reflective, warm, cálido — not clinical, not gamified
 
 ### 2. Academic rigor (verifiable)
 - **Knowledge base is real** — sourced from IPIP-NEO, Jung (1921), Pearson, Calvo & Peters, with enforced citation comments
-- **Eval suite is runnable** — anyone can clone the repo and reproduce H1 / H2 numbers against a committed cache snapshot
-- **Paper preregistered on OSF** — hypotheses, metrics, analysis plan all timestamped before data collection
+- **Módulo analítico propio** — DistilBERT congelado + Ridge multi-output entrenado sobre Essays + corpus latinoamericano propio, con métricas (MSE, R², r) reportables por dimensión Big Five y artefactos serializables. Pipeline reproducible vía `make all` o `dvc repro`.
+- **MLOps**: experimentos versionados en MLflow, datasets versionados en DVC, GitHub Actions verifica métricas mínimas en CI.
 - The competition makes academic claims but nobody ships the receipts. Umbra ships the receipts.
 
 ### 3. Ethical posture (regulatory defensive)
@@ -48,15 +48,15 @@ Umbra is NOT trying to compete on breadth (number of assessments) or price
 
 | Feature | Umbra | 16personalities | Deep Personality | Know Me AI |
 |---|---|---|---|---|
-| Spanish rioplatense | ✓ | ✗ (castellano neutro) | ✗ | ✗ |
+| Spanish latinoamericano | ✓ | ✗ (castellano neutro) | ✗ | ✗ |
 | Jung functions direct | ✓ | ✗ (MBTI-flavored) | ✗ | ✗ |
 | Public academic sources | ✓ | ✗ | partial | ✗ |
-| Preregistered paper | ✓ | ✗ | ✗ | ✗ |
+| Módulo ML auditable + métricas por dimensión | ✓ | ✗ | ✗ | ✗ |
 | Crisis safety guardrails | ✓ (full) | n/a | ✗ | ✗ |
 | Data rights compliant | ✓ (Ley 25.326) | GDPR | GDPR | unclear |
 | Chat with profile context | ✓ | ✗ | ✗ | ✓ (custom AI instructions) |
 | Evidence highlights | ✓ | ✗ | ✗ | ✗ |
-| Open-source eval suite | ✓ | ✗ | ✗ | ✗ |
+| Open-source pipeline ML | ✓ | ✗ | ✗ | ✗ |
 | Free | ✓ (MVP) | ✓ + paid reports | ✗ ($19) | ✓ + paid |
 
 ## Target user personas
@@ -73,7 +73,7 @@ Umbra is NOT trying to compete on breadth (number of assessments) or price
 - Has tried 16personalities and found it shallow
 - Curious about personal development but allergic to "wellness" branding
 - Wants something instrumented — wants to see the reasoning
-- Technical enough to appreciate the eval suite and preregistration
+- Technical enough to appreciate el módulo analítico auditable y el pipeline reproducible
 - Lives in Córdoba, works remote
 
 ### Tertiary — TFG advisor / tribunal
@@ -93,21 +93,21 @@ No ads. No data selling. Consent form explicitly prohibits these.
 
 1. **Deep Personality adds Spanish** — high likelihood, low timeline. They have the resources and Spanish is the #2 market globally.
 2. **Regulatory crackdown on AI self-knowledge apps** — real risk. Umbra's safety posture is defensive against this.
-3. **Claude pricing changes** — ADR-005 + ADR-014 pin model SKU. If pricing jumps, cost model breaks — mitigation is pre-committed `GLOBAL_DAILY_BUDGET_USD` cap.
-4. **Academic rejection of "model as instrument" framing** — codex finding 6. Documented as acknowledged cathedral risk. Fallback: defend as SW engineering thesis (eval + methodology + code quality).
+3. **Claude pricing changes** — ADR-005 fija el identificador del modelo. If pricing jumps, cost model breaks — mitigation is pre-committed `GLOBAL_DAILY_BUDGET_USD` cap.
+4. **Academic rejection of the architectural framing** — fallback: defender la tesis como software engineering con métricas reproducibles del módulo analítico, axe-core en CI, unit + E2E + SUS como evidencia integrada.
 
 ## Growth strategy (post-v1)
 
 - **Organic SEO**: Spanish personality content (blog posts on Jung functions, Big Five in Argentine context) — future work.
-- **Word of mouth in psych/academic Twitter/X** — the preregistered paper is the hook.
+- **Word of mouth in psych/academic Twitter/X** — el pipeline ML reproducible y la auditabilidad del producto son el hook.
 - **Reddit r/psicologia and r/spanish selfimprovement subreddits**
 - **og:image social share** (deferred in TODOS.md, P2) — unlocks Instagram/X growth loop.
 
 ## References
 
-- Sauer (2025) "Rehabilitating Jung's Cognitive Function Theory" — academic trend backing direct-Jung approach
-- Stein (2019) "Evaluating MBTI validity" — the critique Umbra sides with
+- Stein & Swan (2019) "Evaluating MBTI validity" — the critique Umbra sides with
 - Goldberg (1999) IPIP — public domain Big Five instrument
+- Pittenger (2005) — limitaciones documentadas del MBTI
 - [biz/TFG.md](TFG.md) — thesis deliverables
 - [biz/ETHICS.md](ETHICS.md) — ethics review path
 - [biz/LEGAL.md](LEGAL.md) — compliance

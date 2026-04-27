@@ -162,7 +162,7 @@ Contents:
 - Contact info for complaints
 - Last updated date
 
-Drafted in Spanish rioplatense, not legal jargon.
+Drafted in Spanish latinoamericano, not legal jargon.
 
 ## Terms of service (`/terms`)
 

@@ -1,367 +1,214 @@
-# Umbra — Eval Suite (H1 + H2)
+# Umbra — Evaluación
 
-> Golden test cases, H1 determinism hypothesis, H2 cross-model paraphrase
-> consistency hypothesis, committed cache snapshots, CI integration.
+> Métricas del módulo analítico (`ml/`), evaluación del clasificador de
+> crisis y aseguramiento de calidad continuo. Documenta los runners, los
+> umbrales y la integración con CI.
 
-## Purpose
+## Propósito
 
-The eval suite is the **primary validation evidence** for the TFG paper. It is:
-1. Runnable by any reviewer who clones the repo (`npm run eval -- --from-cache`)
-2. Reproducible offline via committed cache snapshots (no API cost)
-3. Preregistered on OSF before first run (H1 and H2 as falsifiable hypotheses)
-4. The CI gate that catches prompt drift and KB changes
+La evaluación de Umbra opera en tres planos complementarios:
 
-The eval suite is NOT:
-- A replacement for real-world testing (Phase 7 has Playwright E2E)
-- A claim about construct validity of the psychological frameworks themselves (that's philosophy, not code)
-- A general benchmark (it's specific to Umbra's prompts + KB)
+1. **Métricas del módulo analítico** — MSE, R² y r de Pearson **por
+   dimensión Big Five**, sobre el split test del corpus combinado
+   Essays + corpus latinoamericano propio. Reportadas en
+   `ml/eval_metrics.json`. Validan la inferencia cuantitativa del
+   sistema.
+2. **Evaluación del clasificador de crisis** — precision, recall, F1
+   sobre `lib/evals/crisis-dataset.ts` (100 casos etiquetados,
+   balanceados). Verifica que el pipeline de seguridad opera dentro
+   de umbrales aceptables. Forma parte del CI gate.
+3. **Tests automatizados** — Vitest unit + Playwright E2E + axe-core,
+   que cubren integridad funcional y accesibilidad del frontend.
 
-## Directory structure
+La evaluación NO es:
+- Un reemplazo del estudio con usuarios (SUS planificado para TP3/TP4).
+- Una afirmación de validez de constructo de los frameworks
+  psicológicos (Big Five, Jung, Pearson) — eso es discusión teórica,
+  no tarea de software.
+
+## 1. Métricas del módulo analítico
+
+### Pipeline
+Documentado en detalle en [`ml/README.md`](../../ml/README.md).
+Resumen:
 
 ```
-lib/evals/
-├── cases/
-│   ├── ipip-neo/
-│   │   ├── case-001-high-openness.json
-│   │   ├── case-002-low-neuroticism.json
-│   │   └── ... (20 total)
-│   ├── jung-vignettes/
-│   │   ├── case-021-dominant-ni.json
-│   │   └── ... (20 total)
-│   └── adversarial/
-│       ├── case-041-argentine-idiom.json
-│       ├── case-042-extreme-brevity.json
-│       └── ... (10 total)
-├── run.ts                      # Main eval runner
-├── consistency.ts              # H1 determinism runner
-├── cross-model-paraphrase.ts   # H2 cross-model runner
-├── rewriters.ts                # Sonnet + Haiku rewriter helpers
-├── cache-keys.ts               # Hash computation for cache keys
-├── .cache/
-│   ├── snapshot-20260412-claude-sonnet-4-6-20260301.json  # committed
-│   ├── snapshot-20260501-claude-sonnet-4-6-20260301.json  # committed
-│   └── live/                   # gitignored
-│       └── ...
-└── *.test.ts                   # Vitest unit tests
+texto introspectivo
+   ↓
+DistilBERT base multilingual cased (frozen, Sanh et al. 2019)
+   ↓
+embedding ℝ⁷⁶⁸
+   ↓
+5 Ridge regressors (Hoerl & Kennard 1970, scikit-learn Pedregosa et al. 2011)
+   ↓
+{openness, conscientiousness, extraversion, agreeableness, neuroticism}
+   + per_dimension_status: "ok" | "low_confidence"
 ```
 
-## Case schema
+### Datos
+- **Essays** (Pennebaker & King 1999) — corpus académico en inglés,
+  ~2500 textos breves de estudiantes universitarios estadounidenses
+  con Big Five etiquetado.
+- **Corpus latinoamericano propio** (n=50-100, voseo argentino,
+  ADR-028) — construido con asistencia de IA generativa y validado
+  manualmente con la rúbrica documentada en
+  `ml/data/latinoamericano/rubrica_validacion.md`.
+- Versionados con DVC. Split 80/10/10 train/val/test determinístico
+  (`SEED=42` en `ml/src/prepare_data.py`).
+
+### Métricas reportadas
+
+| Métrica | Símbolo | Mejor cuando |
+|---|---|---|
+| Error cuadrático medio | MSE | menor |
+| Coeficiente de determinación | R² | mayor (≤ 1) |
+| Coeficiente de correlación lineal r | r | mayor (∈ [-1, 1]) |
+
+**Importante**: el "Pearson" estadístico (Karl Pearson, r) **no
+debe confundirse** con el sistema de arquetipos de Carol Pearson
+(1991) que usa la capa narrativa.
+
+`eval_metrics.json` consolida tres bloques:
+- `english_only` — split test del corpus Essays.
+- `latinoamericano_only` — split test del corpus latinoamericano. Es
+  el bloque que sustenta la narrativa del TFG.
+- `combined` — sobre la unión.
+
+### Umbrales mínimos (ADR-027)
+
+**R² > 0.20** y **r > 0.30** por dimensión. Valores conservadores
+típicos en la literatura de inferencia de personalidad por texto.
+
+Las dimensiones que **no** alcancen ambos umbrales en el split test se
+marcan `per_dimension_status: "low_confidence"`. La capa narrativa
+recibe esta señal y modera su lectura interpretativa explícitamente
+(ver `lib/prompts/interpret-narrative.ts`).
+
+### CI gate ML
+
+`.github/workflows/ml-validate.yml` ejecuta el pipeline ML en cada PR
+que toque `ml/`:
+- Restaura datasets versionados (DVC).
+- Corre `make all` (prepare → baseline → train → evaluate).
+- Falla el workflow si el bloque `latinoamericano_only` no cumple
+  R² > 0.20 y r > 0.30 en al menos 3 de las 5 dimensiones.
+
+## 2. Evaluación del clasificador de crisis
+
+### Objetivo
+Asegurar que el pipeline de detección de crisis (regex
+`crisis-lexicon.ts` + clasificador de la capa narrativa con semántica
+fail-closed) opera dentro de umbrales aceptables.
+
+### Dataset (`lib/evals/crisis-dataset.ts`)
+
+100 casos sintéticos balanceados (sin PII real):
+- 25 crisis reales (parafraseadas, sin detalle operacional sobre
+  métodos de autolesión — red line ética en
+  [biz/ETHICS.md](../biz/ETHICS.md)).
+- 25 idioms argentinos negativos que no son crisis ("me quiero matar
+  estudiando", "esto me mata", "morí de risa").
+- 25 borderline (ambiguos).
+- 25 safe (positivos, neutros, o tristes sin crisis).
+
+El dataset fue draft-generado con asistencia IA y requiere revisión
+por persona con criterio clínico apropiado (T4.0 pendiente al cierre
+de cada release).
+
+### Runner (`lib/evals/crisis-eval.ts`)
 
 ```ts
-export interface EvalCase {
-  id: string;                  // "ipip-neo-001"
-  source: 'ipip-neo' | 'jung-vignettes' | 'adversarial';
-  sourceCitation: string;      // verbatim academic source
-  text: string;                // the introspective text to analyze
-  expected: {
-    bigFive: {
-      openness: [number, number];          // [lowBound, highBound]
-      conscientiousness: [number, number];
-      extraversion: [number, number];
-      agreeableness: [number, number];
-      neuroticism: [number, number];
-    };
-    jungFunctions: {
-      Se: [number, number]; Si: [number, number];
-      Ne: [number, number]; Ni: [number, number];
-      Te: [number, number]; Ti: [number, number];
-      Fe: [number, number]; Fi: [number, number];
-    };
-    archetype: string[];       // allowed set (e.g., ["sage"] or ["sage","creator"])
-  };
-  interRaterLabeled: boolean;  // true if 2 raters validated
-  interRaterKappa?: number;    // Cohen's kappa if labeled
-  notes?: string;              // authoring notes
-}
+import { runCrisisEval } from '@/lib/evals/crisis-eval';
+const report = await runCrisisEval();
+writeFileSync('eval-results/crisis-YYYY-MM-DD.json', JSON.stringify(report, null, 2));
 ```
 
-## Provenance (50 cases total)
+Computa por categoría y agregado:
+- True positives, true negatives, false positives, false negatives.
+- Precision = TP / (TP + FP).
+- Recall = TP / (TP + FN).
+- F1 = 2·P·R / (P + R).
+- False negative rate = FN / (FN + TP) — el más crítico para safety.
 
-### 20 from IPIP-NEO published vignettes
-- Source: Goldberg (1999) IPIP-NEO items and published descriptive vignettes
-- Public domain — can be bundled verbatim in repo
-- Each case has a citation in `sourceCitation`
-- Range labels derived from Goldberg's published scoring rationale
+### Umbrales operativos
 
-### 20 from Jung typology literature
-- Source: Jung (1921) *Tipos Psicológicos*, particularly chapters on function types
-- Public domain (Spanish translation out of copyright)
-- Case text adapted to first-person introspective voice (paraphrase with citation)
-- Expected ranges derived from Jung's characterizations
+- **Recall ≥ 0.95** (prioridad alta — los falsos negativos son
+  éticamente más costosos que los falsos positivos en una superficie
+  de salud mental).
+- **Precision ≥ 0.85**.
 
-### 10 adversarial synthetic cases
-- Authored by the developer
-- Cover: paraphrase tests, Argentine idioms (false positive check for crisis), minority voices (older user, rural voice, neurodivergent self-description), extreme brevity, unicode stress, emoji, code-switching
-- Ranges authored conservatively with rationale in `notes`
+### Test gate
 
-## Inter-rater protocol
+`lib/evals/crisis-eval.test.ts` falla en CI si recall cae por debajo
+de 0.95 sobre la corrida controlada (con flags que permiten ejecutar
+deterministicamente sin llamar al LLM real cuando aplica).
 
-10 of the 50 cases are labeled independently by 2 raters:
-- **Rater 1**: the developer (you)
-- **Rater 2**: a fellow TFG student, psychology advisor, or licensed psychologist
+### Linked to
+- [CHAT_SAFETY.md](CHAT_SAFETY.md) — documentación del pipeline.
+- [DECISIONS.md ADR-008](../DECISIONS.md) — observabilidad de
+  `crisis_events` con HMAC.
+- [biz/ETHICS.md](../biz/ETHICS.md) — líneas rojas éticas.
 
-For each labeled case:
-- Both raters independently assign expected Big Five ranges (5 dimensions) and expected Jung function ranges (8 functions) and allowed archetypes
-- Compute Cohen's kappa per dimension
-- Require kappa > 0.6 per dimension for the case to be locked
-- If kappa < 0.6, widen ranges or discard the case
+## 3. Tests automatizados
 
-Store inter-rater results in `lib/evals/inter-rater-results.json` for the paper.
+### Vitest unit
+- `lib/chat/pipeline.test.ts` — pipeline regex + classifier.
+- `lib/knowledge/build-block.test.ts` — helper de bloques de
+  conocimiento.
+- `lib/knowledge/citation-check.test.ts` — verifica el comentario
+  JSDoc en cada item de KB (ADR-018).
+- `lib/supabase/rls-coverage.test.ts` — verifica RLS y políticas
+  sobre cada tabla pública.
+- `lib/prompts/*.test.ts` — prompt builders.
 
-## H1 — Determinism hypothesis
+### Playwright E2E
+- `e2e/full-flow.spec.ts` — register → consent → onboarding →
+  analyze → dashboard → narrativa → plan.
+- `e2e/chatgpt-seed-flow.spec.ts` — flujo de seed externo.
+- `e2e/qa-screenshots.spec.ts` — capturas de superficies clave.
+- `e2e/a11y.spec.ts` — corre axe-core sobre las páginas principales.
 
-### Statement
-Given `temperature=0` and a pinned model SKU (`claude-sonnet-4-6-20260301`),
-analyzing the same input text 5 times produces Big Five scores with standard
-deviation < 2.5 points (equivalent to < 5-point range) across all 50 eval
-cases.
+### axe-core en CI
+`@axe-core/playwright` integrado al workflow de CI. Las violaciones
+críticas o serias bloquean el merge.
 
-### Runner: `lib/evals/consistency.ts`
+## Costos
 
-```ts
-async function runH1(caseId: string): Promise<H1Result> {
-  const case_ = loadCase(caseId);
-  const results: Profile[] = [];
+El módulo analítico no incurre en costos por inferencia (corre
+localmente o en un servicio dedicado tipo Render). El pipeline de
+crisis usa el LLM externo solo cuando regex dispara o sampling lo
+indica, lo que mantiene el costo acotado y controlado por
+`charge_rate_limit` (ADR-022).
 
-  for (let i = 0; i < 5; i++) {
-    const profile = await callAnalyze({
-      text: case_.text,
-      cached: true,  // uses snapshot cache if available
-      temperature: 0,
-      model: process.env.ANTHROPIC_MODEL_ID!,
-    });
-    results.push(profile);
-  }
+## Reproducibilidad
 
-  // Per dimension, compute std deviation across 5 runs
-  const deviations = computeDeviations(results);
-  const pass = Object.values(deviations.bigFive).every(std => std < 2.5);
+```bash
+# Métricas del módulo analítico
+cd ml && python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+dvc pull
+make all
+cat eval_metrics.json
 
-  return { caseId, results, deviations, pass };
-}
+# Evaluación del clasificador de crisis (frontend repo)
+npm run test -- crisis-eval
+npx tsx scripts/run-crisis-eval.ts
 ```
 
-### Pass criterion
-`H1 passes` iff ALL 50 cases have std dev < 2.5 for ALL 5 Big Five dimensions.
-Partial pass (e.g., 48/50 cases pass) is reported separately.
+## Referencias
 
-### Why pinned SKU matters
-If `ANTHROPIC_MODEL_ID` is an alias like `claude-sonnet-4-6`, Anthropic can
-silently upgrade the underlying version. Past H1 results become unreproducible.
-Pinning to a dated SKU like `claude-sonnet-4-6-20260301` locks the model version.
-See ADR-014.
-
-## H2 — Cross-model paraphrase consistency
-
-### Statement
-Given 3 semantic-preserving paraphrases of each case (2 from Claude Sonnet,
-1 from Claude Haiku — see ADR-020), the Big Five scores for the paraphrased
-texts deviate < 10 points (max pairwise delta) from each other and from the
-original, across all 50 cases.
-
-### Why intra-vendor (Sonnet + Haiku)
-Originally planned as cross-vendor (GPT + Llama) but Llama local doesn't run
-on GitHub Actions runners. Sonnet + Haiku are architecturally distinct within
-Anthropic's family, which is a weaker but honest methodological claim. Paper
-methods section documents this as a limitation (ADR-020).
-
-### Runner: `lib/evals/cross-model-paraphrase.ts`
-
-```ts
-async function runH2(caseId: string): Promise<H2Result> {
-  const case_ = loadCase(caseId);
-
-  const paraphrases = await Promise.all([
-    rewriteWith('sonnet', case_.text),
-    rewriteWith('sonnet', case_.text),  // second sonnet rewrite
-    rewriteWith('haiku', case_.text),
-  ]);
-
-  const profiles = await Promise.all([
-    callAnalyze({ text: case_.text }),       // original
-    callAnalyze({ text: paraphrases[0] }),
-    callAnalyze({ text: paraphrases[1] }),
-    callAnalyze({ text: paraphrases[2] }),
-  ]);
-
-  const maxPairwiseDelta = computeMaxPairwiseDelta(profiles);
-  const pass = Object.values(maxPairwiseDelta.bigFive).every(delta => delta < 10);
-
-  return { caseId, paraphrases, profiles, maxPairwiseDelta, pass };
-}
-```
-
-### Rewriter prompt (`lib/prompts/paraphrase-rewriter.ts`)
-
-```
-Reescribí el siguiente texto introspectivo manteniendo el significado
-semántico exacto pero cambiando la redacción. No cambies detalles
-personales, valores, ni el contenido emocional. Solo cambiá palabras,
-orden de frases, y estilo. Devolvé SOLO el texto reescrito sin comentarios.
-
-Texto original:
-{text}
-```
-
-Temperature=0.7 for the rewriter (creative variation).
-
-### Pass criterion
-`H2 passes` iff ALL 50 cases have max pairwise Big Five delta < 10 points
-across the 4 versions (original + 3 paraphrases).
-
-## Committed cache snapshots (ADR-014)
-
-Every eval run writes its outputs to:
-```
-lib/evals/.cache/snapshot-{YYYYMMDD}-{model-sku}.json
-```
-
-These files are **committed to the repo**, not gitignored. Format:
-
-```json
-{
-  "generated_at": "2026-04-12T21:00:00Z",
-  "model": "claude-sonnet-4-6-20260301",
-  "lexicon_version": "1.0.0",
-  "kb_commit": "abc123",
-  "prompt_commit": "def456",
-  "cases": [
-    {
-      "id": "ipip-neo-001",
-      "h1_runs": [profile1, profile2, ...],
-      "h2_paraphrases": ["...", "...", "..."],
-      "h2_profiles": [profile_orig, profile_p1, ...]
-    }
-  ]
-}
-```
-
-Paper methods section cites the commit hash of the snapshot used for
-published results. Reviewers can:
-1. Clone the repo at that commit
-2. Run `npm run eval -- --from-cache`
-3. See the exact same H1 / H2 results without spending a cent on API calls
-
-## CI integration
-
-### PR workflow (`.github/workflows/eval-pr.yml`)
-
-```yaml
-name: Eval (PR subset)
-on: pull_request
-jobs:
-  eval:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/cache@v4
-        with:
-          path: lib/evals/.cache/live
-          key: evals-${{ hashFiles('lib/evals/cases/**', 'lib/knowledge/**', 'lib/prompts/**') }}-${{ env.ANTHROPIC_MODEL_ID }}
-      - run: npm ci
-      - run: npm run eval -- --subset 10
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          ANTHROPIC_MODEL_ID: claude-sonnet-4-6-20260301
-          ANTHROPIC_MAX_BUDGET_USD_PER_CI_RUN: 5
-```
-
-**PR runs** evaluate a 10-case subset (eng review finding 4.5). Cold-start
-cost ≈ 3 USD max. Cache hits make subsequent runs near-free.
-
-### Main branch workflow (`.github/workflows/eval-main.yml`)
-
-```yaml
-name: Eval (full 50-case)
-on:
-  push:
-    branches: [main]
-jobs:
-  eval:
-    runs-on: ubuntu-latest
-    steps:
-      - ...
-      - run: npm run eval -- --full
-      - run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add lib/evals/.cache/snapshot-*.json
-          git commit -m "chore(eval): update snapshot for commit ${GITHUB_SHA}" || true
-          git push
-```
-
-**Main branch runs** the full 50-case eval and commits the updated snapshot.
-Paper results are always reproducible against the latest committed snapshot.
-
-## Cost cap
-
-`ANTHROPIC_MAX_BUDGET_USD_PER_CI_RUN=5` is a hard cap inside the runner:
-
-```ts
-let runningCostCents = 0;
-const MAX_COST_CENTS = Number(process.env.ANTHROPIC_MAX_BUDGET_USD_PER_CI_RUN!) * 100;
-
-for (const case_ of cases) {
-  if (runningCostCents > MAX_COST_CENTS) {
-    console.error(`[eval] cost cap reached at $${runningCostCents / 100}, aborting`);
-    process.exit(1);
-  }
-  const { profile, costCents } = await callAnalyzeWithCost(case_);
-  runningCostCents += costCents;
-}
-```
-
-With cache restore, real CI cost is ~$0.50 per run. Cold start (cache miss): ~$3-5.
-
-## Unit tests
-
-- `lib/evals/run.test.ts` — runner loads cases, asserts ranges
-- `lib/evals/consistency.test.ts` — H1 logic with mocked Claude (5 runs returning synthetic profiles)
-- `lib/evals/cross-model-paraphrase.test.ts` — H2 logic with mocked rewriters
-- `lib/evals/rewriters.test.ts` — rewriter wraps the right prompt
-- `lib/evals/cache-keys.test.ts` — cache key hashing is stable
-
-## How to author a new case
-
-1. Identify the source (IPIP-NEO vignette, Jung literature, or adversarial)
-2. Write the text in first-person Spanish (natural rioplatense)
-3. Determine expected ranges based on source + your reading
-4. If one of the 10 inter-rater cases, get a second rater to independently label
-5. Compute kappa if inter-rater; require > 0.6
-6. Commit to `lib/evals/cases/{source}/`
-7. Run `npm run eval -- --case <id>` to see the profile Claude produces
-8. If out of range, widen the range OR adjust the text to be more discriminating
-9. Commit the case + run the full eval to update the snapshot
-
-## Debugging eval failures
-
-If H1 fails on a case:
-- Check if model SKU is pinned in `ANTHROPIC_MODEL_ID`
-- Check if prompt changed recently
-- Rerun manually: `npm run eval -- --case <id> --h1 --verbose`
-- If scores drift > 5 points, the model or prompt changed — this is a real regression
-
-If H2 fails on a case:
-- Check if rewriter prompts changed
-- Check if one of the rewriters is producing semantic drift (not paraphrase)
-- Rerun manually: `npm run eval -- --case <id> --h2 --verbose`
-- If delta > 10, inspect each paraphrase and its resulting profile to see which rewrite is the outlier
-
-## Results storage for paper
-
-The paper methods section points to:
-- `lib/evals/.cache/snapshot-{date}-{model}.json` — raw results
-- `lib/evals/inter-rater-results.json` — kappa per case
-- `lib/evals/h1-results-{date}.md` — formatted H1 table
-- `lib/evals/h2-results-{date}.md` — formatted H2 table
-- OSF preregistration URL
-
-All committed to the repo.
-
-## References
-
-- [DECISIONS.md ADR-011, ADR-014, ADR-020](../DECISIONS.md)
-- [PROMPT_ARCHITECTURE.md](../PROMPT_ARCHITECTURE.md) — prompt builders
-- [biz/TFG.md](../biz/TFG.md) — OSF preregistration + paper
-- Goldberg, L. R. (1999). IPIP
-- Jung, C.G. (1921). *Tipos Psicológicos*
+- [DECISIONS.md](../DECISIONS.md) — ADR-026 (módulo analítico),
+  ADR-027 (umbrales por dimensión), ADR-028 (corpus latinoamericano),
+  ADR-008 (crisis events HMAC).
+- [PROMPT_ARCHITECTURE.md](../PROMPT_ARCHITECTURE.md) — prompt
+  builders.
+- [biz/VALIDATION.md](../biz/VALIDATION.md) — plan de validación
+  consolidado.
+- [biz/TFG.md](../biz/TFG.md) — estructura de tesis y cronograma.
+- [ml/README.md](../../ml/README.md) — módulo analítico.
+- Goldberg, L. R. (1999). IPIP-NEO.
+- Hoerl, A. E., & Kennard, R. W. (1970). Ridge regression.
+- Jung, C. G. (1921). *Tipos psicológicos*.
+- Pedregosa, F., et al. (2011). Scikit-learn.
+- Pennebaker, J. W., & King, L. A. (1999). Linguistic styles.
+- Sanh, V., et al. (2019). DistilBERT.

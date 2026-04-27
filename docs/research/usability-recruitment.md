@@ -1,15 +1,19 @@
+# Estudio de usabilidad — Copy de reclutamiento
 
-# M3 — Copy de reclutamiento
+> Materiales para invitar a participantes al estudio SUS planificado
+> para TP3/TP4 (n=8-15, sesiones individuales de pensamiento en voz
+> alta seguidas del cuestionario SUS adaptado al español
+> latinoamericano).
 
 ## Versión corta (WhatsApp, <200 caracteres)
-Hola. Estoy haciendo mi TFG de Ing. en Software en Siglo 21 y busco 8-10 personas para una prueba de usabilidad de 40 min. Es voluntaria y confidencial. ¿Te copás?
+Hola. Estoy haciendo mi TFG de Ing. en Software en Siglo 21 y busco 8-15 personas para una prueba de usabilidad de 40 min. Es voluntaria y confidencial. ¿Te copás?
 
 ## Versión media (email o WhatsApp largo, contactos cercanos)
 **Asunto:** ¿Te sumás a una prueba de usabilidad para mi TFG?
 
 Hola, ¿cómo va?
 
-Estoy haciendo mi Trabajo Final de Grado de Ingeniería en Software en la Universidad Siglo 21 y necesito 8 a 10 personas para una prueba de usabilidad de un prototipo web llamado Umbra.
+Estoy haciendo mi Trabajo Final de Grado de Ingeniería en Software en la Universidad Siglo 21 y necesito 8 a 15 personas para una prueba de usabilidad de un prototipo web llamado Umbra.
 
 La sesión dura unos 40 minutos, es individual, y consiste en usar la app por primera vez mientras pensás en voz alta. También hay un cuestionario corto al final. Se graba pantalla y audio solo para poder analizar la sesión después.
 
@@ -46,15 +50,15 @@ Si te interesa participar, respondeme este mensaje y coordinamos un horario.
 
 Muchas gracias por tu tiempo.
 
-Saludos,  
-[Tu nombre]  
-[Email]  
+Saludos,
+[Tu nombre]
+[Email]
 [Teléfono]
 
 ## FAQ
 
 ### ¿Qué es Umbra?
-Umbra es un proyecto académico de software orientado al autoconocimiento. En esta instancia me interesa evaluar la experiencia de uso, no convencer a nadie de que “le guste”.
+Umbra es un proyecto académico de software orientado al autoconocimiento. En esta instancia me interesa evaluar la experiencia de uso, no convencer a nadie de que "le guste".
 
 ### ¿Cuánto dura?
 Aproximadamente 40 minutos.
@@ -71,12 +75,12 @@ Sí. Podés pausar o retirarte en cualquier momento, incluso después de haber e
 ## Template para coordinar agenda
 Hola, gracias por sumarte.
 
-La sesión dura unos 40 minutos y necesito que puedas compartir pantalla y audio.  
+La sesión dura unos 40 minutos y necesito que puedas compartir pantalla y audio.
 Estos horarios me sirven:
 
 - [día] [hora]
 - [día] [hora]
 - [día] [hora]
 
-Si ninguno te queda cómodo, decime qué franja te sirve y veo si la acomodo.  
+Si ninguno te queda cómodo, decime qué franja te sirve y veo si la acomodo.
 Antes de la sesión te voy a mandar el consentimiento para que lo leas con calma.

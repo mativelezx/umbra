@@ -37,17 +37,17 @@
 | Profile settings | PLANNED | 2 | [features/CONSENT.md](features/CONSENT.md) |
 | Data export (ZIP) | PLANNED | 2 | [features/CONSENT.md](features/CONSENT.md) |
 | Account deletion (magic link) | PLANNED | 2 | [features/CONSENT.md](features/CONSENT.md) |
-| Research mode toggle | PLANNED (Branch A) | 3 | [features/RESEARCH_MODE.md](features/RESEARCH_MODE.md) |
+| Research mode toggle | PLANNED | 3 | [features/RESEARCH_MODE.md](features/RESEARCH_MODE.md) |
 
 ## Academic features
 
 | Feature | Status | Phase | Ref |
 |---|---|---|---|
-| Research participant mode | PLANNED (Branch A, gated on Phase 0) | 3 | [features/RESEARCH_MODE.md](features/RESEARCH_MODE.md) |
-| Eval suite (H1 determinism) | PLANNED | 3 | [tech/EVALS.md](tech/EVALS.md) |
-| Eval suite (H2 cross-model paraphrase) | PLANNED | 3 | [tech/EVALS.md](tech/EVALS.md) |
-| OSF preregistration | PLANNED | 7 (before first data collection) | [biz/TFG.md](biz/TFG.md) |
-| TFG paper draft | PLANNED | parallel | [biz/TFG.md](biz/TFG.md) |
+| Research participant mode (opt-in) | PLANNED | 3 | [features/RESEARCH_MODE.md](features/RESEARCH_MODE.md) |
+| Módulo analítico propio (`ml/`) | EN CURSO | sprints ML 1-3 | [ml/README.md](../ml/README.md), ADR-026 |
+| Crisis classifier eval (precision/recall) | PLANNED | 3 | [tech/EVALS.md](tech/EVALS.md) |
+| Validación SUS (Brooke 1996) | PLANNED | TP3/TP4 | [biz/VALIDATION.md](biz/VALIDATION.md) |
+| Tesis (TP1-TP4) | EN CURSO | TP1 entregado | [biz/TFG.md](biz/TFG.md) |
 
 ## Delight features (from CEO review expansion)
 
@@ -86,23 +86,23 @@
 ```
 Phase 1 (scaffolding) ✓
   ↓
-Phase 0 (ethics gate) — 30min meeting
-  ↓
-Phase 1.5 (remediation) ── parallel ──> KB research (NotebookLM)
+Phase 1.5 (remediation) ── parallel ──> KB research
   ↓                                        ↓
 Phase 2 (auth + consent + layout)          ↓
   ↓                                        ↓
   ┌────────────────────────────────────────┘
   ↓
-Phase 3 (onboarding + analysis + evals + carta)
+Phase 3 (onboarding + análisis + carta) ── parallel ──> Sprint ML 1
   ↓
-Phase 4 (dashboard + archetype SVGs)
+Phase 4 (dashboard + archetype SVGs) ── parallel ──> Sprint ML 2
   ↓
-Phase 5 (narrative + chat with guardrails)
+Phase 5 (narrative + chat con guardrails)
   ↓
-Phase 6 (plan + export + a11y + print stylesheet)
+Phase 6 (plan + export + a11y + print stylesheet) ── parallel ──> Sprint ML 3
   ↓
-Phase 7 (polish + deploy + OSF prereg + smoke tests)
+Phase 7 (polish + deploy + smoke tests)
+  ↓
+Validación SUS (TP3/TP4)
 ```
 
 ## User flow map
@@ -195,7 +195,7 @@ End of onboarding
 - **Narrative** depends on: profile, SSE streaming infra
 - **Plan** depends on: profile, completed narrative (optional)
 - **PDF export** depends on: full profile, narrative, plan, print stylesheet
-- **Research mode** depends on: Phase 0 Ethics Gate Branch A, consent flow
+- **Research mode** depends on: opt-in del consent flow, pseudonimización HMAC (ADR-013)
 
 ## Interaction State Coverage Matrix
 

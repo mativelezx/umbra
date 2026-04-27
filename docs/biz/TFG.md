@@ -1,293 +1,222 @@
 # Umbra — TFG (Trabajo Final de Grado) Deliverables
 
-> The academic dimension of Umbra. Thesis structure, OSF preregistration,
-> paper draft, defense preparation.
->
-> **Validation decision (ADR-023, 2026-04-14)**: el TFG adopta validación
-> mixed-methods con dos pilares: **Branch B (computacional) como primary
-> evidence** (H1/H2/H3 preregistradas en OSF) + **M3 think-aloud como
-> secondary user validation** (n=8-10 con reclutamiento controlado). Ver
-> [VALIDATION.md](VALIDATION.md) para el plan completo de hipótesis,
-> instrumentos y protocolos, y [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)
-> para la ejecución fase por fase.
->
-> **Estado de experimentos (2026-04-14)**:
->
-> | Hipótesis | Estado | Umbral estricto | Resultado | Hallazgo |
-> |---|---|---|---|---|
-> | H1 determinismo | ejecutada (n=25×3) | stddev<2.5 | **FALSIFICADA (13/25 fail)** | Big Five estable (max 1.88), Jung functions inestables (max 7.07) |
-> | H2 paráfrasis | ejecutada (n=25×3) | max delta<10 | **FALSIFICADA (18/25 fail)** | Mean delta 10.24 apenas sobre umbral; reformulable como intervalo |
-> | H3 crisis classifier | ejecutada (n=100) | recall≥0.95 | **PASA en config forzada** (recall=1.0, precision=0.862) | Clasificador capaz, sampling es el bottleneck |
-> | M3 think-aloud | pendiente | SUS≥68 | — | Materiales listos en docs/research/ |
->
-> Los resultados reales están en `eval-results/*.json` (committeados) y
-> se reportan en detalle en
-> [VALIDATION.md sección "Resultados empíricos"](VALIDATION.md#resultados-emp%C3%ADricos-h1--determinismo).
-> La discusión académica de por qué las falsificaciones son hallazgos
-> valiosos (no fallas del artefacto) va en el capítulo 11 Discusión de
-> la tesis.
+> Dimensión académica de Umbra. Estructura de tesis, cronograma, plan de
+> defensa.
 
-## Context
+## Contexto
 
-- **Program**: Ingeniería en Software, Universidad Siglo 21 (Argentina)
-- **Type**: TFG (Trabajo Final de Grado) — required for graduation
-- **Format**: monografía + working software artifact
-- **Tribunal**: 3 professors (software engineering + possibly one psychology-adjacent)
-- **Grade scale**: 0-10 in Argentina; 9-10 = summa cum laude / "con honores"
+- **Programa**: Ingeniería en Software, Universidad Siglo 21 (Argentina)
+- **Tipo**: TFG — requisito de graduación
+- **Formato**: monografía + artefacto de software
+- **Tribunal**: profesores de software engineering + (eventualmente) un
+  examinador externo cercano a psicología.
+- **Escala de calificación**: 0-10 (Argentina). 9-10 con honores.
 
 ## Deliverables
 
-### 1. The product (Umbra web app)
-Phases 2-7 as specified in the master doc + CEO plan + eng review. Runs on
-Vercel + Supabase. Publicly accessible OR demo'd to the tribunal via screen
-share.
+### 1. El producto (Umbra web app)
+Frontend Next.js + módulo analítico propio (`ml/`). Corre sobre Vercel +
+Supabase + un proceso FastAPI que sirve el módulo ML. Demostrable al
+tribunal por screen share o URL pública.
 
-### 2. The written thesis (monografía)
-~50-80 pages in LaTeX or Word. Required sections:
+### 2. La monografía escrita
+Aproximadamente 50-80 páginas. Estructura:
 
-1. **Portada** — title, author, advisor, date, institution
-2. **Resumen** — 250-word abstract in Spanish + English
-3. **Introducción** — problem statement, motivation, research questions
-4. **Marco teórico** — Jung's cognitive functions (Jung 1921 + Sauer 2025), Big Five (Goldberg IPIP 1999), Pearson archetypes (Pearson 1991), Positive Computing (Calvo & Peters 2014)
-5. **Estado del arte** — landscape review: 16personalities, Deep Personality, Truity, academic literature on AI personality assessment
-6. **Metodología** — the eval suite (H1 determinismo + H2 robustez paráfrasis + H3 safety empírico del crisis classifier), OSF preregistration, knowledge base construction from primary sources, **protocolo M3 de think-aloud con n=8-10 (SUS + coding temático)**. Ver [VALIDATION.md](VALIDATION.md) para detalles completos.
-7. **Arquitectura del sistema** — Next.js App Router, Supabase, Anthropic Claude, decisiones arquitecturales (synthesized from `docs/DECISIONS.md`)
-8. **Implementación** — phase-by-phase breakdown, key technical challenges, trade-offs
-9. **Validación** — H1 determinism results, H2 cross-model paraphrase results, **H3 crisis classifier precision/recall sobre dataset n=100**, **M3 think-aloud results (SUS scores + temas cualitativos con citas)**, limitations
-10. **Discusión** — findings, implications, limitations, threats to validity
-11. **Conclusiones** — contributions, future work
-12. **Referencias** — APA format, full bibliography
-13. **Anexos** — OSF preregistration (full PDF or URL), code repo URL, ADRs, eval cache snapshot commit hash
+1. **Portada** — título, autor, director, fecha, institución.
+2. **Resumen** — 250 palabras en español + abstract en inglés.
+3. **Introducción** — contexto, motivación, preguntas de investigación.
+4. **Marco teórico** — Big Five (Goldberg 1999, IPIP-NEO), funciones
+   cognitivas Jung (1921), arquetipos aplicados Pearson (1991), Positive
+   Computing (Calvo & Peters 2014).
+5. **Estado del arte** — revisión del paisaje de productos de
+   autoconocimiento digital + literatura académica sobre LLMs aplicados
+   a inferencia de personalidad.
+6. **Metodología** — arquitectura híbrida (capa analítica propia + capa
+   narrativa LLM externa), construcción de la base de conocimiento,
+   estrategia de validación (métricas ML por dimensión, axe-core en CI,
+   unit + E2E con Vitest y Playwright, SUS en TP3/TP4).
+7. **Arquitectura del sistema** — Next.js App Router, Supabase, módulo
+   analítico FastAPI, decisiones arquitecturales documentadas en ADRs.
+8. **Implementación** — desglose por fase, retos técnicos clave,
+   trade-offs.
+9. **Validación** — métricas del módulo analítico (MSE, R², r por
+   dimensión), pasaje de tests automatizados, planificación SUS.
+10. **Discusión** — hallazgos, implicancias, limitaciones, amenazas a
+    la validez.
+11. **Conclusiones** — contribuciones, trabajo futuro.
+12. **Referencias** — APA 7ª edición.
+13. **Anexos** — ADRs, dataset crisis, screenshots, capturas del
+    dashboard, snapshot del módulo analítico.
 
-### 3. Paper / preprint (optional but recommended for "con honores")
-Shorter version of the thesis (~8-12 pages) in conference paper format.
-Potential venues:
-- **CLEI** (Conferencia Latinoamericana de Informática)
-- **JAIIO** (Jornadas Argentinas de Informática)
-- **OSF preprint server** (if no formal venue)
+### 3. Defensa (~20-30 min + Q&A)
+Slides cubriendo problema, paisaje, metodología, arquitectura, demo en
+vivo (5-7 min), validación, trabajo futuro y Q&A.
 
-### 4. OSF preregistration
-Live link: `osf.io/<your-project-id>` (created before first data collection)
+## Preguntas de investigación
 
-See "Preregistration" section below for content.
+**RQ1**: ¿Puede una arquitectura híbrida (módulo analítico propio +
+capa narrativa LLM externa) producir perfiles psicológicos trazables y
+auditables sobre texto introspectivo en español latinoamericano?
 
-### 5. Defense presentation (~20-30 min + Q&A)
-Slides covering:
-- Problem + motivation (2 slides)
-- Landscape + differentiation (2 slides)
-- Methodology (H1 + H2 + KB construction) (5 slides)
-- Architecture (3 slides, with diagrams from `tech/ARCHITECTURE.md`)
-- Live demo (5-7 min in browser)
-- Validation results (4 slides — H1 + H2 numbers, honest limitations)
-- Future work (1 slide)
-- Q&A
+**RQ2**: ¿Las dimensiones Big Five inferidas por el módulo analítico
+alcanzan los umbrales mínimos R² > 0.20 y r > 0.30 sobre el split test
+del corpus combinado Essays + corpus latinoamericano propio?
 
-## Research questions (for thesis)
+**RQ3**: ¿El sistema cumple con los mecanismos técnicos de la Ley
+25.326 y con los principios de Positive Computing (Calvo & Peters
+2014), y el pipeline de detección de crisis se comporta de manera
+fail-closed conforme a la especificación de seguridad?
 
-**RQ1**: Can a large language model with a structured knowledge base from
-primary psychological sources produce consistent personality profiles from
-introspective text?
-- Operationalized as H1 (determinism)
+**RQ4**: ¿Es Umbra percibido como usable por participantes del perfil
+target medido con SUS (Brooke 1996) adaptado al español latinoamericano,
+con n=8-15 participantes según el plan de TP3/TP4?
 
-**RQ2**: How robust is the profile against semantic-preserving paraphrases
-of the same input?
-- Operationalized as H2 (cross-model paraphrase consistency, limited to
-  intra-vendor Sonnet + Haiku rewriters per ADR-020)
+## Cronograma
 
-**RQ3**: Can a self-knowledge product built on this methodology ship with
-ethical and legal safeguards compliant with Ley 25.326 and Calvo & Peters'
-Positive Computing principles, and is its crisis detection pipeline
-empirically safe?
-- Operationalized as the compliance matrix in [SYSTEM_SPEC.md](../SYSTEM_SPEC.md)
-- Validated by the chat safety pipeline and consent flow implementations
-- **Quantified as H3**: precision/recall del crisis classifier sobre
-  dataset etiquetado n=100 (target recall ≥ 0.95, precision ≥ 0.85). Ver
-  [VALIDATION.md H3](VALIDATION.md#h3--precision-y-recall-del-pipeline-de-crisis).
+Calendario oficial del TFG en Universidad Siglo 21:
 
-**RQ4**: ¿Es Umbra percibido como usable y alineado con autonomía y
-competencia del Positive Computing por usuarios reales de perfil similar
-al target (estudiantes universitarios argentinos, 18-30 años)?
-- Operationalized as **M3 think-aloud** with n=8-10 participants,
-  structured SUS questionnaire (Spanish rioplatense), and thematic coding
-  of session recordings. See [VALIDATION.md M3](VALIDATION.md#m3--think-aloud-con-reclutamiento-controlado-secondary-validation).
-- NOT preregistered in OSF (M3 is qualitative secondary validation, not
-  confirmatory hypothesis).
+| Hito | Fecha | Entregable |
+|---|---|---|
+| **TP1** | 26 de abril de 2026 | Anteproyecto entregado: marco teórico, arquitectura, metodología, cronograma. |
+| Sprint ML 1 | 11-24 de mayo de 2026 | Preparación datasets (Essays + corpus propio), baseline scikit-learn. |
+| **TP2** | 17 de mayo de 2026 | Prototipo, casos de uso UML, DER, arquitectura, requerimientos. |
+| Sprint ML 2 | 25 mayo-7 junio | Extracción de embeddings DistilBERT congelado, entrenamiento Ridge, registro MLflow. |
+| **TP3** | 7 de junio de 2026 | Gestión de proyecto: costos, riesgos, Pareto, contingencia. |
+| Sprint ML 3 | 8-21 de junio | Validación cruzada, métricas por dimensión, serialización joblib. |
+| Validación SUS | 22 junio-5 julio | n=8-15 sesiones, cuestionario SUS adaptado al español latinoamericano. |
+| **TP4** | 28 de junio de 2026 | Documento integrado final. |
+| Defensa oral | agosto/septiembre 2026 | Slides + demo en vivo + Q&A. |
 
-## Preregistration (OSF Standard Prereg)
+## Metodología (Scrum + ADRs)
 
-### Template: OSF Preregistration (standard)
-(NOT Secondary-Data Prereg — per ADR-012, Umbra uses the standard template
-with a computational-study framing paragraph.)
+- **Scrum** (Schwaber & Sutherland 2020) + Manifiesto Ágil (Beck et al.
+  2001).
+- Sprints de 1 semana calendario.
+- Equipo: 1 integrante (PO + SM + Dev), supervisado por director TFG.
+- Artefactos: Product Backlog (Markdown versionado), Sprint Backlog
+  (tablero), Incremento (código mergeado).
+- **Architecture Decision Records (ADR)** — Nygard 2011.
+- Definition of Done: código en main + tests actualizados + docs/ADR
+  + a11y axe + cumplimiento normativo cuando aplica.
 
-### Sections
+## Voz académica
 
-#### Study Information
-- **Title**: "Umbra: Evaluación de consistencia de análisis de personalidad generado por LLM sobre bases teóricas estructuradas"
-- **Authors**: [developer name], supervised by [advisor name]
-- **Affiliation**: Universidad Siglo 21, Ingeniería en Software
-- **Description**: computational study evaluating determinism and paraphrase-robustness of Claude Sonnet analyses of Spanish introspective text, grounded in a structured knowledge base of IPIP-NEO (Big Five), Jung cognitive functions, and Pearson archetypes.
+- Español formal (NO voseo) en la prosa de la tesis.
+- El producto usa voseo argentino — esa decisión de producto se
+  documenta en la tesis pero la prosa académica se redacta en español
+  estándar.
+- Cita todo. APA 7ª edición. Zotero recomendado.
 
-#### Hypotheses
-- **H1 — Determinism**: Given temperature=0 and pinned model SKU (`claude-sonnet-4-6-20260301`), analyzing the same input text produces Big Five scores with standard deviation < 2.5 points (equivalent to < 5-point range) across 5 consecutive runs on all 50 eval cases.
-- **H2 — Cross-model paraphrase consistency**: Given 3 semantic-preserving paraphrases produced by Claude Sonnet and Claude Haiku rewriters, the Big Five scores for the paraphrased texts deviate < 10 points (max pairwise delta) from the original on all 50 eval cases.
-- **H3 — Crisis classifier safety**: The 2-stage crisis detection pipeline (regex with Argentine idiom guards + Claude classifier with fail-closed semantics) achieves recall ≥ 0.95 and precision ≥ 0.85 on a balanced labeled dataset of n=100 messages (25 real crisis + 25 Argentine idioms + 25 borderline + 25 safe). Recall threshold is higher than precision because false negatives (missing a real crisis) are costlier than false positives (blocking a safe conversation). See [VALIDATION.md H3](VALIDATION.md#h3--precision-y-recall-del-pipeline-de-crisis).
+## Honestidad sobre limitaciones
 
-#### Design Plan
-- **Type**: observational computational study, no manipulation
-- **Model = instrument**: Claude Sonnet acts as a stochastic instrument; eval cases are fixed stimuli
-- **Temperature**: 0 for H1 (determinism), 0.3 for H2 (rewriter creativity)
-- **Prompt**: pinned at commit hash `<hash>` in `lib/prompts/analyze-profile.ts`
-- **Knowledge base**: pinned at commit hash `<hash>` in `lib/knowledge/`
+La tesis declara explícitamente las siguientes limitaciones:
 
-#### Sampling Plan
-- **Eval cases**: 50 total
-  - 20 adapted from IPIP-NEO published vignettes (public domain)
-  - 20 from Jung typology literature (Tipos Psicológicos, public domain)
-  - 10 adversarial cases synthesized by the developer
-- **Inter-rater check**: 10 of 50 cases are labeled by 2 raters (developer + external). Cohen's kappa > 0.6 required before case ranges are locked.
-- **Sample size justification**: 50 cases is sufficient to detect deviations > 5 points with high statistical power per dimension, given 5 Big Five dimensions and 8 Jung functions (65 measurements per case × 50 cases = 3250 data points)
-- **No human subjects**: all eval data is computationally generated
+- Heterogeneidad EN vs ES-AR de los datasets ML (Essays en inglés vs
+  corpus propio en español latinoamericano). Mitigación documentada en
+  ADR-027 (umbrales por dimensión) y ADR-028 (rúbrica de validación
+  manual del corpus latinoamericano).
+- Sesgo del corpus latinoamericano generado con asistencia de IA
+  generativa: declarado en ADR-028, mitigado con la rúbrica documentada
+  en `ml/data/latinoamericano/rubrica_validacion.md`.
+- Dependencia operativa del proveedor LLM externo en la capa narrativa:
+  mitigado con identificador de modelo fijado y capa de abstracción.
+- n bajo en el estudio SUS planificado para TP3/TP4: defendible con
+  Brooke (1996) como instrumento estándar de la industria; el reporte
+  honesto del n efectivo es preferible a inflar la muestra.
+- IPIP-NEO sustituye a NEO-PI-R por motivos de licencia (ADR-015).
 
-#### Variables
-- **Primary measures (per case)**: Big Five scores (5 × 0-100), Jung function scores (8 × 0-100), archetype assignment (categorical, 6 levels)
-- **H1 derived**: standard deviation of each dimension across 5 runs
-- **H2 derived**: maximum pairwise delta across 3 paraphrases
+## Estrategia de defensa
 
-#### Analysis Plan
-- **H1 pass criterion**: stddev(scores_per_run) < 2.5 for ALL dimensions on ALL 50 cases
-- **H2 pass criterion**: max_pairwise_delta < 10 for ALL dimensions on ALL 50 cases
-- **Partial pass**: per-dimension thresholds may be reported if all-or-nothing fails. Paper discloses both
-- **Exclusion criteria**: cases where Claude refuses to output JSON (handled by retry; if 2 retries fail, case is excluded and reported)
-- **Reproducibility**: committed cache snapshot allows offline replay at any future date
+### Preguntas probables y respuestas
 
-#### Other
-- **ADRs attached**: `docs/DECISIONS.md` (22 ADRs)
-- **Limitations**:
-  - H2 uses intra-vendor rewriters (Sonnet + Haiku), not cross-vendor. Documented in ADR-020
-  - IPIP-NEO vs NEO-PI-R substitution documented in ADR-015
-  - **No hay test-retest longitudinal con usuarios reales** (requires ethics review + multi-sesión); user validation se cubre con M3 think-aloud single-session, documentado como secondary validation en ADR-023
-  - **M3 n=8-10 es bajo** para afirmaciones con poder estadístico fuerte sobre usabilidad; defensible por la regla de Nielsen & Landauer (1993) pero se declara explícitamente como limitación
-  - **Self-selection bias en M3**: reclutamiento por red personal del autor; mitigado por inclusión de participantes con exposición variable al producto
-- **Ethics statement**: **Branch B adoptada por ADR-023 (2026-04-14)**. Validación computacional (H1/H2/H3) como primary evidence; M3 think-aloud con n=8-10 como secondary user validation sin comité de ética formal (usability testing informal con consentimiento escrito simple). H1, H2 y H3 son puramente computacionales. M3 sigue principios de Helsinki + Calvo & Peters (ver [ETHICS.md](ETHICS.md)).
-- **Data availability**: committed cache snapshots in repo. Raw Claude API responses are NOT published (privacy). All eval code open source.
-
-### Timing
-- Preregistration submitted BEFORE first H1 / H2 run
-- Published after advisor review (to catch methodology errors)
-- Timestamped on OSF
-- Link included in thesis annex and paper
-
-## Timeline (suggested)
-
-| Week | Activity |
-|---|---|
-| W1 | Phase 0 ethics meeting + Phase 1.5 engineering |
-| W2-3 | KB research in NotebookLM (parallel with Phase 2) |
-| W4 | Phase 2 complete (auth + consent + layout) |
-| W5 | Phase 3 complete (onboarding + analysis + evals) |
-| W6 | Phase 4 complete (dashboard) + OSF preregistration drafted |
-| W7 | Phase 5 complete (narrative + chat) |
-| W8 | OSF preregistration submitted (before first eval run) |
-| W9 | Phase 6 complete (plan + export + a11y) |
-| W10 | Phase 7 complete (polish + deploy) |
-| W11 | First H1 + H2 eval runs + thesis writing begins |
-| W12-14 | Thesis writing + paper draft |
-| W15-16 | Advisor reviews, revisions |
-| W17 | Defense |
-
-Assumes 5-month runway. If shorter, see emergency cut order in TODOS.md.
-
-## Thesis writing tips
-
-### Structure per section
-- **Marco teórico**: use `docs/PROMPT_ARCHITECTURE.md` + `lib/knowledge/*.ts` as your primary material. Each knowledge file's citations are already in JSDoc comments — grep for them.
-- **Metodología**: `docs/tech/EVALS.md` + OSF preregistration text are ~80% of this section
-- **Arquitectura**: `docs/tech/ARCHITECTURE.md` + `docs/DECISIONS.md` — include 2-3 ADRs verbatim as appendix
-- **Validación**: H1 + H2 results tables, with discussion of edge cases and failures
-- **Discusión**: cathedral risks (acknowledged in CEO plan), limitations, threats to validity
-
-### Academic voice
-- Spanish formal (NOT rioplatense) for the thesis itself
-- The product's voice (voseo rioplatense) is a design decision that gets documented in the thesis but the thesis prose is standard Spanish academic
-- Cite everything. APA 7th edition. Use a reference manager (Zotero recommended)
-
-### Figures + diagrams
-- Every ASCII diagram in `docs/tech/` can become a clean diagram in the thesis (e.g., draw.io, Mermaid, or direct in LaTeX via TikZ)
-- Screenshots of key UI moments (onboarding, dashboard, chat) — figure captions reference the design system
-- Sequence diagram for crisis pipeline (important — shows safety engineering rigor)
-
-### Honesty about limitations
-- Don't hide the known weaknesses
-- H2 intra-vendor instead of cross-vendor
-- No user-level test-retest
-- Pseudonymization vs anonymization
-- KB gaps documented in `citation-check.test.ts` output
-- "Acknowledged Cathedral Risks" from the CEO plan — paste them verbatim in discussion
-
-## Defense strategy
-
-### Likely questions + answers
-- **"Por qué Claude y no otro modelo?"** → pinned SKU for H1 determinism; Claude's better instruction-following in Spanish; cost at scale
-- **"Cómo sabemos que el análisis es válido y no alucinación?"** → H1 (determinism) + H2 (cross-model robustness) + committed cache snapshot reproducibility + knowledge base with verifiable citations
-- **"Qué pasa si Claude cambia su modelo?"** → pinned SKU (not alias); ADR-014 documents this
-- **"Esto es terapia?"** → no, explicit non-goal; show the banner + crisis classifier; it's a reflective mirror, not a therapist
-- **"Datos personales — cómo cumplís con Ley 25.326?"** → walk through `/consent` flow, data rights endpoints, pseudonymization honesty
-- **"MBTI?"** → no, Jung functions directly; cite Sauer 2025 "Rehabilitating Jung's Cognitive Function Theory"
-- **"Qué diferencia con 16personalities?"** → see `biz/MARKET.md` differentiation matrix
-- **"Cuál es la contribución científica?"** → the eval methodology (H1 + H2) as a template for evaluating LLM-based personality instruments; the open-source knowledge base + prompts + cache snapshots
-- **"Qué falta?"** → longitudinal tracking, cross-vendor H2, real user test-retest — all documented as future work
+- **"¿Por qué módulo analítico propio en vez de delegar todo al LLM?"**
+  Trazabilidad y auditoría: el módulo serializa artefactos, calcula
+  métricas por dimensión, versiona datos con DVC y experimentos con
+  MLflow. ADR-026.
+- **"¿Por qué LLM externo en la capa narrativa?"** La capa narrativa
+  produce texto extenso, contextualizado y conversacional que sería
+  prohibitivamente costoso entrenar localmente. La separación medido
+  vs interpretativo está formalizada en ADR-002 + ADR-007.
+- **"¿Qué pasa si el LLM cambia su modelo?"** El identificador de
+  modelo está fijado por env var (ADR-005). Una capa de abstracción
+  sobre el cliente permite swap a un proveedor alternativo si fuera
+  necesario.
+- **"¿Esto es terapia?"** No, no-meta explícito; banner permanente
+  + classifier de crisis fail-closed + recursos argentinos (135, 911,
+  Salud Mental Responde, Centros de Salud Mental Comunitaria).
+- **"Datos personales — ¿cómo cumplís con Ley 25.326?"** Cinco
+  mecanismos técnicos: consent bloqueante con SHA-256 del texto
+  verbatim, exportación, rectificación, cancelación con magic link
+  single-use, oposición a investigación. ADRs 002, 013, 021, 024.
+- **"¿MBTI?"** No, funciones Jung directamente. Jung (1921) en
+  dominio público.
+- **"¿Diferencia con 16personalities?"** Ver [biz/MARKET.md](MARKET.md):
+  arquitectura híbrida auditable + reporte por dimensión + voseo
+  latinoamericano nativo + cumplimiento Ley 25.326.
 
 ### Demo script (5-7 min)
-1. Landing (10s) — show design, branding
-2. Register + consent (30s) — show Ley 25.326 compliance
-3. Onboarding guided flow (60s) — show the 5 areas, the progressive load animation, the evidence highlights
-4. Dashboard (45s) — show the radar, Jung bars, archetype card with custom SVG
-5. Narrative (45s) — show the streaming, read the first paragraph
-6. Chat (60s) — send a normal message, then send a crisis keyword, show the crisis card blocking
-7. Export (20s) — show the PDF download
-8. /settings/export (20s) — show the Ley 25.326 access right ZIP
+1. Landing (10s).
+2. Register + consent (30s) — Ley 25.326.
+3. Onboarding (60s) — onboarding dinámico, progresivo.
+4. Dashboard (45s) — radar Big Five con `per_dimension_status`, Jung
+   bars, archetype card.
+5. Narrativa (45s) — streaming.
+6. Chat (60s) — mensaje normal, luego mensaje de crisis, mostrar la
+   crisis card bloqueando.
+7. Export (20s) — PDF download.
+8. /settings/export (20s) — Ley 25.326 acceso ZIP.
 
-Total: ~5 min live. Rest: Q&A.
+## Referencias
 
-## Paper submission (post-defense)
+### Académicas
+- Beck, K., et al. (2001). Manifiesto por el Desarrollo Ágil de Software.
+- Brooke, J. (1996). SUS: A quick and dirty usability scale. En P. W.
+  Jordan et al. (Eds.), *Usability evaluation in industry*. Taylor &
+  Francis.
+- Calvo, R. A., & Peters, D. (2014). *Positive Computing: Technology
+  for Wellbeing and Human Potential*. MIT Press.
+- Costa, P. T., & McCrae, R. R. (1992). NEO PI-R Professional Manual.
+- Devlin, J., Chang, M.-W., Lee, K., & Toutanova, K. (2019). BERT.
+- Goldberg, L. R. (1999). A broad-bandwidth, public domain, personality
+  inventory measuring the lower-level facets of several five-factor
+  models. En *Personality Psychology in Europe*, Vol. 7. Tilburg
+  University Press.
+- Hoerl, A. E., & Kennard, R. W. (1970). Ridge regression: Biased
+  estimation for nonorthogonal problems.
+- Howard, J., & Ruder, S. (2018). Universal Language Model Fine-tuning
+  for Text Classification.
+- John, O. P., & Srivastava, S. (1999). The Big Five trait taxonomy.
+- Jung, C. G. (1921). *Tipos psicológicos*.
+- Ley 25.326 (Argentina). Protección de los Datos Personales.
+- Nygard, M. T. (2011). Documenting Architecture Decisions.
+- Pearson, C. S. (1991). *Awakening the heroes within*. HarperOne.
+- Pedregosa, F., et al. (2011). Scikit-learn: Machine learning in
+  Python.
+- Pennebaker, J. W., & King, L. A. (1999). Linguistic styles: Language
+  use as an individual difference.
+- Peters, M. E., et al. (2019). To tune or not to tune?
+- Pittenger, D. J. (2005). Cautionary comments regarding the
+  Myers-Briggs Type Indicator.
+- Ryan, R. M., & Deci, E. L. (2000). Self-determination theory.
+- Sanh, V., Debut, L., Chaumond, J., & Wolf, T. (2019). DistilBERT.
+- Schwaber, K., & Sutherland, J. (2020). The Scrum Guide.
+- Sculley, D., et al. (2015). Hidden technical debt in machine
+  learning systems.
+- Stein, R., & Swan, A. B. (2019). Evaluating the validity of the
+  Myers-Briggs Type Indicator.
+- Treveil, M., et al. (2020). *Introducing MLOps*. O'Reilly.
+- Wolf, T., et al. (2020). Transformers: State-of-the-art Natural
+  Language Processing.
+- Zaharia, M., et al. (2018). Accelerating the machine learning
+  lifecycle with MLflow.
 
-Candidate venues:
-- **CLEI 2026 / 2027** — Latin American computing conference
-- **JAIIO 2026 / 2027** — Argentine computing conference
-- **arXiv.org cs.CL** — preprint
-- **Psychology of Programming** — if paper leans more toward psychology/product
+### Internas (repo)
 
-The preregistration + open eval suite + committed cache snapshots make the
-paper strong for any of these.
-
-## References
-
-### Academic
-
-- Sauer, T. (2025). Rehabilitating Jung's Cognitive Function Theory.
-- Jung, C.G. (1921). Tipos Psicológicos.
-- Goldberg, L. R. (1999). A broad-bandwidth, public domain, personality inventory measuring the lower-level facets of several five-factor models. In I. Mervielde et al. (Eds.), *Personality Psychology in Europe*, Vol. 7 (pp. 7-28). Tilburg University Press.
-- Pearson, C. S. (1991). *Awakening the Heroes Within*.
-- Calvo, R. A., & Peters, D. (2014). *Positive Computing: Technology for Wellbeing and Human Potential*. MIT Press.
-- Stein, R., & Swan, A. B. (2019). Evaluating the Validity of the Myers-Briggs Type Indicator. *Social and Personality Psychology Compass*, 13(2).
-- Brooke, J. (1996). SUS: A quick and dirty usability scale. In P. W. Jordan et al. (Eds.), *Usability evaluation in industry*. Taylor & Francis.
-- Nielsen, J., & Landauer, T. K. (1993). A mathematical model of the finding of usability problems. *Proceedings of ACM INTERCHI 93*, 206-213.
-- Sauro, J. (2011). *A Practical Guide to the System Usability Scale*. Measuring Usability LLC.
-- Braun, V., & Clarke, V. (2006). Using thematic analysis in psychology. *Qualitative Research in Psychology*, 3(2), 77-101.
-
-### External
-
-- [OSF preregistration guidelines](https://www.cos.io/initiatives/prereg)
-- [Ley 25.326 (Protección de Datos Personales, Argentina)](https://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/texact.htm)
-- [People + AI Guidebook (Google PAIR)](https://pair.withgoogle.com/guidebook/)
-
-### Internal (repo)
-
-- [biz/IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) — plan de ejecución por fases con QA Gate
-- [biz/VALIDATION.md](VALIDATION.md) — hipótesis H1/H2/H3 + protocolo M3 completo
+- [biz/IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)
+- [biz/VALIDATION.md](VALIDATION.md)
 - [biz/LEGAL.md](LEGAL.md)
 - [biz/ETHICS.md](ETHICS.md)
-- [DECISIONS.md](../DECISIONS.md) — ADRs 001-024
+- [DECISIONS.md](../DECISIONS.md)
 - [tech/EVALS.md](../tech/EVALS.md)
-- [tech/CHAT_SAFETY.md](../tech/CHAT_SAFETY.md) — objeto de H3
+- [tech/CHAT_SAFETY.md](../tech/CHAT_SAFETY.md)
 - [PROMPT_ARCHITECTURE.md](../PROMPT_ARCHITECTURE.md)

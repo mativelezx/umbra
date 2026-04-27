@@ -58,15 +58,43 @@ La consecuencia práctica es el trade-off que la propia ADR enuncia: “**Can de
 
 Metodológicamente, ADR-008 introduce una noción importante para Umbra: no toda trazabilidad debe perseguirse hasta el máximo posible. En sistemas con datos sensibles, la mejor arquitectura no es la que registra más, sino la que registra lo necesario para cumplir su finalidad sin degradar la privacidad del usuario. Esta decisión es particularmente relevante porque evita una contradicción ética frecuente en productos de seguridad: justificar nuevas recolecciones invasivas en nombre de la propia protección.
 
-### ADR-014 — Reproducibilidad mediante snapshots comprometidos y SKU fijado
+### ADR-026 — Módulo analítico propio (DistilBERT congelado + Ridge multi-output)
 
-La última ADR seleccionada aborda un aspecto poco habitual en productos convencionales, pero central en un TFG: la reproducibilidad. Su contexto advierte que la afirmación “clone repo, run `npm run eval`” depende de una API de terceros, de un modelo hospedado mutable y de una caché potencialmente efímera. En consecuencia, la ADR-014 decide dos medidas decisivas: “**Pin `ANTHROPIC_MODEL_ID` to a dated SKU like `claude-sonnet-4-6-20260301`, never an alias**” y “**Eval snapshots ... [are] committed to the repo**” (ADR-014, 2026-04-12).
+La última ADR seleccionada aborda un aspecto central de la
+arquitectura: la separación entre un componente cuantitativo
+auditable y una capa narrativa interpretativa delegada al proveedor
+externo. ADR-026 establece que la inferencia de las cinco
+dimensiones Big Five se realiza en un módulo propio implementado en
+Python, expuesto como API HTTP por FastAPI y consumido por el
+frontend Next.js a través de `lib/ml-client.ts`. La arquitectura del
+módulo combina DistilBERT base multilingual cased (Sanh et al. 2019)
+en modo *frozen embeddings* con cinco regresores Ridge multi-output
+(Hoerl & Kennard 1970) entrenados con scikit-learn (Pedregosa et al.
+2011). MLflow (Zaharia et al. 2018) registra los experimentos y DVC
+versiona los datasets y artefactos.
 
-Arquitectónicamente, esto afecta tanto la configuración de `lib/claude/client.ts` como la organización de `lib/evals/.cache/`. Fijar el SKU evita que un alias como `claude-sonnet-4-6` cambie silenciosamente de comportamiento y comprometa la estabilidad de H1 o H2. Comprometer snapshots al repositorio permite que las evaluaciones publicadas puedan reproducirse sin costo de API y sin dependencia temporal del proveedor externo. La arquitectura, por tanto, incorpora una capa de estabilización metodológica por encima de la dependencia viva.
+Esta decisión tiene consecuencias arquitectónicas significativas. En
+primer lugar, el frontend Next.js no contiene lógica de inferencia
+psicométrica: solo invoca el endpoint del módulo y consume el JSON
+con scores Big Five y `per_dimension_status` (ADR-027). En segundo
+lugar, el módulo analítico no corre en Vercel, lo cual obliga a
+prever un proceso separado en producción. En tercer lugar, las
+métricas (MSE, R², r) se calculan por dimensión sobre el split test
+y se commitean en `ml/eval_metrics.json` junto con los artefactos
+serializados, lo cual permite a cualquier revisor reproducir los
+resultados con `make all` o `dvc repro` sin necesidad de acceso a
+servicios externos.
 
-Las consecuencias son transparentes: “**Snapshot files add ~1-5 MB to the repo per eval run**” y la reproducibilidad pasa a formularse de modo más honesto: “**reproducible against committed snapshot at commit X**”, no frente a la API en tiempo real. Esta precisión es especialmente valiosa en un contexto académico, donde la robustez de una afirmación depende tanto de su verdad como de su correcto alcance.
-
-La reflexión metodológica final es que ADR-014 transforma una dependencia externa mutable en un insumo controlable para la investigación. En lugar de ocultar la fragilidad temporal de los modelos hospedados, la arquitectura la reconoce y la compensa. De este modo, Umbra no promete una estabilidad imposible; promete una reproducibilidad delimitada, verificable y compatible con la práctica científica aplicada al software.
+La reflexión metodológica es que ADR-026 transforma la dependencia
+del proveedor externo en una decisión arquitectónica acotada: la
+capa narrativa puede usar un proveedor LLM con identificador de
+modelo fijado (ADR-005), pero el componente que sustenta la
+afirmación cuantitativa del perfil queda bajo control del proyecto.
+La separación medido vs interpretativo (ADR-002 + ADR-007) hereda
+esa misma disciplina: lo que se mide se reporta con métricas; lo
+que se interpreta se documenta como tal y se modera con
+`per_dimension_status` cuando la dimensión subyacente no alcanza
+los umbrales mínimos.
 
 ## Modelo de amenazas STRIDE
 
@@ -74,7 +102,7 @@ El threat model de Umbra aplica STRIDE sobre siete componentes y, más que enume
 
 En las **rutas Node**, el punto más delicado es la elevación de privilegios vinculada al `service_role`, así como la posibilidad de borrado indebido de cuentas. Por ello, el flujo de eliminación exige enlace mágico de un solo uso, TTL breve y token firmado con HMAC. En **Supabase**, el riesgo estructural más alto es la existencia de una tabla sin RLS o sin política apropiada. El threat model original lo identifica como residual crítico; posteriormente, ese riesgo fue reducido con la incorporación de un test de cobertura RLS en CI, aunque la tesis debe registrar que la preocupación surgió del análisis STRIDE.
 
-Respecto de **Anthropic**, los dos riesgos más notorios son la indisponibilidad del proveedor y la mutación silenciosa del modelo. El segundo fue mitigado por ADR-014 al fijar SKU; el primero subsiste como riesgo operacional, dado que una caída del servicio produce degradación de analyze, narrative o chat. En el **cliente**, la amenaza más importante es la divulgación de información por XSS o por manipulación del DOM para omitir consentimiento; React, la ausencia de `dangerouslySetInnerHTML` y la verificación server-side reducen ese vector. Finalmente, en el **pipeline de crisis**, el riesgo más severo es el falso negativo. La arquitectura responde con semántica fail-closed: ante error del clasificador, el sistema trata el caso como crisis.
+Respecto del proveedor LLM externo, los dos riesgos más notorios son la indisponibilidad del proveedor y la mutación silenciosa del modelo. El segundo se mitiga fijando el identificador del modelo vía `ANTHROPIC_MODEL_ID` (ADR-005); el primero subsiste como riesgo operacional, dado que una caída del servicio produce degradación de la capa narrativa. En el **cliente**, la amenaza más importante es la divulgación de información por XSS o por manipulación del DOM para omitir consentimiento; React, la ausencia de `dangerouslySetInnerHTML` y la verificación server-side reducen ese vector. Finalmente, en el **pipeline de crisis**, el riesgo más severo es el falso negativo. La arquitectura responde con semántica fail-closed: ante error del clasificador, el sistema trata el caso como crisis.
 
 Entre los riesgos residuales documentados destacan, por tanto, tres: dependencia operativa de Anthropic, posibilidad de omisiones futuras en cobertura RLS si el esquema creciera sin controles, y necesidad de sostener controles de consentimiento verificable a lo largo de evoluciones de interfaz y localización. La utilidad del modelo STRIDE en este capítulo radica en mostrar que la seguridad no fue agregada al final, sino incorporada como criterio de diseño por componente y por frontera de confianza.
 

@@ -344,14 +344,16 @@ de profundidad:
   `AnimatePresence` + `m.div` de framer-motion (spring damping=28
   stiffness=280).
 
-### Confidence surface (Fase 1 — ADR-025 PAIR cap. 4)
+### Confidence surface
 
-`ArchetypeCard` y `QuickGlance` ahora reciben `confidence` y
+`ArchetypeCard` y `QuickGlance` reciben `confidence` y
 `turnsCount` leídos server-side desde `psychological_profiles.analysis_raw.confidence`
-(PAIR cap. 4 Explainability + Trust). El usuario ve una barra de
-progreso + porcentaje + "basado en N respuestas". El `InfoPopover`
-explica que certeza baja significa "refinable con más contexto", no
-"análisis incorrecto".
+y, en el dashboard, se complementan con la señal
+`per_dimension_status` que viaja desde el módulo analítico
+(ADR-027). El usuario ve una barra de progreso + porcentaje +
+"basado en N respuestas". El `InfoPopover` explica que certeza
+baja significa "refinable con más contexto", no "análisis
+incorrecto".
 
 ### Pull quotes en la narrativa (Fase 1)
 
@@ -368,14 +370,13 @@ La columna de prosa está acotada a `max-w-[68ch]` (~65 caracteres
 por línea) siguiendo Bringhurst 2005. Los pull quotes pueden
 extenderse ligeramente.
 
-### InfoPopover en dimensiones (Fase 1)
+### InfoPopover en dimensiones
 
-`DimensionBar` ahora acepta un prop opcional `info: { title, body,
+`DimensionBar` acepta un prop opcional `info: { title, body,
 example }`. En `LiveProfilePanel.tsx` (onboarding) y en los
 componentes del dashboard, cada dimensión Big Five y cada función
 Jung tiene un botón "?" que abre un popover con explicación en
-español plano y ejemplo. Aplica PAIR cap. 3 Mental Models +
-cap. 4 Explainability.
+español plano y ejemplo, reduciendo jerga técnica.
 
 ### Link a PDF export (Fase 3.5)
 
@@ -397,8 +398,7 @@ sola vista larga. El layout actual parte en dos:
 
 El usuario revela la capa 2 con un click explícito en el botón
 "Ver perfil completo". Reduce carga cognitiva inicial y crea un
-momento de exploración elegida. ADR-025 y PAIR cap. 3 Mental
-Models. Fundamento de Loom + Smashing Mag pattern.
+momento de exploración elegida.
 
 ### framer-motion spring animations (Fase 3.2)
 
@@ -428,9 +428,9 @@ de la respuesta original del prompt `analyze-profile.ts` (campo
 
 ### Impacto en métricas
 
-Con el hallazgo empírico de H1 (Big Five estable, Jung functions
-inestables) documentado en VALIDATION.md, el confidence surface
-tiene justificación metodológica concreta: el usuario debería
-poder ver un indicador de qué tan certero es el análisis, y la
-certeza que reporta el prompt está ahora empíricamente calibrada
-contra la variance observada en el experimento H1.
+El confidence surface tiene justificación metodológica concreta:
+el usuario debe poder ver un indicador de qué tan certero es el
+análisis, y el campo `per_dimension_status` (ADR-027) que viaja
+con cada inferencia del módulo analítico expone explícitamente
+qué dimensiones Big Five están en zona `ok` y cuáles en
+`low_confidence`.

@@ -8,8 +8,7 @@
 - `env-vars.md` — extracted from `.env.local.example` + tsc source scan
 - `api-types.md` — extracted from `types/index.ts` + Zod schemas (auto-generated post-Phase 3)
 - `sql-schema-dump.sql` — `pg_dump --schema-only` output for current Supabase state (post-migration, on demand)
-- `eval-results-{date}.md` — H1 + H2 run outputs (committed from CI main-branch workflow)
-- `dependency-graph.md` — `madge` output showing module dependencies (post-Phase 5)
+- `dependency-graph.md` — `madge` output showing module dependencies
 
 ## How to regenerate
 
@@ -41,11 +40,6 @@ Runs `supabase db dump --schema-only` against the local Supabase instance and
 writes `sql-schema-dump.sql`. Useful for comparing to migrations and catching
 drift.
 
-### Eval results
-
-Auto-committed by `.github/workflows/eval-main.yml` on every main-branch push.
-See [tech/EVALS.md](../tech/EVALS.md).
-
 ### Dependency graph
 
 ```bash
@@ -75,5 +69,5 @@ visible.
 ## See also
 
 - [PLAN.md](../PLAN.md) — master plan + doc map
-- [tech/EVALS.md](../tech/EVALS.md) — eval snapshot generation
+- [tech/EVALS.md](../tech/EVALS.md) — métricas y evaluación
 - [tech/DATABASE.md](../tech/DATABASE.md) — schema source of truth

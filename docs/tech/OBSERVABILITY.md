@@ -149,7 +149,7 @@ ORDER BY day DESC;
 ### Informational
 - **New registration** (daily digest)
 - **Successful analyses** (weekly digest)
-- **Weekly eval suite results** — if H1 or H2 drift
+- **Métricas semanales del módulo analítico** — si MSE/R²/r drift por dimensión
 
 ### Alert delivery
 
@@ -303,7 +303,7 @@ Weekly:
 
 Monthly:
 - [ ] Review all users' rate_limit patterns for abuse
-- [ ] Review `research_dataset` growth (if Branch A)
+- [ ] Review `research_dataset` growth
 - [ ] Update `docs/tech/INCIDENTS.md` with any issues
 
 ## References

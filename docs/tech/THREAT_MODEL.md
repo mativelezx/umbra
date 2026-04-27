@@ -124,8 +124,8 @@ flowchart LR
 | Threat | Risk | Mitigation | ADR |
 |---|---|---|---|
 | **S**poofing del endpoint Claude | Baja | TLS verification en Anthropic SDK | — |
-| **T**ampering del modelo (silent upgrade) | Alta (rompe H1 determinismo) | Pinned SKU `claude-sonnet-4-6-20260301`, NO alias | ADR-005, ADR-014 |
-| **R**epudiation de request/response | Media | Committed cache snapshots + model id en cada eval-results JSON | ADR-014 |
+| **T**ampering del modelo (silent upgrade) | Alta (afecta reproducibilidad de la capa narrativa) | Identificador de modelo fijado vía `ANTHROPIC_MODEL_ID` | ADR-005 |
+| **R**epudiation de request/response | Media | Logs estructurados + identificador de modelo persistido en cada perfil | ADR-005 |
 | **I**nformation disclosure via training | Baja | Anthropic enterprise terms: no training on prompts | — |
 | **D**oS por Anthropic API outage | Alta | Fallback path en conductor (open_text question) | ADR-022 |
 | **E**levation vía prompt injection → Claude genera output malicioso | Media | Classifier fail-closed + ChatGPT seed parser con Zod validation + narrativa system prompt fijo | ADR-018 |
@@ -135,7 +135,7 @@ flowchart LR
 | Threat | Risk | Mitigation | ADR |
 |---|---|---|---|
 | **S**poofing por otro sitio con cookies compartidas | Baja | SameSite=Lax default en Supabase | — |
-| **T**ampering del DOM para saltar consent | Media | Server-side check en middleware: sin consent → redirect a `/consent` | ADR-017, ADR-024 |
+| **T**ampering del DOM para saltar consent | Media | Server-side check en middleware: sin consent → redirect a `/consent` | ADR-024 |
 | **R**epudiation de acciones del usuario | Baja | Server logs con IP hash | — |
 | **I**nformation disclosure via XSS | Crítica | React escapes por default; no `dangerouslySetInnerHTML` en contenido del usuario; CSP headers via Vercel | — |
 | **D**oS via client-side bundle bloat | Baja | Next.js tree-shake + dynamic imports para html2pdf.js | ADR-006 |
@@ -152,34 +152,34 @@ flowchart LR
 
 ## Amenazas residuales conocidas (y por qué aceptamos el trade-off)
 
-1. **P1 — ChatGPT seed flow no propaga raw text al analizador final**
-   (documentado en commit f185d25). La calidad del perfil seeded degrada
-   silenciosamente. **Aceptado** para scope del TFG porque el demo oral
-   usa el flow dinámico, no el seeded. Fix es trabajo post-TFG.
-2. **Cross-vendor H2** (Sonnet + Haiku, no GPT + Llama). Documentado en
-   ADR-020 como limitación metodológica explícita.
-3. **Branch B sin usuarios reales longitudinales**. Documentado en
-   ADR-023; compensado con M3 think-aloud n=8-10 como secondary
-   validation (VALIDATION.md).
-4. **CI test de RLS coverage** no existe aún. Riesgo: que un developer
-   cree una tabla nueva sin policy. Mitigación pending en
-   IMPLEMENTATION_PLAN.md.
-5. **Consent text hash** no se verifica aún client-side (ADR-024 landing
-   en migration 004, pero el cliente no envía el hash todavía).
+1. **Dependencia operativa del proveedor LLM externo** en la capa
+   narrativa. Documentado como riesgo en TP1; mitigación con
+   identificador de modelo fijado y capa de abstracción.
+2. **Heterogeneidad EN/ES-AR** del corpus de entrenamiento del módulo
+   analítico. Mitigación: reporte por dimensión Big Five con umbrales
+   R²>0.20 y r>0.30 (ADR-027); las dimensiones que no alcancen el
+   umbral se marcan `low_confidence` y se excluyen del componente
+   cuantitativo del perfil.
+3. **Sesgo del corpus latinoamericano** generado con asistencia IA.
+   Mitigación documentada en ADR-028 (rúbrica manual + recomendación
+   de validación cruzada con muestras humanas).
+4. **n bajo en el estudio SUS** planificado para TP3/TP4. Mitigación:
+   reporte honesto del n efectivo y apoyo en métricas ML, axe-core en
+   CI, unit + E2E que son independientes del n de usuarios.
 
 ## Revisar este documento cuando
 
-- Se agregue una tabla nueva a Supabase (evaluar RLS + STRIDE en sección 4)
-- Se cambie el rewriter de H2 a cross-vendor (actualizar ADR-020 + sección 5)
-- Cualquier ADR nueva toque superficies de auth, crypto, o storage
-- Antes de la defensa del TFG, como gate final
+- Se agregue una tabla nueva a Supabase (evaluar RLS + STRIDE en sección 4).
+- Se cambie el proveedor o el modelo de la capa narrativa (sección 5).
+- Cualquier ADR nueva toque superficies de auth, crypto, o storage.
+- Antes de cada release significativa.
 
 ## Referencias
 
 - [OWASP STRIDE](https://owasp.org/www-community/Threat_Modeling_Process)
 - [Microsoft STRIDE](https://learn.microsoft.com/en-us/previous-versions/commerce-server/ee823878(v=cs.20))
-- [SECURITY.md](SECURITY.md) — implementación de peppers, HMAC, CSP
-- [CHAT_SAFETY.md](CHAT_SAFETY.md) — pipeline de crisis + H3 eval
-- [DECISIONS.md](../DECISIONS.md) — 25 ADRs
-- [biz/LEGAL.md](../biz/LEGAL.md) — mapeo Ley 25.326
-- [biz/VALIDATION.md](../biz/VALIDATION.md) — H1/H2/H3 metodología
+- [SECURITY.md](SECURITY.md) — implementación de peppers, HMAC, CSP.
+- [CHAT_SAFETY.md](CHAT_SAFETY.md) — pipeline de crisis y evaluación.
+- [DECISIONS.md](../DECISIONS.md) — Architecture Decision Records.
+- [biz/LEGAL.md](../biz/LEGAL.md) — mapeo Ley 25.326.
+- [biz/VALIDATION.md](../biz/VALIDATION.md) — plan de validación.

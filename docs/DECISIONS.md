@@ -1,10 +1,15 @@
 # Umbra — Architecture Decision Records (ADRs)
 
 This file is the source of truth for major architectural decisions. Each ADR
-is immutable once written — if a decision changes, append a new ADR that
-supersedes the old one and mark the old one as `SUPERSEDED by ADR-NNN`.
+is immutable once written: if a decision evolves materially, append a new ADR
+that builds on it and reference the prior record explicitly.
 
 Format: `ADR-NNN — Title` · `Status` · `Context` · `Decision` · `Consequences`.
+
+> Numbering note: the sequence has gaps. Numbers reflect chronological order
+> of authoring; missing identifiers were never published. Cross-references in
+> the rest of the documentation always cite the ADR by number, so the gaps
+> are intentional and stable.
 
 ---
 
@@ -21,16 +26,17 @@ or libraries that depend on them. html2pdf.js stays client-side (ADR-006).
 
 ## ADR-002 — Jung cognitive functions used DIRECTLY, not via MBTI
 **Status**: Accepted (2026-04-12)
-**Context**: MBTI is widely criticized as pseudoscience (Stein 2019, Pittenger
-1993). Jung's original cognitive function theory from Tipos Psicológicos (1921)
-is theoretically coherent and has renewed academic interest — Sauer (2020)
-"Rehabilitating Jung's Cognitive Function Theory" frames functions as the
-cognitive architecture generating Big Five behavioral traits.
+**Context**: MBTI is widely criticized as pseudoscience (Stein & Swan 2019,
+Pittenger 2005). Jung's original cognitive function theory from *Tipos
+Psicológicos* (1921) is theoretically coherent and remains in the public
+domain.
 **Decision**: `lib/knowledge/jung-functions.ts` cites Jung (1921) directly.
 No MBTI terminology in code, prompts, or UI. The 8 functions (Se, Si, Ne, Ni,
-Te, Ti, Fe, Fi) are primary.
+Te, Ti, Fe, Fi) are primary. The Jung layer is interpretive, not measured by
+the analytical module (see ADR-026 + ADR-027).
 **Consequences**: We lose the recognizability of "INFJ / INTP" labels but gain
-academic defensibility. The paper can cite Sauer (2020) as theoretical framing.
+academic defensibility. The thesis cites Jung (1921) as source for the
+narrative reading layer.
 
 ## ADR-003 — Supabase + RLS instead of NextAuth
 **Status**: Accepted (2026-04-12)
@@ -51,20 +57,20 @@ because the master doc predated the deprecation.
 **Decision**: Phase 1.5 migrates all files reading cookies to `@supabase/ssr`:
 `lib/supabase/client.ts`, `lib/supabase/server.ts`, `lib/supabase/middleware.ts`,
 `middleware.ts`, and any API route that trusts the session.
-**Consequences**: 0.5-1 day of debugging RLS edge cases during migration.
+**Consequences**: Some debugging of RLS edge cases during migration.
 Future-proof against further auth-helpers abandonment.
 
 ## ADR-005 — Claude model ID as environment variable, pinned SKU
-**Status**: Accepted (2026-04-12) · **Amended by ADR-014**
+**Status**: Accepted (2026-04-12)
 **Context**: Master doc hardcoded `CLAUDE_MODEL = 'claude-sonnet-4-20250514'`.
-Claude Sonnet 4.6 is now available (April 2026) and is cheaper/faster/better.
-Hardcoding a model creates a code change every time a new model lands.
-**Decision**: `lib/claude/client.ts` reads `process.env.ANTHROPIC_MODEL_ID`,
-default `claude-sonnet-4-6`. All routes use the env var.
+Hardcoding a model creates a code change every time a new model lands, and
+aliases can silently shift behind a fixed name.
+**Decision**: `lib/claude/client.ts` reads `process.env.ANTHROPIC_MODEL_ID`
+with a default of `claude-sonnet-4-6`. The thesis methods section cites the
+exact SKU resolved at runtime so any reproduction step is unambiguous.
 **Consequences**: Model can be swapped via env var without a code deploy.
-Trade-off: if the env var uses an alias (e.g. `claude-sonnet-4-6`), Anthropic
-may silently upgrade the underlying version and break H1 determinism. See
-ADR-014 for the pinned-SKU fix.
+The narrative layer is the only consumer of this variable; the analytical
+module owns its own model artifacts (ADR-026).
 
 ## ADR-006 — `html2pdf.js` client-side only, PDF export is a client component
 **Status**: Accepted (2026-04-12)
@@ -84,14 +90,16 @@ the user's browser is online. Print stylesheet is additional maintenance surface
 **Status**: Accepted (2026-04-12)
 **Context**: Jung's structural archetypes (Anima, Animus, Shadow, Self) are
 intra-psychic and don't map cleanly to behavioral profiles. Pearson's "applied
-archetypes" (Hero, Sage, Explorer, Creator, Caregiver, Rebel) are behavioral,
-validated for adult personality, and map cleanly to Big Five.
+archetypes" (Hero, Sage, Explorer, Creator, Caregiver, Rebel) are behavioral
+and map cleanly to the Big Five.
 **Decision**: `lib/knowledge/archetypes.ts` uses Pearson's 6-archetype system
-(Carol S. Pearson, "The Hero Within" 1986 / "Awakening the Heroes Within" 1991).
-The 6 archetypes are frozen and match `types/index.ts` enum.
-**Consequences**: Assignment criteria are rule-based (Big Five + Jung function
-patterns → archetype). Prompts + narrative + SVG avatars + eval golden cases
-all depend on this choice; changing archetypes later is expensive.
+(Pearson, *Awakening the Heroes Within*, 1991). The 6 archetypes are frozen
+and match `types/index.ts` enum. Like Jung functions, archetypes are an
+interpretive narrative reading, not a measured dimension of the analytical
+module (ADR-026).
+**Consequences**: Assignment criteria are heuristic (Big Five + Jung function
+patterns → archetype). Prompts, narrative, SVG avatars all depend on this
+choice; changing archetypes later is expensive.
 
 ## ADR-008 — `crisis_events` observability: salted hashes, 30-day rotation
 **Status**: Accepted (2026-04-12)
@@ -110,60 +118,27 @@ and classifier severity, not their original message.
 
 ## ADR-009 — Test runner is vitest, not jest
 **Status**: Accepted (2026-04-12)
-**Context**: Project needs a test runner for Phase 2 onwards (eval suite,
-regression tests, unit tests). Jest is mature but slow to start and has
-complex ESM handling. Vitest is Vite-native, fast ESM, built-in coverage.
+**Context**: Project needs a test runner for unit and integration tests. Jest
+is mature but slow to start and has complex ESM handling. Vitest is
+Vite-native, fast ESM, built-in coverage.
 **Decision**: `vitest` + `@vitest/ui`. Test files colocated with source
-(`*.test.ts` next to `*.ts`) for unit tests; `lib/evals/` for eval suite.
-Run via `npm run test` (unit + integration) and `npm run eval` (eval suite).
+(`*.test.ts` next to `*.ts`) for unit tests. Run via `npm run test`.
 **Consequences**: Faster CI. Simpler config. Any library that requires jest
 specifically won't work. No such library in our stack.
 
 ## ADR-010 — i18n library is `next-intl@^3`
 **Status**: Accepted (2026-04-12)
-**Context**: Master doc mentions rioplatense Spanish. For the TFG we ship only
+**Context**: Master doc mentions latinoamericano Spanish. For the TFG we ship only
 ES-AR, but retrofit i18n later is painful (all strings inline to dictionary).
 Two candidates: `next-intl` (App Router native middleware) or `@formatjs/intl`
 (library-only, no middleware).
-**Decision**: `next-intl@^3`. Locales: `es-AR` (primary, voseo and rioplatense
+**Decision**: `next-intl@^3`. Locales: `es-AR` (primary, voseo and latinoamericano
 vocabulary), `en` (stub). Middleware-based locale detection. Messages live in
 `messages/es-AR.json` and `messages/en.json`. All component strings pass
 through `t()` from day 1.
-**Consequences**: Day 1 of Phase 2 has i18n boilerplate. English dictionary
+**Consequences**: Initial i18n boilerplate. English dictionary
 starts empty and can be filled later. No runtime penalty — JSON dictionaries
 are bundled per locale.
-
-## ADR-011 — Eval hypotheses: H1 (determinism) + H2 (cross-model paraphrase)
-**Status**: Accepted (2026-04-12) · **Amended by ADR-014**
-**Context**: The paper needs falsifiable preregistered hypotheses. User-level
-test-retest (same user, new text at day 7) is the strongest methodologically
-but requires human subjects + ethics approval. Model-level determinism is
-cheap and runs on CI.
-**Decision**: Two hypotheses preregistered on OSF:
-- H1: Determinism at `temperature=0` with pinned model SKU → scores deviate
-  < 5 points across 5 runs on the same case.
-- H2: Cross-model paraphrase consistency — 3 rewrites of each case produced
-  by two different rewriters (GPT + local Llama) → scores deviate < 10 points
-  across rewrites.
-User-level test-retest is NOT preregistered. It's noted as future work if
-ethics clearance unblocks a longitudinal study.
-**Consequences**: H1 is technically a determinism check of the instrument,
-not a construct check. H2 is a construct check but also measures cross-model
-robustness (stronger claim). Both run on CI against the committed eval cache.
-
-## ADR-012 — OSF Standard Prereg with computational-study framing
-**Status**: Accepted (2026-04-12)
-**Context**: OSF offers Secondary-Data Prereg (for reanalyzed existing data),
-Primary-Data Prereg (for human-subjects trials), and Standard Prereg. Umbra's
-eval cases are forward-collected computational stimuli — neither secondary
-nor human-subjects.
-**Decision**: Use OSF Standard Preregistration with an explicit computational-
-study framing paragraph: "the model acts as a stochastic instrument; eval
-cases are the fixed stimuli; temperature=0 with pinned SKU defines
-determinism." Template sections map to Umbra's hypotheses as documented in
-the CEO plan.
-**Consequences**: Template choice is non-standard but defensible. Thesis
-advisor should review the framing before OSF submission.
 
 ## ADR-013 — `research_dataset` is pseudonymization, not anonymization
 **Status**: Accepted (2026-04-12)
@@ -174,43 +149,22 @@ consent is revocable) is by definition reversible by whoever holds the
 linking key. We cannot promise both irreversibility AND right-to-delete.
 **Decision**: `research_dataset.user_hash = HMAC(user_id, RESEARCH_PEPPER)`.
 This is pseudonymization — the server with pepper access can re-link.
-Consent text discloses this honestly: "sus datos seran seudonomizados, no
-anonimizados irreversiblemente; el responsable con acceso a la clave secreta
-podria tecnicamente re-vincularlos." Research rows ARE included in
+Consent text discloses this honestly. Research rows ARE included in
 `/api/account/export` when `research_opt_in=true` (same code path that
 enables delete-with-purge). Legal basis under Ley 25.326 is explicit
 informed consent + data minimization + access control.
 **Consequences**: Consent text is longer and less marketable. Legally honest
 and ethically defensible.
 
-## ADR-014 — Eval reproducibility via committed cache snapshots + pinned SKU
-**Status**: Accepted (2026-04-12) · **Amends ADR-005, ADR-011**
-**Context**: The reproducibility claim "clone repo, run `npm run eval`"
-depends on a live third-party API, a mutable hosted model, and a gitignored
-cache. If Anthropic silently updates `claude-sonnet-4-6` (the alias) to a
-new version, H1 determinism breaks and past results become unreproducible.
-**Decision**: (1) Pin `ANTHROPIC_MODEL_ID` to a dated SKU like
-`claude-sonnet-4-6-20260301`, never an alias. (2) Eval snapshots are written
-to `lib/evals/.cache/snapshot-{date}-{model}.json` and **committed to the
-repo** (not gitignored). (3) Paper methods section points to the git commit
-hash of the snapshot used for published results. (4) Reviewers reproduce via
-`npm run eval -- --from-cache` offline with zero API cost.
-**Consequences**: Snapshot files add ~1-5 MB to the repo per eval run.
-Eval runs that regenerate the snapshot must be intentional
-(`npm run eval -- --no-cache`). Paper reproducibility claim is now honest:
-"reproducible against committed snapshot at commit X" not "reproducible by
-running against the live API".
-
 ## ADR-015 — Big Five content from IPIP-NEO (public domain), not NEO-PI-R
 **Status**: Accepted (2026-04-12)
 **Context**: The NEO-PI-R manual (Costa & McCrae 1992) is proprietary; PAR
-Inc. licenses its use for commercial and some academic purposes. "Paraphrased
-with citation" of manual content in a public repo + real product is not a
-license. IPIP-NEO (International Personality Item Pool, Goldberg 1999) is
-public domain, maps to the same 5 factors × 30 facets structure, and its
-item content + scoring rationale can be freely bundled with the repo and paper.
+Inc. licenses its use for commercial and some academic purposes. IPIP-NEO
+(International Personality Item Pool, Goldberg 1999) is public domain, maps
+to the same 5-factor structure, and its item content + scoring rationale can
+be freely bundled with the repo and thesis.
 **Decision**: `lib/knowledge/big-five.ts` cites IPIP-NEO, not NEO-PI-R. The
-paper methods section names IPIP-NEO as the Big Five instrument. Facet
+thesis methods section names IPIP-NEO as the Big Five instrument. Facet
 names follow IPIP conventions where they differ from NEO-PI-R.
 **Consequences**: Slight loss of brand recognition (NEO-PI-R is more famous
 in psychology circles) but legal clarity. Academic defensibility is
@@ -230,10 +184,10 @@ burn rate, which for a TFG with 1-10 concurrent users is cents. Acceptable.
 Tighter cap requires a more sophisticated mechanism (e.g., Redis pub/sub).
 
 ## ADR-018 — Citation comment format for `lib/knowledge/` items
-**Status**: Accepted (2026-04-12, from plan-eng-review)
-**Context**: The plan says KB content is "paraphrased-with-citation" as policy
-but never defines the comment format. Without enforcement, citations drift
-into inconsistent styles and the paper methods section becomes impossible to
+**Status**: Accepted (2026-04-12)
+**Context**: KB content is "paraphrased-with-citation" as policy
+but never had a defined comment format. Without enforcement, citations drift
+into inconsistent styles and the thesis methods section becomes impossible to
 audit.
 **Decision**: Every item in `lib/knowledge/*.ts` arrays MUST have a JSDoc
 comment block immediately above it with exactly these tags:
@@ -250,11 +204,11 @@ pinpoints the text. `@verbatim` is `true` if the text is a direct quote,
 `false` if paraphrased. A CI test (`lib/knowledge/citation-check.test.ts`)
 parses all KB files and fails if any item is missing the block.
 **Consequences**: Strict enforcement. Adding a KB item requires citation
-discipline. Paper methods section becomes trivially auditable — grep for
+discipline. Thesis methods section becomes trivially auditable — grep for
 `@verbatim false` to find all paraphrased content.
 
 ## ADR-019 — `analysis_raw` JSONB retention policy (30 days)
-**Status**: Accepted (2026-04-12, from plan-eng-review)
+**Status**: Accepted (2026-04-12)
 **Context**: `psychological_profiles.analysis_raw` stores the full Claude
 response JSON (~5-10KB per row) for debugging. On Supabase free tier (500MB
 total), this fills up at ~50k profiles. For a TFG this is fine but creates a
@@ -268,23 +222,8 @@ debug payload is dropped.
 older analyses only have the structured result. Trade-off: debug depth vs
 storage cost.
 
-## ADR-020 — H2 cross-model rewriters: Sonnet + Haiku, intra-vendor
-**Status**: Accepted (2026-04-12, from plan-eng-review)
-**Context**: H2 preregistered hypothesis requires "cross-model paraphrase
-consistency" — run a case through different rewriters, assert profile
-shifts < 10 points. Originally specified GPT + local Llama (via Ollama), but
-local Llama doesn't run on GitHub Actions runners (no GPU, size limits).
-**Decision**: H2 uses Claude Sonnet (pinned SKU) + Claude Haiku (pinned SKU)
-as the two rewriters. Both Anthropic, but architecturally distinct model
-sizes. This is "intra-vendor cross-model" rather than "cross-vendor."
-Paper methods section documents this as a known limitation: "H2 measures
-robustness across model scales within a single vendor family; a full
-cross-vendor test is future work."
-**Consequences**: Lower methodological strength than cross-vendor but fully
-automatable on CI. Honest limitation disclosed upfront.
-
 ## ADR-021 — Pepper versioning for rotation safety
-**Status**: Accepted (2026-04-12, from plan-eng-review)
+**Status**: Accepted (2026-04-12)
 **Context**: HMAC peppers need to be rotatable on compromise. Without
 versioning, rotating a pepper invalidates all existing hashes — crisis_events
 become un-linkable, research_dataset can't be re-associated for export, etc.
@@ -305,7 +244,7 @@ for new writes. Old rows still readable via their stored `pepper_version`.
 Future-proof against security incidents.
 
 ## ADR-022 — Rate limit: estimate-then-reconcile with finally-block cleanup
-**Status**: Accepted (2026-04-12, from plan-eng-review)
+**Status**: Accepted (2026-04-12)
 **Context**: The original spec charged tokens BEFORE the Claude call based on
 estimates, then "reconciled on success." But if Claude times out at 10s, the
 reconcile never runs and the user's cupo is permanently debited for tokens
@@ -321,91 +260,21 @@ charged for actual consumption.
 error handling per route. The `reconcile_rate_limit` SQL function is in
 Migration 002 alongside `charge_rate_limit`.
 
-## ADR-017 — Phase 0 Ethics Gate blocks Migration 002
-**Status**: Accepted (2026-04-12)
-**Context**: The research participant feature requires ethics clearance
-(Siglo 21 institutional policy varies). Shipping the schema (`research_dataset`,
-`profiles.research_opt_in`), consent text, and OSF wording BEFORE knowing
-whether ethics path is cleared creates a sequencing contradiction — codex
-outside voice finding 1.
-**Decision**: Phase 0 is a 30-min meeting with the TFG advisor, held BEFORE
-Phase 1.5.6 (Migration 002). Two branches: **Branch A** (ethics cleared with
-consent-only) ships the full schema + research feature. **Branch B** (ethics
-path unclear or blocked) ships Migration 002 without `research_dataset` and
-without the research section in the consent form. The paper's validation
-evidence rests solely on eval H1 + H2 in Branch B.
-**Consequences**: 30-min gate protects weeks of rework. Branch B is still a
-defensible TFG — the eval suite is the primary evidence regardless.
-
-## ADR-023 — Validación mixed-methods: Branch B (computacional) + M3 think-aloud (n=8-10)
+## ADR-024 — Consent text hash + locale en consent_records
 **Status**: Accepted (2026-04-14)
-**Context**: ADR-017 dejó abierta la elección entre Branch A (dataset de
-investigación con usuarios reales pseudonimizados) y Branch B (validación
-puramente computacional). Con la decisión del autor de optimizar para
-aprobación del TFG con mínimo riesgo, se evaluaron tres modalidades de
-validación con usuarios: M1 (estudio formal n≥30 con sesiones controladas y
-posible comité de ética), M2 (instrumentación in-app opt-in dependiente de
-tráfico), M3 (think-aloud con reclutamiento controlado de amigos y
-compañeros, n=8-10). M1 tiene alta varianza por dropout y burocracia ética;
-M2 depende de tráfico que el autor no controla (riesgo de n=0 a dos semanas
-de defensa); M3 es controlable de punta a punta y es defendible
-académicamente por la regla de Nielsen (n=5 detecta 85% de problemas de
-usabilidad; Nielsen & Landauer 1993). Adicionalmente, el audit de Fase 0
-reveló que `lib/evals/` no existe todavía — H1/H2 deben ser escritos, no
-solo corridos.
-**Decision**: El TFG adopta un enfoque mixed-methods con dos pilares:
-(1) **Branch B computacional como primary validation evidence** con tres
-hipótesis preregistradas en OSF: H1 (determinismo, stddev<2.5 a temp=0),
-H2 (robustez a paráfrasis intra-vendor, max pairwise delta<10 — ADR-020),
-H3 (safety empírico del crisis classifier, recall≥0.95 y precision≥0.85
-sobre un dataset etiquetado n=100).
-(2) **M3 think-aloud como secondary user validation** con reclutamiento
-controlado de 8-10 amigos y compañeros de Siglo 21, protocolo fijo (SUS en
-español + 3 preguntas abiertas + grabación con consentimiento), análisis
-cuanti (SUS promedio + stddev) y cuali (coding temático con citas textuales
-anonimizadas). Sin comité de ética formal — es usability testing informal
-con consentimiento escrito simple, práctica estándar en HCI aplicada.
-El código `lib/evals/` se escribe en Fase 5 del IMPLEMENTATION_PLAN.md
-antes de correr H1/H2. La tesis presenta Branch B como primary y M3 como
-secondary en la sección de Validación.
-**Consequences**:
-- **Ganancia**: control total sobre variables, cero dependencia de tráfico
-  externo, cero burocracia ética, timeline defendible (~6-7 semanas),
-  mixed-methods convincente para tribunal de Ingeniería en Software.
-- **Costo**: no podemos afirmar usabilidad con poder estadístico de n≥30;
-  el coding temático cualitativo depende de la calidad de las 8-10
-  sesiones.
-- **Plan B documentado**: si M3 no llega a n=8 por dropout, pivotamos a
-  reporte honest con el n obtenido y nos apoyamos en H1/H2/H3 como evidencia
-  primary. El tribunal no puede objetar si el pivot está documentado desde
-  antes de la recolección.
-- **Scope cut explícito**: UMUX-Lite/METUX in-app, shipeo a producción,
-  framer-motion, chat persistente, y todos los items estructurales del
-  research de UX quedan fuera del TFG y pasan a "Trabajo futuro" en la
-  tesis. Ver IMPLEMENTATION_PLAN.md sección "Scope explícitamente FUERA del
-  TFG".
-- **Timeline realista**: 6-7 semanas calendario con 3-4 hs/día; 4-5 semanas
-  full-time. Ver IMPLEMENTATION_PLAN.md timeline.
-- **Supersedes**: reemplaza la ambigüedad de ADR-017 sobre qué branch
-  adoptar. ADR-017 sigue vigente para la estructura de Migration 002.
-
-## ADR-024 — Parche Ley 25.326: consent_text_hash + locale en consent_records
-**Status**: Accepted (2026-04-14)
-**Context**: El audit de Fase 0 (2026-04-14) identificó que
-`supabase/migrations/002_core_tables.sql` crea la tabla `consent_records`
-con `consent_version TEXT`, `accepted_at`, `ip_hash + pepper_version`, y
-`user_agent`, pero **no almacena un hash verificable del texto consentido
-verbatim ni el locale**. Para datos psicológicos sensibles bajo Ley 25.326
-(datos sensibles — art. 2 y art. 7), la autoridad de aplicación (AAIP)
-exige que el consentimiento sea "preciso e informado", lo cual requiere
-poder demostrar qué texto específico vio el usuario al aceptar. El campo
-`consent_version TEXT` alone no es suficiente: si mañana se corrige una
-tipografía o una frase del texto de consentimiento manteniendo la versión
-(o incluso cambiando la versión retroactivamente por error), no hay forma
-de auditar qué vio históricamente el usuario X. Adicionalmente, el
-`consent_records` schema no captura `locale`, lo cual en un contexto
-multi-idioma futuro (next-intl ya está instalado — ADR-010) puede hacer
-imposible distinguir a un usuario que consintió en español vs inglés.
+**Context**: `supabase/migrations/002_core_tables.sql` crea la tabla
+`consent_records` con `consent_version TEXT`, `accepted_at`, `ip_hash +
+pepper_version`, y `user_agent`, pero **no almacena un hash verificable del
+texto consentido verbatim ni el locale**. Para datos psicológicos sensibles
+bajo Ley 25.326 (datos sensibles — art. 2 y art. 7), la autoridad de
+aplicación (AAIP) exige que el consentimiento sea "preciso e informado", lo
+cual requiere poder demostrar qué texto específico vio el usuario al
+aceptar. El campo `consent_version TEXT` no es suficiente: si mañana se
+corrige una tipografía manteniendo la versión, no hay forma de auditar qué
+vio históricamente el usuario X. Adicionalmente, el `consent_records` schema
+no captura `locale`, lo cual en un contexto multi-idioma futuro (next-intl
+ya está instalado — ADR-010) puede hacer imposible distinguir a un usuario
+que consintió en español vs inglés.
 **Decision**: Se agregan dos columnas a `consent_records` vía migration 004:
 ```sql
 ALTER TABLE public.consent_records
@@ -421,7 +290,6 @@ verbatim de cada versión se mantiene en archivos versionados bajo
 `content/consent/<version>-<locale>.md` para poder verificar hashes a
 posteriori. El test `consent-text-integrity.test.ts` valida que el hash
 computado sobre el archivo coincide con el que el cliente envía.
-Esta migration es parte de Fase 5 del IMPLEMENTATION_PLAN.md (task T5.8).
 **Consequences**:
 - **Ganancia**: auditabilidad completa del consentimiento bajo Ley 25.326;
   capacidad de probar ante la AAIP o ante el usuario mismo qué texto
@@ -430,111 +298,106 @@ Esta migration es parte de Fase 5 del IMPLEMENTATION_PLAN.md (task T5.8).
   flow + mantenimiento de archivos verbatim en repo (`content/consent/`).
 - **Migración de datos existentes**: los registros anteriores a la
   migration quedan con `consent_text_hash=''` y `locale='es-AR'` (defaults).
-  Se documenta en LEGAL.md como "consentimientos pre-migración 004
-  auditables solo por `consent_version`".
-- **Dependencia**: [docs/features/CONSENT.md](../features/CONSENT.md) y
-  [docs/biz/LEGAL.md](biz/LEGAL.md) deben actualizarse para reflejar el
-  nuevo schema.
-- **Linked to**: IMPLEMENTATION_PLAN.md T5.8, ADR-021 (pepper versioning —
-  mismo patrón de immutable audit trail).
+- **Linked to**: ADR-021 (pepper versioning — mismo patrón de immutable
+  audit trail).
 
-## ADR-025 — Aplicación de heurísticas Google PAIR en Fase 1 Dashboard/Chat/Onboarding
+## ADR-026 — Módulo analítico propio (DistilBERT congelado + Ridge multi-output)
 **Status**: Accepted (2026-04-14)
-**Context**: El IMPLEMENTATION_PLAN.md Fase 1 introduce 7 cambios de UX
-(confidence surface, pull quotes, line-length 65ch, sticky TOC con
-scroll-spy, InfoPopover en dimensiones Big Five/Jung, InsightPing
-colapsable, QuickPromptChips siempre visibles). Para un TFG de Ingeniería
-en Software estas mejoras necesitan estar fundamentadas como decisiones
-técnicas defendibles, no como preferencia estética. Sin una fundamentación
-explícita, un tribunal puede objetar "son solo cambios de estilo". La
-literatura de HCI aplicada a IA tiene un marco establecido y citable: el
-**People + AI Guidebook** de Google PAIR (pair.withgoogle.com/guidebook),
-con 6 capítulos de heurísticas que cubren todo el ciclo de vida de un
-producto human-centered AI: (1) User Needs + Success Definition,
-(2) Data Collection + Evaluation, (3) Mental Models, (4) Explainability +
-Trust, (5) Feedback + Control, (6) Errors + Graceful Failure.
-**Decision**: Cada tarea de Fase 1 se mapea explícitamente a uno de los
-capítulos del PAIR Guidebook y se documenta el racional:
-
-- **T1.1 Confidence surface** (ArchetypeCard + QuickGlance) → PAIR cap. 4
-  Explainability + Trust. Fundamento: "the user should be able to see
-  the model's confidence in its output and the basis for that
-  confidence". Implementación: se lee `analysis_raw.confidence` del
-  profileRow, se renderiza como barra + porcentaje + "basado en N
-  respuestas" con InfoPopover que explica qué significa certeza baja vs
-  alta. El usuario entiende que un valor bajo no es "falla" sino
-  "refinable con más contexto".
-- **T1.2 Pull quotes** (SectionedNarrative parser + prompt) → PAIR cap. 3
-  Mental Models. Fundamento: los modelos mentales se construyen mejor
-  con anclas memorables, no con texto plano. Implementación: el prompt
-  de generación de narrativa ahora instruye a Claude a marcar 1-2
-  frases esenciales por sección con \`> \` (markdown blockquote); el
-  parser reconoce esos blockquotes y los renderiza como callouts
-  italic grandes. La prosa gana ritmo y el usuario recuerda las frases
-  destacadas mucho más que un muro de texto.
-- **T1.3 Line-length 65ch** → PAIR cap. 3 Mental Models (cognitive load
-  reduction). Fundamento: la investigación en tipografía (Bringhurst
-  2005, Smashing 2022) establece que líneas de 60-80 caracteres son
-  óptimas para comprensión. Implementación: la columna interna de
-  SectionedNarrative se restringe a \`max-w-[68ch]\`, lo cual deja ~65ch
-  para la prosa y aproxima los pull quotes dentro del mismo ritmo.
-- **T1.4 Sticky TOC con scroll-spy** (NarrativeTOC nuevo) → PAIR cap. 5
-  Feedback + Control. Fundamento: el usuario necesita saber dónde está
-  y poder navegar un documento largo sin perder contexto. Implementación:
-  nuevo componente client-side que usa IntersectionObserver para spy la
-  sección visible y resaltar su anchor. Los 5 headers (Apertura, Cómo
-  te movés, Lo que te cuesta, Lo que te mueve, Lo que queda por explorar)
-  son fijos por el prompt de narrativa, así que la fuente de verdad está
-  en \`lib/dimensions/narrative-sections.ts\` con regex + slugs. Visible
-  solo en \`lg:\` (desktop) para no crowdear el scroll en mobile.
-- **T1.5 InfoPopover en dimensiones** (DimensionBar + LiveProfilePanel +
-  QuickGlance + JungAxisView) → PAIR cap. 4 Explainability + Trust y
-  cap. 3 Mental Models. Fundamento: toda etiqueta técnica que ve el
-  usuario (openness, conscientiousness, Ni, Ti, etc.) debe estar a un
-  click de una explicación en español plano con ejemplo. Implementación:
-  \`DimensionBar\` gana un prop opcional \`info\` con title/body/example;
-  si está presente, renderiza un botón "?" al lado del label que abre
-  un popover. Se aplica a las 5 Big Five + 8 funciones Jung en
-  LiveProfilePanel y QuickGlance; JungAxisView ya lo tenía desde antes.
-- **T1.6 InsightPing colapsable** (InsightPing simplificado +
-  LiveProfilePanel con botón toggle) → PAIR cap. 5 Feedback + Control.
-  Fundamento: los insights generados durante el onboarding son
-  discoveries del usuario sobre sí mismo; hacerlos auto-expire en 4.2s
-  los vuelve efímeros, el usuario los pierde si está leyendo la pregunta.
-  Implementación: InsightPing ya no tiene setTimeout; LiveProfilePanel
-  renderiza los insights como una lista colapsable con header
-  "Descubrimientos · N" + caret que toggle expand/collapse. Por default
-  expandido; el usuario puede contraer para reducir clutter visual.
-- **T1.7 QuickPromptChips siempre visibles** (QuickPromptChips con prop
-  \`compact\` + ChatShell siempre renderiza) → PAIR cap. 5 Feedback +
-  Control y cap. 1 User Needs + Success. Fundamento: los prompts
-  sugeridos son entry-points al mirror; limitarlos al empty state
-  significa que una vez que la conversación arranca, el usuario no tiene
-  forma de volver a descubrir qué preguntas puede hacer. Implementación:
-  QuickPromptChips ahora acepta \`compact?: boolean\`; el ChatShell los
-  renderiza siempre que haya profile, con \`compact={!isEmpty}\` —
-  horizontal scroll strip de 4 pills pequeñas arriba del ChatInput cuando
-  hay mensajes, hero full-size cuando el chat está vacío.
-
+**Context**: La capa cuantitativa del perfil necesita inferir las cinco
+dimensiones del modelo Big Five sobre texto introspectivo de manera
+trazable, reproducible y sin depender de un proveedor externo en cada
+inferencia. Las opciones consideradas fueron: (a) usar el LLM externo para
+también inferir Big Five; (b) construir un módulo analítico propio basado
+en embeddings preentrenados + un regresor clásico. La opción (a) hereda la
+opacidad del proveedor y exige métricas reproducibles que dependen de su
+catálogo. La opción (b) ofrece un instrumento auditable, con artefactos
+serializables y métricas calculables por dimensión.
+**Decision**: Se construye un módulo analítico propio en `ml/` con dos
+etapas: (1) DistilBERT base multilingual cased (Sanh et al. 2019) usado en
+modo *frozen embeddings* — sin fine-tuning, siguiendo la línea de Howard y
+Ruder (2018) y Peters et al. (2019) — para extraer un vector de 768
+dimensiones por texto; (2) cinco regresores Ridge (Hoerl & Kennard 1970)
+multi-output, uno por dimensión Big Five, entrenados con scikit-learn
+(Pedregosa et al. 2011) sobre la unión de los corpus Essays (Pennebaker &
+King 1999) y el corpus latinoamericano propio. El módulo se sirve como API
+HTTP via FastAPI; el frontend Next.js consume el endpoint via
+`lib/ml-client.ts`. Versionado de datos via DVC, tracking de experimentos
+via MLflow (Zaharia et al. 2018), CI con GitHub Actions verifica métricas
+mínimas. La capa narrativa (Jung + arquetipo + retrato + plan + chat)
+queda separada y delegada al proveedor externo de IA generativa.
 **Consequences**:
-- **Ganancia académica**: cada cambio de UX está citable en el capítulo
-  de Implementación de la tesis con una referencia al PAIR Guidebook,
-  transformando "mejoras de estilo" en "aplicación de heurísticas HCI
-  validadas". El tribunal no puede objetar "son solo cambios estéticos".
-- **Ganancia de producto**: las decisiones son internamente consistentes
-  (todas las partes del sistema reducen jerga via InfoPopover, todas
-  refuerzan mental models via pull quotes + TOC, todas dan control al
-  usuario via collapsible + chips) — el producto se siente más pensado.
-- **Costo**: los cambios se deben describir uno a uno en la tesis (no
-  agrupar como "polish"). Agrega ~2 páginas al capítulo de
-  Implementación pero son páginas defendibles.
-- **Positive Computing alignment**: los 7 cambios respetan autonomía
-  (el usuario navega, no el sistema), competencia (entiende lo que ve
-  sin jerga clínica), y relación (el mirror sigue sintiéndose cercano,
-  no clínico). Linkea directamente con [ETHICS.md](biz/ETHICS.md) Calvo
-  & Peters principles.
-- **Linked to**: IMPLEMENTATION_PLAN.md Fase 1, [VALIDATION.md](biz/VALIDATION.md)
-  RQ4, [biz/TFG.md](biz/TFG.md) Metodología, PAIR Guidebook
-  (https://pair.withgoogle.com/guidebook/).
-- **Superseded by**: future ADRs if PAIR Guidebook is updated or if the
-  narrative structure changes.
+- **Ganancia**: instrumento auditable, métricas (MSE, R², r) calculables y
+  reportables por dimensión, artefactos serializables (joblib), pipeline
+  reproducible (`make all` o `dvc repro`), independencia operativa de la
+  API externa para el componente cuantitativo.
+- **Costo**: complejidad operacional adicional (módulo Python separado,
+  servir FastAPI, DVC remote). El módulo no corre en Vercel.
+- **Riesgo**: heterogeneidad EN vs ES-AR de los datasets; mitigación con
+  reporte por dimensión y umbrales (ADR-027).
+- **Linked to**: ADR-027 (reporte por dimensión + per_dimension_status),
+  ADR-028 (corpus latinoamericano), ADR-002 (Jung directo, lectura
+  interpretativa).
+
+## ADR-027 — Reporte por dimensión Big Five con umbrales R²>0.20, r>0.30
+**Status**: Accepted (2026-04-14)
+**Context**: El módulo analítico (ADR-026) entrena cinco regresores
+independientes; nada garantiza que las cinco dimensiones alcancen el mismo
+nivel de calidad de inferencia. La literatura de inferencia de personalidad
+por texto reporta consistentemente que ciertas dimensiones (típicamente
+extraversión y apertura) son más predecibles desde estilo lingüístico que
+otras (amabilidad, neuroticismo). Reportar un único score global oculta esa
+heterogeneidad y daría al usuario y al tribunal una falsa sensación de
+uniformidad psicométrica.
+**Decision**: Las métricas (MSE, R² de Pearson, r de Pearson) se calculan
+y reportan **por dimensión Big Five**. Se adoptan dos umbrales mínimos
+conservadores: **R² > 0.20** y **r > 0.30**, valores típicos de la
+literatura para inferencia de rasgos a partir de texto libre. Las
+dimensiones que **no** alcancen ambos umbrales en el split de test se
+reportan honestamente como "no incluidas en el componente cuantitativo del
+perfil"; en el contrato del módulo eso se traduce como
+`per_dimension_status: "low_confidence"`. Las que pasan se marcan como
+`"ok"`. La capa narrativa recibe ambas señales y, ante una dimensión
+`low_confidence`, modera explícitamente su lectura interpretativa.
+**Consequences**:
+- **Ganancia**: honestidad psicométrica; el usuario ve qué dimensiones son
+  fiables y cuáles no; el tribunal puede auditar dimensión por dimensión.
+- **Costo**: el reporte público es más complejo que un single score.
+- **Linked to**: ADR-026 (módulo analítico propio), ADR-002 (Jung directo,
+  lectura interpretativa que se modera ante `low_confidence`),
+  `lib/prompts/interpret-narrative.ts` (consume `per_dimension_status`).
+
+## ADR-028 — Corpus latinoamericano construido con asistencia IA generativa + rúbrica manual
+**Status**: Accepted (2026-04-14)
+**Context**: El corpus Essays (Pennebaker & King 1999) está en inglés y
+representa estudiantes universitarios estadounidenses; usarlo solo
+introduciría un sesgo cultural/lingüístico inaceptable para una plataforma
+que se presenta en español latinoamericano con voseo argentino. El proyecto
+necesita un corpus complementario en español latinoamericano. Las opciones
+fueron: (a) recolectar textos reales con consentimiento (timeline largo,
+requiere ética formal); (b) usar un corpus académico latinoamericano
+existente (no se identificó uno con etiquetas Big Five en la cantidad
+necesaria); (c) construir el corpus con asistencia de IA generativa
+guiada por un prompt explícito y validado manualmente con rúbrica.
+**Decision**: Se construye un corpus latinoamericano propio con n=50-100
+casos en `ml/data/latinoamericano/`. Cada caso se redacta en voseo
+argentino, dirigido por un prompt que especifica una dimensión Big Five
+target con dirección alta o baja, y se valida manualmente contra una
+rúbrica documentada en `ml/data/latinoamericano/rubrica_validacion.md`. La
+rúbrica cubre: claridad de marcadores lingüísticos asociados a la
+dimensión target (Pennebaker & King 1999), naturalidad del voseo, ausencia
+de jerga clínica, longitud apropiada y diversidad temática. El versionado
+del corpus es responsabilidad de DVC (ADR-026).
+**Consequences**:
+- **Ganancia**: corpus en idioma de uso real del producto, disponible en
+  el timeline del TFG, controlable de punta a punta.
+- **Riesgo declarado**: sesgo del modelo generador (los textos pueden
+  reflejar el sesgo estilístico del LLM más que la diversidad real de la
+  población). **Mitigación**: rúbrica documentada y aplicada
+  manualmente; validación cruzada con muestras ciegas de textos humanos
+  como trabajo posterior recomendado.
+- **Reproducibilidad**: el prompt usado y la rúbrica se versionan con el
+  corpus para que cualquier auditor pueda evaluar la construcción.
+- **Linked to**: ADR-026 (módulo analítico), ADR-027 (umbrales por
+  dimensión sobre el split test del corpus), Pennebaker & King (1999)
+  como anclaje de "linguistic styles + personality" para justificar el
+  enfoque text → Big Five.

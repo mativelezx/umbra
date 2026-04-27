@@ -5,63 +5,66 @@
      inspeccionar. Cada anexo se pega verbatim desde su fuente en el
      repo para que no haya drift entre el documento y el código. -->
 
-## Anexo A — ADRs seleccionadas (5 principales)
+## Anexo A — ADRs seleccionadas
 
-<!-- Copiar verbatim desde docs/DECISIONS.md. Las 5 más representativas:
+<!-- Copiar verbatim desde docs/DECISIONS.md. Las cinco más
+     representativas:
 
-     - ADR-002: Jung directo, no MBTI
-     - ADR-008: crisis_events observability con salted hashes
-     - ADR-014: committed cache snapshots + pinned SKU
-     - ADR-023: validación mixed-methods Branch B + M3
-     - ADR-025: aplicación de heurísticas PAIR
+     - ADR-002: Jung directo, no MBTI (lectura interpretativa).
+     - ADR-008: crisis_events observability con salted hashes.
+     - ADR-024: consent_text_hash + locale (Ley 25.326 art. 7).
+     - ADR-026: módulo analítico propio (DistilBERT congelado +
+       Ridge multi-output).
+     - ADR-027: reporte por dimensión Big Five con umbrales
+       R²>0.20, r>0.30 y per_dimension_status.
 
-     Incluir los 25 ADRs completos como Anexo A1 en un archivo aparte
-     si el TFG permite PDFs adjuntos. -->
+     El conjunto completo de ADRs queda en docs/DECISIONS.md. -->
 
 ## Anexo B — Texto de consentimiento informado
 
-<!-- Copiar verbatim content/consent/v1-es-AR.md (consentimiento del
-     producto) y content/consent/research-m3-v1-es-AR.md (consentimiento
-     específico del estudio M3). -->
+<!-- Copiar verbatim content/consent/v1-es-AR.md (consentimiento
+     del producto) y content/consent/research-m3-v1-es-AR.md
+     (consentimiento específico del estudio de usabilidad
+     planificado para TP3/TP4). -->
 
 ## Anexo C — Dataset de crisis etiquetado (extracto)
 
 <!-- Copiar un subset representativo del lib/evals/crisis-dataset.ts
-     — NO los 100 casos por ética (evitar que el dataset completo se
-     indexe en buscadores), solo 5 por categoría como ejemplo. El
-     dataset completo queda en el repo con nota ética. -->
+     — NO los 100 casos por ética (evitar que el dataset completo
+     se indexe en buscadores), solo 5 por categoría como ejemplo.
+     El dataset completo queda en el repo con nota ética. -->
 
-## Anexo D — Corpus H1/H2 (extracto)
+## Anexo D — Corpus latinoamericano (extracto)
 
-<!-- Copiar 3-5 casos representativos de lib/evals/cases.ts como
-     ejemplo del formato. El corpus completo queda en el repo. -->
+<!-- Copiar 3-5 casos representativos del corpus
+     ml/data/latinoamericano/cases.csv como ejemplo del formato.
+     El corpus completo queda en el repo, versionado con DVC. -->
 
-## Anexo E — Protocolo de sesión M3
+## Anexo E — Rúbrica de validación del corpus latinoamericano
 
-<!-- Copiar verbatim docs/research/M3-session-protocol.md -->
+<!-- Copiar verbatim ml/data/latinoamericano/rubrica_validacion.md
+     (ADR-028). -->
 
-## Anexo F — SUS en español rioplatense
+## Anexo F — Protocolo de sesión SUS
 
-<!-- Copiar verbatim docs/research/sus-spanish-rioplatense.md -->
+<!-- Copiar verbatim docs/research/usability-protocol.md -->
 
-## Anexo G — OSF preregistration
+## Anexo G — SUS en español latinoamericano
 
-<!-- Incluir (a) el texto completo del preregistro, (b) el DOI obtenido
-     al submit, (c) la fecha. Si el preregistro vive online solo,
-     linkearlo con QR code para la versión impresa. -->
+<!-- Copiar verbatim docs/research/sus-spanish-latinoamericano.md -->
 
-## Anexo H — Screenshots clave del producto
+## Anexo H — Métricas del módulo analítico
+
+<!-- Copiar la tabla consolidada de MSE/R²/r por dimensión sobre
+     los tres bloques (english_only, latinoamericano_only,
+     combined) desde ml/eval_metrics.json. Incluir el commit hash
+     usado para reproducir las métricas. -->
+
+## Anexo I — Screenshots clave del producto
 
 <!-- 5-8 screenshots del dashboard, onboarding, chat, y narrativa en
      su estado final. Capturados con Playwright contra el dev server.
-     Preferir vista desktop (mostrar el sticky TOC) y mobile (mostrar
-     el stack responsive). -->
-
-## Anexo I — Eval results (H1/H2/H3) y cache snapshots
-
-<!-- Referencia al directorio eval-results/ en el commit hash publicado.
-     No pegar el JSON completo en el anexo — solo tablas resumen que
-     ya aparecieron en el capítulo 08. -->
+     Preferir vista desktop y mobile. -->
 
 ## Anexo J — Diff de commits de desarrollo
 

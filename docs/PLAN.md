@@ -1,37 +1,39 @@
 # Umbra — Master Plan
 
-> **Source of truth for the Umbra build.** This file is the entry point to all
-> project documentation. It links out to every other doc and tracks current
-> status at a glance.
+> **Source of truth for the Umbra build.** Entry point a toda la documentación
+> del proyecto. Linkea a cada doc relevante y trackea el estado actual.
 
 ## Status dashboard
 
-> **Last refresh:** 2026-04-13 (Phase 7 completeness sprint). Every code-level
-> phase is ✓ SHIPPED. The only remaining work is non-code: ethics-gate advisor
-> meeting, OSF paper preregistration, and live-deploy smoke tests.
-
 | Phase | Description | Status | Notes |
 |---|---|---|---|
-| Phase 1 | Scaffolding + config | ✓ SHIPPED 2026-04-12 | tsc/build/greps all clean. Dev server smoke-tested. |
-| Phase 0 | Ethics gate (advisor meeting) | OPEN (non-blocking for code) | Docs-only. Blocks running Migration 002 against a real prod Supabase project with `research_dataset` enabled. See [DECISIONS.md ADR-017](DECISIONS.md) + `docs/biz/ETHICS.md`. |
-| Phase 1.5 | Remediation + hygiene | ✓ SHIPPED 2026-04-12 | SSR migration, typed errors, Web-Crypto peppers, Vitest + Playwright, Migration 002 authored. |
-| Phase 2 | Auth + Landing + Layout shell + Consent + i18n | ✓ SHIPPED 2026-04-12 | Landing, /login, /register, /consent (Ley 25.326), LayoutShell, `t()` dict. |
-| Phase 3 | Onboarding + AI analysis + Evidence + KB + Evals + Carta | ✓ SHIPPED 2026-04-12 | Guided/freetext/hybrid onboarding, `/api/analyze` Pass 1 + Pass 2, CartaForm, KB files filled (1,484 lines, zero `/* COMPLETAR */`). |
-| Phase 4 | Dashboard + Big Five radar + Jung bars + Archetype | ✓ SHIPPED 2026-04-12 | Custom archetype SVGs, Recharts radar, Jung bars. Carta modal now has focus trap + Escape + scroll lock (2026-04-13). |
-| Phase 5 | Narrative streaming + Chat with full guardrails | ✓ SHIPPED 2026-04-12 | SSE narrative persists on client disconnect. Chat pipeline: regex + classifier fail-closed + 451 hard block. **Partial assistant turns now persisted on stream failure (2026-04-13)**, so retries don't lose context. |
-| Phase 6 | Development plan + PDF export + Accessibility + Print stylesheet | ✓ SHIPPED 2026-04-12, polished 2026-04-13 | `/api/plan` validated with 300-char microGoal cap. PDF export now ships with inline SVG Big Five radar + bars + narrative + plan. `/settings` has a root landing; delete magic-link ships via Resend with a dev-mode inline fallback. |
-| Phase 7 | Polish + Deploy + Smoke tests + Paper preregistration on OSF | ✓ SHIPPED 2026-04-13 (code) | `app/error.tsx`, `app/not-found.tsx`, `app/robots.ts`, `app/sitemap.ts`, OG + Twitter metadata with `metadataBase`, a11y pass (textarea labels + checkbox semantics + modal focus), `typecheck` script, `.github/workflows/ci.yml`, `vercel.json` with security headers. OSF paper preregistration still pending (non-code). |
-| Fullstack | Real Supabase + real Anthropic wire-up | ✓ SHIPPED 2026-04-13 | `e2e/full-flow.spec.ts` walks register → consent → onboarding → analyze → dashboard → narrative → plan in ~1.3 min against real Claude. QA sprint fixed Input hydration (ISSUE-001) and plan microGoal validation (ISSUE-002). |
+| Phase 1 | Scaffolding + config | SHIPPED | tsc/build/greps clean. Dev server smoke-tested. |
+| Phase 1.5 | Remediation + hygiene | SHIPPED | SSR migration, typed errors, Web-Crypto peppers, Vitest + Playwright, Migration 002. |
+| Phase 2 | Auth + Landing + Layout shell + Consent + i18n | SHIPPED | Landing, /login, /register, /consent (Ley 25.326), LayoutShell, `t()` dict. |
+| Phase 3 | Onboarding + AI analysis + Evidence + KB + Carta | SHIPPED | Guided/freetext/dynamic onboarding, `/api/analyze`, CartaForm, KB files filled. |
+| Phase 4 | Dashboard + Big Five radar + Jung bars + Archetype | SHIPPED | Custom archetype SVGs, Recharts radar, Jung bars. |
+| Phase 5 | Narrative streaming + Chat with full guardrails | SHIPPED | SSE narrative. Chat pipeline: regex + classifier fail-closed + 451 hard block. |
+| Phase 6 | Development plan + PDF export + Accessibility + Print stylesheet | SHIPPED | `/api/plan` con 300-char microGoal cap. PDF export con Big Five radar + bars + narrativa + plan. |
+| Phase 7 | Polish + Deploy + Smoke tests | SHIPPED | `app/error.tsx`, `app/not-found.tsx`, `app/robots.ts`, `app/sitemap.ts`, OG metadata, a11y pass, axe-core en CI, `vercel.json` con security headers. |
+| Fullstack | Real Supabase + real Anthropic wire-up | SHIPPED | E2E walks register → consent → onboarding → analyze → dashboard → narrativa → plan. |
+| Módulo ML | DistilBERT congelado + Ridge multi-output + FastAPI + DVC + MLflow | en `ml/` | Pipeline reproducible; entrenamiento sobre Essays + corpus latinoamericano propio. Ver [`ml/README.md`](../ml/README.md). |
 
 ## Documentation map
 
 ```
 Umbra/
-├── UMBRA_MASTER_BUILD.md    # Original specification (Phase 1 source)
+├── UMBRA_MASTER_BUILD.md    # Especificación de la fase web inicial
 ├── README.md                # Quick setup
-├── TODOS.md                 # Deferred items + acknowledged risks
+├── TODOS.md                 # Continuaciones y riesgos asumidos
 ├── umbra-design-system.html # Visual design reference (open in browser)
 ├── .env.local.example       # Environment variables template
+│
+├── ml/                      # Módulo analítico propio (Python)
+│   ├── README.md            # Setup + uso + métricas
+│   ├── src/                 # prepare_data, baseline_tfidf, extract_embeddings, train_ridge, evaluate, predict, api_server
+│   ├── data/                # essays/ + latinoamericano/ (versionados con DVC)
+│   ├── models/              # artefactos joblib
+│   └── tests/               # pytest
 │
 ├── docs/
 │   ├── PLAN.md              # THIS FILE — entry point
@@ -39,97 +41,67 @@ Umbra/
 │   ├── API_MAP.md           # Every API route + schemas + runtime
 │   ├── FEATURE_MAP.md       # Every feature with status + user flows
 │   ├── DESIGN_SYSTEM.md     # Design tokens + typography + colors + icons
-│   ├── PROMPT_ARCHITECTURE.md  # Prompt design + KB injection + evals
-│   ├── CLOUD_HANDOFF.md     # Deploy to Vercel + Supabase + secrets + migrations
-│   ├── DECISIONS.md         # 22 Architecture Decision Records
+│   ├── PROMPT_ARCHITECTURE.md  # Prompt design + KB injection
+│   ├── CLOUD_HANDOFF.md     # Deploy a Vercel + Supabase + secrets + migrations
+│   ├── DECISIONS.md         # Architecture Decision Records
 │   │
-│   ├── biz/                 # Business concerns
-│   │   ├── MARKET.md        # Landscape, competitors, differentiation
-│   │   ├── LEGAL.md         # Ley 25.326 compliance, consent, data rights
-│   │   ├── ETHICS.md        # Ethics review path, research participant mode
-│   │   └── TFG.md           # Academic deliverables (thesis, paper, defense)
+│   ├── biz/                 # Business / academic concerns
+│   │   ├── MARKET.md
+│   │   ├── LEGAL.md
+│   │   ├── ETHICS.md
+│   │   ├── TFG.md
+│   │   ├── VALIDATION.md
+│   │   └── IMPLEMENTATION_PLAN.md
 │   │
 │   ├── features/            # Per-feature deep-dive specs
-│   │   ├── ONBOARDING.md
-│   │   ├── ANALYSIS.md
-│   │   ├── DASHBOARD.md
-│   │   ├── CHAT.md
-│   │   ├── NARRATIVE.md
-│   │   ├── DEVELOPMENT_PLAN.md
-│   │   ├── PDF_EXPORT.md
-│   │   ├── CONSENT.md
-│   │   ├── CARTA_AL_FUTURO.md
-│   │   └── RESEARCH_MODE.md
+│   │   └── ...
 │   │
-│   ├── generated/           # Auto-generated / export artifacts
-│   │   ├── README.md        # How to regenerate
-│   │   ├── env-vars.md      # Auto-extracted from .env.local.example
-│   │   └── (sql schema dump, api types, etc. — generated on build)
+│   ├── generated/           # Auto-generated artifacts
+│   │
+│   ├── research/            # Materiales SUS (Brooke 1996) para TP3/TP4
+│   │   ├── usability-protocol.md
+│   │   ├── usability-recruitment.md
+│   │   └── sus-spanish-latinoamericano.md
 │   │
 │   └── tech/                # Technical deep-dives
-│       ├── ARCHITECTURE.md  # System architecture + component diagram
-│       ├── DATABASE.md      # Schema, RLS policies, migrations
-│       ├── AUTH.md          # Supabase Auth + SSR + middleware
-│       ├── RATE_LIMITING.md # charge_rate_limit RPC + cost accounting
-│       ├── CHAT_SAFETY.md   # Crisis pipeline + classifier + lexicon
-│       ├── EVALS.md         # Eval methodology + H1/H2 + caches
-│       ├── SECURITY.md      # Peppers, HMACs, RLS, threat model
-│       └── OBSERVABILITY.md # Logs, metrics, alerts, runbooks
+│       ├── ARCHITECTURE.md
+│       ├── DATABASE.md
+│       ├── AUTH.md
+│       ├── RATE_LIMITING.md
+│       ├── CHAT_SAFETY.md
+│       ├── EVALS.md
+│       ├── SECURITY.md
+│       └── OBSERVABILITY.md
 │
 ├── lib/
-│   ├── knowledge/           # NotebookLM research → structured TS
-│   ├── prompts/             # Prompt builders (import from knowledge/)
-│   ├── evals/               # Golden test cases + eval runners
+│   ├── ml-client.ts         # cliente HTTP al módulo analítico (ADR-026)
+│   ├── knowledge/           # Knowledge base estructurada
+│   ├── prompts/             # Prompt builders (interpret-narrative.ts, etc.)
 │   ├── supabase/            # Client/server/edge/middleware variants
-│   ├── claude/              # Claude SDK wrapper + pricing table
+│   ├── claude/              # Cliente para la capa narrativa
 │   ├── chat/                # Crisis lexicon + classifier + pipeline
 │   ├── security/            # Peppers, HMAC helpers
-│   ├── errors.ts            # Typed error classes
-│   └── api/with-error-handler.ts  # Response envelope wrapper
+│   ├── errors.ts
+│   └── api/with-error-handler.ts
 │
 └── supabase/migrations/
-    ├── 001_initial_schema.sql       # Phase 1 — 6 original tables
-    └── 002_core_tables.sql          # Phase 1.5.6 — 7 new tables + columns
+    ├── 001_initial_schema.sql       # tablas base
+    ├── 002_core_tables.sql          # 7 tablas + RPC
+    ├── 003_onboarding_sessions.sql  # onboarding_sessions con flags JSONB
+    ├── 004_consent_text_hash.sql    # consent_text_hash + locale (ADR-024)
+    └── 005_usability_responses.sql  # SUS in-app
 ```
-
-## Phase 1.5 remediation breakdown (blocks Phase 2)
-
-1. **1.5.1** — Supabase SSR migration (`@supabase/auth-helpers-nextjs` → `@supabase/ssr`) with client split per runtime (Node/Edge/middleware/browser). See [tech/AUTH.md](tech/AUTH.md).
-2. **1.5.2** — Next.js `14.2.15` → `14.2.35+` (CVE-2025-58060 patch).
-3. **1.5.3** — Claude model SKU pinned via `ANTHROPIC_MODEL_ID` env var. See [DECISIONS.md ADR-005 + ADR-014](DECISIONS.md).
-4. **1.5.4** — Vitest bootstrap + `npm run test` + `npm run eval`.
-5. **1.5.5** — TODOS.md + docs/DECISIONS.md (this is you're looking at, already shipped).
-6. **1.5.6** — Migration 002 (7 new tables + 2 forward-compat columns). See [tech/DATABASE.md](tech/DATABASE.md).
-7. **1.5.7** — `psychological_profiles.version` forward-compat column + `UNIQUE(user_id, version)`.
-
-Plus from eng review (Phase 1.5 scope additions):
-- `lib/errors.ts` + `lib/api/with-error-handler.ts`
-- `lib/security/peppers.ts` (pepper versioning per ADR-021)
-- Refreshed `.env.local.example`
 
 ## Gates
 
-- **Phase 0 gate (ethics)**: blocks Migration 002. 30-min advisor meeting must close before Phase 1.5.6. Decision determines Branch A (full research mode) vs Branch B (research deferred). See [biz/ETHICS.md](biz/ETHICS.md).
-- **KB gate**: blocks Phase 3. Minimum viable KB thresholds: 20/30 IPIP-NEO facets, 8/8 Jung functions, 6/6 Pearson archetypes, 5/7 Positive Computing principles. See [PROMPT_ARCHITECTURE.md](PROMPT_ARCHITECTURE.md).
-- **Eng review gate**: required before ship. Currently CLEAR (2026-04-12).
-- **CEO review gate**: optional but ran. CLEAR (2026-04-12).
+- **KB gate**: bloquea Phase 3. Mínimos viables: 20 IPIP-NEO facets, 8/8 funciones Jung, 6/6 arquetipos Pearson, 8/8 factores Positive Computing. Ver [PROMPT_ARCHITECTURE.md](PROMPT_ARCHITECTURE.md).
+- **Eng review gate**: required antes de cada release. Currently CLEAR.
+- **ML metrics gate**: bloquea liberación de cada dimensión Big Five al usuario final. Umbral por dimensión: R² > 0.20 y r > 0.30 (ADR-027). Las dimensiones por debajo se reportan como `low_confidence`.
 
 ## External references
 
-- **Master spec**: [UMBRA_MASTER_BUILD.md](../UMBRA_MASTER_BUILD.md) (the original Phase 1 source)
-- **CEO plan**: `~/.gstack/projects/Umbra/ceo-plans/2026-04-12-umbra-full-project.md` (the full expansion scope, 1100+ lines, 22 ADRs, 7 codex findings applied)
-- **Visual design**: open `umbra-design-system.html` in a browser for tokens + components reference
-- **TFG framing paper**: Sauer (2025) "Rehabilitating Jung's Cognitive Function Theory" — the academic backbone for using Jung functions directly instead of MBTI
-
-## Review history
-
-| Date | Review | Outcome | Notes |
-|---|---|---|---|
-| 2026-04-12 | Phase 1 QA | PASS | tsc, build, greps, dev server smoke test |
-| 2026-04-12 | `/plan-ceo-review` | CLEAR (mode: SCOPE_EXPANSION) | 22 proposed, 15 accepted, 7 deferred |
-| 2026-04-12 | 3× adversarial spec review (Claude subagent) | 9/10 after iter 3 | 37/38 issues fixed |
-| 2026-04-12 | `/codex-plan-review` (outside voice) | 7 findings | 5 fixed, 2 acknowledged |
-| 2026-04-12 | `/plan-eng-review` | CLEAR | 20 findings, all applied |
+- **Master spec**: [UMBRA_MASTER_BUILD.md](../UMBRA_MASTER_BUILD.md)
+- **Visual design**: open `umbra-design-system.html` in a browser
 
 ## User journey storyboard (emotional arc)
 
@@ -141,122 +113,56 @@ design: 5-sec visceral, 5-min behavioral, 5-year reflective.
 ```
 STEP 1 — Landing
   USER DOES: arrives from link / search
-  USER FEELS: curious, skeptical ("is this another MBTI test?")
-  UI SUPPORTS: Instrument Serif hero "Conocé tu sombra" — not corporate,
-               not "welcome to [X]". Cosmic background subtle, not loud.
-               Subtitle disambiguates: "autoconocimiento con rigor académico,
-               en tu idioma". Two CTAs: primary start, secondary learn more.
-  RISK: if the hero looks like every SaaS landing, user bounces in 5s
-  MITIGATION: Instrument Serif + rioplatense voseo copy + no 3-column
-              feature grid (see AI slop blacklist)
+  USER FEELS: curious, skeptical
+  UI SUPPORTS: Instrument Serif hero "Conocé tu sombra" — not corporate.
+               Cosmic background subtle. Subtitle disambiguates the value.
+               Two CTAs: primary start, secondary learn more.
 
 STEP 2 — Register
   USER DOES: fills 3 fields (name, email, password)
   USER FEELS: committed enough to try, not yet invested
-  UI SUPPORTS: single glass card, no distractions, form max 300px wide
-               centered. Error states inline (not toast). "Crear cuenta" not
-               "Submit".
-  RISK: friction kills conversion; email verify would drop 30%
-  MITIGATION: v1 ships without email verification (Supabase option off).
-              OAuth deferred to TODOS.
+  UI SUPPORTS: single glass card, centered, error states inline.
 
 STEP 3 — Consent
   USER DOES: reads (or scrolls) Ley 25.326 consent, checks box, continues
   USER FEELS: slightly concerned (privacy) but reassured by transparency
-  UI SUPPORTS: full consent text in readable scrollable area, not a modal.
-               Research opt-in is an OPTIONAL checkbox below the required
-               one. "Entendí y acepto" button, not "I Agree".
-  RISK: user treats consent as friction and rushes through
-  MITIGATION: scrollable but NOT behind an accordion. Honest copy. Concrete
-              examples ("tus textos se guardan en Supabase en US")
+  UI SUPPORTS: full consent text in readable scrollable area.
+               Research opt-in is OPTIONAL, separate from the required check.
 
 STEP 4 — Mode selector
-  USER DOES: chooses guided / freetext / hybrid
+  USER DOES: chooses guided / freetext / dynamic
   USER FEELS: curious about which approach fits them
-  UI SUPPORTS: 3 glass cards side-by-side (desktop) / stacked (mobile), each
-               with Phosphor icon + name + 1-line description. Hover state
-               highlights border.
-  RISK: decision paralysis between 3 modes
-  MITIGATION: "Recomendado para empezar" small badge on guided (default)
+  UI SUPPORTS: 3 glass cards, each with Phosphor icon + name + 1-line description.
 
-STEP 5 — Onboarding flow (guided)
-  USER DOES: writes 5 area responses (or 1 freetext block)
+STEP 5 — Onboarding flow
+  USER DOES: writes responses (5 areas guided, 1 textbox freetext, or 6-8 turns dynamic)
   USER FEELS: initially uncertain, then starts flowing as they write
-  UI SUPPORTS: one question at a time, ghost placeholder with tone example,
-               word counter that becomes reassuring ("55 palabras, buen
-               ritmo" at 50+). Progress dots at top. Back/next buttons.
-               Draft auto-saved to localStorage every keystroke.
-  RISK: user abandons mid-flow (most drop-off point)
-  MITIGATION: ~45s average per area = 4 min total. Short enough to finish
-              in one sitting. Progress dots make progress visible.
+  UI SUPPORTS: one question at a time, ghost placeholder, word counter,
+               progress dots. Draft auto-saved to localStorage.
 
 STEP 6 — Submit → Progressive load animation
   USER DOES: clicks "mostrame lo que ves"
-  USER FEELS: anticipation ("what is Claude going to say about me?") +
-              mild vulnerability
-  UI SUPPORTS: 8-second progressive reveal. NOT a generic spinner.
-               - Starts: "analizando tus palabras..."
-               - Second 1-2: "Big Five" label fades in, 5 dimension
-                 skeletons appear
-               - Second 2-4: dimension bars animate width from 0 to final
-                 value, one at a time
-               - Second 4-6: "funciones cognitivas" label + 8 Jung bars
-                 animate
-               - Second 6-7: "tu arquetipo" label + SVG fade-in
-               - Second 7-8: evidence highlights fade in (Pass 2 arrives)
-  RISK: this is the highest-stakes moment. If it feels generic, trust
-        breaks immediately
-  MITIGATION: deliberately slower than necessary (would be 2s of raw API
-              call) so user SEES the system working. Evidence highlights
-              make it concrete.
+  USER FEELS: anticipation + mild vulnerability
+  UI SUPPORTS: progressive reveal de las dimensiones inferidas por el
+               módulo analítico, seguido de la lectura interpretativa
+               (Jung + arquetipo) por la capa narrativa.
 
 STEP 7 — Carta al futuro (optional final step)
   USER DOES: writes 1 paragraph to their future self (or skips)
   USER FEELS: reflective, slightly emotional
-  UI SUPPORTS: single textarea with gentle prompt "escribile a tu vos de 6
-               meses. ¿Qué querés que recuerde?" Unlock date shown below.
-               "Saltear" and "guardar" buttons.
-  RISK: optional step feels tacked-on
-  MITIGATION: copy positions it as a gift ("una carta que se abre sola")
+  UI SUPPORTS: single textarea with gentle prompt. Unlock date shown below.
 
 STEP 8 — First dashboard view
   USER DOES: sees archetype first, then narrative, then explores radar
-  USER FEELS: seen, understood, validated. "This is actually about me."
-  UI SUPPORTS: archetype card primary, narrative secondary (already
-               streaming or ready), radar + Jung tertiary. Greeting "hola,
-               {nombre}" in small text at top. No "welcome screen", no
-               tutorial overlay — the dashboard IS the reward.
-  RISK: overwhelming information density
-  MITIGATION: primary→secondary→tertiary hierarchy from Pass 1 fix
+  USER FEELS: seen, understood. "This is actually about me."
+  UI SUPPORTS: archetype card primary, narrative secondary, radar + Jung
+               tertiary. `per_dimension_status` visible donde aplique.
 
 STEP 9 — First chat turn (within 5 min)
   USER DOES: types their first question
-  USER FEELS: tentative ("can I talk to this like a therapist?")
-  UI SUPPORTS: persistent "Umbra no es terapia" banner. Welcome message
-               from assistant: "Hola. ¿En qué estás pensando hoy?" Input
-               placeholder: "escribí tu reflexión...".
-  RISK: user crosses therapy boundary, feels unheard, or writes crisis
-        content
-  MITIGATION: crisis pipeline is invisible until triggered. Banner sets
-              expectations. System prompt establishes mirror, not therapist.
-
-STEP 10 — Return visit at +30 days (if retention works)
-  USER DOES: logs back in after email reminder (future v1.5)
-  USER FEELS: curious about changes, emotional about time passing
-  UI SUPPORTS: dashboard unchanged (no longitudinal in v1) + carta card
-               showing countdown to unlock
-  RISK: nothing to bring user back in v1
-  MITIGATION: this is the deferred longitudinal tracking (TODOS.md P2).
-              v1 acknowledges retention is weak without it.
-
-STEP 11 — Return visit at +180 days (carta unlock)
-  USER DOES: clicks "leer tu carta" card
-  USER FEELS: reconnection with past self, nostalgia, reflection
-  UI SUPPORTS: modal with letter + "cuando escribiste esto eras: {archetype}
-               + top 2 Jung functions". Static snapshot, no diff.
-  RISK: letter feels stale if life changed
-  MITIGATION: the letter WAS meant for that past self. Framing it as a
-              snapshot rather than a comparison respects that.
+  USER FEELS: tentative
+  UI SUPPORTS: persistent "Umbra no es terapia" banner. Welcome message.
+               Crisis pipeline invisible until triggered.
 ```
 
 ### Time horizons
@@ -270,18 +176,6 @@ feel earned? Does the first chat turn feel safe + reflective?
 **5 years (reflective)**: will the user remember Umbra as "that platform
 that actually saw me" or "another personality test I did once"?
 
-The archetype custom SVGs, the evidence highlights, and the carta al futuro
-are the three interventions that specifically target the 5-year reflective
-layer — they're designed to be memorable.
-
-## Next actions
-
-1. ☐ Schedule Phase 0 ethics meeting with TFG advisor (30 min)
-2. ☐ Start KB research in NotebookLM (parallel with Phase 1.5 engineering)
-3. ☐ Execute Phase 1.5 remediation (~1 day)
-4. ☐ Run `/plan-design-review` for UI scope validation
-5. ☐ Begin Phase 2 implementation
-
 ---
 
-**Last updated**: 2026-04-12 by `/plan-eng-review`
+**Last updated**: junto con la sincronización de documentación post-implementación.

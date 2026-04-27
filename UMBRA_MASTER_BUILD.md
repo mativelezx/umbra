@@ -1,26 +1,21 @@
 # UMBRA — Master Build Document
 
-> **Qué es esto**: La fuente de verdad ORIGINAL para construir Umbra de cero. Describe las fases 1-7 del master build inicial. Claude Code (en VS Code) leyó este documento al principio y ejecutó fase por fase.
+> **Qué es esto**: La fuente de verdad de la fase de construcción inicial (scaffolding, autenticación, consentimiento, onboarding, dashboard, chat con guardrails, plan, export). Describe la arquitectura web, los tipos, el schema SQL, los prompts y los design tokens.
 >
-> **⚠️ NOTA IMPORTANTE — 2026-04-14**:
+> Para el estado actual del proyecto y las decisiones posteriores, complementar con:
 >
-> **Este documento describe el scope original del proyecto (master build fases 1-7, shipeado el 2026-04-13)**. El proyecto evolucionó después con **7 fases adicionales específicas del TFG** (Fase 0 a 6) que no están descritas acá. Para el estado actual completo del proyecto y las decisiones posteriores, ver:
->
-> - **[`docs/biz/IMPLEMENTATION_PLAN.md`](docs/biz/IMPLEMENTATION_PLAN.md)** — plan maestro de las fases TFG con checkboxes, QA gate, timeline
-> - **[`docs/biz/VALIDATION.md`](docs/biz/VALIDATION.md)** — hipótesis H1/H2/H3 + protocolo M3 + **resultados empíricos reales**
-> - **[`docs/biz/TFG.md`](docs/biz/TFG.md)** — estructura de tesis + preregistro OSF + status de experimentos
-> - **[`docs/DECISIONS.md`](docs/DECISIONS.md)** — 25 ADRs (incluyendo ADR-023 Branch B + M3, ADR-024 consent_text_hash, ADR-025 PAIR heuristics)
-> - **[`docs/features/*.md`](docs/features/)** — cada feature doc tiene una sección "Post-implementación" que documenta los cambios de Fase 1/2/3 sobre la spec original
-> - **[`README.md`](README.md)** — status actualizado con ambas tracks (master build + TFG)
+> - **[`docs/biz/IMPLEMENTATION_PLAN.md`](docs/biz/IMPLEMENTATION_PLAN.md)** — plan operativo con QA gate y timeline
+> - **[`docs/biz/VALIDATION.md`](docs/biz/VALIDATION.md)** — plan de validación (métricas ML por dimensión, unit, E2E, axe, SUS)
+> - **[`docs/biz/TFG.md`](docs/biz/TFG.md)** — estructura de tesis y cronograma
+> - **[`docs/DECISIONS.md`](docs/DECISIONS.md)** — Architecture Decision Records
+> - **[`docs/features/*.md`](docs/features/)** — feature specs detallados
+> - **[`README.md`](README.md)** — entry point con setup y arquitectura híbrida
 > - **[`thesis/`](thesis/)** — esqueleto de tesis con 16 capítulos
+> - **[`ml/`](ml/)** — módulo analítico propio (DistilBERT + Ridge + MLflow + DVC + FastAPI)
 >
-> Las features agregadas post-master build incluyen: confidence surface, pull quotes en narrativa, sticky TOC con scroll-spy, InfoPopover en dimensiones, progressive disclosure 2 capas, framer-motion, chat persistente con sidebar, autonomy dial (espejo/guía/reto), undo de turnos en onboarding, UMUX-Lite/METUX/CUQ/SUS in-app instrumentation, y el eval suite computacional completo (H1/H2/H3 runners + scripts + committed cache snapshots).
->
-> Este documento sigue siendo útil como **referencia histórica** del scope original y como archivo del pensamiento inicial del proyecto, pero no refleja el estado actual del código en producción (https://umbra-sigma.vercel.app).
+> Este documento describe el frontend Next.js. La capa cuantitativa Big Five se inferencia en el módulo analítico propio en `ml/` (ADR-026); este documento se concentra en el resto del sistema. La defensa académica se apoya en métricas reproducibles del módulo ML, axe-core en CI, unit + E2E con Vitest y Playwright, y SUS adaptado al español latinoamericano (Brooke 1996) planificado para TP3/TP4 con n=8-15 participantes.
 >
 > **Ubicación del proyecto**: `~/Desktop/Umbra`
->
-> **Modelo de ejecución**: Claude Code (Opus 4.6) como builder principal. Codex como copiloto opcional para tareas aisladas — que en las fases TFG posteriores se convirtió en **core colaborativo** para code review independiente + drafting de capítulos de tesis técnicos.
 
 ---
 
@@ -1041,7 +1036,7 @@ Escribí una narrativa en SEGUNDA PERSONA ("Vos sos...", "Tu mente funciona...")
 
 TONO: Reflexivo, cálido, profundo pero accesible. Como un mentor sabio que te conoce bien.
 EVITAR: Lenguaje clínico, diagnósticos, etiquetas rígidas, generalidades vacías.
-IDIOMA: Español rioplatense (vos, voseo, vocabulario argentino).
+IDIOMA: Español latinoamericano (vos, voseo, vocabulario argentino).
 
 Respondé SOLO con la narrativa, sin encabezados ni metadata.`;
 }
@@ -1464,7 +1459,7 @@ TAREAS:
 ```
 
 **QA FASE 5**:
-- [ ] Narrativa se genera correctamente en español rioplatense
+- [ ] Narrativa se genera correctamente en español latinoamericano
 - [ ] Narrativa se guarda y persiste entre sesiones
 - [ ] Chat envía mensajes y recibe respuestas streamed
 - [ ] Mensajes se persisten en Supabase

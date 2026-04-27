@@ -35,7 +35,7 @@ Max tokens: 1500.
 - Realistic actions doable in 1-4 weeks
 - Measurable micro-goals (e.g. "meditar 10 min/día" yes, "ser más mindful" no)
 - Motivational tone, not prescriptive
-- Spanish rioplatense
+- Spanish latinoamericano
 
 ## UI components (Phase 6)
 

@@ -99,4 +99,3 @@ Referencias citadas en este capítulo:
 - Sauer, T. (2020). *Rehabilitating Jung’s cognitive function theory*.
 - Stein, R., & Swan, A. B. (2019). Evaluating the validity of the Myers-Briggs Type Indicator. *Social and Personality Psychology Compass, 13*(2).
 
-No pude escribirlo en `thesis/03-marco-teorico.md` porque el entorno está en modo solo lectura.

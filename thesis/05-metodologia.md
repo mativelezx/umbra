@@ -1,299 +1,271 @@
 # Metodología
 
-<!-- FUENTE PRIMARIA: docs/biz/VALIDATION.md, ADR-011, ADR-012, ADR-014,
-     ADR-020, ADR-023. -->
+<!-- FUENTE PRIMARIA: docs/biz/VALIDATION.md, docs/biz/TFG.md, ADRs
+     026 (módulo analítico), 027 (umbrales por dimensión), 028 (corpus
+     latinoamericano). -->
 
 ## 1. Introducción
 
-Este capítulo describe el diseño metodológico de la validación del
-TFG. La decisión central, documentada en ADR-023, es la adopción
-de un enfoque mixed-methods con dos pilares complementarios. El
-primero es una validación computacional con tres hipótesis
-preregistradas en OSF (H1, H2 y H3) que examinan propiedades
-estadísticas del sistema sin requerir sujetos humanos. El segundo
-es un estudio con usuarios reales tipo think-aloud con
-reclutamiento controlado de ocho a diez participantes (M3), que
-evalúa la usabilidad percibida del producto mediante el
-instrumento System Usability Scale adaptado al español rioplatense.
-Esta estrategia fue elegida sobre alternativas más ambiciosas
-(como un estudio formal con muestra probabilística de n≥30 y
-aprobación de un comité de ética institucional) por razones de
-factibilidad temporal y control metodológico sobre variables bajo
-los límites de un trabajo final de grado.
+Este capítulo describe el diseño metodológico del TFG. El proyecto
+adopta una estrategia de validación multi-pilar coherente con la
+naturaleza del artefacto, que combina un componente cuantitativo
+medido por un módulo analítico propio y una capa narrativa
+interpretativa delegada a un proveedor externo de IA generativa. Los
+cuatro pilares de validación son: (i) métricas de regresión por
+dimensión Big Five (MSE, R², r) sobre el split test del corpus
+combinado de entrenamiento; (ii) tests automatizados (Vitest unit,
+Playwright E2E, axe-core a11y) integrados al CI; (iii) evaluación del
+clasificador de crisis sobre dataset etiquetado balanceado de cien
+casos; (iv) System Usability Scale (Brooke 1996) adaptado al español
+latinoamericano sobre n=8-15 participantes en TP3/TP4.
 
-El plan completo de hipótesis, instrumentos, datasets y análisis
-estadístico está en `docs/biz/VALIDATION.md`. Este capítulo de la
-tesis presenta la metodología en formato narrativo académico, sin
-duplicar el nivel de detalle operacional. Las tablas de resultados
-y los protocolos específicos se incluyen como referencia en los
-capítulos 8, 9 y 15.
+El plan completo de pilares, instrumentos, datasets y umbrales está
+en `docs/biz/VALIDATION.md`. Este capítulo presenta la metodología
+en formato narrativo académico, sin duplicar el nivel de detalle
+operacional.
 
-## 2. Enfoque mixed-methods Branch B + M3
+## 2. Marco metodológico de gestión
 
-### 2.1 Fundamentación del enfoque
+El proceso de desarrollo sigue Scrum (Schwaber & Sutherland 2020) con
+sprints de una semana calendario y el equipo unipersonal en los
+roles combinados de Product Owner, Scrum Master y Developer,
+supervisado por la dirección del TFG. Los artefactos son el Product
+Backlog versionado en Markdown, un Sprint Backlog operacional por
+semana, y el Incremento como código mergeado a la rama principal con
+sus tests, documentación, y ADRs (Nygard 2011) actualizadas. La
+*Definition of Done* incluye: código en main, tests actualizados,
+documentación y ADR cuando aplica, accesibilidad axe verificada en
+CI, y cumplimiento normativo Ley 25.326 cuando se tocan rutas
+sensibles.
 
-La validación de un sistema software que produce análisis
-psicológicos tiene dos dimensiones que deben evaluarse de manera
-complementaria. La primera es la consistencia interna del
-instrumento computacional, es decir, si el sistema produce
-salidas coherentes, reproducibles y robustas bajo variaciones
-controladas de entrada. La segunda es la experiencia percibida
-por los usuarios reales, es decir, si el producto resulta útil,
-comprensible y valioso en uso efectivo. Ninguna de las dos
-dimensiones, por sí sola, constituye evidencia suficiente para
-respaldar una tesis de ingeniería en software que combine
-artefacto y argumento metodológico.
+## 3. Arquitectura híbrida medido vs interpretativo
 
-La tesis adopta, por tanto, un diseño mixed-methods explícito.
-El pilar computacional provee evidencia falsificable sobre las
-propiedades técnicas del sistema, mientras que el pilar con
-usuarios provee evidencia interpretativa sobre su recepción. Los
-dos pilares conversan en el capítulo 10 Resultados y en el
-capítulo 11 Discusión, donde los hallazgos cuantitativos y
-cualitativos se triangulan para construir una imagen integrada.
+La decisión arquitectónica central, formalizada en ADR-026 + ADR-002
++ ADR-007, separa el sistema en dos capas con responsabilidades
+disjuntas:
 
-### 2.2 Por qué Branch B en lugar de Branch A
+1. **Capa analítica propia** (`ml/`) — infiere las cinco dimensiones
+   Big Five con DistilBERT base multilingual cased (Sanh et al. 2019)
+   en modo *frozen embeddings* (Howard & Ruder 2018; Peters et al.
+   2019) y cinco regresores Ridge (Hoerl & Kennard 1970) entrenados
+   con scikit-learn (Pedregosa et al. 2011). Servida como API HTTP
+   por FastAPI. Versionado con DVC, tracking en MLflow (Zaharia et al.
+   2018).
+2. **Capa narrativa** — delega a un proveedor externo de IA
+   generativa con identificador de modelo fijado (ADR-005) la lectura
+   interpretativa: ocho funciones cognitivas Jung (1921, ADR-002),
+   arquetipo Pearson (1991, ADR-007), retrato escrito, plan de
+   desarrollo y chat contextualizado. La capa narrativa **no** infiere
+   Big Five; recibe los valores medidos por el módulo analítico junto
+   con `per_dimension_status` (ADR-027) y modera su interpretación.
 
-La decisión original del proyecto (ADR-017) contemplaba dos
-ramas posibles de validación. La rama A implicaba recolectar un
-dataset pseudonimizado de usuarios reales bajo consentimiento
-informado y pretendía obtener aprobación institucional para
-investigación con sujetos humanos. La rama B limitaba la
-validación a evaluación puramente computacional del modelo como
-instrumento estadístico.
+Esta separación es metodológicamente importante: las dimensiones
+Big Five admiten métricas de regresión reportables y reproducibles;
+la lectura Jung y la asignación de arquetipo son interpretaciones
+heurísticas que se documentan como tales y que no se evalúan con
+métricas de regresión.
 
-Tras análisis del calendario académico, de los recursos
-disponibles y del estado del arte en preregistros OSF de estudios
-computacionales, el proyecto adoptó la rama B como pilar primario
-(ADR-023). Las razones fueron tres. Primero, la rama B permite
-ejecutar experimentos rigurosos sin burocracia ética institucional,
-lo cual resulta indispensable en el tiempo disponible. Segundo, la
-rama B produce evidencia replicable mediante committed cache
-snapshots (ADR-014), un estándar emergente en investigación
-computacional reproducible. Tercero, la literatura reciente que
-trata a los LLMs como "instrumentos estocásticos" (capítulo 4 del
-presente documento) ofrece un framing legítimo para este tipo de
-estudio en ingeniería en software.
+## 4. Pilar 1 — Métricas del módulo analítico
 
-La validación con usuarios quedó restringida al estudio
-think-aloud (M3) con reclutamiento controlado. Este estudio no
-pretende reemplazar un estudio poblacional sino aportar señal
-cualitativa y cuantitativa complementaria al pilar computacional.
-Su legitimidad metodológica se apoya en la literatura clásica de
-usabilidad (Nielsen y Landauer, 1993) que documenta empíricamente
-que cinco participantes think-aloud detectan aproximadamente el
-ochenta y cinco por ciento de los problemas de usabilidad de una
-interfaz, y que el retorno marginal disminuye rápidamente a partir
-de ocho o diez participantes.
+### 4.1 Pipeline reproducible
 
-## 3. Hipótesis preregistradas H1, H2, H3
+El pipeline del módulo analítico se ejecuta con `make all` o, de
+manera equivalente, `dvc repro`. Las etapas son: (1) `prepare_data.py`
+descarga, normaliza y particiona los corpus 80/10/10 con
+`SEED=42`; (2) `extract_embeddings.py` carga DistilBERT congelado y
+extrae el vector CLS para cada texto; (3) `train_ridge.py` entrena
+los cinco regresores Ridge con `GridSearchCV` para tunear `alpha` por
+dimensión, registra el experimento en MLflow y serializa el regresor
+final en `ml/models/*.joblib`; (4) `evaluate.py` calcula MSE, R² y r
+de Pearson por dimensión sobre el split test, separados en tres
+bloques (`english_only`, `latinoamericano_only`, `combined`), y
+escribe el resultado consolidado en `ml/eval_metrics.json`. El
+artefacto serializado y `eval_metrics.json` se commitean al repo.
 
-Las tres hipótesis computacionales del TFG están formalizadas en
-ADR-011 (con enmiendas en ADR-014) y presentan las siguientes
-formulaciones operativas.
+### 4.2 Datasets
 
-### 3.1 H1 — Determinismo del análisis
+El corpus combinado de entrenamiento tiene dos componentes: Essays
+(Pennebaker & King 1999, ~2500 textos breves de estudiantes
+universitarios estadounidenses con Big Five etiquetado) y un corpus
+latinoamericano propio (n=50-100, voseo argentino, ADR-028)
+construido con asistencia de IA generativa y validado manualmente
+contra una rúbrica documentada en
+`ml/data/latinoamericano/rubrica_validacion.md`. La rúbrica cubre
+claridad de marcadores lingüísticos asociados a la dimensión target
+(Pennebaker & King 1999), naturalidad del voseo, ausencia de jerga
+clínica, longitud apropiada y diversidad temática. Ambos corpus se
+versionan con DVC.
 
-La hipótesis H1 sostiene que, dado `temperature=0` y un modelo
-SKU fijado (`claude-sonnet-4-6-20260301` o equivalente alias
-pinned en el archivo `.env.local`), analizar el mismo texto
-introspectivo mediante el prompt `analyze-profile.ts` produce
-puntuaciones Big Five con desviación estándar por dimensión
-inferior a 2.5 puntos en escala 0-100, a lo largo de corridas
-consecutivas independientes sobre un corpus fijo. El diseño
-preregistrado contemplaba cinco corridas por caso sobre cincuenta
-casos (doscientos cincuenta análisis totales).
+### 4.3 Umbrales mínimos
 
-La motivación metodológica de esta hipótesis es que, si un
-sistema LLM no es reproducible bajo condiciones idénticas,
-cualquier análisis posterior pierde fundamento: no hay un objeto
-estable sobre el cual discutir robustez ni validez. H1 constituye,
-por tanto, una condición necesaria pero no suficiente para
-interpretar el artefacto como un sistema de ingeniería defendible.
+Por dimensión Big Five, **R² > 0.20** y **r > 0.30** (ADR-027). Las
+dimensiones que no alcancen ambos umbrales sobre el split test del
+bloque `latinoamericano_only` se marcan `per_dimension_status:
+"low_confidence"` y se excluyen del componente cuantitativo
+visible al usuario. La capa narrativa modera la lectura
+interpretativa correspondiente.
 
-### 3.2 H2 — Robustez a paráfrasis semánticamente preservantes
+### 4.4 CI gate
 
-La hipótesis H2 es más exigente que H1. Sostiene que, dadas tres
-paráfrasis semánticamente preservantes de un mismo texto
-introspectivo, generadas por modelos Claude Sonnet y Claude Haiku
-actuando como reescritores, las puntuaciones Big Five derivadas
-del texto original y las paráfrasis no deben diferir en más de
-diez puntos (máximo delta pairwise) en ninguna dimensión. Esta
-configuración es intra-vendor (ADR-020), es decir, limita la
-evaluación a reescritores de la misma familia Anthropic; una
-versión cross-vendor usando modelos de otras familias como GPT
-o Llama habría sido metodológicamente más fuerte pero quedó
-descartada por restricciones de automatización en el entorno de
-ejecución disponible.
+GitHub Actions ejecuta el pipeline ML en cada PR que toque `ml/`
+(`.github/workflows/ml-validate.yml`). Si las métricas del bloque
+`latinoamericano_only` no cumplen R² > 0.20 y r > 0.30 en al menos
+tres de las cinco dimensiones, el workflow falla y el merge queda
+bloqueado.
 
-H2 aborda una pregunta distinta a H1: no si el modelo es estable
-frente a entradas idénticas, sino si es estable frente a la
-reformulación lingüística del mismo contenido. Una inestabilidad
-en H2 indicaría que el sistema es sensible a la superficie lexical
-del texto en lugar del significado subyacente, lo cual sería un
-hallazgo relevante para cualquier aplicación que pretenda
-inferir rasgos estables de personalidad a partir de texto libre
-no estandarizado.
+## 5. Pilar 2 — Tests automatizados
 
-### 3.3 H3 — Precisión y recall del pipeline de safety
+### 5.1 Vitest unit
+- `lib/chat/pipeline.test.ts` — pipeline regex + clasificador.
+- `lib/knowledge/build-block.test.ts` — helper de bloques.
+- `lib/knowledge/citation-check.test.ts` — verifica que cada item
+  de KB tenga el comentario JSDoc completo (ADR-018).
+- `lib/supabase/rls-coverage.test.ts` — verifica RLS y políticas
+  sobre cada tabla pública creada por las migrations.
+- Tests de prompts en `lib/prompts/*.test.ts`.
 
-La hipótesis H3 evalúa el pipeline de detección de crisis
-implementado en `lib/chat/pipeline.ts`. Este pipeline combina un
-filtro regex con un clasificador LLM fail-closed y constituye la
-pieza más crítica del sistema desde una perspectiva ética: si
-falla, un usuario en crisis real no recibe los recursos
-profesionales que el producto promete ofrecer.
+### 5.2 Playwright E2E
+- `e2e/full-flow.spec.ts` cubre register → consent → onboarding
+  → analyze → dashboard → narrativa → plan.
+- `e2e/chatgpt-seed-flow.spec.ts` cubre el flujo de seed externo.
+- `e2e/qa-screenshots.spec.ts` produce capturas de las superficies
+  clave para anexos.
+- `e2e/a11y.spec.ts` ejecuta axe-core sobre las páginas
+  principales.
 
-La formulación de H3 sostiene que el pipeline alcanza un recall
-mayor o igual a 0.95 y una precisión mayor o igual a 0.85 sobre
-un dataset etiquetado de cien mensajes distribuidos en cuatro
-categorías balanceadas: veinticinco crisis reales, veinticinco
-expresiones idiomáticas argentinas (que contienen palabras
-asociadas a crisis pero no lo son), veinticinco casos borderline
-ambiguos y veinticinco mensajes seguros. El recall se pondera
-más alto que la precisión porque, en un producto de salud mental,
-los falsos negativos (no detectar una crisis real) son éticamente
-más costosos que los falsos positivos (bloquear temporalmente
-una conversación segura).
+### 5.3 axe-core en CI
 
-## 4. Diseño muestral y corpus
+`@axe-core/playwright` está integrado al workflow de CI. Las
+violaciones críticas o serias bloquean el merge.
 
-El corpus de evaluación para H1 y H2 consta de cincuenta casos
-distribuidos así: veinte casos basados en viñetas adaptadas del
-instrumento IPIP-NEO de dominio público (Goldberg, 1999), veinte
-casos basados en tipología junguiana adaptados de *Tipos
-Psicológicos* (Jung, 1921, dominio público) y diez casos
-adversariales sintetizados para probar comportamientos edge como
-tonos ambivalentes, narrativas contradictorias, entradas muy
-cortas y mezclas de voseo con tuteo. Este corpus está
-committeado en `lib/evals/cases.ts` y constituye el estímulo
-fijo de las evaluaciones H1 y H2.
+## 6. Pilar 3 — Evaluación del clasificador de crisis
 
-El dataset para H3 consta de cien casos etiquetados en
-`lib/evals/crisis-dataset.ts`. Los casos fueron redactados como
-mensajes sintéticos verosímiles en español rioplatense, sin
-información personalmente identificable ni detalles operacionales
-específicos sobre métodos de autolesión (ética red line en
-`docs/biz/ETHICS.md`). El draft inicial del dataset fue generado
-con asistencia de codex y posteriormente requiere revisión humana
-con criterio clínico formal (tarea T4.0 del plan de
-implementación, pendiente al cierre del presente capítulo).
+### 6.1 Objetivo
 
-## 5. Procedimiento y configuración técnica
+Asegurar que el pipeline de detección de crisis (regex
+`crisis-lexicon.ts` + clasificador de la capa narrativa con
+semántica fail-closed) opera dentro de umbrales aceptables sobre
+una superficie sensible.
 
-Las tres evaluaciones se ejecutan mediante runners TypeScript
-committeados en el repositorio. El runner H1 (`lib/evals/consistency.ts`)
-carga los cincuenta casos, ejecuta cinco análisis consecutivos
-por caso con `temperature=0` mediante el helper `claudeText` del
-cliente Anthropic, almacena los resultados en memoria y calcula
-la desviación estándar por dimensión para cada caso. El runner
-H2 (`lib/evals/cross-model-paraphrase.ts`) genera tres paráfrasis
-por caso usando tres reescritores configurados (Claude Sonnet base,
-Claude Haiku base y Claude Sonnet en modo lexical híbrido),
-analiza cada paráfrasis con `temperature=0` en el analizador y
-calcula el máximo delta pairwise entre los cuatro análisis
-resultantes. El runner H3 (`lib/evals/crisis-eval.ts`) ejecuta el
-pipeline completo de `runSafetyPipeline()` sobre cada caso del
-dataset de cien, captura las excepciones `CrisisDetected` y
-construye la matriz de confusión correspondiente.
+### 6.2 Dataset
 
-Todos los runners soportan un flag `--from-cache` que permite
-replay offline de los resultados sin realizar llamadas nuevas a
-la API Anthropic, leyendo en su lugar los snapshots committeados
-en `lib/evals/.cache/`. Esta capacidad, documentada en ADR-014,
-es condición necesaria para que la replicación externa del
-experimento sea viable sin que cada revisor deba pagar el costo
-de API completo.
+`lib/evals/crisis-dataset.ts` contiene 100 casos sintéticos
+balanceados (sin información personalmente identificable,
+parafraseados y desprovistos de detalle operacional sobre métodos
+de autolesión, conforme a las líneas rojas declaradas en
+`docs/biz/ETHICS.md`): 25 crisis reales, 25 idioms argentinos
+negativos, 25 borderline ambiguos y 25 mensajes seguros. El draft
+inicial se generó con asistencia IA y queda pendiente la revisión
+por persona con criterio clínico apropiado.
 
-La configuración del modelo usa el alias `claude-sonnet-4-6`
-leído desde la variable de entorno `ANTHROPIC_MODEL_ID`. El
-preregistro original exigía un SKU fechado (como
-`claude-sonnet-4-6-20260301`) para garantizar estabilidad
-longitudinal, pero la ejecución efectiva del experimento se
-realizó con el alias debido a que la versión fechada no estaba
-disponible en el catálogo al momento de la corrida. Esta
-desviación respecto del preregistro queda documentada como
-limitación explícita en el capítulo 8.
+### 6.3 Umbrales operativos
 
-## 6. Estudio M3 con usuarios reales
+`recall ≥ 0.95` (prioridad alta — los falsos negativos son
+éticamente más costosos en una superficie de salud mental) y
+`precision ≥ 0.85`.
 
-El estudio M3 es de naturaleza cualitativa con componente
-cuantitativo. El protocolo completo, los materiales de
-reclutamiento, el formulario de consentimiento informado
-(alineado con los artículos 6 y 7 de la Ley 25.326 argentina de
-protección de datos personales) y el cuestionario System
-Usability Scale en versión español rioplatense están en
-`docs/research/` y `content/consent/research-m3-v1-es-AR.md`.
+### 6.4 Runner y test gate
 
-El procedimiento contempla sesiones individuales de cuarenta
-minutos. En cada sesión, el participante recibe una computadora
-con Umbra abierto en su página de landing y se le solicita que
-complete el flujo de onboarding pensando en voz alta. El
-investigador observa, toma notas escritas sin intervenir salvo
-para recordar la instrucción de verbalizar, y registra la
-sesión en audio y video mediante OBS Studio con consentimiento
-explícito. Al finalizar la interacción con el producto, el
-participante completa el cuestionario SUS y responde tres
-preguntas abiertas sobre qué le sorprendió, qué le incomodó y
-qué cambiaría.
+`lib/evals/crisis-eval.ts` ejecuta el pipeline contra cada caso y
+computa la matriz de confusión, precision, recall, F1 y false
+negative rate, con desglose por categoría. El test
+`lib/evals/crisis-eval.test.ts` falla en CI si el recall cae por
+debajo del umbral sobre la corrida controlada.
 
-El análisis cuantitativo consiste en calcular el promedio y la
-desviación estándar del SUS sobre los participantes completados,
-y comparar el promedio contra el benchmark de sesenta y ocho
-puntos que Sauro (2011) identifica como el umbral por debajo del
-cual una interfaz es considerada peor que el promedio de la
-industria. El análisis cualitativo aplica análisis temático
-inductivo de Braun y Clarke (2006) sobre las transcripciones
-anonimizadas, identificando tres a cinco temas recurrentes con
-dos o tres citas textuales por tema.
+## 7. Pilar 4 — System Usability Scale (TP3/TP4)
 
-## 7. Ética de la investigación
+### 7.1 Diseño
 
-El estudio M3 adopta los principios de la Declaración de
-Helsinki para investigación con sujetos humanos, adaptados al
-contexto de usabilidad informal de software. Estos principios
-están documentados en `docs/biz/ETHICS.md` e incluyen
-beneficencia (el producto debe ser diseñado para beneficio del
-usuario), no maleficencia (protocolos de escalamiento claros en
-caso de malestar emocional durante una sesión), autonomía
-(consentimiento informado explícito, derecho a retirarse en
-cualquier momento, opciones de borrado posterior) y justicia
-(acceso gratuito al producto durante el estudio).
+Sesiones individuales presenciales o por videollamada de
+aproximadamente 40 minutos, con n=8-15 participantes (rango
+planteado por TP1) reclutados por la red de contactos del autor
+(compañeros de Siglo 21, conocidos del área de tecnología y
+humanidades), sin compensación económica. El estudio es de tipo
+usability testing, no investigación clínica.
 
-Los principios del marco Positive Computing de Calvo y Peters
-(2014) operan como una capa adicional de revisión ética orientada
-al diseño: cada decisión técnica o de interfaz se evalúa contra
-los ocho factores operativos del marco (autonomía, competencia,
-relación, atención plena, emoción positiva, involucramiento,
-resiliencia y autocompasión) para verificar que contribuye al
-bienestar subjetivo del usuario en lugar de erosionarlo.
+### 7.2 Procedimiento
 
-El cumplimiento con la Ley 25.326 argentina de protección de
-datos personales se aborda mediante tres mecanismos concretos
-documentados en `docs/biz/LEGAL.md`: consentimiento expreso
-verificable (artículo 7), derechos de acceso y rectificación
-(artículos 14 y 16) implementados mediante endpoints API
-propios, y procedimientos de cancelación con cascade delete
-seguro mediante magic link con token de vida breve.
+El protocolo (`docs/research/usability-protocol.md`) prevé los
+siguientes bloques: bienvenida y consentimiento (5 min); permiso
+explícito de grabación de pantalla y audio (2 min); instrucciones
+de pensamiento en voz alta (3 min); tarea principal de completar
+el onboarding y leer el retrato (17 min); exploración libre del
+dashboard (3 min); cuestionario SUS de 10 ítems escala 1-5 (3
+min); preguntas abiertas sobre sorpresa, incomodidad y cambios
+sugeridos, con una pregunta específica sobre la naturalidad del
+español latinoamericano (3 min); cierre y agradecimiento (2 min).
 
-## 8. Reproducibilidad
+### 7.3 Instrumento SUS
 
-El experimento completo es reproducible externamente mediante
-tres mecanismos. Primero, el código fuente del proyecto es open
-source y está disponible en su totalidad en el repositorio
-correspondiente, lo cual permite auditar tanto el artefacto
-evaluado como los runners de evaluación. Segundo, los cache
-snapshots committeados en `lib/evals/.cache/` permiten
-reproducir los resultados sin realizar llamadas nuevas a la API
-Anthropic, eliminando tanto el costo económico como la variabilidad
-asociada a cambios futuros en el modelo. Tercero, el preregistro
-OSF (cuando sea submitido) proveerá un timestamp independiente
-que certifica que las hipótesis fueron formuladas antes de la
-observación de los resultados.
+System Usability Scale (Brooke 1996) adaptado al español
+latinoamericano. Los 10 ítems usan voseo argentino y se
+encuentran en `docs/research/sus-spanish-latinoamericano.md`. El
+scoring sigue la fórmula clásica: ítems impares puntúan
+`score - 1`, ítems pares puntúan `5 - score`; la suma multiplicada
+por 2.5 da el score final en rango 0-100.
 
-La tesis cita explícitamente el commit hash del repositorio
-correspondiente al estado del código en el momento de cada
-corrida. Los revisores que clonen el repositorio en ese hash y
-ejecuten `npm run eval -- --from-cache` pueden reproducir los
-resultados reportados sin requerir acceso a servicios externos
-ni credenciales privadas.
+### 7.4 Análisis
+
+El análisis cuantitativo reporta el promedio del SUS sobre los
+participantes completados, su desviación estándar y la comparación
+con la mediana histórica del instrumento. El análisis cualitativo
+aplica codificación temática inductiva sobre las transcripciones
+anonimizadas y las respuestas a preguntas abiertas, identificando
+3-5 temas con 2-3 citas verbatim por tema (anonimizadas como P1,
+P2, etc.).
+
+### 7.5 Plan de contingencia
+
+Si el reclutamiento no alcanza n=8 dentro del calendario de
+TP3/TP4, se reporta honestamente el n efectivo y la validación se
+apoya principalmente en los pilares cuantitativos restantes
+(métricas del módulo analítico, tests automatizados y evaluación
+del clasificador de crisis), que son independientes del n de
+usuarios.
+
+## 8. Ética de la investigación
+
+El estudio SUS adopta los principios de la Declaración de Helsinki
+para investigación con sujetos humanos, adaptados al contexto de
+usabilidad informal de software. Los principios están documentados
+en `docs/biz/ETHICS.md` e incluyen beneficencia (el producto debe
+ser diseñado para beneficio del usuario), no maleficencia
+(protocolos de escalamiento claros si surge malestar emocional),
+autonomía (consentimiento informado explícito, derecho a retirarse
+en cualquier momento) y justicia (acceso gratuito al producto
+durante el estudio).
+
+Los principios del marco Positive Computing (Calvo & Peters 2014)
+operan como una capa adicional de revisión ética orientada al
+diseño: cada decisión técnica o de interfaz se evalúa contra los
+ocho factores operativos del marco (autonomía, competencia,
+relación, atención plena, emoción positiva, engagement,
+resiliencia y autocompasión).
+
+El cumplimiento con la Ley 25.326 argentina de protección de datos
+personales se aborda con cinco mecanismos técnicos documentados en
+`docs/biz/LEGAL.md`: (1) consentimiento informado bloqueante con
+SHA-256 del texto verbatim (ADR-024), (2) exportación integral de
+datos, (3) rectificación, (4) cancelación con magic link
+single-use, (5) oposición al tratamiento con fines de investigación.
+
+## 9. Reproducibilidad
+
+El experimento del módulo analítico es reproducible externamente
+por cualquier revisor con Python 3.11+, los datasets versionados
+con DVC y los artefactos serializados commiteados en `ml/models/`.
+El procedimiento de reproducción es:
+
+```bash
+git clone <repo>
+cd umbra/ml
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+dvc pull
+make all
+cat eval_metrics.json
+```
+
+La tesis cita el commit hash del repositorio correspondiente al
+estado del código y de los datasets en el momento de cada corrida
+de métricas.

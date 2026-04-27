@@ -12,21 +12,22 @@ implementación (para ello están los documentos de
 cómo se tomaron las decisiones, qué restricciones operaron en
 cada momento y cómo el proyecto evolucionó desde la especificación
 inicial hasta el estado productivo final. La estructura del
-capítulo sigue el orden cronológico aproximado del desarrollo,
-distinguiendo dos grandes bloques: el master build inicial (fases
-1 a 7) y las fases posteriores específicas del TFG (fases 0 a 6
-del plan de implementación).
+capítulo sigue el orden cronológico aproximado del desarrollo: la
+fase web inicial (scaffolding, autenticación, consentimiento,
+onboarding, dashboard, narrativa, chat con guardrails, plan,
+export y polish) y los sprints del módulo analítico propio que se
+ejecutan en paralelo según el cronograma del TFG.
 
-## 2. Fase de construcción inicial (master build)
+## 2. Fase web inicial
 
-El master build, documentado en `UMBRA_MASTER_BUILD.md`, estableció
-la especificación completa del producto antes de escribir
-código. El documento incluía arquitectura, tipos, schema SQL,
-prompts, design tokens, plan de ejecución por fases y checklists
-de QA por fase. Este enfoque de "especificación antes de código"
-permitió que el desarrollo principal se completara en siete fases
-secuenciales, cada una con criterios de aceptación claros y
-entregables medibles.
+La fase web inicial, documentada en `UMBRA_MASTER_BUILD.md`,
+estableció la especificación completa del frontend antes de
+escribir código. El documento incluyó arquitectura, tipos, schema
+SQL, prompts, design tokens, plan de ejecución por fases y
+checklists de QA por fase. Este enfoque de "especificación antes
+de código" permitió que el desarrollo principal del frontend se
+completara en siete fases secuenciales, cada una con criterios de
+aceptación claros y entregables medibles.
 
 ### 2.1 Fase 1 — Scaffolding
 
@@ -66,11 +67,12 @@ con seis tipos de preguntas (texto libre, multi-choice, escenario,
 ranking, polaridad y metáfora) orquestadas por un prompt
 conductor en `lib/prompts/onboarding-conductor.ts`. La ruta
 `/api/analyze` (Edge runtime, ADR-001) combina los textos del
-usuario con los bloques de conocimiento de `lib/knowledge/` y
-genera un perfil psicológico completo en dos pasadas (Pass 1 Big
-Five + Jung + arquetipo, Pass 2 evidencia textual). El pipeline
-de rate limiting atómico (ADR-016, ADR-022) protege el sistema
-contra costos descontrolados mediante estimación previa y
+usuario, invoca al módulo analítico propio para inferir las
+dimensiones Big Five (ADR-026) y luego delega a la capa narrativa
+la lectura interpretativa de funciones cognitivas Jung y arquetipo
+Pearson a través de `lib/prompts/interpret-narrative.ts`. El
+pipeline de rate limiting atómico (ADR-016, ADR-022) protege el
+sistema contra costos descontrolados mediante estimación previa y
 reconciliación posterior.
 
 ### 2.5 Fase 4 — Dashboard
@@ -117,180 +119,88 @@ de Resend para emails de borrado, workflow de CI en GitHub
 Actions y configuración de despliegue en Vercel. Al cierre de
 esta fase, el producto estaba técnicamente completo y desplegable.
 
-## 3. Fase de validación y refinamiento académico (sesión TFG)
+## 3. Sprints del módulo analítico
 
-El segundo bloque de desarrollo, ejecutado en una sesión extensa
-el 14 de abril de 2026, corresponde al plan de implementación
-específico del TFG documentado en
-`docs/biz/IMPLEMENTATION_PLAN.md`. Este bloque añadió siete
-fases (numeradas 0 a 6, con subfases en la 3 y 4) orientadas a
-transformar el producto funcional en un artefacto académicamente
-defendible con evidencia empírica.
+En paralelo a la fase web inicial, el cronograma del TFG (TP1
+ya entregado, TP2 el 17 de mayo, TP3 el 7 de junio, TP4 el 28 de
+junio) prevé tres sprints específicos del módulo analítico
+propio (`ml/`).
 
-### 3.1 Fase 0 — Fundación académica
+### 3.1 Sprint ML 1 — Datasets + baseline
 
-La fase 0 no agregó código de producto, sino documentación
-académica vertebrada. Se redactaron ADR-023 (adopción de Branch
-B + M3), ADR-024 (hash verbatim del consentimiento), ADR-025
-(aplicación de heurísticas PAIR), se creó
-`docs/biz/VALIDATION.md` con el plan completo de hipótesis H1,
-H2, H3 y protocolo M3, se creó el plan maestro
-`docs/biz/IMPLEMENTATION_PLAN.md` con QA Gate estándar y se
-actualizó `docs/biz/TFG.md` con la metodología de validación.
-Esta fase constituye el andamiaje académico sobre el cual se
-ejecutan todas las fases posteriores.
+El primer sprint prepara los corpus de entrenamiento. El corpus
+Essays (Pennebaker & King 1999) se obtiene por acceso académico y
+se versiona localmente con DVC. El corpus latinoamericano propio
+(ADR-028) se construye con asistencia de IA generativa, dirigido
+por un prompt explícito que especifica una dimensión Big Five
+target con dirección alta o baja, y se valida manualmente contra
+una rúbrica documentada. La unión de ambos corpus se particiona
+en train/val/test 80/10/10 con seed determinístico
+(`SEED=42`). Como línea base, se entrena un Ridge multi-output
+sobre representaciones TF-IDF para tener referencia.
 
-### 3.2 Fase 1 — Aplicación de heurísticas PAIR
+### 3.2 Sprint ML 2 — Embeddings DistilBERT + Ridge
 
-La fase 1 reformuló siete mejoras de UX como aplicación explícita
-de las heurísticas del *People + AI Guidebook* de Google (ver
-capítulo 4 y ADR-025). Las mejoras incluyeron: una *confidence
-surface* visible en el dashboard que muestra qué tan seguro
-está el análisis (heurística capítulo 4 Explainability + Trust),
-*pull quotes* italics destacados dentro de la narrativa
-(heurística capítulo 3 Mental Models), *sticky TOC* con
-scroll-spy que muestra la sección actual (heurística capítulo 5
-Feedback + Control), *InfoPopover* en cada dimensión Big Five y
-función Jung que provee definición plain en español, *InsightPing*
-colapsable durante el onboarding, *QuickPromptChips* siempre
-visibles en el chat (incluso durante la conversación, no solo en
-empty state) y acotamiento de ancho de línea a sesenta y cinco
-caracteres en la narrativa para optimizar la legibilidad
-(Bringhurst, 2005).
+El segundo sprint extrae embeddings DistilBERT base multilingual
+cased (Sanh et al. 2019) en modo *frozen* sobre la unión de
+ambos corpus, sin fine-tuning. El vector CLS de 768 dimensiones
+alimenta cinco regresores Ridge (Hoerl & Kennard 1970)
+entrenados independientemente, uno por dimensión Big Five, con
+`GridSearchCV` para tunear el hiperparámetro `alpha`. El
+experimento se registra en MLflow con métricas (MSE, R², r) por
+dimensión y los regresores se serializan en `ml/models/*.joblib`.
 
-### 3.3 Fase 2 — Instrumentación in-app de métricas de usabilidad
+### 3.3 Sprint ML 3 — Validación + serving
 
-La fase 2 añadió instrumentación opt-in para recolectar datos de
-usabilidad dentro del producto. Se creó la migración 005 con la
-tabla `usability_responses`, un endpoint POST `/api/research/usability`,
-una biblioteca `lib/research/instruments.ts` con los cuatro
-instrumentos completos (UMUX-Lite, METUX, CUQ, SUS) en español
-rioplatense, y un componente `UsabilityPrompt.tsx` que renderiza
-el cuestionario con escala Likert de siete puntos. Esta
-infraestructura quedó preparada pero no activada en el flujo
-principal del producto, a la espera de la decisión futura sobre
-cuándo presentar los cuestionarios a los usuarios reales.
+El tercer sprint calcula y consolida las métricas finales sobre
+el split test, estratificadas en los bloques `english_only`,
+`latinoamericano_only` y `combined`. Las dimensiones que no
+alcanzan los umbrales mínimos R² > 0.20 y r > 0.30 sobre el
+bloque `latinoamericano_only` se marcan
+`per_dimension_status: "low_confidence"` (ADR-027) y se reportan
+honestamente en `eval_metrics.json`. Adicionalmente, este sprint
+levanta el servicio FastAPI (`ml/src/api_server.py`) y verifica
+la integración con el frontend Next.js a través de
+`lib/ml-client.ts`.
 
-### 3.4 Fase 3 — Mejoras estructurales de UX
+## 4. Cierres técnicos transversales
 
-La fase 3 agregó seis mejoras estructurales de interacción en el
-producto:
+Adicionalmente al desarrollo principal, se ejecutaron varios
+cierres técnicos relevantes para la defensa académica:
 
-- **3.1** Progressive disclosure de dos capas en el dashboard,
-  ocultando la sección de data visualizations por default hasta
-  que el usuario pulse "Ver perfil completo". Reduce carga
-  cognitiva inicial y crea un momento de exploración elegida
-  (ADR-025, heurística capítulo 3 PAIR).
-- **3.2** Integración de framer-motion mediante `LazyMotion` con
-  `domAnimation` features tree-shaking (~17 kB gzip), provider
-  global `MotionProvider.tsx` y `MotionConfig` con
-  `reducedMotion="user"` para respetar preferencias de
-  accesibilidad. Animación spring en la expansión del disclosure.
-- **3.3** Chat persistente con sidebar de historial. Dos endpoints
-  nuevos (`GET /api/chat/conversations` y `GET /api/chat/conversations/[id]`)
-  alimentan un componente `ConversationsSidebar.tsx` visible en
-  desktop. El usuario puede retomar conversaciones previas,
-  iniciar conversaciones nuevas y navegar su historial.
-- **3.4** Undo del último turno de onboarding. Nueva ruta
-  `/api/onboarding/undo` con helper `undoLastAnsweredTurn` en
-  `session-store.ts` permite al usuario revisar su respuesta
-  anterior sin perder el progreso anterior.
-- **3.5** Link a PDF export desde el dashboard (originalmente la
-  feature existía pero no estaba entrada desde la interfaz) y
-  fix de tipo `Html2PdfChain` interface que elimina un casting
-  `as any` previamente violatorio de la convención estricta del
-  proyecto.
-- **3.6** Autonomy dial en el chat. Tres modos (espejo, guía,
-  reto) seleccionables mediante un radiogroup pequeño arriba
-  del chat. El modo seleccionado modifica el system prompt que
-  envía el cliente al endpoint del chat, alterando el grado de
-  asertividad de Umbra en la respuesta.
+- **Migration 004** (ADR-024, Ley 25.326 art. 7): agrega los
+  campos `consent_text_hash` (SHA-256 verbatim) y `locale` a la
+  tabla `consent_records`, con la actualización correspondiente
+  de `app/api/consent/route.ts`.
+- **Diagramas Mermaid** en `docs/tech/ARCHITECTURE.md` para
+  topología, dependency graph y data flow.
+- **Threat model STRIDE** en `docs/tech/THREAT_MODEL.md` por
+  siete componentes (middleware, Edge routes, Node routes,
+  Supabase, proveedor LLM externo, cliente, pipeline de crisis).
+- **axe-core en CI** (`@axe-core/playwright`) para pruebas
+  automatizadas de accesibilidad sobre las páginas principales.
+- **Test de cobertura RLS** (`lib/supabase/rls-coverage.test.ts`)
+  que verifica que toda tabla pública creada en migrations tenga
+  RLS habilitada y al menos una política (o esté listada como
+  service-role-only).
+- **Materiales del estudio de usabilidad** SUS para TP3/TP4 en
+  `docs/research/`, incluyendo el protocolo de sesión, copy de
+  reclutamiento, cuestionario SUS adaptado al español
+  latinoamericano y consentimiento informado con líneas de ayuda
+  de salud mental argentinas.
 
-### 3.5 Fase 4 — Infraestructura H3 de safety empírica
+## 5. Gestión del proyecto
 
-La fase 4 construyó la infraestructura necesaria para medir
-empíricamente el pipeline de detección de crisis. Se creó el
-dataset etiquetado `lib/evals/crisis-dataset.ts` con cien casos
-distribuidos en cuatro categorías balanceadas, un runner
-`lib/evals/crisis-eval.ts` que ejecuta el pipeline contra cada
-caso y computa matriz de confusión y métricas derivadas, un
-test de integridad `lib/evals/crisis-eval.test.ts` que valida
-que el dataset tenga la estructura esperada, y un script
-ejecutable `scripts/run-crisis-eval.ts` que corre la evaluación
-completa y escribe los resultados en `eval-results/`.
+El control de versiones usó Git con commits atómicos por unidad
+de trabajo, cada uno con mensaje descriptivo que incluye la
+justificación del cambio y las consecuencias esperadas. Las
+decisiones arquitectónicas significativas se documentan como
+Architecture Decision Records (Nygard 2011) en
+`docs/DECISIONS.md`. El cronograma se ajusta al calendario
+oficial del TFG: TP1 entregado, TP2 el 17 de mayo, TP3 el 7 de
+junio, TP4 el 28 de junio, defensa en agosto/septiembre.
 
-### 3.6 Fase 5 — Infraestructura H1 y H2 y cierres técnicos
-
-La fase 5 agregó la infraestructura para H1 y H2, más varios
-cierres técnicos pendientes. Se creó `lib/evals/cases.ts` con el
-corpus de cincuenta casos (veinte IPIP, veinte Jung, diez
-adversariales),
-`lib/evals/consistency.ts` con el runner H1 y
-`lib/evals/cross-model-paraphrase.ts` con el runner H2. Los
-scripts ejecutables correspondientes están en `scripts/run-h1.ts`
-y `scripts/run-h2.ts`. Adicionalmente se ejecutó la migración
-004 con el campo `consent_text_hash` y `locale` en
-`consent_records` (ADR-024, Ley 25.326 artículo 7), se convirtieron
-los diagramas ASCII de `ARCHITECTURE.md` a bloques Mermaid, se
-creó el documento `THREAT_MODEL.md` con análisis STRIDE completo
-por siete componentes, se integró `@axe-core/playwright` en el
-workflow de CI para pruebas automatizadas de accesibilidad, y
-se agregó un test de cobertura RLS en `lib/supabase/rls-coverage.test.ts`
-que verifica que toda tabla pública creada en migrations tenga
-RLS habilitada y al menos una política (o esté listada como
-service-role-only de manera explícita).
-
-### 3.7 Fase 4.5 — Materiales para el estudio M3
-
-La fase 4.5 produjo los materiales necesarios para el estudio
-think-aloud con usuarios. Se redactaron el protocolo de sesión
-minuto a minuto, el formulario de consentimiento informado en
-voseo rioplatense (alineado con Ley 25.326 artículos 6 y 7), la
-traducción del System Usability Scale al español rioplatense
-(manteniendo la estructura de Brooke 1996 pero adaptando la
-redacción al registro oral argentino) y tres variantes de copy
-de reclutamiento para diferentes canales de comunicación. Los
-materiales quedan en `docs/research/` y
-`content/consent/research-m3-v1-es-AR.md`, listos para ser usados
-cuando el autor ejecute las sesiones reales.
-
-### 3.8 Fase 6 — Esqueleto de la tesis
-
-La fase 6 construyó el esqueleto de dieciséis archivos markdown
-numerados en la carpeta `thesis/`, correspondientes a los
-capítulos del documento académico. Se incluyó un archivo
-`thesis/README.md` con la tabla de mapeo capítulo a fuente
-primaria del repositorio, un archivo `thesis/pandoc.yaml` con
-metadata y estilo para la compilación a PDF, y un script
-`thesis/build.sh` que concatena los capítulos y ejecuta Pandoc
-con XeLaTeX. Tres capítulos técnicos (03 Marco teórico, 06
-Arquitectura y 08 Validación computacional) fueron drafteados
-con asistencia de codex y luego refinados manualmente.
-
-## 4. Gestión del proyecto y herramientas de colaboración
-
-El desarrollo combinó dos herramientas de IA generativa como
-asistentes: Claude Code (como IDE agent principal responsable de
-editar el código directamente) y OpenAI codex CLI (como segundo
-par de ojos para code review independiente y como generador de
-drafts de capítulos técnicos de la tesis). Esta combinación
-permitió ejecutar auditoría cruzada del código antes de cerrar
-cada fase, y delegar tareas de redacción extensa sin sacrificar
-supervisión humana final. El uso de codex review detectó, entre
-otras cosas, una regresión P1 en el flujo de importación desde
-ChatGPT que había pasado inadvertida durante el merge del WIP
-inicial; la regresión fue corregida posteriormente y queda
-documentada en el capítulo 11 como ejemplo de disciplina de
-revisión cruzada.
-
-El control de versiones usó Git con commits atómicos por fase,
-cada uno con mensaje descriptivo extenso que incluye la
-justificación del cambio y las consecuencias esperadas. Al
-cierre del proyecto, el histórico de commits relevantes para el
-TFG abarca treinta y dos entradas cronológicas entre la fase 0
-y la sincronización final de documentación.
-
-## 5. Deploy a producción
+## 6. Deploy a producción
 
 El producto fue desplegado a producción en dos plataformas
 cloud. El frontend y las rutas API se alojan en Vercel bajo el
@@ -312,7 +222,7 @@ magic links en el flujo de borrado de cuenta; su ausencia no
 afecta el resto del sistema pero queda documentada como
 continuación.
 
-## 6. Convenciones de código mantenidas
+## 7. Convenciones de código mantenidas
 
 El proyecto mantuvo consistencia estricta con las convenciones
 establecidas en `CLAUDE.md`: TypeScript strict sin tipos `any`
@@ -320,12 +230,12 @@ en el código propio (las únicas excepciones son dependencias
 transitivas de librerías sin types bundled, y ese caso específico
 se resuelve mediante interfaces locales como `Html2PdfChain`);
 Zod en toda frontera de entrada (rutas API, formularios, parsers
-de respuestas de Claude); componentes React funcionales con
+de respuestas de la capa narrativa); componentes React funcionales con
 hooks y props tipadas mediante interfaces; tipos centralizados
 en `types/index.ts`; prompts del modelo centralizados en
 `lib/prompts/` y nunca inline en componentes o rutas; estilos
 Tailwind utility-first con tokens custom en lugar de CSS
 tradicional; iconos Phosphor exclusivamente, sin emoji en
-interfaces de usuario; y español rioplatense (voseo) en toda
+interfaces de usuario; y español latinoamericano (voseo) en toda
 cadena de texto visible al usuario, reservando el español
 formal para la prosa académica de la tesis.

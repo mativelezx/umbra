@@ -128,7 +128,7 @@ See [features/ANALYSIS.md](ANALYSIS.md) for the Pass 2 spec.
 - `lib/store/onboarding-store.test.ts` — state transitions, reset, persistence
 - `e2e/onboarding-full-flow.spec.ts` (Playwright) — new user completes guided onboarding end-to-end
 
-## Copy (Spanish rioplatense)
+## Copy (Spanish latinoamericano)
 
 - Mode selector title: "Empezá como te sientas cómodo"
 - Guided label: "Te guío con preguntas"
