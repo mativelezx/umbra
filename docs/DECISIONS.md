@@ -221,6 +221,10 @@ debug payload is dropped.
 **Consequences**: Can debug recent analysis issues (last 30 days) in detail,
 older analyses only have the structured result. Trade-off: debug depth vs
 storage cost.
+**Implementación**: la migración `006_enable_pg_cron_purges.sql` agenda
+los tres jobs (`purge-crisis-events`, `purge-analysis-raw`,
+`purge-expired-delete-tokens`) vía `pg_cron`. Idempotente. Requiere
+plan Supabase con `pg_cron` habilitado.
 
 ## ADR-021 — Pepper versioning for rotation safety
 **Status**: Accepted (2026-04-12)
@@ -337,6 +341,11 @@ queda separada y delegada al proveedor externo de IA generativa.
 - **Linked to**: ADR-027 (reporte por dimensión + per_dimension_status),
   ADR-028 (corpus latinoamericano), ADR-002 (Jung directo, lectura
   interpretativa).
+- **Implementación operativa**: `lib/ml-client.ts` consume `POST /infer`
+  del FastAPI; `app/api/analyze/route.ts` orquesta Pass 1 (módulo ML) +
+  Pass 1.5 (`lib/prompts/interpret-narrative.ts`). Errores `503` del
+  módulo se propagan como `MlUnavailableError` (NO degrada a Claude
+  para Big Five). Variable de entorno: `ML_API_URL`.
 
 ## ADR-027 — Reporte por dimensión Big Five con umbrales R²>0.20, r>0.30
 **Status**: Accepted (2026-04-14)

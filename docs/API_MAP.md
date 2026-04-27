@@ -15,101 +15,66 @@
 
 ### `POST /api/analyze`
 **Runtime**: Edge
-**Purpose**: Pass 1 — analyze user introspective text and produce psychological profile.
+**Purpose**: Inferir Big Five (Pass 1 — módulo ML propio) + lectura interpretativa Jung/arquetipo (Pass 1.5 — capa narrativa Claude). Pass 2 (evidence highlights) corre fire-and-forget.
 **Auth**: required
-**Phase**: 3
 
 **Request body**:
 ```ts
 {
-  texts: string[],           // 1-5 entries (5 for guided, 1 for freetext)
-  mode: 'guided' | 'freetext',
-  areas?: string[],          // required if mode='guided', length matches texts
+  texts: string[],            // 1-16 entries
+  mode: 'dynamic',
+  areas?: string[],           // si presente, mismo length que texts
+  sessionId?: string,         // UUID; recupera seedText desde onboarding_sessions
 }
 ```
 
 **Response `data`** (on success):
 ```ts
 {
-  profileId: string,         // UUID
-  bigFive: {
-    openness: number,        // 0-100
+  profileId: string,          // UUID
+  bigFive: {                  // ← inferido por módulo ML (DistilBERT + Ridge)
+    openness: number,         // 0-100
     conscientiousness: number,
     extraversion: number,
     agreeableness: number,
     neuroticism: number,
   },
-  jungFunctions: {
+  perDimensionStatus: {       // ← bandera por dimensión (ADR-027)
+    openness: 'ok' | 'low_confidence',
+    conscientiousness: 'ok' | 'low_confidence',
+    extraversion: 'ok' | 'low_confidence',
+    agreeableness: 'ok' | 'low_confidence',
+    neuroticism: 'ok' | 'low_confidence',
+  },
+  jungFunctions: {            // ← lectura interpretativa Pass 1.5 (Claude)
     Se: number, Si: number, Ne: number, Ni: number,
     Te: number, Ti: number, Fe: number, Fi: number,
   },
   archetype: 'hero' | 'sage' | 'explorer' | 'creator' | 'caregiver' | 'rebel',
   archetypeSecondary: string,
-  confidence: number,        // 0-100, self-reported
-  reasoning: string,         // short narrative citing evidence
+  confidence: number,         // 0-100, lectura interpretativa Pass 1.5
+  reasoning: string,          // narrativa citando evidencia
 }
 ```
 
 **Error responses**:
-- `400 validation` — zod parse failed
-- `401 unauthenticated` — no session
-- `403 consent_required` — user has not accepted consent
-- `429 rate_limited` — daily token or cost cap hit
-- `503 ai_unavailable` — Claude API failed after retries
-- `503 budget_exceeded` — global daily budget exceeded
+- `400 validation` — zod parse falló
+- `401 unauthenticated` — sin sesión
+- `403 consent_required` — usuario no aceptó consent
+- `429 rate_limited` — cap diario de tokens o costo
+- `503 ai_unavailable` — Claude (Pass 1.5) falló
+- `503 budget_exceeded` — presupuesto diario global excedido
+- `503 ml_unavailable` — módulo ML caído o devolvió error (NO degrada a Claude para Big Five — ADR-026)
 
 **Side effects**:
-- INSERT `psychological_profiles` (version=1)
+- POST a `lib/ml-client.inferBigFive` (módulo ML propio)
+- POST a Claude para Pass 1.5 (Jung + arquetipo + reasoning)
+- INSERT/UPSERT `psychological_profiles` (version=1) con `analysis_raw.ml.{modelVersion, elapsedMs, perDimensionStatus}`
 - UPDATE `profiles.onboarding_completed = true`
-- If `research_opt_in=true`, INSERT `research_dataset` row (HMAC-pseudonymized)
-- Triggers Pass 2 (`/api/analyze/evidence`) in parallel
+- Si `research_opt_in=true`, INSERT `research_dataset` (HMAC-pseudonymized)
+- Pass 2 fire-and-forget: extrae evidence highlights y guarda en `evidence_highlights`
 
-**Spec**: [features/ANALYSIS.md](features/ANALYSIS.md)
-
----
-
-### `POST /api/analyze/evidence`
-**Runtime**: Edge
-**Purpose**: Pass 2 — extract phrase-level evidence from user text given Pass 1 profile.
-**Auth**: required
-**Phase**: 3
-
-**Request body**:
-```ts
-{
-  profileId: string,
-  originalText: string,
-}
-```
-
-**Response `data`**:
-```ts
-{
-  evidenceId: string,
-  highlights: Array<{
-    trait: string,           // e.g. "openness", "Ni"
-    phrases: Array<{
-      quote: string,         // verbatim from text
-      occurrence: number,    // 1-indexed for disambiguation
-    }>,
-  }>,
-}
-```
-
-**Error responses**:
-- `400 validation`
-- `404 profile_not_found` — profileId does not match session user
-- `503 ai_unavailable`
-
-**Side effects**:
-- INSERT `evidence_highlights` row
-
-**Notes**:
-- Temperature=0.3 (exploratory phrase selection)
-- Client-side offset resolution via `text.indexOf(quote, fromIndex)` with `occurrence` disambiguation
-- Silent no-op if quote not found in text
-
-**Spec**: [features/ANALYSIS.md](features/ANALYSIS.md)
+**Spec**: [features/ANALYSIS.md](features/ANALYSIS.md), ADR-026, ADR-027
 
 ---
 
@@ -338,23 +303,46 @@
 
 ---
 
-### `POST /api/account/research-opt-out`
+### `PATCH /api/account/profile`
 **Runtime**: Node
-**Purpose**: Toggle research participant mode.
+**Purpose**: Rectificación de datos personales (Ley 25.326 art. 16).
 **Auth**: required
-**Phase**: 3
 
 **Request body**:
 ```ts
-{ optIn: boolean }
+{ full_name?: string }
 ```
 
-**Response `data`**: `{ researchOptIn: boolean }`
+**Response `data`**: `{ full_name: string | null, updated: boolean }`
+
+**Side effects**:
+- UPDATE `profiles.full_name` + `profiles.updated_at`
+- Validación Zod server-side (1–120 chars trim).
+
+**Spec**: [features/CONSENT.md](features/CONSENT.md)
+
+---
+
+### `POST /api/account/research-opt-out`
+**Runtime**: Node
+**Purpose**: Toggle de oposición al tratamiento con fines de investigación (Ley 25.326 art. 17).
+**Auth**: required
+
+**Request body**:
+```ts
+{
+  research_opt_in: boolean;
+  // Cuando research_opt_in=false, opcional purgar contribución existente
+  purge_existing?: boolean;
+}
+```
+
+**Response `data`**: `{ research_opt_in: boolean, purged_records: number }`
 
 **Side effects**:
 - UPDATE `profiles.research_opt_in`
-- Future writes to `research_dataset` respect new value
-- Existing rows are NOT affected (retention documented in consent text)
+- Si `purge_existing=true` y `research_opt_in=false`, DELETE en `research_dataset` matcheando `user_hash = HMAC(user_id, RESEARCH_PEPPER)`
+- Futuras escrituras a `research_dataset` respetan el nuevo valor
 
 **Spec**: [features/RESEARCH_MODE.md](features/RESEARCH_MODE.md)
 
@@ -365,11 +353,19 @@
 | Route | File | Runtime |
 |---|---|---|
 | `POST /api/analyze` | `app/api/analyze/route.ts` | Edge |
-| `POST /api/analyze/evidence` | `app/api/analyze/evidence/route.ts` | Edge |
 | `POST /api/narrative` | `app/api/narrative/route.ts` | Edge |
 | `POST /api/chat` | `app/api/chat/route.ts` | Edge |
+| `GET /api/chat/conversations` | `app/api/chat/conversations/route.ts` | Edge |
+| `GET /api/chat/conversations/[id]` | `app/api/chat/conversations/[id]/route.ts` | Edge |
 | `POST /api/plan` | `app/api/plan/route.ts` | Edge |
+| `POST /api/carta` | `app/api/carta/route.ts` | Edge |
+| `POST /api/consent` | `app/api/consent/route.ts` | Edge |
+| `POST /api/onboarding/next` | `app/api/onboarding/next/route.ts` | Edge |
+| `POST /api/onboarding/seed` | `app/api/onboarding/seed/route.ts` | Edge |
+| `POST /api/onboarding/undo` | `app/api/onboarding/undo/route.ts` | Edge |
+| `POST /api/research/usability` | `app/api/research/usability/route.ts` | Edge |
 | `GET /api/account/export` | `app/api/account/export/route.ts` | Node |
+| `PATCH /api/account/profile` | `app/api/account/profile/route.ts` | Node |
 | `POST /api/account/delete/request` | `app/api/account/delete/request/route.ts` | Node |
 | `POST /api/account/delete/confirm` | `app/api/account/delete/confirm/route.ts` | Node |
 | `POST /api/account/research-opt-out` | `app/api/account/research-opt-out/route.ts` | Node |

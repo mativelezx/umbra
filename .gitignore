@@ -49,3 +49,4 @@ UMBRA_TP*.docx
 
 # eval cache snapshots (committed selectively via ADR-014 process)
 lib/evals/.cache/
+.next-qa/

@@ -122,12 +122,13 @@ All tables have explicit `ENABLE ROW LEVEL SECURITY` and `CREATE POLICY` DDL. Se
 - `build-block.ts` — Shared helper `buildKnowledgeBlock<T>()`
 
 ### Prompts (`lib/prompts/`)
-- `analyze-profile.ts` — Pass 1 analysis prompt (temperature=0)
+- `interpret-narrative.ts` — Pass 1.5: lectura interpretativa Jung + arquetipo + reasoning a partir del Big Five medido por el módulo ML (temperature=0)
 - `analyze-evidence.ts` — Pass 2 phrase highlight prompt (temperature=0.3)
 - `generate-narrative.ts` — Personalized narrative (800-1200 words)
 - `chat-context.ts` — System prompt for contextualized chat
 - `crisis-classifier.ts` — Classifier system prompt (JSON mode, idiom-aware)
 - `development-plan.ts` — 3-area development plan
+- `analyze-profile.ts` — helper histórico (pre-integración ML); reservado por compatibilidad pero no usado en el flujo actual
 
 ### Eval suite (`lib/evals/`)
 - `cases.ts` — corpus de casos golden derivados de IPIP-NEO + Jung + adversariales (utilizable por el módulo ML como fuente de viñetas etiquetadas en español latinoamericano).

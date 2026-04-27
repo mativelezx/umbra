@@ -1,8 +1,6 @@
 # Environment Variables
 
-> Auto-derived from `.env.local.example`. Last updated by hand: 2026-04-12
-> (post-eng-review). Re-generate with `npm run docs:env-vars` when that script
-> lands in Phase 1.5.
+> Auto-derived from `.env.local.example`. Last updated by hand: 2026-04-27.
 
 ## Supabase (Phase 1)
 
@@ -53,6 +51,20 @@ See [tech/SECURITY.md](../tech/SECURITY.md) for rotation procedure (migration-fr
 | `RESEND_API_KEY` | ✓ | Resend email service for delete confirmation magic links |
 | `EMAIL_FROM` | ✓ | Verified sending domain (e.g. `umbra@yourdomain.com`) |
 
+## Módulo ML propio (ADR-026)
+
+| Variable | Scope | Required | Purpose |
+|---|---|---|---|
+| `ML_API_URL` | **Server only** | ✓ en prod | Endpoint del componente analítico FastAPI (DistilBERT + Ridge). Default local: `http://localhost:8000`. En prod, URL pública del servicio Render (ej: `https://umbra-ml.onrender.com`). |
+
+`lib/ml-client.ts` toma esta URL para llamar a `POST /infer` durante `Pass 1` de `/api/analyze`. Si el servicio cae, el endpoint devuelve 503 `ml_unavailable` (NO degrada a Claude para Big Five — ADR-026 explícito).
+
+## Site URL
+
+| Variable | Scope | Required | Purpose |
+|---|---|---|---|
+| `NEXT_PUBLIC_SITE_URL` | Public | ✓ en prod | Base URL canónica del producto (sin trailing slash). La leen `app/layout.tsx` (metadata), `app/sitemap.ts`, `app/robots.ts`, redirects de auth. |
+
 ## Where each variable is read
 
 (Updated when auto-generation script lands)
@@ -64,7 +76,7 @@ See [tech/SECURITY.md](../tech/SECURITY.md) for rotation procedure (migration-fr
 | `SUPABASE_SERVICE_ROLE_KEY` | `app/api/account/delete/confirm/route.ts`, `app/api/chat/route.ts` (crisis_events writes) |
 | `ANTHROPIC_API_KEY` | `lib/claude/client.ts` |
 | `ANTHROPIC_MODEL_ID` | `lib/claude/client.ts`, `lib/evals/*` |
-| `ANTHROPIC_HAIKU_MODEL_ID` | `lib/evals/cross-model-paraphrase.ts` |
+| `ANTHROPIC_HAIKU_MODEL_ID` | `lib/claude/client.ts` (modelos secundarios para llamadas auxiliares) |
 | `DAILY_TOKEN_CAP` | `app/api/chat/route.ts`, `app/api/analyze/route.ts`, etc. |
 | `DAILY_COST_CAP_CENTS` | same |
 | `GLOBAL_DAILY_BUDGET_USD` | `lib/claude/global-budget.ts` (unstable_cache wrapper) |
@@ -75,6 +87,8 @@ See [tech/SECURITY.md](../tech/SECURITY.md) for rotation procedure (migration-fr
 | `DELETE_TOKEN_PEPPER_V1` | `lib/security/peppers.ts`, used by delete request/confirm |
 | `RESEND_API_KEY` | `app/api/account/delete/request/route.ts` |
 | `EMAIL_FROM` | same |
+| `ML_API_URL` | `lib/ml-client.ts` (consumido por `app/api/analyze/route.ts`) |
+| `NEXT_PUBLIC_SITE_URL` | `app/layout.tsx`, `app/sitemap.ts`, `app/robots.ts` |
 
 ## Missing variables (will fail at import)
 
@@ -95,4 +109,4 @@ This is intentional: explicit failure is better than silent fallback.
 - `.env.local.example` (the canonical source in repo root)
 - [CLOUD_HANDOFF.md](../CLOUD_HANDOFF.md) — Vercel deployment of env vars
 - [tech/SECURITY.md](../tech/SECURITY.md) — pepper rotation
-- [DECISIONS.md](../DECISIONS.md) — ADR-005, ADR-021
+- [DECISIONS.md](../DECISIONS.md) — ADR-005, ADR-021, ADR-026

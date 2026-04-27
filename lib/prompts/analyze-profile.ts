@@ -1,3 +1,15 @@
+/**
+ * Helper histórico, no usado por el flujo actual.
+ *
+ * El pipeline activo de inferencia es:
+ *   Pass 1   → módulo ML propio (DistilBERT + Ridge) vía `lib/ml-client.ts`
+ *   Pass 1.5 → `lib/prompts/interpret-narrative.ts` (Jung + arquetipo + reasoning)
+ *
+ * Este archivo se mantiene como referencia del prompt monolítico previo
+ * a la integración del módulo ML (ADR-026). Si se elimina, el typecheck
+ * sigue pasando.
+ */
+
 import { buildBigFiveBlock } from '@/lib/knowledge/big-five';
 import { buildJungBlock } from '@/lib/knowledge/jung-functions';
 import { buildArchetypesBlock } from '@/lib/knowledge/archetypes';
