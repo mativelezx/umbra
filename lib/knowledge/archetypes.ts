@@ -1,9 +1,22 @@
 // ═══════════════════════════════════════════════════════════════
-// Arquetipos — Pearson applied system
+// Arquetipos — Pearson applied system — INSUMO DE LA CAPA NARRATIVA
 // ═══════════════════════════════════════════════════════════════
 // Source: Pearson, C. S. (1986) The Hero Within + (1991) Awakening
-// the Heroes Within. Pearson's "applied archetypes" (not Jung's
-// structural archetypes). See ADR-007 for the rationale.
+// the Heroes Within. Pearson's "applied archetypes" (NOT Jung's
+// structural archetypes; ver ADR-007 para el rationale original).
+//
+// IMPORTANTE (post-pivot ML, ADR-002 v2 + ADR-007 amendado + ADR-026,
+// 2026-04-27): el arquetipo NO es una dimensión inferida como medición
+// psicométrica. La capa narrativa basada en Claude (Pass 1.5,
+// `lib/prompts/interpret-narrative.ts`) lo asigna como **etiqueta
+// interpretativa derivada del Big Five medido por el módulo ML propio**
+// en `/ml/`, con racional citado en el campo `reasoning`.
+//
+// Aclaración crítica de nomenclatura: "Pearson" acá es Carol S. Pearson
+// (arquetipos aplicados, 1991). El estadístico **Karl Pearson** del
+// coeficiente de correlación r usado por las métricas del módulo ML
+// (ADR-028) es otra persona. Cualquier mención cruzada debe explicitar
+// la diferencia.
 // ═══════════════════════════════════════════════════════════════
 
 import { buildKnowledgeBlock } from './build-block';

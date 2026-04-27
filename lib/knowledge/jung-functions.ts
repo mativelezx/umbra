@@ -1,10 +1,24 @@
 // ═══════════════════════════════════════════════════════════════
-// Funciones cognitivas de Jung
+// Funciones cognitivas de Jung — INSUMO DE LA CAPA NARRATIVA
 // ═══════════════════════════════════════════════════════════════
 // Source: Jung, C.G. (1921) Tipos Psicológicos (Psychological Types).
 // Public domain — Spanish translation is out of copyright.
-// Umbra uses Jung DIRECTLY, NOT via MBTI. See ADR-002.
-// Academic framing: Sauer (2025) "Rehabilitating Jung's Cognitive Function Theory".
+//
+// IMPORTANTE (post-pivot ML, ADR-002 v2 + ADR-026 + ADR-007 amendado,
+// 2026-04-27): este conocimiento alimenta la **lectura interpretativa
+// narrativa** que Claude produce en el Pass 1.5 (ver
+// `lib/prompts/interpret-narrative.ts`). Las funciones cognitivas Jung
+// NO son dimensiones inferidas como medición psicométrica; son una
+// lectura interpretativa derivada del Big Five (medido por el módulo
+// ML propio en `/ml/`) y de los textos del usuario.
+//
+// Si volvés a este archivo desde el TFG, en defensa o en review:
+// el modelo medido del sistema es Big Five (IPIP-NEO, Goldberg 1999;
+// ADR-015). Jung vive acá como vocabulario interpretativo del retrato
+// narrativo y del chat contextualizado, NO como dimensión calibrada.
+// Umbra NO usa terminología MBTI (INFJ, INTP, etc.); las 8 funciones
+// (Se, Si, Ne, Ni, Te, Ti, Fe, Fi) se citan directamente desde Jung
+// (1921).
 // ═══════════════════════════════════════════════════════════════
 
 import { buildKnowledgeBlock } from './build-block';
