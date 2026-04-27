@@ -8,27 +8,42 @@
   },
   "blocks": {
     "combined": {
-      "n_samples": 2,
+      "n_samples": 250,
       "metrics": {
         "openness": {
-          "n": 0,
-          "note": "muestras insuficientes"
+          "n": 248,
+          "mse": 2329.139063348376,
+          "r2": 0.06341046778569148,
+          "r": 0.2580633926745396,
+          "p_value": 3.899717089056436e-05
         },
         "conscientiousness": {
-          "n": 0,
-          "note": "muestras insuficientes"
+          "n": 248,
+          "mse": 2489.8896124256735,
+          "r2": -0.007024204133810885,
+          "r": 0.09982318710198773,
+          "p_value": 0.11688251404991386
         },
         "extraversion": {
-          "n": 1,
-          "note": "muestras insuficientes"
+          "n": 249,
+          "mse": 2437.3688992697553,
+          "r2": 0.022357343716041922,
+          "r": 0.15905476777351163,
+          "p_value": 0.011963043396780323
         },
         "agreeableness": {
-          "n": 1,
-          "note": "muestras insuficientes"
+          "n": 248,
+          "mse": 2516.31731347898,
+          "r2": -0.006526925391591831,
+          "r": 0.02091835837462422,
+          "p_value": 0.7430672347603618
         },
         "neuroticism": {
-          "n": 0,
-          "note": "muestras insuficientes"
+          "n": 249,
+          "mse": 2490.002025687978,
+          "r2": 3.7854204322229634e-06,
+          "r": 0.08821340021798837,
+          "p_value": 0.1652325057132962
         }
       },
       "per_dimension_status": {
@@ -40,8 +55,51 @@
       }
     },
     "english_only": {
-      "n_samples": 0,
-      "note": "muestras de ingl\u00e9s insuficientes en test (Essays no integrado)"
+      "n_samples": 248,
+      "metrics": {
+        "openness": {
+          "n": 248,
+          "mse": 2329.139063348376,
+          "r2": 0.06341046778569148,
+          "r": 0.2580633926745396,
+          "p_value": 3.899717089056436e-05
+        },
+        "conscientiousness": {
+          "n": 248,
+          "mse": 2489.8896124256735,
+          "r2": -0.007024204133810885,
+          "r": 0.09982318710198773,
+          "p_value": 0.11688251404991386
+        },
+        "extraversion": {
+          "n": 248,
+          "mse": 2446.3282858087614,
+          "r2": 0.02121405874068405,
+          "r": 0.15615075069922715,
+          "p_value": 0.013825687009538488
+        },
+        "agreeableness": {
+          "n": 248,
+          "mse": 2516.31731347898,
+          "r2": -0.006526925391591831,
+          "r": 0.02091835837462422,
+          "p_value": 0.7430672347603618
+        },
+        "neuroticism": {
+          "n": 248,
+          "mse": 2498.67824474434,
+          "r2": -0.0010989952755904309,
+          "r": 0.08506688930580042,
+          "p_value": 0.1817819729032779
+        }
+      },
+      "per_dimension_status": {
+        "openness": "low_confidence",
+        "conscientiousness": "low_confidence",
+        "extraversion": "low_confidence",
+        "agreeableness": "low_confidence",
+        "neuroticism": "low_confidence"
+      }
     },
     "rioplatense_only": {
       "n_samples": 2,
@@ -59,11 +117,11 @@
           "note": "muestras insuficientes"
         },
         "agreeableness": {
-          "n": 1,
+          "n": 0,
           "note": "muestras insuficientes"
         },
         "neuroticism": {
-          "n": 0,
+          "n": 1,
           "note": "muestras insuficientes"
         }
       },
@@ -77,11 +135,11 @@
     }
   },
   "dataset_status": {
-    "essays_integrated": false,
-    "n_train": 16,
-    "n_val": 2,
-    "n_test": 2,
-    "n_full": 20,
-    "warning": "Essays no integrado: las m\u00e9tricas reportadas se basan \u00fanicamente en el corpus rioplatense propio (n=20 etiquetado IPIP). El poder estad\u00edstico es bajo. Para reproducir las m\u00e9tricas comprometidas en el TFG, descargar Essays seg\u00fan ml/data/essays/README.md y re-ejecutar `make all`."
+    "essays_integrated": true,
+    "n_train": 1989,
+    "n_val": 248,
+    "n_test": 250,
+    "n_full": 2487,
+    "warning": null
   }
 }

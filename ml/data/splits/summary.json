@@ -1,11 +1,12 @@
 {
   "seed": 42,
-  "total": 20,
-  "train": 16,
-  "val": 2,
-  "test": 2,
+  "total": 2487,
+  "train": 1989,
+  "val": 248,
+  "test": 250,
   "by_origin": {
+    "essays": 2467,
     "rioplatense": 20
   },
-  "essays_available": false
+  "essays_available": true
 }

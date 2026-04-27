@@ -9,35 +9,45 @@
     1000.0
   ],
   "best_alpha_per_dim": {
-    "openness": 0.1,
-    "conscientiousness": 0.1,
-    "extraversion": 0.1,
-    "agreeableness": 0.1,
-    "neuroticism": 0.1
+    "openness": 10.0,
+    "conscientiousness": 100.0,
+    "extraversion": 10.0,
+    "agreeableness": 100.0,
+    "neuroticism": 10.0
   },
   "val": {
     "openness": {
-      "n": 1,
-      "note": "val insuficiente"
+      "n": 246,
+      "mse": 2343.2495765448843,
+      "r2": 0.06270016938204637,
+      "r": 0.25427414476456706
     },
     "conscientiousness": {
-      "n": 0,
-      "note": "val insuficiente"
+      "n": 247,
+      "mse": 2445.670372748417,
+      "r2": 0.0008738290285138506,
+      "r": 0.13592323966857478
     },
     "extraversion": {
-      "n": 0,
-      "note": "val insuficiente"
+      "n": 247,
+      "mse": 2489.2986459301487,
+      "r2": -0.0032980099778585625,
+      "r": 0.0778050712527049
     },
     "agreeableness": {
-      "n": 0,
-      "note": "val insuficiente"
+      "n": 246,
+      "mse": 2444.414184037798,
+      "r2": 0.0054046341610207715,
+      "r": 0.10880410809396905
     },
     "neuroticism": {
-      "n": 1,
-      "note": "val insuficiente"
+      "n": 246,
+      "mse": 2506.5684746551647,
+      "r2": -0.0026273898620658986,
+      "r": 0.08599878019257692
     }
   },
-  "n_train": 16,
-  "n_val": 2,
+  "n_train": 1989,
+  "n_val": 248,
   "seed": 42
 }
