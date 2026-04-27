@@ -162,7 +162,7 @@ CREATE INDEX IF NOT EXISTS idx_consent_records_version_locale
 - **`consent_text_hash`** es SHA-256 del texto verbatim renderizado
   al usuario, hex-encoded.
 - **`locale`** es BCP-47 (`es-AR`, `en`, etc.), preparado para
-  multi-idioma futuro vía `next-intl` (ADR-010).
+  multi-idioma futuro mediante las claves de diccionario de ADR-010.
 - Registros pre-migration 004 quedan con `consent_text_hash = ''`
   y `locale = 'es-AR'` (defaults); son auditables solo por
   `consent_version` y están documentados como tales en
@@ -258,4 +258,3 @@ consentimiento del producto, específico para las sesiones
 individuales de pensamiento en voz alta con participantes reales.
 Está versionado en el repo y puede hashearse bajo el mismo patrón
 si es necesario.
-

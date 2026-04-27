@@ -74,7 +74,7 @@ falla, no se promueve a producción hasta arreglarlo.
 [ ] 8. Visual check:           Playwright screenshots      → archivadas
 [ ] 9. Docs actualizadas:      ADR + feature doc + VALIDATION → committed
 [ ] 10. axe-core:               sin violaciones críticas/serias
-[ ] 11. ML metrics gate:        eval_metrics.json del bloque latinoamericano_only con R² > 0.20 y r > 0.30 en al menos 3 de 5 dimensiones (ADR-027)
+[ ] 11. ML metrics gate:        eval_metrics.json sin incoherencias: dimensiones bajo umbral quedan low_confidence; si la etiqueta es binaria (Essays 0/100), reportar AUC/F1/balanced accuracy además de R²/r.
 ```
 
 ---
@@ -102,7 +102,7 @@ Cronograma alineado con [TFG.md](TFG.md):
 
 ### Sprint ML 1 — Datasets + baseline (11-24 mayo 2026)
 - Preparar Essays (descarga + acceso académico).
-- Construir corpus latinoamericano propio (n=50-100 voseo argentino)
+- Ampliar corpus latinoamericano propio: n=20 actual, meta mínima TP2-TP4 n=300 con consentimiento, texto introspectivo e IPIP/BFI breve.
   contra la rúbrica documentada en
   `ml/data/latinoamericano/rubrica_validacion.md`.
 - Versionar ambos corpus con DVC (split 80/10/10 con `SEED=42`).

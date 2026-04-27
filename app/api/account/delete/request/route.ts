@@ -52,7 +52,7 @@ export const POST = withErrorHandler(async (req) => {
     }
 
     if (result.sent) {
-      console.log(
+      console.info(
         JSON.stringify({
           event: 'delete_confirmation_sent',
           user_id_hash: userIdHash,
@@ -66,11 +66,10 @@ export const POST = withErrorHandler(async (req) => {
     // Dev-mode fallback. Never reached in prod (EmailConfigError would have
     // fired). Log the link server-side and hand it back inline so the
     // developer can complete the flow without reading server logs.
-    console.log(
+    console.info(
       JSON.stringify({
         event: 'delete_confirmation_link_dev',
         user_id_hash: userIdHash,
-        email: user.email,
         link: magicLink,
         expires_at: expiresAt,
         note: 'RESEND_API_KEY not set. Link returned inline for dev.',

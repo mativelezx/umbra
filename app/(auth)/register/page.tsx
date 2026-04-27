@@ -95,7 +95,7 @@ export default function RegisterPage() {
               <Link
                 href="/login"
                 prefetch={false}
-                className="text-violet-300 hover:text-violet-200 transition-colors"
+                className="text-violet-300 underline underline-offset-4 transition-colors hover:text-violet-200"
               >
                 {t('auth.sign_in')}
               </Link>
@@ -152,7 +152,7 @@ export default function RegisterPage() {
             <Link
               href="/login"
               prefetch={false}
-              className="text-violet-300 hover:text-violet-200 transition-colors"
+              className="text-violet-300 underline underline-offset-4 transition-colors hover:text-violet-200"
             >
               {t('auth.sign_in')}
             </Link>

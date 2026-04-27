@@ -14,6 +14,8 @@
 - `../docs/DECISIONS.md` — ADR-002 (separación medido vs narrativo),
   ADR-026 (este módulo), ADR-027 (umbrales por dimensión), ADR-028
   (corpus latinoamericano).
+- `DATASET_EXPANSION.md` — plan de ampliación: Essays, PAN 2015,
+  corpus propio es-AR y datasets descartados por riesgo metodológico.
 - TP1 entregado del TFG, secciones 6.2.2 (Capa analítica), 6.2.3
   (MLOps), 7.2.3 (Stack ML), 7.3.1 (Datasets), 7.4.1 (Riesgos).
 
@@ -65,7 +67,7 @@ ml/
 │   ├── essays/                      ← Pennebaker y King (1999)
 │   │   └── README.md                ← cómo conseguir el corpus
 │   ├── latinoamericano/
-│   │   ├── cases.csv                ← corpus propio n=50
+│   │   ├── cases.csv                ← corpus propio inicial n=20
 │   │   └── rubrica_validacion.md    ← criterios de validación
 │   └── splits/                      ← train/val/test 80/10/10
 ├── src/
@@ -152,20 +154,37 @@ Devuelve:
 
 ### Essays (Pennebaker y King, 1999)
 ~2500 textos breves de estudiantes universitarios estadounidenses con
-puntuaciones Big Five asociadas. Inglés. Acceso académico.
-Ver `data/essays/README.md` para instrucciones de descarga (no se
-commitea por licencia; se versiona vía DVC con remote local).
+puntuaciones Big Five asociadas. Inglés.
 
-### Corpus latinoamericano propio (n=50-100)
+La versión integrada en este repo proviene de un mirror abierto con
+etiquetas binarias 0/1 por rasgo, normalizadas a 0/100 por
+`prepare_data.py`. Por eso, además de MSE/R²/r, `evaluate.py` reporta
+métricas binarias (AUC, F1, balanced accuracy) cuando detecta etiquetas
+0/100. Ver `data/essays/README.md` y `DATASET_EXPANSION.md`.
+
+### Corpus latinoamericano propio (n=20 actual; meta n>=300)
 Textos en español argentino (voseo), cada uno targeteando una
 dimensión Big Five con dirección alta/baja. Construido con asistencia
 de IA generativa y validado manualmente con la rúbrica documentada en
 `data/latinoamericano/rubrica_validacion.md` (ADR-028). Migrado a CSV
 en `data/latinoamericano/cases.csv` con scores Big Five por caso.
+El tamaño actual sirve como validación cualitativa y prueba de
+transferencia local; para sostener métricas estadísticas fuertes en
+TP2-TP4 se recomienda ampliarlo a por lo menos 300 casos con
+consentimiento e IPIP/BFI breve.
 
 ### Versionado
 Ambos corpus bajo DVC. La unión se particiona en train/val/test 80/10/10
 con seed determinístico (`SEED = 42` en `prepare_data.py`).
+
+### Expansión recomendada
+
+Para TP2-TP4, la ruta metodológicamente más fuerte es:
+
+1. ampliar corpus propio `es-AR` con consentimiento e IPIP/BFI breve;
+2. agregar PAN 2015 Author Profiling como validación de transferencia;
+3. mantener datasets sintéticos solo para pruebas de pipeline, no como
+   evidencia principal.
 
 ## Métricas y umbrales
 

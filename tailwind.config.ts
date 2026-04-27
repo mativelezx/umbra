@@ -13,6 +13,7 @@ const config: Config = {
         umbra: {
           void: '#050510',
           abyss: '#08081A',
+          fog: '#0C091A',
           deep: '#0E0E2A',
           shadow: '#16163A',
           mist: '#1E1E4A',
@@ -41,8 +42,8 @@ const config: Config = {
         text: {
           1: '#F0ECFF',
           2: '#A8A0C8',
-          3: '#6B6490',
-          4: '#3D3860',
+          3: '#8A82AE',
+          4: '#7D75A3',
         },
       },
       fontFamily: {

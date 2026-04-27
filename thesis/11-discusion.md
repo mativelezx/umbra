@@ -41,7 +41,8 @@
 
 ### Validez estadística
 
-<!-- PENDIENTE: n acotado tanto en el corpus latinoamericano (n=50-100)
+<!-- PENDIENTE: n acotado tanto en el corpus latinoamericano (n=20 actual;
+     meta TP2-TP4 n>=300)
      como en el estudio SUS (n=8-15). Defender con la honestidad
      metodológica del reporte por dimensión y con el carácter de
      usability testing del estudio SUS (Brooke 1996) más que de

@@ -1,34 +1,55 @@
 {
-  "model_type": "baseline_tfidf",
-  "model_version": "baseline_tfidf",
-  "embedding_model": "tfidf_unigram_bigram",
+  "model_type": "distilbert_ridge",
+  "model_version": "ridge_v1",
+  "embedding_model": "distilbert-base-multilingual-cased",
   "thresholds": {
-    "r2": 0.2,
-    "r": 0.3
+    "regression": {
+      "r2": 0.2,
+      "r": 0.3
+    },
+    "binary": {
+      "roc_auc": 0.6,
+      "balanced_accuracy": 0.55
+    }
   },
   "blocks": {
     "combined": {
-      "n_samples": 2,
+      "n_samples": 250,
       "metrics": {
         "openness": {
-          "n": 0,
-          "note": "muestras insuficientes"
+          "n": 248,
+          "mse": 2329.139063348376,
+          "r2": 0.06341046778569148,
+          "r": 0.2580633926745396,
+          "p_value": 3.899717089056436e-05
         },
         "conscientiousness": {
-          "n": 0,
-          "note": "muestras insuficientes"
+          "n": 248,
+          "mse": 2489.8896124256735,
+          "r2": -0.007024204133810885,
+          "r": 0.09982318710198773,
+          "p_value": 0.11688251404991386
         },
         "extraversion": {
-          "n": 1,
-          "note": "muestras insuficientes"
+          "n": 249,
+          "mse": 2437.3688992697553,
+          "r2": 0.022357343716041922,
+          "r": 0.15905476777351163,
+          "p_value": 0.011963043396780323
         },
         "agreeableness": {
-          "n": 1,
-          "note": "muestras insuficientes"
+          "n": 248,
+          "mse": 2516.31731347898,
+          "r2": -0.006526925391591831,
+          "r": 0.02091835837462422,
+          "p_value": 0.7430672347603618
         },
         "neuroticism": {
-          "n": 0,
-          "note": "muestras insuficientes"
+          "n": 249,
+          "mse": 2490.002025687978,
+          "r2": 3.7854204322229634e-06,
+          "r": 0.08821340021798837,
+          "p_value": 0.1652325057132962
         }
       },
       "per_dimension_status": {
@@ -37,11 +58,136 @@
         "extraversion": "low_confidence",
         "agreeableness": "low_confidence",
         "neuroticism": "low_confidence"
+      },
+      "classification_metrics": {
+        "openness": {
+          "n": 248,
+          "label_type": "binary_high_trait",
+          "decision_threshold": 50,
+          "roc_auc": 0.6486433474991826,
+          "balanced_accuracy": 0.5952271984308597,
+          "f1": 0.6212121212121212
+        },
+        "conscientiousness": {
+          "n": 248,
+          "label_type": "binary_high_trait",
+          "decision_threshold": 50,
+          "roc_auc": 0.5582955217991714,
+          "balanced_accuracy": 0.5357729992766489,
+          "f1": 0.5608856088560885
+        },
+        "agreeableness": {
+          "n": 248,
+          "label_type": "binary_high_trait",
+          "decision_threshold": 50,
+          "roc_auc": 0.49733350676378774,
+          "balanced_accuracy": 0.49193548387096775,
+          "f1": 0.6272189349112426
+        }
+      },
+      "per_dimension_classification_status": {
+        "openness": "ok",
+        "conscientiousness": "low_confidence",
+        "extraversion": "not_applicable",
+        "agreeableness": "low_confidence",
+        "neuroticism": "not_applicable"
       }
     },
     "english_only": {
-      "n_samples": 0,
-      "note": "muestras de ingl\u00e9s insuficientes en test (Essays no integrado)"
+      "n_samples": 248,
+      "metrics": {
+        "openness": {
+          "n": 248,
+          "mse": 2329.139063348376,
+          "r2": 0.06341046778569148,
+          "r": 0.2580633926745396,
+          "p_value": 3.899717089056436e-05
+        },
+        "conscientiousness": {
+          "n": 248,
+          "mse": 2489.8896124256735,
+          "r2": -0.007024204133810885,
+          "r": 0.09982318710198773,
+          "p_value": 0.11688251404991386
+        },
+        "extraversion": {
+          "n": 248,
+          "mse": 2446.3282858087614,
+          "r2": 0.02121405874068405,
+          "r": 0.15615075069922715,
+          "p_value": 0.013825687009538488
+        },
+        "agreeableness": {
+          "n": 248,
+          "mse": 2516.31731347898,
+          "r2": -0.006526925391591831,
+          "r": 0.02091835837462422,
+          "p_value": 0.7430672347603618
+        },
+        "neuroticism": {
+          "n": 248,
+          "mse": 2498.67824474434,
+          "r2": -0.0010989952755904309,
+          "r": 0.08506688930580042,
+          "p_value": 0.1817819729032779
+        }
+      },
+      "per_dimension_status": {
+        "openness": "low_confidence",
+        "conscientiousness": "low_confidence",
+        "extraversion": "low_confidence",
+        "agreeableness": "low_confidence",
+        "neuroticism": "low_confidence"
+      },
+      "classification_metrics": {
+        "openness": {
+          "n": 248,
+          "label_type": "binary_high_trait",
+          "decision_threshold": 50,
+          "roc_auc": 0.6486433474991826,
+          "balanced_accuracy": 0.5952271984308597,
+          "f1": 0.6212121212121212
+        },
+        "conscientiousness": {
+          "n": 248,
+          "label_type": "binary_high_trait",
+          "decision_threshold": 50,
+          "roc_auc": 0.5582955217991714,
+          "balanced_accuracy": 0.5357729992766489,
+          "f1": 0.5608856088560885
+        },
+        "extraversion": {
+          "n": 248,
+          "label_type": "binary_high_trait",
+          "decision_threshold": 50,
+          "roc_auc": 0.5909445745511319,
+          "balanced_accuracy": 0.5865860005204268,
+          "f1": 0.6254545454545455
+        },
+        "agreeableness": {
+          "n": 248,
+          "label_type": "binary_high_trait",
+          "decision_threshold": 50,
+          "roc_auc": 0.49733350676378774,
+          "balanced_accuracy": 0.49193548387096775,
+          "f1": 0.6272189349112426
+        },
+        "neuroticism": {
+          "n": 248,
+          "label_type": "binary_high_trait",
+          "decision_threshold": 50,
+          "roc_auc": 0.5557292684515666,
+          "balanced_accuracy": 0.5321477428180574,
+          "f1": 0.5433070866141733
+        }
+      },
+      "per_dimension_classification_status": {
+        "openness": "ok",
+        "conscientiousness": "low_confidence",
+        "extraversion": "low_confidence",
+        "agreeableness": "low_confidence",
+        "neuroticism": "low_confidence"
+      }
     },
     "latinoamericano_only": {
       "n_samples": 2,
@@ -59,65 +205,12 @@
           "note": "muestras insuficientes"
         },
         "agreeableness": {
-          "n": 1,
-          "note": "muestras insuficientes"
-        },
-        "neuroticism": {
           "n": 0,
           "note": "muestras insuficientes"
-        }
-      },
-      "per_dimension_status": {
-        "openness": "low_confidence",
-        "conscientiousness": "low_confidence",
-        "extraversion": "low_confidence",
-        "agreeableness": "low_confidence",
-        "neuroticism": "low_confidence"
-      }
-    },
-    "loo_full_corpus_baseline": {
-      "n_samples": 20,
-      "note": "M\u00e9tricas Leave-One-Out sobre todo el corpus disponible. Usadas cuando el split fijo train/val/test deja n<2 por dimensi\u00f3n en test. Esta es la m\u00e9trica primary mientras Essays no est\u00e9 integrado.",
-      "metrics": {
-        "openness": {
-          "n": 4,
-          "method": "leave_one_out",
-          "mse": 1570.872597186057,
-          "r2": -0.7454139968733966,
-          "r": -0.9908442148977403,
-          "p_value": 0.009155785102259673
-        },
-        "conscientiousness": {
-          "n": 4,
-          "method": "leave_one_out",
-          "mse": 1532.9949467056913,
-          "r2": -0.7033277185618791,
-          "r": -0.9996523637887327,
-          "p_value": 0.00034763621126732147
-        },
-        "extraversion": {
-          "n": 5,
-          "method": "leave_one_out",
-          "mse": 1288.8946370972612,
-          "r2": -0.49177620034405223,
-          "r": -0.9785154992378481,
-          "p_value": 0.0037680547294999464
-        },
-        "agreeableness": {
-          "n": 4,
-          "method": "leave_one_out",
-          "mse": 1422.625526252019,
-          "r2": -0.8505697902465288,
-          "r": -0.996337784150126,
-          "p_value": 0.0036622158498740287
         },
         "neuroticism": {
-          "n": 3,
-          "method": "leave_one_out",
-          "mse": 1707.5295245130328,
-          "r2": -1.134411905641291,
-          "r": -0.9984421909330643,
-          "p_value": 0.035539280364418675
+          "n": 1,
+          "note": "muestras insuficientes"
         }
       },
       "per_dimension_status": {
@@ -126,15 +219,23 @@
         "extraversion": "low_confidence",
         "agreeableness": "low_confidence",
         "neuroticism": "low_confidence"
+      },
+      "classification_metrics": {},
+      "per_dimension_classification_status": {
+        "openness": "not_applicable",
+        "conscientiousness": "not_applicable",
+        "extraversion": "not_applicable",
+        "agreeableness": "not_applicable",
+        "neuroticism": "not_applicable"
       }
     }
   },
   "dataset_status": {
-    "essays_integrated": false,
-    "n_train": 16,
-    "n_val": 2,
-    "n_test": 2,
-    "n_full": 20,
-    "warning": "Essays no integrado: las m\u00e9tricas reportadas se basan \u00fanicamente en el corpus latinoamericano propio (n=20 etiquetado IPIP). El poder estad\u00edstico es bajo. Para reproducir las m\u00e9tricas comprometidas en el TFG, descargar Essays seg\u00fan ml/data/essays/README.md y re-ejecutar `make all`."
+    "essays_integrated": true,
+    "n_train": 1989,
+    "n_val": 248,
+    "n_test": 250,
+    "n_full": 2487,
+    "warning": null
   }
 }

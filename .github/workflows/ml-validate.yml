@@ -76,8 +76,7 @@ jobs:
 
       - name: Verify eval_metrics.json thresholds (ADR-027)
         working-directory: ml
-        run: |
-          python scripts/check_eval_thresholds.py || true
+        run: python scripts/check_eval_thresholds.py
           # No-fail por defecto: el corpus chico (sin Essays) deja
           # dimensiones bajo umbral honestamente. Cuando Essays se
           # integre y las métricas suban, cambiar `|| true` por strict.

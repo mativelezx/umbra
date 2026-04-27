@@ -112,7 +112,7 @@ IP hashing prevents unnecessary PII storage while allowing future-you to verify 
   and asserts the computed hash matches what clients send — preventing
   drift between displayed text and archived file.
 - **`locale`** is BCP-47 (`es-AR`, `en`, etc.). Ready for multi-idioma
-  futuro via next-intl (ADR-010).
+  futuro via repo-local dictionaries and ADR-010.
 
 ## Data rights endpoints
 

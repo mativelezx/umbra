@@ -9,6 +9,10 @@ import { test, expect, type Page } from '@playwright/test';
 // Uses a canned "ChatGPT response" so we don't depend on a real ChatGPT
 // session. The response mimics what a user would actually paste: prose
 // + structured JSON block + evidence quotes.
+// Opt in with E2E_REAL_FLOW=true because this requires Supabase sign-up to
+// create a session immediately, a running ML API, and live Anthropic calls.
+
+const RUN_REAL_FLOW = process.env.E2E_REAL_FLOW === 'true';
 
 const SHOTS = '.gstack/qa-reports/screenshots';
 
@@ -103,8 +107,8 @@ async function answerRefinementTurn(page: Page): Promise<void> {
 
 test.describe('New dashboard + chat via ChatGPT seed flow', () => {
   test.skip(
-    ({ browserName }) => browserName !== 'chromium',
-    'Chromium only',
+    ({ browserName }) => browserName !== 'chromium' || !RUN_REAL_FLOW,
+    'Opt-in chromium-only test: set E2E_REAL_FLOW=true with live Supabase, ML API, and Anthropic',
   );
 
   test('seed flow lands on new dashboard + contextual chat', async ({
@@ -117,7 +121,7 @@ test.describe('New dashboard + chat via ChatGPT seed flow', () => {
 
     // Register + consent
     await page.goto('/register');
-    await page.getByLabel('Nombre completo').fill('Seed Demo');
+    await page.getByLabel('Tu nombre').fill('Seed Demo');
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Contraseña').fill('UmbraSeed-1234!');
     await page.getByRole('button', { name: /Crear cuenta/i }).click();

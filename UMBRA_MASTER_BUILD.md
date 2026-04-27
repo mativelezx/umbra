@@ -94,7 +94,7 @@ Plataforma web de autoconocimiento que triangula psicología junguiana (8 funcio
 
 **Modelo de funciones cognitivas**: Jung directo — *Tipos Psicológicos* (1921). Las 8 funciones como actitudes de la consciencia (Se, Si, Ne, Ni, Te, Ti, Fe, Fi).
 
-**Big Five**: NEO-PI-R (Costa & McCrae, 1992). 5 factores × 6 facets = 30 facets con indicadores.
+**Big Five**: IPIP-NEO / Big Five de dominio público (Goldberg, 1999), no NEO-PI-R propietario. 5 factores × 6 facetas equivalentes para uso académico y repositorio abierto.
 
 **Arquetipos**: Definidos según la fuente que el developer elija en su investigación (Jung estructurales o Pearson aplicados). La estructura del código soporta ambos.
 
@@ -224,6 +224,7 @@ const colors = {
   umbra: {
     void:       '#050510',
     abyss:      '#08081A',
+    fog:        '#0C091A',
     deep:       '#0E0E2A',
     shadow:     '#16163A',
     mist:       '#1E1E4A',
@@ -252,8 +253,8 @@ const colors = {
   text: {
     1: '#F0ECFF',
     2: '#A8A0C8',
-    3: '#6B6490',
-    4: '#3D3860',
+    3: '#8A82AE',
+    4: '#7D75A3',
   }
 }
 ```
@@ -593,7 +594,7 @@ CREATE TABLE public.psychological_profiles (
   archetype TEXT CHECK (archetype IN ('hero','sage','explorer','creator','caregiver','rebel')),
   archetype_secondary TEXT,
   analysis_raw JSONB,
-  input_mode TEXT CHECK (input_mode IN ('guided', 'freetext')),
+  input_mode TEXT CHECK (input_mode IN ('guided', 'freetext', 'dynamic')),
   input_texts JSONB,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -674,12 +675,12 @@ CREATE INDEX idx_plans_user ON public.development_plans(user_id);
 
 > **FUENTE**: Estos archivos se completan con la investigación del developer en NotebookLM. La estructura de abajo define QUÉ necesita cada archivo. El contenido viene de fuentes académicas.
 
-### 5.1 big-five.ts — Modelo NEO-PI-R
+### 5.1 big-five.ts — Modelo IPIP-NEO
 
 ```typescript
 // ═══════════════════════════════════════
 // Big Five — Knowledge Base
-// Fuente: Costa & McCrae (1992), NEO-PI-R
+// Fuente: IPIP-NEO / International Personality Item Pool (Goldberg, 1999)
 // ═══════════════════════════════════════
 
 export interface Facet {
@@ -701,7 +702,7 @@ export interface BigFiveDimension {
   lowProfile: string;         // Descripción de alguien con puntaje bajo
 }
 
-// COMPLETAR desde NotebookLM con datos del NEO-PI-R
+// COMPLETAR desde NotebookLM con datos IPIP-NEO / Big Five de dominio público
 export const BIG_FIVE_DIMENSIONS: BigFiveDimension[] = [
   {
     key: 'openness',

@@ -1,5 +1,6 @@
 {
-  "model": "baseline_tfidf_ridge",
+  "model": "distilbert_frozen + ridge_per_dim",
+  "embedding_model": "distilbert-base-multilingual-cased",
   "alphas_grid": [
     0.1,
     1.0,
@@ -7,58 +8,46 @@
     100.0,
     1000.0
   ],
-  "n_train": 16,
-  "n_val": 2,
-  "n_test": 2,
-  "evaluation_method": "leave_one_out",
-  "loo_metrics": {
+  "best_alpha_per_dim": {
+    "openness": 10.0,
+    "conscientiousness": 100.0,
+    "extraversion": 10.0,
+    "agreeableness": 100.0,
+    "neuroticism": 10.0
+  },
+  "val": {
     "openness": {
-      "n": 4,
-      "method": "leave_one_out",
-      "mse": 1570.872597186057,
-      "r2": -0.7454139968733966,
-      "r": -0.9908442148977403,
-      "alpha_median": 0.1
+      "n": 246,
+      "mse": 2343.2495765448843,
+      "r2": 0.06270016938204637,
+      "r": 0.25427414476456706
     },
     "conscientiousness": {
-      "n": 4,
-      "method": "leave_one_out",
-      "mse": 1532.9949467056913,
-      "r2": -0.7033277185618791,
-      "r": -0.9996523637887327,
-      "alpha_median": 0.1
+      "n": 247,
+      "mse": 2445.670372748417,
+      "r2": 0.0008738290285138506,
+      "r": 0.13592323966857478
     },
     "extraversion": {
-      "n": 5,
-      "method": "leave_one_out",
-      "mse": 1288.8946370972612,
-      "r2": -0.49177620034405223,
-      "r": -0.9785154992378481,
-      "alpha_median": 0.1
+      "n": 247,
+      "mse": 2489.2986459301487,
+      "r2": -0.0032980099778585625,
+      "r": 0.0778050712527049
     },
     "agreeableness": {
-      "n": 4,
-      "method": "leave_one_out",
-      "mse": 1422.625526252019,
-      "r2": -0.8505697902465288,
-      "r": -0.996337784150126,
-      "alpha_median": 0.1
+      "n": 246,
+      "mse": 2444.414184037798,
+      "r2": 0.0054046341610207715,
+      "r": 0.10880410809396905
     },
     "neuroticism": {
-      "n": 3,
-      "method": "leave_one_out",
-      "mse": 1707.5295245130328,
-      "r2": -1.134411905641291,
-      "r": -0.9984421909330643,
-      "alpha_median": 0.1
+      "n": 246,
+      "mse": 2506.5684746551647,
+      "r2": -0.0026273898620658986,
+      "r": 0.08599878019257692
     }
   },
-  "n_full": 20,
-  "best_alpha_per_dim": {
-    "openness": 0.1,
-    "conscientiousness": 0.1,
-    "extraversion": 0.1,
-    "agreeableness": 0.1,
-    "neuroticism": 0.1
-  }
+  "n_train": 1989,
+  "n_val": 248,
+  "seed": 42
 }

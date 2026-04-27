@@ -49,7 +49,7 @@ y los regresores entrenados se serializan en `ml/models/*.joblib`.
 El corpus combinado tiene dos componentes documentados en
 ADR-028: Essays (Pennebaker & King 1999) en inglés (~2500 textos
 breves de estudiantes universitarios estadounidenses con Big Five
-etiquetado) y un corpus latinoamericano propio (n=50-100, voseo
+etiquetado) y un corpus latinoamericano propio inicial (n=20, voseo
 argentino) construido con asistencia de IA generativa y validado
 manualmente contra una rúbrica documentada en
 `ml/data/latinoamericano/rubrica_validacion.md`. Ambos corpus se

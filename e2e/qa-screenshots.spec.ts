@@ -8,6 +8,7 @@ import { test, expect, type Page } from '@playwright/test';
 // for /qa reports.
 
 const SHOTS = '.gstack/qa-reports/screenshots';
+const RUN_REAL_FLOW = process.env.E2E_REAL_FLOW === 'true';
 
 async function shot(page: Page, name: string): Promise<void> {
   await page.screenshot({
@@ -68,8 +69,8 @@ async function answerCurrentTurn(page: Page, turnIdx: number): Promise<void> {
 
 test.describe('QA screenshots (visual evidence)', () => {
   test.skip(
-    ({ browserName }) => browserName !== 'chromium',
-    'Capture once, in chromium',
+    ({ browserName }) => browserName !== 'chromium' || !RUN_REAL_FLOW,
+    'Opt-in chromium-only capture: set E2E_REAL_FLOW=true with live Supabase, ML API, and Anthropic',
   );
 
   test('capture the full authenticated happy path', async ({ page }) => {
@@ -77,7 +78,7 @@ test.describe('QA screenshots (visual evidence)', () => {
 
     // 1. Landing
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /Conocé tu sombra/i }))
+    await expect(page.getByRole('heading', { name: /Hablás de vos/i }))
       .toBeVisible();
     await shot(page, '01-landing');
 
@@ -87,7 +88,7 @@ test.describe('QA screenshots (visual evidence)', () => {
 
     const stamp = Date.now();
     const email = `qa-shots-${stamp}@test.local`;
-    await page.getByLabel('Nombre completo').fill('QA Shots');
+    await page.getByLabel('Tu nombre').fill('QA Shots');
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Contraseña').fill('UmbraQA-1234!');
     await page.getByRole('button', { name: /Crear cuenta/i }).click();

@@ -19,8 +19,8 @@
 -- is later edited (even for a typo fix). With `consent_text_hash` we
 -- can store a SHA-256 of the exact rendered text and verify it against
 -- a versioned file in `content/consent/<version>-<locale>.md`. Adding
--- `locale` makes the schema ready for multi-idioma futuro (next-intl
--- is already installed — ADR-010).
+-- `locale` makes the schema ready for multi-idioma futuro if i18n is
+-- introduced later.
 --
 -- Backfill policy: rows created before this migration get empty string
 -- for `consent_text_hash` and 'es-AR' as `locale`. These pre-migration

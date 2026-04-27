@@ -74,9 +74,10 @@ señal más exigente.
 
 ### Expansión del corpus latinoamericano
 
-El corpus latinoamericano propio (n=50-100, ADR-028) cubre el
-mínimo viable para entrenar Ridge sobre embeddings de
-DistilBERT, pero un corpus mayor (n=200+) reduciría la
+El corpus latinoamericano propio actual (n=20, ADR-028) cubre una
+validación cualitativa mínima en voseo argentino, pero no alcanza para
+sostener validez estadística fuerte. Un corpus mayor (n≥300; ideal
+500-1000) reduciría la
 incertidumbre de las métricas reportadas y permitiría reservar
 un split test más representativo. Esta expansión combina bien
 con la validación cruzada con muestras humanas declarativas

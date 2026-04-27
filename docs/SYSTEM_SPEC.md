@@ -62,9 +62,9 @@ Optional (user opt-in during consent flow):
 | AI (capa narrativa) | Anthropic Claude SDK | `0.30.1` | Identificador de modelo fijado vía `ANTHROPIC_MODEL_ID` |
 | Capa analítica | Módulo propio en `ml/` | DistilBERT base multilingual cased congelado + Ridge multi-output (FastAPI + DVC + MLflow) | Ver ADR-026 |
 | Charts | Recharts | `2.13.0` | Radar + bars |
-| PDF | html2pdf.js | `0.10.2` | Client-side only |
+| PDF | html2pdf.js | `0.14.0` | Client-side only |
 | Validation | Zod | `3.23.8` | All API inputs |
-| i18n | next-intl | `^3` | es-AR primary, en stub |
+| i18n | Repo-local dictionaries | `lib/i18n/dict.ts` | es-AR primary, en stub |
 | Testing | Vitest + Playwright | latest | Vitest for units, Playwright for E2E |
 | Deploy | Vercel | — | Git-connected CI/CD |
 
@@ -97,7 +97,7 @@ Optional (user opt-in during consent flow):
 - `POST /api/account/delete/confirm` — Confirm + cascade delete (Node)
 - `POST /api/account/research-opt-out` — Toggle research mode (Node)
 
-### Supabase tables (post-Migration 002)
+### Supabase tables (post-Migration 006)
 - `profiles` (Phase 1)
 - `psychological_profiles` (Phase 1, + version column in 002)
 - `narratives` (Phase 1)
@@ -111,8 +111,12 @@ Optional (user opt-in during consent flow):
 - `future_letters` (Migration 002)
 - `delete_confirmations` (Migration 002)
 - `evidence_highlights` (Migration 002, from eng review E4)
+- `onboarding_sessions` (Migration 003)
+- `usability_responses` (Migration 005)
 
-All tables have explicit `ENABLE ROW LEVEL SECURITY` and `CREATE POLICY` DDL. See [tech/DATABASE.md](tech/DATABASE.md).
+All tables have explicit `ENABLE ROW LEVEL SECURITY`; user-owned tables have
+policies, while service-role-only audit tables intentionally have no user
+policy. See [tech/DATABASE.md](tech/DATABASE.md).
 
 ### Knowledge base (`lib/knowledge/`)
 - `big-five.ts` — IPIP-NEO (not NEO-PI-R) facets with textual indicators

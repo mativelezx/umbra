@@ -3,7 +3,9 @@
 Plataforma de autoconocimiento basada en Big Five (IPIP-NEO) + funciones cognitivas Jung + Positive Computing, en español latinoamericano. TFG de Ingeniería en Software, Universidad Siglo 21.
 
 **Producción**: https://umbra-sigma.vercel.app
-**Status**: deployed, todas las migraciones aplicadas (001-005), módulo ML propio en `ml/` con pipeline reproducible, capítulos técnicos de la tesis drafteados.
+**Status**: deployed, migraciones 001-006 documentadas, módulo ML propio en `ml/` con pipeline reproducible, QA risk mitigation y readiness de defensa documentados.
+
+**Docs clave**: [Defense readiness](docs/DEFENSE_READINESS.md), [QA risk mitigation](docs/QA_RISK_MITIGATION.md), [Dataset expansion](ml/DATASET_EXPANSION.md), [Database schema](docs/tech/DATABASE.md).
 
 ## Lo que hace Umbra
 
@@ -31,7 +33,7 @@ Plataforma de autoconocimiento basada en Big Five (IPIP-NEO) + funciones cogniti
 - **Recharts** para el radar chart
 - **framer-motion** con `LazyMotion` + `domAnimation` tree-shaking (~17kb gzip)
 - **Phosphor Icons** (nunca emoji en UI)
-- **html2pdf.js** client-side para export
+- **html2pdf.js 0.14.0** client-side para export
 - **Zod** para validación en todo boundary
 - **Vitest** para unit tests
 - **Playwright** + `@axe-core/playwright` para E2E + a11y automatizada
@@ -66,6 +68,7 @@ En el SQL Editor del dashboard de Supabase, correr en orden, o usar `supabase db
 3. `supabase/migrations/003_onboarding_sessions.sql` (onboarding_sessions table con flags JSONB + RLS)
 4. `supabase/migrations/004_consent_text_hash.sql` (ADR-024: consent_text_hash + locale en consent_records)
 5. `supabase/migrations/005_usability_responses.sql` (tabla `usability_responses` para SUS in-app)
+6. `supabase/migrations/006_enable_pg_cron_purges.sql` (retención 30 días para payloads sensibles y limpieza de tokens)
 
 ### 4. Módulo analítico (`ml/`)
 

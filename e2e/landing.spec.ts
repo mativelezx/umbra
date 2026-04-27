@@ -3,9 +3,9 @@ import { test, expect } from '@playwright/test';
 test.describe('Landing page', () => {
   test('shows hero with Instrument Serif title + both CTAs', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /Conocé tu sombra/i })).toBeVisible();
-    await expect(page.getByRole('link', { name: /Comenzar viaje/i }).first()).toBeVisible();
-    await expect(page.getByRole('link', { name: /Saber más/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Hablás de vos/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /Empezar/i }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /Cómo funciona/i })).toBeVisible();
   });
 
   test('shows 4 pilar cards without 3-column grid (AI slop avoidance)', async ({ page }) => {
@@ -13,16 +13,16 @@ test.describe('Landing page', () => {
     // Use heading role so the pillar cards aren't confused with the hero
     // copy paragraph that also mentions "Positive Computing".
     await expect(
-      page.getByRole('heading', { name: /Base teórica real/i }),
+      page.getByRole('heading', { name: /Una sola teoría medida/i }),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: /Jung directo, no MBTI/i }),
+      page.getByRole('heading', { name: /Jung como espejo/i }),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: /^Positive Computing$/i }),
+      page.getByRole('heading', { name: /Pensado para tu bienestar/i }),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: /Español latinoamericano/i }),
+      page.getByRole('heading', { name: /Te hablamos en argentino/i }),
     ).toBeVisible();
   });
 
@@ -35,9 +35,9 @@ test.describe('Landing page', () => {
     await expect(footer.getByText(/135/)).toBeVisible();
   });
 
-  test('Comenzar viaje link goes to /register', async ({ page }) => {
+  test('Empezar link goes to /register', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('link', { name: /Comenzar viaje/i }).first().click();
+    await page.getByRole('link', { name: /Empezar/i }).first().click();
     await expect(page).toHaveURL(/\/register/);
   });
 });

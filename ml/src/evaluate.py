@@ -30,7 +30,13 @@ from pathlib import Path
 import joblib
 import numpy as np
 import pandas as pd
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import (
+    balanced_accuracy_score,
+    f1_score,
+    mean_squared_error,
+    r2_score,
+    roc_auc_score,
+)
 from sklearn.model_selection import LeaveOneOut
 from sklearn.linear_model import Ridge, RidgeCV
 from scipy.stats import pearsonr
@@ -46,6 +52,8 @@ BIG_FIVE_DIMS = ["openness", "conscientiousness", "extraversion", "agreeableness
 
 R2_THRESHOLD = 0.20
 R_THRESHOLD = 0.30
+ROC_AUC_THRESHOLD = 0.60
+BALANCED_ACC_THRESHOLD = 0.55
 ALPHAS = (0.1, 1.0, 10.0, 100.0, 1000.0)
 
 
@@ -76,18 +84,85 @@ def status_for(metrics: dict) -> str:
     return "low_confidence"
 
 
+def binary_status_for(metrics: dict) -> str:
+    if "roc_auc" not in metrics or metrics["roc_auc"] is None:
+        return "not_applicable"
+    if metrics["roc_auc"] >= ROC_AUC_THRESHOLD and metrics.get("balanced_accuracy", 0) >= BALANCED_ACC_THRESHOLD:
+        return "ok"
+    return "low_confidence"
+
+
+def maybe_binary_metrics(model, X, y) -> dict | None:
+    """Clasificación rasgo alto/bajo cuando el target es binario.
+
+    El mirror abierto de Essays trae etiquetas 0/1, que prepare_data.py
+    escala a 0/100. Para ese caso, R² de regresión no es la única lectura
+    honesta: también reportamos AUC/F1/balanced accuracy sobre la frontera
+    de 50 puntos. No se aplica a scores continuos reales.
+    """
+    mask = ~np.isnan(y)
+    n = int(mask.sum())
+    if n < 2:
+        return None
+    y_d = y[mask]
+    unique = set(np.unique(y_d).tolist())
+    if not unique.issubset({0.0, 1.0, 100.0}):
+        return None
+    y_true = (y_d >= 50).astype(int)
+    if len(set(y_true.tolist())) < 2:
+        return {
+            "n": n,
+            "note": "una sola clase presente; métricas binarias no definidas",
+        }
+    scores = model.predict(X[mask])
+    labels = (scores >= 50).astype(int)
+    try:
+        roc_auc = float(roc_auc_score(y_true, scores))
+    except Exception:
+        roc_auc = float("nan")
+    return {
+        "n": n,
+        "label_type": "binary_high_trait",
+        "decision_threshold": 50,
+        "roc_auc": roc_auc,
+        "balanced_accuracy": float(balanced_accuracy_score(y_true, labels)),
+        "f1": float(f1_score(y_true, labels, zero_division=0)),
+    }
+
+
 def evaluate_block(models, df: pd.DataFrame, X: np.ndarray, label: str) -> dict:
-    block = {"n_samples": len(df), "metrics": {}, "per_dimension_status": {}}
+    block = {
+        "n_samples": len(df),
+        "metrics": {},
+        "per_dimension_status": {},
+        "classification_metrics": {},
+        "per_dimension_classification_status": {},
+    }
     for dim in BIG_FIVE_DIMS:
         if dim not in models:
             block["metrics"][dim] = {"n": 0, "note": "modelo no entrenado para esta dimensión"}
             block["per_dimension_status"][dim] = "low_confidence"
+            block["per_dimension_classification_status"][dim] = "not_applicable"
             continue
         y = df[dim].to_numpy(dtype=float)
         m = per_dim_metrics(models[dim], X, y)
         block["metrics"][dim] = m
         block["per_dimension_status"][dim] = status_for(m)
+        bm = maybe_binary_metrics(models[dim], X, y)
+        if bm is not None:
+            block["classification_metrics"][dim] = bm
+            block["per_dimension_classification_status"][dim] = binary_status_for(bm)
+        else:
+            block["per_dimension_classification_status"][dim] = "not_applicable"
         log.info("[%s] dim=%s: %s → %s", label, dim, m, block["per_dimension_status"][dim])
+        if bm is not None:
+            log.info(
+                "[%s] dim=%s binary: %s → %s",
+                label,
+                dim,
+                bm,
+                block["per_dimension_classification_status"][dim],
+            )
     return block
 
 
@@ -180,7 +255,10 @@ def main():
         "model_type": model_type,
         "model_version": bundle.get("version", model_type),
         "embedding_model": bundle.get("model_name") if model_type == "distilbert_ridge" else "tfidf_unigram_bigram",
-        "thresholds": {"r2": R2_THRESHOLD, "r": R_THRESHOLD},
+        "thresholds": {
+            "regression": {"r2": R2_THRESHOLD, "r": R_THRESHOLD},
+            "binary": {"roc_auc": ROC_AUC_THRESHOLD, "balanced_accuracy": BALANCED_ACC_THRESHOLD},
+        },
         "blocks": {},
     }
 

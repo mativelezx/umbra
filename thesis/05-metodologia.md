@@ -87,13 +87,17 @@ artefacto serializado y `eval_metrics.json` se commitean al repo.
 El corpus combinado de entrenamiento tiene dos componentes: Essays
 (Pennebaker & King 1999, ~2500 textos breves de estudiantes
 universitarios estadounidenses con Big Five etiquetado) y un corpus
-latinoamericano propio (n=50-100, voseo argentino, ADR-028)
+latinoamericano propio inicial (n=20, voseo argentino, ADR-028)
 construido con asistencia de IA generativa y validado manualmente
 contra una rúbrica documentada en
 `ml/data/latinoamericano/rubrica_validacion.md`. La rúbrica cubre
 claridad de marcadores lingüísticos asociados a la dimensión target
 (Pennebaker & King 1999), naturalidad del voseo, ausencia de jerga
-clínica, longitud apropiada y diversidad temática. Ambos corpus se
+clínica, longitud apropiada y diversidad temática. Por su tamaño, este
+corpus local se usa como validación cualitativa y señal de transferencia,
+no como prueba estadística fuerte; la ampliación recomendada para las
+siguientes iteraciones es n≥300 con consentimiento e IPIP/BFI breve.
+Ambos corpus se
 versionan con DVC.
 
 ### 4.3 Umbrales mínimos

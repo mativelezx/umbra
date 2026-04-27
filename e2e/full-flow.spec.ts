@@ -9,6 +9,10 @@ import { test, expect, type Page } from '@playwright/test';
 //
 // Chromium only: one pass of the full loop is enough to validate every
 // backend integration is wired up, and we don't want to double-charge Claude.
+// Opt in with E2E_REAL_FLOW=true because this requires Supabase sign-up to
+// create a session immediately, a running ML API, and live Anthropic calls.
+
+const RUN_REAL_FLOW = process.env.E2E_REAL_FLOW === 'true';
 
 const INTRO_TEXT = [
   'Siento que soy alguien que pasa mucho tiempo adentro de su cabeza.',
@@ -72,8 +76,8 @@ async function answerCurrentTurn(page: Page, turnIdx: number): Promise<void> {
 
 test.describe('Umbra full-flow happy path (dynamic onboarding)', () => {
   test.skip(
-    ({ browserName }) => browserName !== 'chromium',
-    'Run only on chromium to avoid double-charging Claude tokens',
+    ({ browserName }) => browserName !== 'chromium' || !RUN_REAL_FLOW,
+    'Opt-in chromium-only test: set E2E_REAL_FLOW=true with live Supabase, ML API, and Anthropic',
   );
 
   test('register → consent → dynamic onboarding → dashboard → narrative → plan', async ({
@@ -89,9 +93,9 @@ test.describe('Umbra full-flow happy path (dynamic onboarding)', () => {
     // 1. Register
     await page.goto('/register');
     await expect(
-      page.getByRole('heading', { name: /Empezá tu viaje/i }),
+      page.getByRole('heading', { name: /Crear tu cuenta/i }),
     ).toBeVisible();
-    await page.getByLabel('Nombre completo').fill(fullName);
+    await page.getByLabel('Tu nombre').fill(fullName);
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Contraseña').fill(password);
     await page.getByRole('button', { name: /Crear cuenta/i }).click();

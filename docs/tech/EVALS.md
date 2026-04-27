@@ -49,10 +49,12 @@ embedding ℝ⁷⁶⁸
 - **Essays** (Pennebaker & King 1999) — corpus académico en inglés,
   ~2500 textos breves de estudiantes universitarios estadounidenses
   con Big Five etiquetado.
-- **Corpus latinoamericano propio** (n=50-100, voseo argentino,
+- **Corpus latinoamericano propio** (n=20 actual, voseo argentino,
   ADR-028) — construido con asistencia de IA generativa y validado
   manualmente con la rúbrica documentada en
-  `ml/data/latinoamericano/rubrica_validacion.md`.
+  `ml/data/latinoamericano/rubrica_validacion.md`. Es validación
+  cualitativa/transferencia local; la meta TP2-TP4 es ampliarlo a
+  300+ casos con consentimiento e IPIP/BFI breve.
 - Versionados con DVC. Split 80/10/10 train/val/test determinístico
   (`SEED=42` en `ml/src/prepare_data.py`).
 

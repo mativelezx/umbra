@@ -2,7 +2,7 @@
 
 > Full schema, RLS policies, migrations, SQL functions.
 
-## Tables (post-Migration 002)
+## Tables (post-Migration 006)
 
 ### From Migration 001 (Phase 1)
 
@@ -63,7 +63,7 @@ CREATE TABLE public.psychological_profiles (
   archetype TEXT CHECK (archetype IN ('hero','sage','explorer','creator','caregiver','rebel')),
   archetype_secondary TEXT,
   analysis_raw JSONB,  -- 30-day retention (ADR-019)
-  input_mode TEXT CHECK (input_mode IN ('guided','freetext')),
+  input_mode TEXT CHECK (input_mode IN ('guided','freetext','dynamic')),
   input_texts JSONB,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -158,6 +158,8 @@ CREATE TABLE public.consent_records (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
   consent_version TEXT NOT NULL,
+  consent_text_hash TEXT NOT NULL DEFAULT '', -- Added in Migration 004
+  locale TEXT NOT NULL DEFAULT 'es-AR',       -- Added in Migration 004
   accepted_at TIMESTAMPTZ DEFAULT NOW(),
   ip_hash TEXT NOT NULL,           -- HMAC(ip, CONSENT_IP_PEPPER_V1)
   pepper_version SMALLINT NOT NULL DEFAULT 1,
@@ -169,6 +171,10 @@ CREATE POLICY "consent_select_own" ON public.consent_records
   FOR SELECT USING (auth.uid() = user_id);
 -- No INSERT/UPDATE/DELETE policies — service_role only (immutable audit trail)
 ```
+
+`consent_text_hash` stores the SHA-256 of the exact consent text rendered to
+the user. Rows created before Migration 004 keep `consent_text_hash = ''` and
+are auditable by `consent_version` only.
 
 #### `crisis_events` (chat safety audit trail, 30-day retention)
 ```sql
@@ -271,6 +277,62 @@ CREATE POLICY "evidence_select_own" ON public.evidence_highlights
 CREATE INDEX idx_evidence_profile ON public.evidence_highlights(profile_id);
 ```
 
+### From Migration 003
+
+#### `onboarding_sessions` (dynamic onboarding state)
+```sql
+CREATE TABLE public.onboarding_sessions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  status TEXT NOT NULL DEFAULT 'in_progress'
+    CHECK (status IN ('in_progress', 'completed', 'abandoned')),
+  turns JSONB NOT NULL DEFAULT '[]'::jsonb,
+  working_profile JSONB NOT NULL,
+  flags JSONB NOT NULL DEFAULT '{}'::jsonb,
+  started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  completed_at TIMESTAMPTZ
+);
+
+ALTER TABLE public.onboarding_sessions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "onboarding_sessions_select_own"
+  ON public.onboarding_sessions
+  FOR SELECT USING (auth.uid() = user_id);
+-- Writes go through service_role only.
+```
+
+### From Migration 005
+
+#### `usability_responses` (opt-in research instrumentation)
+```sql
+CREATE TABLE public.usability_responses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  instrument TEXT NOT NULL CHECK (
+    instrument IN (
+      'umux_lite',
+      'metux_autonomy',
+      'metux_competence',
+      'metux_relatedness',
+      'cuq',
+      'sus'
+    )
+  ),
+  item_key TEXT NOT NULL,
+  score INTEGER NOT NULL CHECK (score BETWEEN 1 AND 7),
+  free_text TEXT,
+  shown_at TIMESTAMPTZ NOT NULL,
+  answered_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  pepper_version SMALLINT NOT NULL DEFAULT 1
+);
+
+ALTER TABLE public.usability_responses ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "usability_select_own" ON public.usability_responses
+  FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "usability_insert_own" ON public.usability_responses
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+```
+
 ## SQL Functions (Migration 002)
 
 ### `charge_rate_limit` (atomic check + charge)
@@ -319,24 +381,28 @@ SELECT cron.schedule(
 
 ## Delete cascade order (for `/api/account/delete/confirm`)
 
-When a user confirms account deletion, the route executes this cascade in a
-single transaction. Order matters because of FK constraints:
+When a user confirms account deletion, the route executes this service-role
+cascade with explicit error checks after each step. Order matters because of
+FK constraints:
 
 1. `messages` (via `conversations.id` FK cascade)
 2. `conversations` (via `user_id` FK cascade)
 3. `crisis_events` (lookup by recomputed `user_hash`, service_role delete)
 4. `narratives`
 5. `future_letters`
-6. `evidence_highlights` (cascades from `psychological_profiles.id` FK)
-7. `rate_limits`
-8. `delete_confirmations` (all rows for this user)
+6. `development_plans` (must precede `psychological_profiles` because of `profile_id` FK)
+7. `evidence_highlights` (cascades from `psychological_profiles.id` FK)
+8. `rate_limits`
 9. `psychological_profiles`
 10. `consent_records`
 11. IF `purgeResearch=true`: `research_dataset` (recompute `user_hash` with `RESEARCH_PEPPER_V1`, delete)
-12. `profiles` (parent — most FKs cascade from here)
+12. `profiles` (parent — cascades `delete_confirmations`, `onboarding_sessions`, `usability_responses`, and other FK-owned rows)
 13. `auth.users` (top-level — handled by Supabase admin API)
 
-Wrapped in `BEGIN; ... COMMIT;`. If any step fails, `ROLLBACK` and return 500.
+If any checked step fails before the final account delete, the route returns
+`cascade_failed` and does not mark the delete token as used, so the user can
+retry. `auth.users` deletion remains an external Supabase Admin API call, so it
+cannot be part of a SQL transaction with the prior PostgREST deletes.
 
 ## Indexes summary
 
@@ -349,8 +415,14 @@ Wrapped in `BEGIN; ... COMMIT;`. If any step fails, `ROLLBACK` and return 500.
 | `idx_conversations_activity` | `conversations` | `last_activity_at` | session timeout checks |
 | `idx_messages_conversation` | `messages` | `conversation_id` | thread fetch |
 | `idx_plans_user` | `development_plans` | `user_id` | RLS |
+| `idx_onboarding_sessions_user` | `onboarding_sessions` | `user_id` | resume dynamic onboarding |
+| `idx_onboarding_sessions_in_progress` | `onboarding_sessions` | `(user_id, status)` | find active onboarding |
 | `idx_research_user_hash` | `research_dataset` | `user_hash` | export lookup, delete purge |
 | `idx_evidence_profile` | `evidence_highlights` | `profile_id` | dashboard lazy load |
+| `idx_delete_confirmations_token` | `delete_confirmations` | `token_hash` | magic-link confirmation lookup |
+| `idx_delete_confirmations_user` | `delete_confirmations` | `user_id` | purge account delete tokens |
+| `idx_consent_records_version_locale` | `consent_records` | `(consent_version, locale)` | consent audit queries |
+| `idx_usability_responses_user_instrument_answered_at` | `usability_responses` | `(user_id, instrument, answered_at DESC)` | research export/scoring |
 | (PK) | `rate_limits` | `(user_id, day)` | atomic upsert |
 | `idx_future_letters_user` | `future_letters` | `user_id` | dashboard lookup |
 

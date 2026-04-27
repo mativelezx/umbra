@@ -89,22 +89,22 @@ export const POST = withErrorHandler(async (req) => {
     assertOk('future_letters delete')(
       await service.from('future_letters').delete().eq('user_id', user.id),
     );
-    // 6. evidence_highlights (cascades from psychological_profiles)
-    // 7. rate_limits
+    // 6. development_plans (must precede psychological_profiles: profile_id FK)
+    assertOk('development_plans delete')(
+      await service.from('development_plans').delete().eq('user_id', user.id),
+    );
+    // 7. evidence_highlights (cascades from psychological_profiles)
+    // 8. rate_limits
     assertOk('rate_limits delete')(
       await service.from('rate_limits').delete().eq('user_id', user.id),
     );
-    // 8. psychological_profiles (cascades to evidence_highlights)
+    // 9. psychological_profiles (cascades to evidence_highlights)
     assertOk('psychological_profiles delete')(
       await service.from('psychological_profiles').delete().eq('user_id', user.id),
     );
-    // 9. consent_records
+    // 10. consent_records
     assertOk('consent_records delete')(
       await service.from('consent_records').delete().eq('user_id', user.id),
-    );
-    // 10. development_plans
-    assertOk('development_plans delete')(
-      await service.from('development_plans').delete().eq('user_id', user.id),
     );
     // 11. research_dataset IF purgeResearch
     if (body.purgeResearch) {

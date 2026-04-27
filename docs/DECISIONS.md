@@ -126,19 +126,19 @@ Vite-native, fast ESM, built-in coverage.
 **Consequences**: Faster CI. Simpler config. Any library that requires jest
 specifically won't work. No such library in our stack.
 
-## ADR-010 — i18n library is `next-intl@^3`
+## ADR-010 — i18n strategy is repo-local dictionaries
 **Status**: Accepted (2026-04-12)
 **Context**: Master doc mentions latinoamericano Spanish. For the TFG we ship only
 ES-AR, but retrofit i18n later is painful (all strings inline to dictionary).
-Two candidates: `next-intl` (App Router native middleware) or `@formatjs/intl`
-(library-only, no middleware).
-**Decision**: `next-intl@^3`. Locales: `es-AR` (primary, voseo and latinoamericano
-vocabulary), `en` (stub). Middleware-based locale detection. Messages live in
-`messages/es-AR.json` and `messages/en.json`. All component strings pass
-through `t()` from day 1.
-**Consequences**: Initial i18n boilerplate. English dictionary
-starts empty and can be filled later. No runtime penalty — JSON dictionaries
-are bundled per locale.
+The first design considered `next-intl`, but the prototype does not need
+locale routing or middleware yet.
+**Decision**: Use repo-local dictionaries in `messages/es-AR.json` and
+`messages/en.json`, accessed through `lib/i18n/dict.ts`. Locale `es-AR`
+is primary; English remains a future stub. `next-intl` is not a runtime
+dependency until route-level i18n is actually needed.
+**Consequences**: Lower dependency surface and simpler App Router setup.
+If multi-locale routing is added later, `next-intl` can be introduced
+behind the same dictionary keys.
 
 ## ADR-013 — `research_dataset` is pseudonymization, not anonymization
 **Status**: Accepted (2026-04-12)
@@ -276,8 +276,8 @@ cual requiere poder demostrar qué texto específico vio el usuario al
 aceptar. El campo `consent_version TEXT` no es suficiente: si mañana se
 corrige una tipografía manteniendo la versión, no hay forma de auditar qué
 vio históricamente el usuario X. Adicionalmente, el `consent_records` schema
-no captura `locale`, lo cual en un contexto multi-idioma futuro (next-intl
-ya está instalado — ADR-010) puede hacer imposible distinguir a un usuario
+no captura `locale`, lo cual en un contexto multi-idioma futuro (ADR-010)
+puede hacer imposible distinguir a un usuario
 que consintió en español vs inglés.
 **Decision**: Se agregan dos columnas a `consent_records` vía migration 004:
 ```sql
@@ -387,8 +387,9 @@ requiere ética formal); (b) usar un corpus académico latinoamericano
 existente (no se identificó uno con etiquetas Big Five en la cantidad
 necesaria); (c) construir el corpus con asistencia de IA generativa
 guiada por un prompt explícito y validado manualmente con rúbrica.
-**Decision**: Se construye un corpus latinoamericano propio con n=50-100
-casos en `ml/data/latinoamericano/`. Cada caso se redacta en voseo
+**Decision**: Se construye un corpus latinoamericano propio inicial con
+20 casos en `ml/data/latinoamericano/`, como validación cualitativa y
+smoke test de transferencia local. Cada caso se redacta en voseo
 argentino, dirigido por un prompt que especifica una dimensión Big Five
 target con dirección alta o baja, y se valida manualmente contra una
 rúbrica documentada en `ml/data/latinoamericano/rubrica_validacion.md`. La
@@ -398,6 +399,11 @@ de jerga clínica, longitud apropiada y diversidad temática. El versionado
 del corpus es responsabilidad de DVC (ADR-026).
 **Consequences**:
 - **Ganancia**: corpus en idioma de uso real del producto, disponible en
+  el repositorio y auditable.
+- **Limitación**: n=20 no alcanza para sostener validez estadística
+  fuerte; por eso `per_dimension_status` excluye dimensiones bajo umbral
+  y `ml/DATASET_EXPANSION.md` fija una meta mínima de 300 casos es-AR
+  para TP2-TP4.
   el timeline del TFG, controlable de punta a punta.
 - **Riesgo declarado**: sesgo del modelo generador (los textos pueden
   reflejar el sesgo estilístico del LLM más que la diversidad real de la
