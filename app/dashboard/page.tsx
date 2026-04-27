@@ -12,7 +12,7 @@ import { ArchetypeMap } from '@/components/dashboard/ArchetypeMap';
 import { CartaFuturaCard } from '@/components/dashboard/CartaFuturaCard';
 import { Card } from '@/components/ui/Card';
 import { ARCHETYPE_INFO } from '@/types';
-import type { Archetype, BigFive, JungFunctions as JF } from '@/types';
+import type { Archetype, BigFive, BigFiveDimension, JungFunctions as JF } from '@/types';
 import {
   DEMO_BIG_FIVE,
   DEMO_JUNG_FUNCTIONS,
@@ -22,8 +22,11 @@ import {
   DEMO_NARRATIVE,
   DEMO_CARTA_LETTER,
   DEMO_USER,
+  DEMO_PER_DIMENSION_STATUS,
   isDemoMode,
 } from '@/lib/demo/seed';
+
+type PerDimensionStatus = Record<BigFiveDimension, 'ok' | 'low_confidence'>;
 
 export const dynamic = 'force-dynamic';
 
@@ -38,6 +41,7 @@ interface DashboardData {
   narrativeContent: string | null;
   confidence: number | null;
   turnsCount: number | null;
+  perDimensionStatus: PerDimensionStatus | null;
   letter: {
     id: string;
     content: string;
@@ -92,6 +96,7 @@ function DashboardView({ data }: { data: DashboardData }) {
           archetypeName={archetypeName}
           confidence={data.confidence}
           turnsCount={data.turnsCount}
+          perDimensionStatus={data.perDimensionStatus ?? undefined}
         />
 
         {/* NARRATIVA — sectioned with iconography + sticky TOC on desktop.
@@ -127,7 +132,10 @@ function DashboardView({ data }: { data: DashboardData }) {
               <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
                 Big Five · radar
               </p>
-              <BigFiveRadar bigFive={data.bigFive} />
+              <BigFiveRadar
+                bigFive={data.bigFive}
+                perDimensionStatus={data.perDimensionStatus ?? undefined}
+              />
             </Card>
             <Card>
               <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
@@ -167,6 +175,7 @@ export default async function DashboardPage() {
           narrativeContent: DEMO_NARRATIVE,
           confidence: 82,
           turnsCount: 14,
+          perDimensionStatus: DEMO_PER_DIMENSION_STATUS,
           letter: {
             id: DEMO_CARTA_LETTER.id,
             content: DEMO_CARTA_LETTER.content,
@@ -224,7 +233,10 @@ export default async function DashboardPage() {
   // legacy or seeded rows may hold a 0-1 decimal. Anything <= 1 is treated
   // as a decimal and multiplied, so the UI never renders "0.68%".
   const analysisRaw = profileRow.analysis_raw as
-    | { confidence?: number }
+    | {
+        confidence?: number;
+        perDimensionStatus?: Partial<Record<BigFiveDimension, 'ok' | 'low_confidence'>>;
+      }
     | null;
   const rawConfidence =
     typeof analysisRaw?.confidence === 'number' ? analysisRaw.confidence : null;
@@ -241,6 +253,25 @@ export default async function DashboardPage() {
   // transparency ("basado en N respuestas") per PAIR Explainability heuristics.
   const inputTextsRaw = profileRow.input_texts as string[] | null;
   const turnsCount = Array.isArray(inputTextsRaw) ? inputTextsRaw.length : null;
+
+  // ADR-027: per-dimension confidence surfacing. El módulo ML emite
+  // `perDimensionStatus` con valor `ok` o `low_confidence` por cada dimensión
+  // Big Five. Si el campo no está (legacy / fallback claude), tratamos todas
+  // las dimensiones como `ok` por compatibilidad — la UI no muestra badges.
+  const dims: BigFiveDimension[] = [
+    'openness',
+    'conscientiousness',
+    'extraversion',
+    'agreeableness',
+    'neuroticism',
+  ];
+  const rawStatus = analysisRaw?.perDimensionStatus;
+  const perDimensionStatus: PerDimensionStatus | null = rawStatus
+    ? dims.reduce((acc, d) => {
+        acc[d] = rawStatus[d] === 'low_confidence' ? 'low_confidence' : 'ok';
+        return acc;
+      }, {} as PerDimensionStatus)
+    : null;
 
   const { data: profileMeta } = await supabase
     .from('profiles')
@@ -277,6 +308,7 @@ export default async function DashboardPage() {
         narrativeContent: narrativeRow?.content ?? null,
         confidence,
         turnsCount,
+        perDimensionStatus,
         letter: letterRow ?? null,
       }}
     />

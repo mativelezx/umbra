@@ -1,6 +1,7 @@
 import type {
   Archetype,
   BigFive,
+  BigFiveDimension,
   JungFunctions,
   PsychologicalProfile,
 } from '@/types';
@@ -30,6 +31,24 @@ export const DEMO_BIG_FIVE: BigFive = {
   extraversion: 34,
   agreeableness: 74,
   neuroticism: 61,
+};
+
+/**
+ * Status por dimensión Big Five — política ADR-027.
+ * El módulo ML (`lib/ml-client.ts`) lo emite a partir de
+ * `eval_metrics.json`: una dimensión es `ok` solo si su R² > 0.20 y
+ * r > 0.30 en el bloque rioplatense_only del eval. Cualquier otra
+ * dimensión queda `low_confidence` y se reporta con badge "Preliminar".
+ *
+ * Demo: dejamos dos dimensiones en `low_confidence` para que la UX
+ * del dashboard tenga material de prueba; el resto en `ok`.
+ */
+export const DEMO_PER_DIMENSION_STATUS: Record<BigFiveDimension, 'ok' | 'low_confidence'> = {
+  openness: 'ok',
+  conscientiousness: 'ok',
+  extraversion: 'ok',
+  agreeableness: 'low_confidence',
+  neuroticism: 'low_confidence',
 };
 
 export const DEMO_JUNG_FUNCTIONS: JungFunctions = {

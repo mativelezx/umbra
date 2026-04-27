@@ -7,7 +7,7 @@ import {
   Target,
   Waves,
 } from '@phosphor-icons/react/dist/ssr';
-import type { BigFive, JungFunctions } from '@/types';
+import type { BigFive, BigFiveDimension, JungFunctions } from '@/types';
 import {
   BIG_FIVE_LABELS,
   JUNG_LABELS,
@@ -15,12 +15,15 @@ import {
 } from '@/lib/dimensions/labels';
 import { InfoPopover } from '@/components/ui/InfoPopover';
 
+type PerDimensionStatus = Record<BigFiveDimension, 'ok' | 'low_confidence'>;
+
 interface QuickGlanceProps {
   bigFive: BigFive;
   jungFunctions: JungFunctions;
   archetypeName: string;
   confidence?: number | null;
   turnsCount?: number | null;
+  perDimensionStatus?: PerDimensionStatus;
 }
 
 const BIG_FIVE_ICON: Record<keyof BigFive, React.ReactNode> = {
@@ -37,15 +40,25 @@ export function QuickGlance({
   archetypeName,
   confidence,
   turnsCount,
+  perDimensionStatus,
 }: QuickGlanceProps) {
   // Big Five: pick the dimension that deviates most from 50 — most
-  // informative for a quick glance.
+  // informative for a quick glance. Cuando el módulo ML marca dimensiones
+  // como `low_confidence` (ADR-027), preferimos elegir entre las `ok`;
+  // solo caemos a una `low_confidence` si todas lo están — y en ese caso
+  // la card destacada muestra el badge "Preliminar".
   const bfDev = (
     Object.entries(bigFive) as Array<[keyof BigFive, number]>
   )
-    .map(([k, v]) => ({ key: k, value: v, dev: Math.abs(v - 50) }))
+    .map(([k, v]) => ({
+      key: k,
+      value: v,
+      dev: Math.abs(v - 50),
+      isLow: perDimensionStatus?.[k] === 'low_confidence',
+    }))
     .sort((a, b) => b.dev - a.dev);
-  const topBf = bfDev[0];
+  const okDevs = bfDev.filter((d) => !d.isLow);
+  const topBf = okDevs.length > 0 ? okDevs[0] : bfDev[0];
   const topBfLabel = BIG_FIVE_LABELS[topBf.key];
   const topBfPos = bigFivePosition(topBf.key, topBf.value);
 
@@ -107,6 +120,7 @@ export function QuickGlance({
           title={topBfLabel.label}
           value={topBf.value}
           caption={topBfPos.phrase}
+          lowConfidence={topBf.isLow}
           popover={{
             title: topBfLabel.label,
             body: topBfLabel.long,
@@ -148,6 +162,7 @@ interface GlanceCardProps {
   caption: string;
   accent?: boolean;
   technicalCode?: string;
+  lowConfidence?: boolean;
   popover?: { title: string; body: string; example?: string };
 }
 
@@ -160,6 +175,7 @@ function GlanceCard({
   caption,
   accent = false,
   technicalCode,
+  lowConfidence = false,
   popover,
 }: GlanceCardProps) {
   return (
@@ -190,12 +206,26 @@ function GlanceCard({
         )}
       </div>
       <div className="mt-2 flex items-baseline gap-2">
-        <span className="font-mono text-2xl tabular-nums text-violet-200">
+        <span
+          className={`font-mono text-2xl tabular-nums ${
+            lowConfidence ? 'text-text-3/80' : 'text-violet-200'
+          }`}
+        >
           {value != null ? value : subtitleValue}
         </span>
         <span className="font-mono text-[10px] uppercase tracking-wider text-text-3">
           {caption}
         </span>
+        {lowConfidence && (
+          <span className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-amber-300/30 bg-amber-300/5 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.18em] text-amber-200/90">
+            Preliminar
+            <InfoPopover
+              title="¿Por qué 'Preliminar'?"
+              body="Esta dimensión todavía no llega al umbral de confianza estadística del módulo ML (R² > 0.20 y r > 0.30 sobre el corpus rioplatense, ADR-027). El valor es informativo pero estimativo: la dirección general (alta o baja) es robusta, el número exacto puede moverse cuando ampliemos los datos de entrenamiento."
+              className="text-amber-300/80"
+            />
+          </span>
+        )}
       </div>
     </div>
   );
