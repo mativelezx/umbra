@@ -1,76 +1,25 @@
 /**
- * Standalone runner for H1 (determinism) preregistered hypothesis.
+ * @deprecated DESDE 2026-04-27 (pivot ML, ADR-011 SUPERSEDED).
  *
- * Usage:
- *   npx tsx scripts/run-h1.ts
- *   npx tsx scripts/run-h1.ts --runs=3
- *   npx tsx scripts/run-h1.ts --from-cache
+ * Este script era el runner CLI de la hipótesis H1 (determinismo del Pass 1
+ * Claude). Tras el pivot ML (ADR-026 + ADR-028), la validación primary
+ * del componente analítico es **MSE / R² / r de Pearson por dimensión Big
+ * Five** sobre el regresor entrenado, ejecutada por el módulo Python.
  *
- * Flags:
- *   --runs=N         Override default 5 runs per case.
- *   --from-cache     Read the committed snapshot instead of calling Claude.
- *   --pass=X         Override default stddev<2.5 pass criterion.
+ * Reemplazo:
  *
- * Output:
- *   eval-results/H1-YYYYMMDD-HHmmss.json
+ *   cd ml
+ *   make all                # prepare + baseline + train + evaluate
+ *   cat eval_metrics.json   # métricas reproducidas
  *
- * H1 preregistration (docs/biz/VALIDATION.md):
- *   Given temperature=0 and pinned model SKU, analyzing the same input
- *   produces Big Five scores with stddev<2.5 across 5 consecutive runs
- *   on all eval cases.
+ * Este stub se conserva para que cualquier referencia residual en
+ * documentación o CI no produzca un import roto. Su ejecución sale
+ * inmediatamente con un mensaje informativo.
  */
 
-import { mkdir, writeFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
-import { runH1 } from '@/lib/evals/consistency';
-import { EVAL_CASES } from '@/lib/evals/cases';
-
-function parseArg(name: string): string | undefined {
-  const arg = process.argv.find((a) => a.startsWith(`--${name}=`));
-  return arg?.split('=')[1];
-}
-
-async function main() {
-  const runsPerCase = parseArg('runs') ? Number(parseArg('runs')) : undefined;
-  const passCriterion = parseArg('pass') ? Number(parseArg('pass')) : undefined;
-  const caseLimit = parseArg('cases') ? Number(parseArg('cases')) : undefined;
-
-  // eslint-disable-next-line no-console
-  console.log('[h1] starting determinism eval');
-  if (caseLimit) {
-    // eslint-disable-next-line no-console
-    console.log(`[h1] limiting corpus to first ${caseLimit} cases`);
-  }
-  const started = Date.now();
-  // Note: --from-cache is picked up by consistency.ts internally via
-  // process.argv inspection (shouldUseSnapshotCache helper).
-  const cases = caseLimit ? EVAL_CASES.slice(0, caseLimit) : undefined;
-  const report = await runH1({ runsPerCase, passCriterion, cases });
-  const elapsed = Date.now() - started;
-
-  // eslint-disable-next-line no-console
-  console.log(
-    `[h1] done in ${(elapsed / 1000).toFixed(1)}s — overallPass=${report.overallPass} failedCases=${report.failedCases.length}/${report.results.length}`,
-  );
-
-  if (!existsSync('eval-results')) {
-    await mkdir('eval-results', { recursive: true });
-  }
-  const stamp = new Date()
-    .toISOString()
-    .replace(/[:.]/g, '-')
-    .replace('T', '_')
-    .replace('Z', '');
-  const file = `eval-results/H1-${stamp}.json`;
-  await writeFile(file, JSON.stringify(report, null, 2), 'utf8');
-  // eslint-disable-next-line no-console
-  console.log(`[h1] wrote ${file}`);
-
-  process.exit(report.overallPass ? 0 : 1);
-}
-
-main().catch((e) => {
-  // eslint-disable-next-line no-console
-  console.error('[h1] fatal error:', e);
-  process.exit(2);
-});
+/* eslint-disable no-console */
+console.log('[run-h1] DESCONTINUADO (pivot ML, 2026-04-27).');
+console.log('[run-h1] Validación primary del componente analítico:');
+console.log('[run-h1]   cd ml && make all && cat eval_metrics.json');
+console.log('[run-h1] Ver docs/DECISIONS.md (ADR-011 SUPERSEDED, ADR-026, ADR-028).');
+process.exit(0);
