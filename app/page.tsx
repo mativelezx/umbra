@@ -63,7 +63,7 @@ export default function LandingPage() {
           </LandingItem>
 
           <LandingItem>
-            <p className="mt-8 max-w-2xl text-pretty font-body text-lg leading-relaxed text-text-2 md:text-xl">
+            <p className="mt-8 max-w-2xl text-pretty font-body text-xl leading-relaxed text-text-2 md:text-2xl">
               {t('landing.hero_subtitle')}
             </p>
           </LandingItem>
@@ -120,8 +120,8 @@ export default function LandingPage() {
                       {t(step.labelKey)}
                     </span>
                   </div>
-                  <h3 className="mt-6 text-pretty font-display text-2xl text-text-1">{t(step.titleKey)}</h3>
-                  <p className="mt-3 text-pretty font-body text-sm leading-relaxed text-text-2">
+                  <h3 className="mt-6 text-pretty font-display text-3xl text-text-1">{t(step.titleKey)}</h3>
+                  <p className="mt-3 text-pretty font-body text-base leading-relaxed text-text-2">
                     {t(step.descKey)}
                   </p>
                 </article>
@@ -155,9 +155,9 @@ export default function LandingPage() {
                     i % 2 === 0 ? 'md:translate-y-3' : ''
                   }`}
                 >
-                  <Sparkle size={22} weight="duotone" className="text-violet-300" />
-                  <h3 className="mt-5 text-pretty font-display text-2xl text-text-1">{t(titleKey)}</h3>
-                  <p className="mt-3 text-pretty font-body text-sm leading-relaxed text-text-2">
+                  <Sparkle size={26} weight="duotone" className="text-violet-300" />
+                  <h3 className="mt-5 text-pretty font-display text-3xl text-text-1">{t(titleKey)}</h3>
+                  <p className="mt-3 text-pretty font-body text-base leading-relaxed text-text-2">
                     {t(descKey)}
                   </p>
                 </article>
@@ -186,9 +186,9 @@ export default function LandingPage() {
           {TRUST.map((row, i) => (
             <LandingReveal key={row.key} delay={0.05 + i * 0.06} as="li">
               <LandingItem>
-                <div className="flex items-start gap-3 rounded-xl border border-violet-400/8 bg-umbra-fog/20 p-4 transition-[border-color] duration-200 hover:border-violet-400/20">
-                  <ChatCircleDots size={18} weight="duotone" className="mt-0.5 shrink-0 text-violet-300" />
-                  <p className="text-pretty font-body text-sm leading-relaxed text-text-2">
+                <div className="flex items-start gap-3 rounded-xl border border-violet-400/8 bg-umbra-fog/20 p-5 transition-[border-color] duration-200 hover:border-violet-400/20">
+                  <ChatCircleDots size={20} weight="duotone" className="mt-0.5 shrink-0 text-violet-300" />
+                  <p className="text-pretty font-body text-base leading-relaxed text-text-2">
                     {t(row.key)}
                   </p>
                 </div>
@@ -207,7 +207,7 @@ export default function LandingPage() {
             </h2>
           </LandingItem>
           <LandingItem>
-            <p className="mx-auto mt-6 max-w-xl text-pretty font-body text-base text-text-2 md:text-lg">
+            <p className="mx-auto mt-6 max-w-xl text-pretty font-body text-lg text-text-2 md:text-xl">
               {t('landing.closing_desc')}
             </p>
           </LandingItem>

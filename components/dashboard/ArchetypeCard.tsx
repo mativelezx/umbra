@@ -39,7 +39,7 @@ export function ArchetypeCard({
           <h2 className="text-balance font-display text-5xl italic text-text-1 md:text-6xl">
             {info.name}
           </h2>
-          <p className="mt-4 max-w-md text-pretty font-body text-base leading-relaxed text-text-2">
+          <p className="mt-4 max-w-md text-pretty font-body text-lg leading-relaxed text-text-2">
             {info.description}
           </p>
           {secondary && (

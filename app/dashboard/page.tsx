@@ -64,7 +64,7 @@ function DashboardView({ data }: { data: DashboardData }) {
             <h1 className="mt-2 text-balance font-display text-4xl italic text-text-1 md:text-5xl">
               Tu retrato, en una sola página
             </h1>
-            <p className="mt-2 max-w-xl text-pretty font-body text-sm text-text-3">
+            <p className="mt-2 max-w-xl text-pretty font-body text-base text-text-3">
               Esto que ves no es un diagnóstico. Es un espejo escrito a partir de lo que contaste.
               Tomalo como punto de partida, no como veredicto.
             </p>
@@ -131,7 +131,7 @@ function DashboardView({ data }: { data: DashboardData }) {
               <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
                 Cinco grandes rasgos
               </p>
-              <p className="mt-2 max-w-prose text-pretty font-body text-xs leading-relaxed text-text-3">
+              <p className="mt-2 max-w-prose text-pretty font-body text-sm leading-relaxed text-text-2">
                 Las cinco dimensiones del modelo Big Five (también llamado OCEAN). Cada barra es una de tus inclinaciones generales sobre 100. No son percentiles ni diagnósticos.
               </p>
               <div className="mt-4">
@@ -142,7 +142,7 @@ function DashboardView({ data }: { data: DashboardData }) {
               <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
                 Cómo procesás la información
               </p>
-              <p className="mt-2 max-w-prose text-pretty font-body text-xs leading-relaxed text-text-3">
+              <p className="mt-2 max-w-prose text-pretty font-body text-sm leading-relaxed text-text-2">
                 Una lectura inspirada en las ocho funciones cognitivas que describió Jung en 1921. Lo usamos como espejo interpretativo, no como tipología cerrada.
               </p>
               <div className="mt-4">

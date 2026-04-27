@@ -21,7 +21,7 @@ export function ModeSelector({ onPick }: ModeSelectorProps) {
         <h1 className="text-balance font-display text-5xl italic text-text-1 md:text-6xl">
           {t('onboarding.selector_title')}
         </h1>
-        <p className="mx-auto max-w-2xl text-pretty font-body text-base leading-relaxed text-text-2">
+        <p className="mx-auto max-w-2xl text-pretty font-body text-lg leading-relaxed text-text-2">
           {t('onboarding.selector_subtitle')}
         </p>
       </header>
@@ -101,7 +101,7 @@ function ModeCard({
         </div>
         <div className="flex flex-col gap-2">
           <h2 className="text-balance font-display text-3xl italic text-text-1">{title}</h2>
-          <p className="text-pretty font-body text-sm leading-relaxed text-text-2">
+          <p className="text-pretty font-body text-base leading-relaxed text-text-2">
             {description}
           </p>
         </div>

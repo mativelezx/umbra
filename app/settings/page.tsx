@@ -64,7 +64,7 @@ export default function SettingsPage() {
           <h1 className="mt-2 text-balance font-display text-4xl italic text-text-1 md:text-5xl">
             Configuración
           </h1>
-          <p className="mt-4 max-w-2xl text-pretty font-body leading-relaxed text-text-2">
+          <p className="mt-4 max-w-2xl text-pretty font-body text-lg leading-relaxed text-text-2">
             Tus datos, tu participación en investigación y tu cuenta. Todo está pensado para que tengas control. Cada acción se explica antes de ejecutarse.
           </p>
         </div>
@@ -96,13 +96,13 @@ export default function SettingsPage() {
                       <h2
                         className={
                           isDanger
-                            ? 'text-balance font-display text-xl text-accent-rose'
-                            : 'text-balance font-display text-xl text-text-1'
+                            ? 'text-balance font-display text-2xl text-accent-rose'
+                            : 'text-balance font-display text-2xl text-text-1'
                         }
                       >
                         {entry.title}
                       </h2>
-                      <p className="mt-1.5 text-pretty font-body text-sm leading-relaxed text-text-2">
+                      <p className="mt-1.5 text-pretty font-body text-base leading-relaxed text-text-2">
                         {entry.description}
                       </p>
                     </div>

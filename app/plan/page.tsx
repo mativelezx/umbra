@@ -154,7 +154,7 @@ export default function PlanPage() {
           <h1 className="mt-2 text-balance font-display text-4xl italic text-text-1 md:text-5xl">
             Caminos para explorar
           </h1>
-          <p className="mt-3 max-w-2xl text-pretty font-body leading-relaxed text-text-2">
+          <p className="mt-3 max-w-2xl text-pretty font-body text-lg leading-relaxed text-text-2">
             Tres áreas de crecimiento, pensadas a partir de tu perfil. Pequeños pasos chequeables. Ningún plazo te apura — el ritmo lo ponés vos. Tildá los pasos a medida que los hacés; se guardan solos.
           </p>
         </div>
