@@ -19,18 +19,51 @@ Node runtime for Supabase service-role operations that need Node APIs.
 **Consequences**: Edge routes cannot use Node built-ins (`fs`, `child_process`)
 or libraries that depend on them. html2pdf.js stays client-side (ADR-006).
 
-## ADR-002 — Jung cognitive functions used DIRECTLY, not via MBTI
-**Status**: Accepted (2026-04-12)
-**Context**: MBTI is widely criticized as pseudoscience (Stein 2019, Pittenger
-1993). Jung's original cognitive function theory from Tipos Psicológicos (1921)
-is theoretically coherent and has renewed academic interest — Sauer (2020)
-"Rehabilitating Jung's Cognitive Function Theory" frames functions as the
-cognitive architecture generating Big Five behavioral traits.
-**Decision**: `lib/knowledge/jung-functions.ts` cites Jung (1921) directly.
-No MBTI terminology in code, prompts, or UI. The 8 functions (Se, Si, Ne, Ni,
-Te, Ti, Fe, Fi) are primary.
-**Consequences**: We lose the recognizability of "INFJ / INTP" labels but gain
-academic defensibility. The paper can cite Sauer (2020) as theoretical framing.
+## ADR-002 — Separación entre teoría medida (Big Five) y diseño narrativo (Jung, Pearson, Positive Computing)
+**Status**: Accepted (2026-04-27) · **Reemplaza la versión original del 2026-04-12**
+**Context**: La versión original de este ADR (12/04/2026) declaraba a las
+funciones cognitivas de Jung como dimensiones inferidas primarias del
+sistema, junto a Big Five. La auditoría defensiva del TFG (sesión 26-27/04)
+identificó esa articulación como el flanco psicométrico más serio frente al
+tribunal: cuatro tradiciones teóricas inferidas automáticamente sobre texto
+introspectivo libre, sin instrumento validado para tres de ellas, abre una
+crítica sostenida sobre el respaldo psicométrico del componente medido.
+**Decision**: La inferencia psicológica automática del sistema se restringe
+al modelo de los **Big Five operacionalizado mediante IPIP-NEO**
+(Goldberg, 1999; ADR-015), ejecutada por el módulo ML propio (DistilBERT
+congelado + Ridge multi-output; ver ADR-026). Las funciones cognitivas de
+Jung (Jung, 1921), los arquetipos aplicados de Pearson (Pearson, 1991) y
+los principios de Positive Computing (Calvo y Peters, 2014) pasan a ser
+**elementos de diseño narrativo y conversacional, NO dimensiones inferidas**.
+La capa narrativa basada en Anthropic Claude las produce como lectura
+interpretativa, con encuadre explícito de su carácter heurístico y no
+diagnóstico. El conocimiento estructurado de `lib/knowledge/jung-functions.ts`,
+`lib/knowledge/archetypes.ts` y `lib/knowledge/positive-computing.ts`
+queda como insumo del prompt narrativo y como anexo académico, no como
+taxonomía de medición.
+**Consequences**:
+- Blindaje psicométrico del componente medido: instrumento de dominio
+  público, métricas estándar de regresión por dimensión (MSE / R² / r de
+  Pearson), pipeline reproducible (ver ADR-026).
+- Honestidad sobre el carácter de las lecturas adicionales: el usuario
+  recibe la lectura de funciones Jung y de arquetipo enmarcada como
+  interpretación, no como medición.
+- El módulo ML propio infiere solo Big Five (5 puntuaciones) — esquema
+  `psychological_profiles.openness/conscientiousness/extraversion/agreeableness/neuroticism`.
+- La capa narrativa (Pass 1.5 en `lib/prompts/interpret-narrative.ts`)
+  produce las lecturas Jung + arquetipo + razonamiento como output
+  estructurado interpretativo.
+- En el TFG y en cualquier comunicación pública del proyecto se mantiene
+  esta distinción explícitamente. Tabla de trazabilidad sección 6.4 del
+  TP1 entregado.
+- **Reemplaza**: la versión original de este ADR del 12/04 que declaraba
+  a las 8 funciones de Jung como dimensiones primarias inferidas. Esa
+  redacción estaba desalineada con el TFG entregado y se corrigió en este
+  refactor.
+- **Linked to**: ADR-007 (archetypes como etiqueta narrativa, amendado),
+  ADR-015 (IPIP-NEO como instrumento), ADR-026 (módulo ML propio),
+  ADR-027 (política UI bajo umbral por dimensión), ADR-028 (validación
+  primary = métricas ML por dimensión).
 
 ## ADR-003 — Supabase + RLS instead of NextAuth
 **Status**: Accepted (2026-04-12)
@@ -80,18 +113,29 @@ avoidance).
 **Consequences**: Simpler architecture (one less route). PDF only works when
 the user's browser is online. Print stylesheet is additional maintenance surface.
 
-## ADR-007 — Archetypes sourced from Pearson applied system
-**Status**: Accepted (2026-04-12)
+## ADR-007 — Archetypes sourced from Pearson applied system (used as narrative label, not measurement)
+**Status**: Accepted (2026-04-12) · **Amended (2026-04-27) by ADR-002 v2 + ADR-026**
 **Context**: Jung's structural archetypes (Anima, Animus, Shadow, Self) are
 intra-psychic and don't map cleanly to behavioral profiles. Pearson's "applied
 archetypes" (Hero, Sage, Explorer, Creator, Caregiver, Rebel) are behavioral,
-validated for adult personality, and map cleanly to Big Five.
+validated for adult personality, and articulan bien con Big Five como lectura
+interpretativa.
 **Decision**: `lib/knowledge/archetypes.ts` uses Pearson's 6-archetype system
 (Carol S. Pearson, "The Hero Within" 1986 / "Awakening the Heroes Within" 1991).
-The 6 archetypes are frozen and match `types/index.ts` enum.
-**Consequences**: Assignment criteria are rule-based (Big Five + Jung function
-patterns → archetype). Prompts + narrative + SVG avatars + eval golden cases
-all depend on this choice; changing archetypes later is expensive.
+The 6 archetypes are frozen and match `types/index.ts` enum. **A partir del
+pivot ML (ADR-002 v2, 2026-04-27), el arquetipo NO se infiere como medición
+psicométrica**: la capa narrativa (Claude, Pass 1.5 en
+`lib/prompts/interpret-narrative.ts`) lo asigna como **etiqueta interpretativa
+derivada de los Big Five inferidos por el módulo ML propio**, con encuadre
+explícito de su carácter heurístico. Sirve como ancla narrativa para el
+retrato escrito y la conversación contextualizada.
+**Consequences**: Assignment criteria are heurísticas (Big Five inferido por
+módulo ML → arquetipo más resonante asignado por Claude con racional citado).
+Prompts + narrative + SVG avatars dependen de esta elección; el campo
+`psychological_profiles.archetype` se mantiene en el esquema porque es
+input narrativo persistido, no medición.
+**Linked to**: ADR-002 (separación medido vs narrativo), ADR-026 (módulo ML
+propio), ADR-028 (validación primary = métricas ML por dimensión).
 
 ## ADR-008 — `crisis_events` observability: salted hashes, 30-day rotation
 **Status**: Accepted (2026-04-12)
@@ -134,7 +178,21 @@ starts empty and can be filled later. No runtime penalty — JSON dictionaries
 are bundled per locale.
 
 ## ADR-011 — Eval hypotheses: H1 (determinism) + H2 (cross-model paraphrase)
-**Status**: Accepted (2026-04-12) · **Amended by ADR-014**
+**Status**: SUPERSEDED by ADR-028 (2026-04-27) · Originally Accepted (2026-04-12) · **Amended by ADR-014**
+
+**Nota de migración (2026-04-27)**: H1 y H2 surgieron cuando el Pass 1
+inferencial era íntegramente Claude. Tras el pivot ML (ADR-002 v2 +
+ADR-026), la inferencia Big Five la realiza un regresor entrenado y
+determinístico por construcción; el determinismo conceptual de H1 deja
+de ser una pregunta de investigación. La validación primary del TFG
+entregado son **métricas estándar de regresión por dimensión Big Five**
+(MSE / R² / r de Pearson) reportadas por el módulo ML — ver ADR-028.
+H2 queda absorbida en la robustez del regresor entrenado sobre Essays +
+corpus rioplatense. Los resultados empíricos viejos de H1/H2 se preservan
+en `eval-results/legacy/` como histórico, no son evidencia primary del
+TFG.
+
+
 **Context**: The paper needs falsifiable preregistered hypotheses. User-level
 test-retest (same user, new text at day 7) is the strongest methodologically
 but requires human subjects + ethics approval. Model-level determinism is
@@ -152,7 +210,20 @@ not a construct check. H2 is a construct check but also measures cross-model
 robustness (stronger claim). Both run on CI against the committed eval cache.
 
 ## ADR-012 — OSF Standard Prereg with computational-study framing
-**Status**: Accepted (2026-04-12)
+**Status**: SUPERSEDED by ADR-023 v2 + ADR-028 (2026-04-27) · Originally Accepted (2026-04-12)
+
+**Nota de migración (2026-04-27)**: La preregistración en OSF se descartó
+como parte del pivot ML. La validación primary del TFG entregado pasó a
+ser el reporte honesto de métricas por dimensión Big Five del módulo ML
+propio, sostenida por el versionado DVC del corpus + tracking MLflow del
+entrenamiento + commits del repo público + métricas committeadas en
+`metrics.json` y `eval_metrics.json`. Esa cadena de auditabilidad cumple
+el rol que tenía OSF (reproducibilidad + trazabilidad de decisiones de
+análisis) sin la fricción de subir y mantener un preregistro externo. El
+archivo `docs/research/osf/preregistration-standard.md` queda eliminado;
+su contenido vivo se redistribuyó a ADR-026 + ADR-028 + VALIDATION.md.
+
+
 **Context**: OSF offers Secondary-Data Prereg (for reanalyzed existing data),
 Primary-Data Prereg (for human-subjects trials), and Standard Prereg. Umbra's
 eval cases are forward-collected computational stimuli — neither secondary
@@ -184,7 +255,20 @@ informed consent + data minimization + access control.
 and ethically defensible.
 
 ## ADR-014 — Eval reproducibility via committed cache snapshots + pinned SKU
-**Status**: Accepted (2026-04-12) · **Amends ADR-005, ADR-011**
+**Status**: PARTIALLY SUPERSEDED by ADR-026 (2026-04-27) · Originally Accepted (2026-04-12) · **Amends ADR-005, ADR-011**
+
+**Nota de migración (2026-04-27)**: La parte que aplicaba a la
+reproducibilidad de H1/H2 sobre Claude (snapshots de respuestas) queda
+descontinuada porque H1/H2 ya no son validación primary (ADR-011
+SUPERSEDED). La parte que sigue vigente: **el modelo Claude usado por la
+capa narrativa permanece pinned a SKU dateado** (`ANTHROPIC_MODEL_ID`
+nunca un alias) para que la narrativa generada sea estable sesión a
+sesión y la auditoría de cualquier output narrativo sea trazable a un
+modelo concreto. La reproducibilidad del componente analítico (Big Five)
+ahora se sostiene en **DVC + MLflow + metrics.json committeado**
+(ADR-026), no en snapshots de respuestas Claude.
+
+
 **Context**: The reproducibility claim "clone repo, run `npm run eval`"
 depends on a live third-party API, a mutable hosted model, and a gitignored
 cache. If Anthropic silently updates `claude-sonnet-4-6` (the alias) to a
@@ -269,7 +353,16 @@ older analyses only have the structured result. Trade-off: debug depth vs
 storage cost.
 
 ## ADR-020 — H2 cross-model rewriters: Sonnet + Haiku, intra-vendor
-**Status**: Accepted (2026-04-12, from plan-eng-review)
+**Status**: SUPERSEDED by ADR-026 + ADR-028 (2026-04-27) · Originally Accepted (2026-04-12, from plan-eng-review)
+
+**Nota de migración (2026-04-27)**: H2 quedó deprecada con el pivot ML
+(ADR-011 SUPERSEDED). La robustez del componente analítico ahora se mide
+sobre el regresor entrenado (no sobre Claude rewriters), y se reporta
+como métrica MSE / R² / r de Pearson por dimensión Big Five sobre
+splits train/val/test 80/10/10 del corpus combinado Essays + corpus
+rioplatense (ver ADR-026, ADR-028).
+
+
 **Context**: H2 preregistered hypothesis requires "cross-model paraphrase
 consistency" — run a case through different rewriters, assert profile
 shifts < 10 points. Originally specified GPT + local Llama (via Ollama), but
@@ -337,8 +430,27 @@ evidence rests solely on eval H1 + H2 in Branch B.
 **Consequences**: 30-min gate protects weeks of rework. Branch B is still a
 defensible TFG — the eval suite is the primary evidence regardless.
 
-## ADR-023 — Validación mixed-methods: Branch B (computacional) + M3 think-aloud (n=8-10)
-**Status**: Accepted (2026-04-14)
+## ADR-023 — Validación mixed-methods: módulo ML (primary) + crisis classifier (H3) + M3 think-aloud (secondary)
+**Status**: AMENDED (2026-04-27) · Originally Accepted (2026-04-14)
+
+**Nota de migración (2026-04-27)**: La versión original de este ADR
+adoptaba un enfoque mixed-methods con tres hipótesis preregistradas en
+OSF (H1 determinismo, H2 paráfrasis, H3 crisis classifier) + M3
+think-aloud. Tras el pivot ML (ADR-002 v2 + ADR-026), el pilar
+computacional primary se reemplaza por las **métricas estándar de
+regresión por dimensión Big Five** del módulo ML propio (ver ADR-028).
+El esquema mixed-methods vigente es: (1) **primary computational**:
+métricas MSE / R² / r de Pearson por dimensión Big Five sobre el
+regresor Ridge entrenado (umbrales R² > 0.20 y r > 0.30 por dimensión;
+las que caen por debajo se reportan honestamente y quedan fuera del
+componente cuantitativo del perfil); (2) **safety computational**: H3
+mantiene precision/recall del crisis classifier (recall ≥ 0.95,
+precision ≥ 0.85) — es ortogonal al pivot ML; (3) **secondary user**:
+M3 think-aloud n=8-10 con SUS en español rioplatense + coding temático,
+sin cambios. La preregistración OSF queda eliminada (ver ADR-012
+SUPERSEDED).
+
+
 **Context**: ADR-017 dejó abierta la elección entre Branch A (dataset de
 investigación con usuarios reales pseudonimizados) y Branch B (validación
 puramente computacional). Con la decisión del autor de optimizar para
@@ -538,3 +650,168 @@ capítulos del PAIR Guidebook y se documenta el racional:
   (https://pair.withgoogle.com/guidebook/).
 - **Superseded by**: future ADRs if PAIR Guidebook is updated or if the
   narrative structure changes.
+
+## ADR-026 — Módulo ML propio: DistilBERT congelado + Ridge multi-output, FastAPI separado, MLflow + DVC
+**Status**: Accepted (2026-04-27)
+**Context**: El TFG entregado (TP1, 26-04-2026) describe un componente
+analítico propio bajo prácticas MLOps que infiere las cinco dimensiones
+del modelo Big Five sobre texto introspectivo, en respuesta directa al
+pedido del director de tesis (Mainero, inbox Canvas 16/04/2026: "buscaría
+la forma de que este módulo lo realizara algún sistema del tipo MLOp
+realizado por vos"). El código pre-pivot inferenciaba Big Five con un
+prompt a Claude Sonnet (`lib/prompts/analyze-profile.ts`), lo que
+contradecía explícitamente al TFG. Este ADR documenta la decisión
+arquitectónica que cierra esa brecha.
+**Decision**: El componente analítico de Umbra se implementa como
+**módulo Python independiente** ubicado en `/ml/` del repositorio,
+servido como API HTTP por FastAPI (`/ml/src/api_server.py` con endpoint
+`POST /infer`). El frontend Next.js lo consume vía cliente TypeScript
+(`lib/ml-client.ts`) usando la variable de entorno `ML_API_URL`. El
+módulo NO se empaqueta en el bundle de Vercel — corre como servicio
+separado (en desarrollo: `localhost:8000`; despliegue listo en Render
+o Fly.io vía `Dockerfile` y `render.yaml` committeados). La arquitectura
+del módulo es de **dos etapas**:
+
+1. **Etapa 1 — extractor de embeddings congelado**: DistilBERT base
+   multilingual cased (Sanh et al., 2019), cargado preentrenado, con
+   pesos congelados (`requires_grad = False`). Pooling sobre el token
+   CLS. Cobertura lingüística inglés + español rioplatense en un solo
+   modelo. Estrategia "frozen embeddings" recomendada por Howard y
+   Ruder (2018) y Peters et al. (2019) cuando el dataset descendente es
+   pequeño. NO se hace fine-tuning, NO se exporta a ONNX, NO se publica
+   en HuggingFace Hub.
+2. **Etapa 2 — regresor lineal regularizado**: cinco regresores Ridge
+   (Hoerl y Kennard, 1970) independientes, uno por dimensión Big Five,
+   implementados en scikit-learn (Pedregosa et al., 2011). Hiperparámetro
+   `alpha` ajustado por GridSearchCV con `cv=5` sobre el conjunto de
+   entrenamiento. Serialización con joblib en `/ml/models/ridge_v1.joblib`.
+
+**Pipeline MLOps**:
+- **MLflow** (Zaharia et al., 2018) para tracking de experimentos:
+  cada corrida de entrenamiento registra dimensión, alpha óptimo,
+  métricas por dimensión, artefactos y enlace al commit.
+- **DVC** para versionado del corpus combinado Essays + rioplatense y
+  de los splits train/val/test 80/10/10.
+- **Pipeline DVC declarado en `/ml/dvc.yaml`** con stages
+  `prepare_data → extract_embeddings → train → evaluate`, con métricas
+  trackeadas en `metrics.json` y `eval_metrics.json`.
+- **GitHub Actions workflow `.github/workflows/ml-validate.yml`**
+  ejecuta tests + verifica que las métricas committeadas mantengan los
+  umbrales mínimos por dimensión (R² > 0.20 y r > 0.30) o, si caen
+  bajo umbral, que la dimensión esté declarada como excluida del
+  componente cuantitativo (ver ADR-027).
+
+**Datasets**:
+- **Essays** (Pennebaker y King, 1999): ~2500 textos en inglés con
+  puntajes Big Five.
+- **Corpus rioplatense propio**: 50 casos en español argentino, voseo,
+  generados con asistencia LLM y validados manualmente con rúbrica
+  documentada en `/ml/data/rioplatense/rubrica_validacion.md`. Origen
+  histórico: `lib/evals/cases.ts` (corpus pre-existente del proyecto,
+  preservado en su uso original para crisis classifier + tests TS).
+- **Versionado**: ambos corpus bajo DVC.
+- **Split**: 80/10/10 train/val/test, fijado por seed determinístico.
+
+**Reemplazo del Pass 1 viejo**: `app/api/analyze/route.ts` ahora
+infiere Big Five vía `inferBigFive()` del cliente ML, y delega
+**solo** funciones cognitivas Jung + arquetipo + razonamiento a un
+nuevo prompt narrativo `lib/prompts/interpret-narrative.ts` (Pass 1.5)
+que recibe el Big Five inferido como contexto. El archivo viejo
+`lib/prompts/analyze-profile.ts` queda marcado deprecated.
+
+**Feature flag**: `ANALYZE_BIG_FIVE_SOURCE` (`ml` | `claude`) permite
+rollback inmediato durante la primera iteración tras deploy.
+
+**Consequences**:
+- **Ganancia académica**: el código del repo coincide con el TFG
+  entregado (sección 6.2.2 Capa analítica + 6.2.3 MLOps + 7.2.3
+  Stack ML + 7.3.1 Datasets). En defensa oral, el tribunal puede
+  abrir `/ml/`, ejecutar `make eval` y reproducir las métricas
+  reportadas en el documento.
+- **Costo de infraestructura**: el módulo ML no corre en Vercel
+  (Edge runtime no soporta Python). Hosting separado en Render/Fly.io
+  agrega ~7-10 USD/mes si se activa producción; en desarrollo y
+  defensa académica corre en `localhost:8000` sin costo.
+- **Alcance**: la inferencia psicológica automática del sistema queda
+  restringida a Big Five (5 puntuaciones). Jung, arquetipos y Positive
+  Computing son lectura interpretativa de la capa Claude (ver
+  ADR-002 v2).
+- **Limitación honestamente reportada**: el corpus rioplatense propio
+  es chico (n=50). Las métricas por dimensión sobre rioplatense pueden
+  estar bajo el umbral mínimo en algunas dimensiones; en ese caso, la
+  dimensión queda excluida del componente cuantitativo del perfil y
+  se aborda solo desde la capa narrativa (ADR-027).
+- **Linked to**: ADR-002 v2 (separación medido vs narrativo),
+  ADR-007 amendado (archetype como narrativa), ADR-011 SUPERSEDED,
+  ADR-012 SUPERSEDED, ADR-014 partially SUPERSEDED, ADR-020 SUPERSEDED,
+  ADR-023 amendado, ADR-027 (UI bajo umbral), ADR-028 (validación
+  primary), TFG TP1 secciones 6.2 y 7.2-7.4.
+
+## ADR-027 — Política de reporte por dimensión bajo umbral mínimo de aceptación
+**Status**: Accepted (2026-04-27) · Decisión técnica cerrada; decisión de UX diferida
+**Context**: ADR-026 fija umbrales mínimos por dimensión Big Five
+(R² > 0.20 y r de Pearson > 0.30). El corpus disponible (Essays +
+rioplatense propio n=50) es heterogéneo en idioma y tamaño; es
+plausible que una o más dimensiones queden bajo umbral en evaluación
+honesta. El TFG entregado (sección 7.4.1 Riesgos) declara
+explícitamente que esa situación se reporta y se acota.
+**Decision**:
+- **Decisión técnica (cerrada en este refactor)**: la API del módulo ML
+  (`POST /infer`) devuelve siempre las cinco puntuaciones Big Five y un
+  campo adicional `per_dimension_status` con valores `"ok"` o
+  `"low_confidence"` por dimensión, calculado al boot del servicio
+  leyendo `eval_metrics.json` y comparando contra los umbrales.
+- **Decisión de UX (diferida a sesión siguiente)**: la política
+  de qué hace el dashboard del usuario con dimensiones marcadas
+  `low_confidence` (no mostrar / mostrar con flag visible / mostrar
+  con copy interpretativo) se decide cuando estén las métricas reales
+  en mano, no antes. Hasta entonces, el frontend consume las cinco
+  puntuaciones igual que hoy (compatibilidad backward).
+**Consequences**:
+- El módulo ML hace su trabajo honesto sin sobrepasar su rol; el
+  dashboard hereda la decisión de UX como TODO trazable.
+- La cita "umbral mínimo de aceptación por dimensión" del TFG queda
+  respaldada con código verificable: la lógica vive en
+  `/ml/src/predict.py` y se testea en `/ml/tests/test_predict.py`.
+- **Linked to**: ADR-002 v2, ADR-026, TFG TP1 sección 7.4.1.
+
+## ADR-028 — Validación primary del componente analítico = métricas estándar de regresión por dimensión Big Five
+**Status**: Accepted (2026-04-27)
+**Context**: El TFG entregado (sección 7.2.4 Aseguramiento de calidad +
+7.3.1 Datasets) establece que la evaluación del módulo ML se reporta
+**por dimensión** con tres métricas estándar de regresión: error
+cuadrático medio (MSE), coeficiente de determinación (R²) y coeficiente
+de correlación lineal r de Pearson (en referencia al estadístico Karl
+Pearson, sin relación con el sistema de arquetipos de Carol Pearson —
+clarificación crítica documentada en HANDOFF). Esa metodología reemplaza
+las hipótesis pre-pivot H1/H2 (ADR-011 SUPERSEDED) en el rol de
+evidencia primary del TFG.
+**Decision**: La validación primary del componente analítico de Umbra
+es el reporte de **MSE, R² y r de Pearson por cada una de las cinco
+dimensiones Big Five**, calculadas sobre el split de test (10% del
+corpus combinado Essays + rioplatense, fijado por seed). Las métricas se
+reportan en tres bloques en `eval_metrics.json`:
+1. `english_only` — solo casos del corpus Essays.
+2. `rioplatense_only` — solo casos del corpus propio.
+3. `combined` — sobre la unión.
+
+El bloque `rioplatense_only` es el que sustenta la narrativa del TFG
+porque es el idioma de uso real del sistema; los otros dos sirven para
+mostrar generalización del modelo y para auditoría de cualquier
+afirmación cruzada. Las dimensiones que caen bajo umbral (R² ≤ 0.20 o
+r ≤ 0.30) se reportan explícitamente como **no incluidas en el
+componente cuantitativo del perfil** (ADR-027). H3 (precision/recall del
+crisis classifier) se mantiene como validación adicional del pipeline
+de seguridad (ortogonal al pivot ML, ver ADR-023 amendado). M3
+(think-aloud n=8-10 con SUS) se mantiene como validación secundaria de
+usabilidad.
+**Consequences**:
+- La sección "Validación" del TFG cita números reales del módulo ML
+  entrenado, no resultados pre-pivot de H1/H2 sobre Claude.
+- La reproducibilidad se garantiza por la cadena DVC (corpus
+  versionado) + MLflow (experimento trackeado) + commit del repo
+  público (código y métricas committeados) + script `make eval`
+  (reproducción local). El tribunal puede ejecutar la cadena completa
+  desde cero.
+- **Linked to**: ADR-002 v2, ADR-026, ADR-027, ADR-023 amendado, TFG
+  TP1 secciones 7.2.4 + 7.3.1 + 7.4.1.
