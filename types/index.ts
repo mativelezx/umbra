@@ -405,6 +405,13 @@ export interface AnalyzeResponse {
   archetypeSecondary: string;
   confidence: number;
   reasoning: string;
+  /**
+   * Dimension-by-dimension confidence flag from the ML module
+   * (ADR-027). `low_confidence` means the regressor's R²/r for that
+   * dimension is below the minimum threshold; the UI surfaces a
+   * "Preliminar" badge so the user reads it with margin.
+   */
+  perDimensionStatus?: Record<keyof BigFive, 'ok' | 'low_confidence'>;
 }
 
 export interface NarrativeRequest {

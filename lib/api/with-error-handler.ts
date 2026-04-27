@@ -5,6 +5,7 @@ import {
   ClassifierFailure,
   ConsentRequiredError,
   CrisisDetected,
+  MlUnavailableError,
   NotFoundError,
   RateLimitError,
   SessionExpiredError,
@@ -99,6 +100,13 @@ function errorToResponse(e: unknown, req: Request): Response {
   if (e instanceof ClaudeError) {
     return Response.json(
       { ok: false, error: 'ai_unavailable' } satisfies ApiFailure,
+      { status: 503 },
+    );
+  }
+
+  if (e instanceof MlUnavailableError) {
+    return Response.json(
+      { ok: false, error: 'ml_unavailable', message: e.userMessage } satisfies ApiFailure,
       { status: 503 },
     );
   }

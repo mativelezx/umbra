@@ -4,15 +4,16 @@ import { withErrorHandler } from '@/lib/api/with-error-handler';
 import {
   ClaudeError,
   ConsentRequiredError,
-  NotFoundError,
   RateLimitError,
   SessionExpiredError,
+  MlUnavailableError,
 } from '@/lib/errors';
 import { claudeText, getModelId } from '@/lib/claude/client';
 import { costUsdCents } from '@/lib/claude/pricing';
-import { buildAnalyzeProfilePrompt } from '@/lib/prompts/analyze-profile';
+import { buildInterpretNarrativePrompt } from '@/lib/prompts/interpret-narrative';
 import { buildEvidencePrompt } from '@/lib/prompts/analyze-evidence';
 import { computeHash, CURRENT_PEPPER_VERSION } from '@/lib/security/peppers';
+import { inferBigFive, MlApiUnavailableError, MlApiError } from '@/lib/ml-client';
 import type { AnalyzeResponse } from '@/types';
 
 export const runtime = 'edge';
@@ -26,21 +27,12 @@ const AnalyzeInputSchema = z.object({
    * `flags.seedText` (seeded from ChatGPT import per Fase 3 ChatGPT
    * seed flow), the analyzer prepends that raw text to `texts` so the
    * final profile is grounded in BOTH the imported portrait AND the
-   * refinement turns. Without this, seeded users would get analysis
-   * based only on 2-3 refinement answers (codex P1 finding, see
-   * commit f185d25 known-issue note).
+   * refinement turns.
    */
   sessionId: z.string().uuid().optional(),
 });
 
-const AnalyzeResponseSchema = z.object({
-  bigFive: z.object({
-    openness: z.number(),
-    conscientiousness: z.number(),
-    extraversion: z.number(),
-    agreeableness: z.number(),
-    neuroticism: z.number(),
-  }),
+const InterpretResponseSchema = z.object({
   jungFunctions: z.object({
     Se: z.number(),
     Si: z.number(),
@@ -104,11 +96,7 @@ export const POST = withErrorHandler(async (req) => {
   const today = new Date().toISOString().slice(0, 10);
   const model = getModelId();
 
-  // ChatGPT seed flow — if the client sent a sessionId that belongs to
-  // a seeded session, recover the original pasted portrait from flags
-  // and prepend it to `texts` as the first element labelled "Retrato
-  // importado". Refinement answers follow as subsequent elements so the
-  // final analysis is grounded in the full corpus the user provided.
+  // ChatGPT seed flow — recover original pasted portrait
   const augmentedTexts = [...body.texts];
   const augmentedAreas = body.areas ? [...body.areas] : undefined;
   if (body.sessionId) {
@@ -129,8 +117,29 @@ export const POST = withErrorHandler(async (req) => {
     }
   }
 
-  // Estimate tokens + cost
-  const estInput = 3000 + Math.ceil(augmentedTexts.join('\n').length / 4);
+  // Pass 1 — Big Five vía módulo ML propio (ADR-026).
+  // Si el módulo ML cae, NO degradamos a Claude para Big Five (ADR-026
+  // explícito: el módulo ML es la única fuente de inferencia Big Five).
+  const combinedText = augmentedTexts.join('\n\n');
+  let mlResult;
+  try {
+    mlResult = await inferBigFive(combinedText);
+  } catch (e) {
+    if (e instanceof MlApiUnavailableError) {
+      throw new MlUnavailableError(
+        'El módulo de análisis no está disponible en este momento. Probá de nuevo en unos minutos.',
+      );
+    }
+    if (e instanceof MlApiError) {
+      throw new MlUnavailableError(
+        'El módulo de análisis devolvió un error inesperado. Probá de nuevo.',
+      );
+    }
+    throw e;
+  }
+
+  // Estimate tokens + cost para la pasada narrativa (Pass 1.5 + Pass 2)
+  const estInput = 3000 + Math.ceil(combinedText.length / 4);
   const estOutput = 1200;
   const estCostCents = costUsdCents(model, estInput, estOutput);
 
@@ -154,21 +163,20 @@ export const POST = withErrorHandler(async (req) => {
     throw new RateLimitError(86400);
   }
 
-  // Build analyze prompt (Pass 1). Uses augmentedTexts (includes seed
-  // text when the session was seeded) and augmentedAreas.
-  const { system, prompt } = buildAnalyzeProfilePrompt({
+  // Pass 1.5 — Lectura interpretativa (Jung + arquetipo + reasoning)
+  const { system, prompt } = buildInterpretNarrativePrompt({
     texts: augmentedTexts,
-    mode: body.mode,
     areas: augmentedAreas,
+    bigFive: mlResult.bigFive,
+    perDimensionStatus: mlResult.perDimensionStatus,
   });
 
-  let claudeResult;
   let actualInput = 0;
   let actualOutput = 0;
   let actualCost = 0;
 
   try {
-    claudeResult = await claudeText({
+    const claudeResult = await claudeText({
       system,
       prompt,
       temperature: 0,
@@ -180,19 +188,11 @@ export const POST = withErrorHandler(async (req) => {
 
     // Parse + validate Claude response
     const jsonMatch = claudeResult.text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('No JSON in analyze response');
+    if (!jsonMatch) throw new Error('No JSON in interpret response');
     const rawJson = JSON.parse(jsonMatch[0]);
 
-    // Clamp scores before Zod validation
     const sanitized = {
       ...rawJson,
-      bigFive: {
-        openness: clamp(rawJson.bigFive?.openness),
-        conscientiousness: clamp(rawJson.bigFive?.conscientiousness),
-        extraversion: clamp(rawJson.bigFive?.extraversion),
-        agreeableness: clamp(rawJson.bigFive?.agreeableness),
-        neuroticism: clamp(rawJson.bigFive?.neuroticism),
-      },
       jungFunctions: {
         Se: clamp(rawJson.jungFunctions?.Se),
         Si: clamp(rawJson.jungFunctions?.Si),
@@ -206,7 +206,17 @@ export const POST = withErrorHandler(async (req) => {
       confidence: clamp(rawJson.confidence),
     };
 
-    const profile = AnalyzeResponseSchema.parse(sanitized);
+    const interpret = InterpretResponseSchema.parse(sanitized);
+
+    const profile: AnalyzeResponse = {
+      bigFive: mlResult.bigFive,
+      jungFunctions: interpret.jungFunctions,
+      archetype: interpret.archetype,
+      archetypeSecondary: interpret.archetypeSecondary,
+      confidence: interpret.confidence,
+      reasoning: interpret.reasoning,
+      perDimensionStatus: mlResult.perDimensionStatus,
+    };
 
     // Persist profile
     const { data: inserted, error: insertError } = await service
@@ -223,7 +233,14 @@ export const POST = withErrorHandler(async (req) => {
           jung_functions: profile.jungFunctions,
           archetype: profile.archetype,
           archetype_secondary: profile.archetypeSecondary,
-          analysis_raw: rawJson,
+          analysis_raw: {
+            ...rawJson,
+            ml: {
+              modelVersion: mlResult.modelVersion,
+              elapsedMs: mlResult.elapsedMs,
+              perDimensionStatus: mlResult.perDimensionStatus,
+            },
+          },
           input_mode: body.mode,
           input_texts: augmentedTexts,
           updated_at: new Date().toISOString(),
@@ -251,7 +268,6 @@ export const POST = withErrorHandler(async (req) => {
       .single();
 
     if (profileRow?.research_opt_in) {
-      const combinedText = augmentedTexts.join('\n\n');
       const userHash = await computeHash('research', user.id);
       await service.from('research_dataset').insert({
         user_hash: userHash,
@@ -262,11 +278,11 @@ export const POST = withErrorHandler(async (req) => {
     }
 
     // Pass 2: evidence highlights (fire-and-forget, don't block response)
-    const originalText = augmentedTexts.join('\n\n');
     runEvidencePass2({
       profileId,
-      originalText,
-      profile,
+      originalText: combinedText,
+      bigFive: profile.bigFive,
+      jungFunctions: profile.jungFunctions,
       service,
     }).catch((e) => {
       console.warn('[analyze] Pass 2 evidence failed', e);
@@ -275,12 +291,11 @@ export const POST = withErrorHandler(async (req) => {
     return {
       profileId,
       ...profile,
-    } satisfies AnalyzeResponse & { profileId: string };
+    };
   } catch (e) {
-    console.error('[analyze] Claude or parse failed', e);
+    console.error('[analyze] interpret pass or persist failed', e);
     throw new ClaudeError(e);
   } finally {
-    // Reconcile rate limit regardless of success/error
     try {
       await service.rpc('reconcile_rate_limit', {
         p_user_id: user.id,
@@ -301,14 +316,15 @@ export const POST = withErrorHandler(async (req) => {
 async function runEvidencePass2(args: {
   profileId: string;
   originalText: string;
-  profile: z.infer<typeof AnalyzeResponseSchema>;
+  bigFive: AnalyzeResponse['bigFive'];
+  jungFunctions: AnalyzeResponse['jungFunctions'];
   service: ReturnType<typeof createEdgeServiceClient>;
 }) {
-  const { profileId, originalText, profile, service } = args;
+  const { profileId, originalText, bigFive, jungFunctions, service } = args;
   const { system, prompt } = buildEvidencePrompt({
     originalText,
-    bigFive: profile.bigFive,
-    jungFunctions: profile.jungFunctions,
+    bigFive,
+    jungFunctions,
   });
 
   const result = await claudeText({

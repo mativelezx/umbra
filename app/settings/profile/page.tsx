@@ -44,23 +44,23 @@ export default function SettingsProfilePage() {
     setError(null);
     setMessage(null);
 
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { error: err } = await supabase
-      .from('profiles')
-      .update({ full_name: fullName, updated_at: new Date().toISOString() })
-      .eq('id', user.id);
-
-    if (err) {
-      setError('No pudimos guardar.');
-    } else {
-      setMessage('Guardado.');
+    try {
+      const res = await fetch('/api/account/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ full_name: fullName }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.ok) {
+        setError('No pudimos guardar. Probá de nuevo.');
+      } else {
+        setMessage('Listo, tu nombre quedó actualizado.');
+      }
+    } catch {
+      setError('No pudimos guardar. Probá de nuevo.');
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   }
 
   return (

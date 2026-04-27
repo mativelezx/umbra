@@ -37,7 +37,17 @@ export async function GET(request: Request) {
     if (user) {
       return NextResponse.redirect(new URL(redirectTo, url.origin));
     }
+    // Hard failure: PKCE exchange failed AND no live session. Send the user
+    // to a dedicated error page with a hint about why.
+    const reason = error.message?.toLowerCase().includes('expired')
+      ? 'expired'
+      : error.message?.toLowerCase().includes('used')
+        ? 'used'
+        : 'pkce';
+    return NextResponse.redirect(
+      new URL(`/auth/auth-code-error?reason=${reason}`, url.origin),
+    );
   }
 
-  return NextResponse.redirect(new URL('/login', url.origin));
+  return NextResponse.redirect(new URL('/auth/auth-code-error?reason=pkce', url.origin));
 }

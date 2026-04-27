@@ -36,22 +36,37 @@ export default function SettingsResearchPage() {
     setSaving(true);
     setMessage(null);
     const newValue = !optIn;
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return;
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({ research_opt_in: newValue, updated_at: new Date().toISOString() })
-      .eq('id', user.id);
-
-    if (!error) {
-      setOptIn(newValue);
-      setMessage(newValue ? 'Gracias por contribuir.' : 'Listo, salida de investigación.');
+    try {
+      const res = await fetch('/api/account/research-opt-out', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          research_opt_in: newValue,
+          // Cuando alguien sale, purgamos su contribución existente.
+          purge_existing: !newValue,
+        }),
+      });
+      const json = await res.json();
+      if (res.ok && json.ok) {
+        setOptIn(newValue);
+        setMessage(
+          newValue
+            ? 'Gracias por contribuir. Podés salir cuando quieras.'
+            : `Listo, saliste de investigación.${
+                json.data?.purged_records > 0
+                  ? ` Borramos ${json.data.purged_records} registros previos.`
+                  : ''
+              }`,
+        );
+      } else {
+        setMessage('No pudimos guardar el cambio. Probá de nuevo.');
+      }
+    } catch {
+      setMessage('No pudimos guardar el cambio. Probá de nuevo.');
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   }
 
   return (

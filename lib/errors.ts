@@ -56,3 +56,10 @@ export class NotFoundError extends Error {
     this.name = 'NotFoundError';
   }
 }
+
+export class MlUnavailableError extends Error {
+  constructor(public userMessage: string = 'El módulo de análisis no está disponible.') {
+    super('ml_unavailable');
+    this.name = 'MlUnavailableError';
+  }
+}

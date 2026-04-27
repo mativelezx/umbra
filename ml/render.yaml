@@ -25,4 +25,4 @@ services:
         value: "3.11"
       - key: ML_LOG_LEVEL
         value: info
-    autoDeploy: false  # deploy manual por defecto
+    autoDeploy: true  # deploy automático tras cada push a main
