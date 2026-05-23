@@ -8,7 +8,7 @@
 --
 -- References:
 -- - docs/DECISIONS.md (dynamic onboarding spec)
--- - /Users/matiasvelez/.claude/plans/spicy-herding-boot.md
+-- - historical Claude plan retained outside the repo
 -- ═══════════════════════════════════════════════════════════════
 
 CREATE TABLE IF NOT EXISTS public.onboarding_sessions (

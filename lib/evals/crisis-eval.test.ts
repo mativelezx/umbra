@@ -3,7 +3,7 @@
  *
  * This test file does NOT call the LLM. The actual recall/precision run
  * lives in `scripts/run-crisis-eval.ts` and is invoked manually via
- * `npx tsx scripts/run-crisis-eval.ts`, which writes a JSON report to
+ * `pnpm exec tsx scripts/run-crisis-eval.ts`, which writes a JSON report to
  * `eval-results/crisis-YYYYMMDD.json`.
  *
  * These unit tests verify:

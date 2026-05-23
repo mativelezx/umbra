@@ -24,6 +24,7 @@
     "turbo:test": "turbo run test",
     "turbo:test:e2e": "turbo run test:e2e",
     "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm build",
+    "integrity:check": "node scripts/check-internal-integrity.mjs",
     "agent-os:check": "test -f AGENTS.md && test -f .agent-os/PROJECT_PROFILE.md && test -f pnpm-workspace.yaml && test -f turbo.json"
   },
   "dependencies": {

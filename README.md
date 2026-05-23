@@ -1,215 +1,166 @@
-# Umbra
+# umbra
 
-Plataforma de autoconocimiento basada en Big Five (IPIP-NEO) + funciones cognitivas Jung + Positive Computing, en español latinoamericano. TFG de Ingeniería en Software, Universidad Siglo 21.
+Plataforma web de autoconocimiento basada en Big Five (IPIP-NEO), funciones cognitivas de Jung y Positive Computing. Umbra es el Trabajo Final de Grado de Ingeniería en Software para Universidad Siglo 21.
 
-**Producción**: https://umbra-sigma.vercel.app
-**Status**: deployed, migraciones 001-006 documentadas, módulo ML propio en `ml/` con pipeline reproducible, QA risk mitigation y readiness de defensa documentados.
+**Producción:** https://umbra-sigma.vercel.app
+**Estado:** deployed, migraciones 001-006 documentadas, módulo ML reproducible y readiness de defensa activo
+**Workspace:** pnpm `9.15.0` + Turborepo baseline single-package
+**Nota clínica:** Umbra no es terapia, diagnóstico ni consejo médico.
 
-**Docs clave**: [Defense readiness](docs/DEFENSE_READINESS.md), [QA risk mitigation](docs/QA_RISK_MITIGATION.md), [Dataset expansion](ml/DATASET_EXPANSION.md), [Database schema](docs/tech/DATABASE.md).
+## Qué Hace
 
-## Lo que hace Umbra
+Umbra toma texto introspectivo del usuario y devuelve una lectura reflexiva en español latinoamericano con safety crítico:
 
-1. **Onboarding**: el usuario escribe sobre sí mismo (guiado en 5 áreas, o texto libre, o flujo dinámico conducido).
-2. **Análisis**: arquitectura híbrida de dos capas:
-   - **Capa analítica propia** — módulo ML en `ml/` (DistilBERT base multilingual cased congelado + Ridge multi-output) infiere las 5 dimensiones Big Five con métricas reportables (MSE, R², r) por dimensión y `per_dimension_status: "ok" | "low_confidence"` (ADR-026, ADR-027).
-   - **Capa narrativa** — proveedor externo de IA generativa con identificador de modelo fijado produce la lectura interpretativa: 8 funciones cognitivas Jung (1921, lectura, no medida — ADR-002), arquetipo Pearson (1991, 6 fijos, ADR-007), retrato escrito y plan de desarrollo.
-3. **Narrativa**: 800-1200 palabras en voseo argentino, streameada vía SSE, escrita como un mentor que te conoce.
-4. **Dashboard**: arquetipo con SVG custom, Big Five radar, 8 Jung function bars, carta al futuro.
-5. **Chat con safety pipeline crítica**: banner permanente "no es terapia" + regex lexicon + idiom pre-filter de expresiones argentinas + classifier fail-closed + crisis card con recursos argentinos (135, 911, Salud Mental Responde, Centros de Salud Mental Comunitaria). 45 min session timeout. Rate limits atómicos.
-6. **Plan de desarrollo**: 3 áreas con acciones y micro-objetivos chequeables.
-7. **PDF export**: informe imprimible con print-safe stylesheet.
-8. **Ley 25.326 compliance**: 5 mecanismos técnicos — consentimiento informado bloqueante con SHA-256 del texto verbatim (ADR-024), exportación integral, rectificación, cancelación con magic link single-use, oposición al tratamiento con fines de investigación.
-9. **Carta al futuro**: al final del onboarding, el usuario le escribe a su vos de 180 días. Se desbloquea sola.
+1. **Onboarding:** modo guiado, texto libre o flujo dinámico conducido.
+2. **Capa analítica propia:** `ml/` infiere Big Five con DistilBERT multilingual congelado + Ridge multi-output y reporta métricas por dimensión.
+3. **Capa narrativa:** IA generativa externa produce lectura interpretativa: funciones Jung, arquetipo Pearson, retrato y plan.
+4. **Dashboard:** arquetipo, radar Big Five, barras de funciones, narrativa y carta al futuro.
+5. **Chat seguro:** banner permanente "no es terapia", regex lexicon, idiom pre-filter, classifier fail-closed y crisis card con recursos argentinos.
+6. **Plan de desarrollo:** 3 áreas con acciones y micro-objetivos.
+7. **Export:** informe PDF/print-safe y exportación de datos.
+8. **Ley 25.326:** consentimiento, exportación, rectificación, cancelación y oposición.
 
 ## Stack
 
-### Web
-- **Next.js 14.2.35** (App Router, Edge + Node runtimes)
-- **TypeScript strict**
-- **Tailwind CSS 3.4** con tokens custom (`umbra-*`, `violet-*`, `accent-*`, `text-*`)
-- **Supabase** (Auth + PostgreSQL + RLS) via `@supabase/ssr`
-- **Anthropic Claude** como proveedor externo de IA generativa para la capa narrativa, identificador de modelo fijado por `ANTHROPIC_MODEL_ID`
-- **Zustand 5** para stores de cliente
-- **Recharts** para el radar chart
-- **framer-motion** con `LazyMotion` + `domAnimation` tree-shaking (~17kb gzip)
-- **Phosphor Icons** (nunca emoji en UI)
-- **html2pdf.js 0.14.0** client-side para export
-- **Zod** para validación en todo boundary
-- **Vitest** para unit tests
-- **Playwright** + `@axe-core/playwright` para E2E + a11y automatizada
-- **pnpm workspace metadata + Turborepo baseline** para installs reproducibles y checks cacheables
+- **Framework:** Next.js `14.2.35` App Router + React `18.3`.
+- **Lenguaje:** TypeScript strict.
+- **UI:** Tailwind CSS `3.4`, tokens `umbra-*`, `violet-*`, `accent-*`, `text-*`.
+- **Datos:** Supabase Auth/PostgreSQL/RLS via `@supabase/ssr`.
+- **Estado:** Zustand 5.
+- **IA narrativa:** Anthropic Claude con `ANTHROPIC_MODEL_ID` fijado por entorno.
+- **ML propio:** Python, Hugging Face Transformers, scikit-learn, MLflow, DVC, FastAPI, joblib.
+- **Validación:** Zod, Vitest, Playwright y `@axe-core/playwright`.
+- **Tooling:** pnpm workspace metadata + Turborepo baseline para checks cacheables.
 
-### Módulo analítico (`ml/`)
-- **Python** + **Hugging Face Transformers** (Wolf et al. 2020) para cargar DistilBERT (Sanh et al. 2019) y extraer embeddings congelados.
-- **scikit-learn** (Pedregosa et al. 2011) para Ridge multi-output.
-- **MLflow** (Zaharia et al. 2018) tracking de experimentos.
-- **Data Version Control (DVC)** para versionado de datasets y artefactos.
-- **FastAPI** para servir el endpoint de inferencia.
-- **joblib** para serializar el regresor.
-- **GitHub Actions** verifica métricas mínimas en CI (`.github/workflows/ml-validate.yml`).
+## Estructura Del Repo
 
-## Setup local
+Umbra se mantiene intencionalmente como single-package root app. Moverla a `apps/web` es una migración futura, no una limpieza menor, porque impacta rutas, Vercel, imports, tesis y evidencia de defensa.
 
-### 1. Dependencias del frontend
+```text
+umbra/
+├── app/              # Next.js App Router
+├── components/       # UI por feature
+├── lib/              # dominio, prompts, Supabase, safety, stores
+├── types/            # contratos compartidos
+├── ml/               # módulo analítico Python reproducible
+├── docs/             # documentación técnica, académica y de producto
+├── thesis/           # estructura de tesis
+├── supabase/         # migraciones y snippets
+├── .agent-os/        # contratos/agentes portables
+├── .claude/          # adaptador local mínimo
+├── package.json
+├── pnpm-workspace.yaml
+├── pnpm-lock.yaml
+└── turbo.json
+```
+
+## Setup Local
 
 ```bash
+corepack enable
 pnpm install
+pnpm dev
 ```
 
-### 2. Env vars
+Abrir http://localhost:3000.
 
-Copiá `.env.local.example` a `.env.local` y completá con keys reales. Las variables relevantes son las credenciales de Supabase, la API key de Anthropic, los identificadores de modelo, los cuatro peppers HMAC versionados (`CONSENT_IP_PEPPER_V1`, `CRISIS_PEPPER_V1`, `RESEARCH_PEPPER_V1`, `DELETE_TOKEN_PEPPER_V1`), los caps de presupuesto diario, la URL pública del sitio, y `ML_API_URL` apuntando al módulo analítico (por defecto `http://localhost:8000`).
+Para demo sin backend:
 
-### 3. Supabase migrations
-
-En el SQL Editor del dashboard de Supabase, correr en orden, o usar `supabase db push --linked --include-all`:
-
-1. `supabase/migrations/001_initial_schema.sql` (tablas base + RLS)
-2. `supabase/migrations/002_core_tables.sql` (7 tablas nuevas + charge_rate_limit RPC + RLS)
-3. `supabase/migrations/003_onboarding_sessions.sql` (onboarding_sessions table con flags JSONB + RLS)
-4. `supabase/migrations/004_consent_text_hash.sql` (ADR-024: consent_text_hash + locale en consent_records)
-5. `supabase/migrations/005_usability_responses.sql` (tabla `usability_responses` para SUS in-app)
-6. `supabase/migrations/006_enable_pg_cron_purges.sql` (retención 30 días para payloads sensibles y limpieza de tokens)
-
-### 4. Módulo analítico (`ml/`)
-
-```bash
-cd ml
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-make all          # prepare_data → baseline → train → evaluate
-make serve        # FastAPI en localhost:8000
-```
-
-Detalle completo en [`ml/README.md`](ml/README.md).
-
-### 5. Ejecutar la web
-
-```bash
-pnpm dev           # Dev server en http://localhost:3000
-pnpm typecheck     # tsc --noEmit
-pnpm lint          # next lint
-pnpm test          # Vitest units
-pnpm build         # Production build
-pnpm test:e2e      # Playwright E2E (requiere dev server)
-pnpm turbo:build   # Turbo cached build task
-```
-
-### 6. Demo mode (sin backend)
-
-```bash
-# .env.local
+```env
 NEXT_PUBLIC_DEMO_MODE=true
 ```
 
-Esto seedea un perfil, una narrativa de 800+ palabras en latinoamericano, un plan de 3 áreas, y una carta al futuro archivada. El middleware saltea el consent gate y la UI carga todo desde `lib/demo/seed.ts`.
+## Variables De Entorno
 
-## Flujo de usuario completo
+Copiá `.env.local.example` a `.env.local` y completá:
 
-```
-/ (landing)
-  → /register
-    → /consent (Ley 25.326 form blocking)
-      → /onboarding (mode selector → guided/freetext/dynamic flow)
-        → /api/analyze (Edge)
-            → módulo ML propio: Big Five inferido por DistilBERT+Ridge
-            → capa narrativa (proveedor externo): Jung + arquetipo + retrato
-              → progressive load animation
-                → carta al futuro opcional
-                  → /dashboard
-                    ├─ archetype card (custom SVG + name + secondary)
-                    ├─ narrative section (SSE streaming, Instrument Serif)
-                    ├─ Big Five radar chart con `per_dimension_status`
-                    ├─ 8 Jung function bars (lectura interpretativa)
-                    └─ carta al futuro (locked/unlocked)
-                      ├─ /chat (crisis pipeline + IA contextualizada)
-                      ├─ /plan (3 areas + micro-goal checkboxes)
-                      └─ /export (client-side html2pdf)
+- Supabase URL/anon/service role.
+- Anthropic API key e identificador de modelo.
+- Peppers HMAC versionados: `CONSENT_IP_PEPPER_V1`, `CRISIS_PEPPER_V1`, `RESEARCH_PEPPER_V1`, `DELETE_TOKEN_PEPPER_V1`.
+- Caps de presupuesto diario.
+- `ML_API_URL`, por defecto `http://localhost:8000`.
+- URL pública y configuración de email.
 
-Settings:
-  /settings                  — landing con 4 entries
-  /settings/profile          — editar nombre
-  /settings/export           — descargar JSON con todos tus datos
-  /settings/research-opt-out — toggle modo investigación
-  /settings/delete           — magic link 5min single-use → cascade delete
+## Módulo Analítico
+
+```bash
+cd ml
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+make all
+make serve
 ```
 
-## Architecture highlights
+Detalle: [`ml/README.md`](ml/README.md).
 
-### Arquitectura híbrida (módulo ML + capa narrativa)
-La capa cuantitativa Big Five se infiere por el módulo ML propio en `ml/`
-(DistilBERT congelado + Ridge multi-output) — código Python, servido como
-API HTTP por FastAPI, consumido desde Next.js via
-[`lib/ml-client.ts`](lib/ml-client.ts). La capa narrativa (Jung como
-lectura interpretativa, arquetipo Pearson, retrato y plan) se delega a un
-proveedor externo de IA generativa con identificador de modelo fijado.
-Ver [docs/tech/ARCHITECTURE.md](docs/tech/ARCHITECTURE.md) y ADR-026.
+## Comandos
 
-### Chat safety pipeline (`lib/chat/`)
-Tres capas en serie para cada mensaje:
-1. **Regex lexicon** (`crisis-lexicon.ts`): idiom pre-filter + patrones de crisis. Zero-latency. No puede ser bypasseado por prompt injection porque corre antes de la IA generativa.
-2. **Classifier de la capa narrativa** (`classifier.ts`): solo corre si regex hit o sampling. **Fail-closed**: cualquier error → trata como crisis.
-3. **Hard block**: si detectó crisis, **NO llama a la IA generativa**, retorna 451 con recursos, loggea `crisis_event` con `user_hash + message_hash` (nunca texto plano).
+```bash
+pnpm dev              # Next dev
+pnpm build            # Production build
+pnpm start            # Next start
+pnpm typecheck        # tsc --noEmit
+pnpm lint             # next lint
+pnpm test             # Vitest
+pnpm test:e2e         # Playwright
+pnpm verify           # typecheck + lint + test + build
+pnpm turbo:build      # Build vía Turbo
+pnpm integrity:check  # Cruza workspace, APIs, Supabase/RLS y residuos
+pnpm agent-os:check   # Gate mínimo Agent OS
+```
 
-### Rate limiting (`lib/claude/pricing.ts` + `charge_rate_limit` RPC)
-Atómico via Supabase RPC con `FOR UPDATE` lock y `SECURITY DEFINER` + `SET search_path` hardening. Estimate + reconcile en finally block — si la API externa falla, el usuario no paga tokens.
+## Flujo De Usuario
 
-### HMAC peppers (`lib/security/peppers.ts`)
-Web Crypto API (Edge-compatible). 4 peppers version-pinned (CRISIS, RESEARCH, CONSENT_IP, DELETE_TOKEN). Rotación migration-free vía `pepper_version` column en cada tabla.
+```text
+/ → /register → /consent → /onboarding
+  → /api/analyze
+    → ML Big Five
+    → narrativa externa
+      → /dashboard
+        ├─ /chat
+        ├─ /plan
+        ├─ /export
+        └─ /settings
+```
 
-### Knowledge base (`lib/knowledge/`)
-4 archivos con contenido académico real:
-- `big-five.ts` — IPIP-NEO (Goldberg 1999, public domain)
-- `jung-functions.ts` — Tipos Psicológicos (Jung 1921), insumo narrativo
-- `archetypes.ts` — Pearson applied system (1991), insumo narrativo
-- `positive-computing.ts` — Calvo & Peters (2014), guardrails de tono
+## Documentación Canónica
 
-Cada item tiene citation block JSDoc (`@source`, `@reference`, `@page_or_section`, `@verbatim`). Enforceable con CI linter.
+- [`docs/PLAN.md`](docs/PLAN.md) — entry point y dashboard de estado.
+- [`docs/SYSTEM_SPEC.md`](docs/SYSTEM_SPEC.md) — spec del sistema.
+- [`docs/API_MAP.md`](docs/API_MAP.md) — rutas y contratos.
+- [`docs/FEATURE_MAP.md`](docs/FEATURE_MAP.md) — features y matriz de estado.
+- [`docs/PROMPT_ARCHITECTURE.md`](docs/PROMPT_ARCHITECTURE.md) — prompts y knowledge base.
+- [`docs/DECISIONS.md`](docs/DECISIONS.md) — ADRs.
+- [`docs/tech/`](docs/tech/) — arquitectura, seguridad, DB, rate limit, evals y observabilidad.
+- [`docs/biz/`](docs/biz/) — TFG, validación, ética, legal, mercado y plan.
+- [`docs/research/`](docs/research/) — protocolo SUS y reclutamiento.
+- [`thesis/`](thesis/) — tesis con capítulos.
+- [`UMBRA_MASTER_BUILD.md`](UMBRA_MASTER_BUILD.md) — spec histórica de la fase web inicial, mantenida porque la tesis la referencia.
 
-## Documentation
+## Guardrails
 
-Todo en `docs/`:
+- No MBTI.
+- No lenguaje diagnóstico ni clínico.
+- No prompts inline; siempre en `lib/prompts/`.
+- No `any` en TypeScript.
+- No `console.log` productivo.
+- No emoji en UI; usar Phosphor Icons.
+- Crisis pipeline fail-closed antes de cualquier respuesta sensible.
+- RLS obligatorio para datos de usuario.
 
-- [`docs/PLAN.md`](docs/PLAN.md) — entry point, status dashboard
-- [`docs/SYSTEM_SPEC.md`](docs/SYSTEM_SPEC.md) — system specification
-- [`docs/API_MAP.md`](docs/API_MAP.md) — todas las routes con schemas
-- [`docs/FEATURE_MAP.md`](docs/FEATURE_MAP.md) — inventory con state matrix
-- [`docs/PROMPT_ARCHITECTURE.md`](docs/PROMPT_ARCHITECTURE.md) — prompts + KB injection
-- [`docs/DECISIONS.md`](docs/DECISIONS.md) — ADRs (módulo ML, RLS, peppers, consent text hash, etc.)
-- [`docs/biz/`](docs/biz/) — documentación de negocio/académica:
-  - [`TFG.md`](docs/biz/TFG.md) — estructura de tesis + cronograma + defensa
-  - [`VALIDATION.md`](docs/biz/VALIDATION.md) — plan de validación (métricas ML por dimensión + a11y axe + unit + E2E + SUS Brooke 1996 n=8-15 en TP3/TP4)
-  - [`ETHICS.md`](docs/biz/ETHICS.md) — Helsinki + Calvo & Peters
-  - [`LEGAL.md`](docs/biz/LEGAL.md) — Ley 25.326 con consent_text_hash
-  - [`MARKET.md`](docs/biz/MARKET.md) — competitive landscape
-  - [`IMPLEMENTATION_PLAN.md`](docs/biz/IMPLEMENTATION_PLAN.md) — plan operativo
-- [`docs/features/`](docs/features/) — feature specs detallados
-- [`docs/tech/`](docs/tech/) — deep-dives:
-  - [`ARCHITECTURE.md`](docs/tech/ARCHITECTURE.md) — topología con diagramas Mermaid
-  - [`THREAT_MODEL.md`](docs/tech/THREAT_MODEL.md) — STRIDE por componente
-  - [`CHAT_SAFETY.md`](docs/tech/CHAT_SAFETY.md) — pipeline de crisis
-  - `DATABASE.md`, `AUTH.md`, `RATE_LIMITING.md`, `SECURITY.md`, `EVALS.md`, `OBSERVABILITY.md`
-- [`docs/research/`](docs/research/) — materiales para el estudio de usabilidad SUS:
-  - `usability-protocol.md` — guion minuto a minuto de sesiones
-  - `usability-recruitment.md` — copy de reclutamiento
-  - `sus-spanish-latinoamericano.md` — cuestionario SUS adaptado
-- [`thesis/`](thesis/) — esqueleto de la tesis con 16 capítulos + Pandoc build
-- [`ml/`](ml/) — módulo analítico propio (Python, DistilBERT + Ridge + MLflow + DVC + FastAPI)
+## Checklist Antes De Deploy/Defensa
 
-## Prohibiciones (CLAUDE.md)
-
-- NO MBTI. Usamos funciones Jung directamente como lectura narrativa.
-- NO lenguaje diagnóstico ni clínico.
-- NO `console.log` en producción (salvo structured JSON logs).
-- NO `any` en TypeScript.
-- NO prompts inline. Siempre en `lib/prompts/`.
-- NO emoji en UI. Phosphor Icons.
-- NO olvides rotar peppers cuando sospeches compromise.
-
-## Licencia
-
-TFG académico. Código open-source. El contenido de la knowledge base cita fuentes públicas (IPIP-NEO, Jung, Pearson, Calvo & Peters) — la knowledge base en sí está bajo la misma licencia que el código.
+```bash
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
+pnpm test:e2e
+pnpm integrity:check
+pnpm agent-os:check
+```
 
 ---
 
-**Umbra no es terapia.** Si estás en crisis: 135 (Argentina) · 911 · Salud Mental Responde · Centros de Salud Mental Comunitaria.
+Umbra no es terapia. Si estás en crisis: 135 (Argentina) · 911 · Salud Mental Responde · Centros de Salud Mental Comunitaria.

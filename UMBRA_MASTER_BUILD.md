@@ -15,7 +15,7 @@
 >
 > Este documento describe el frontend Next.js. La capa cuantitativa Big Five se inferencia en el módulo analítico propio en `ml/` (ADR-026); este documento se concentra en el resto del sistema. La defensa académica se apoya en métricas reproducibles del módulo ML, axe-core en CI, unit + E2E con Vitest y Playwright, y SUS adaptado al español latinoamericano (Brooke 1996) planificado para TP3/TP4 con n=8-15 participantes.
 >
-> **Ubicación del proyecto**: `~/Desktop/Umbra`
+> **Ubicación actual del proyecto**: `/Users/matiasvelez/Developer/umbra`
 
 ---
 
@@ -33,9 +33,9 @@
 ### 0.2 Primer comando en terminal VS Code
 
 ```bash
-cd ~/Desktop
+cd /Users/matiasvelez/Developer
 pnpm create next-app@14 Umbra --typescript --tailwind --app --src-dir=false --import-alias="@/*"
-cd Umbra
+cd umbra
 git init
 ```
 

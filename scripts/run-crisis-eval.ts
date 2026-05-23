@@ -3,8 +3,8 @@
  * JSON report to eval-results/.
  *
  * Usage:
- *   npx tsx scripts/run-crisis-eval.ts
- *   npx tsx scripts/run-crisis-eval.ts --force-classifier
+ *   pnpm exec tsx scripts/run-crisis-eval.ts
+ *   pnpm exec tsx scripts/run-crisis-eval.ts --force-classifier
  *
  * Flags:
  *   --force-classifier   Force the Claude classifier on every case

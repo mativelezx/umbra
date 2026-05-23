@@ -5,7 +5,7 @@ import { test, expect, type Page } from '@playwright/test';
 // → CartaForm skip → dashboard → narrative streams in → /plan generates.
 //
 // This spec hits real Supabase local + real Anthropic API. Run with:
-//   npx playwright test e2e/full-flow.spec.ts --project=chromium
+//   pnpm exec playwright test e2e/full-flow.spec.ts --project=chromium
 //
 // Chromium only: one pass of the full loop is enough to validate every
 // backend integration is wired up, and we don't want to double-charge Claude.
