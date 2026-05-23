@@ -14,7 +14,7 @@ const UNLOCK_DAYS = 180;
 
 export const POST = withErrorHandler(async (req) => {
   const body = CartaSchema.parse(await req.json());
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const {
     data: { user },

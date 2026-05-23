@@ -6,7 +6,7 @@ import type { Archetype, BigFive, JungFunctions } from '@/types';
 export const dynamic = 'force-dynamic';
 
 export default async function ChatPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

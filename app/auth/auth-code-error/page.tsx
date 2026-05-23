@@ -6,7 +6,7 @@ export const metadata = {
 };
 
 interface PageProps {
-  searchParams: { reason?: string };
+  searchParams: Promise<{ reason?: string }>;
 }
 
 const REASON_COPY: Record<string, { title: string; body: string }> = {
@@ -24,8 +24,9 @@ const REASON_COPY: Record<string, { title: string; body: string }> = {
   },
 };
 
-export default function AuthCodeErrorPage({ searchParams }: PageProps) {
-  const reason = searchParams.reason ?? 'pkce';
+export default async function AuthCodeErrorPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const reason = params.reason ?? 'pkce';
   const copy = REASON_COPY[reason] ?? REASON_COPY.pkce;
 
   return (

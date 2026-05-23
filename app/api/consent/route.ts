@@ -26,7 +26,7 @@ const ConsentSchema = z.object({
 
 export const POST = withErrorHandler(async (req) => {
   const body = ConsentSchema.parse(await req.json());
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const {
     data: { user },

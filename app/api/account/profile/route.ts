@@ -20,7 +20,7 @@ const ProfilePatchSchema = z.object({
 export const PATCH = withErrorHandler(async (req) => {
   const body = ProfilePatchSchema.parse(await req.json());
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

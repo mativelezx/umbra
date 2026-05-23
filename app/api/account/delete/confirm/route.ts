@@ -13,7 +13,7 @@ const ConfirmSchema = z.object({
 
 export const POST = withErrorHandler(async (req) => {
   const body = ConfirmSchema.parse(await req.json());
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

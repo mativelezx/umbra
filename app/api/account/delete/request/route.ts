@@ -13,7 +13,7 @@ export const runtime = 'nodejs';
 const TOKEN_TTL_MS = 5 * 60 * 1000;
 
 export const POST = withErrorHandler(async (req) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

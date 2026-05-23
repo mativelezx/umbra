@@ -28,7 +28,7 @@ const ResearchPatchSchema = z.object({
 export const POST = withErrorHandler(async (req) => {
   const body = ResearchPatchSchema.parse(await req.json());
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
