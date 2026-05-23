@@ -122,7 +122,7 @@ and classifier severity, not their original message.
 is mature but slow to start and has complex ESM handling. Vitest is
 Vite-native, fast ESM, built-in coverage.
 **Decision**: `vitest` + `@vitest/ui`. Test files colocated with source
-(`*.test.ts` next to `*.ts`) for unit tests. Run via `npm run test`.
+(`*.test.ts` next to `*.ts`) for unit tests. Run via `pnpm test`.
 **Consequences**: Faster CI. Simpler config. Any library that requires jest
 specifically won't work. No such library in our stack.
 

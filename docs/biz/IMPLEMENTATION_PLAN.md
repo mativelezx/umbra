@@ -64,11 +64,11 @@ Corre al cierre de cada release o sprint relevante. Si cualquier item
 falla, no se promueve a producción hasta arreglarlo.
 
 ```
-[ ] 1. TypeScript strict:     npx tsc --noEmit            → 0 errores
-[ ] 2. Build:                  npm run build               → success
-[ ] 3. Unit tests:             npm run test                → 100% passing
-[ ] 4. E2E relevante:          npx playwright test <spec>  → passing
-[ ] 5. Lint:                   npm run lint                → 0 errores
+[ ] 1. TypeScript strict:     pnpm exec tsc --noEmit            → 0 errores
+[ ] 2. Build:                  pnpm build               → success
+[ ] 3. Unit tests:             pnpm test                → 100% passing
+[ ] 4. E2E relevante:          pnpm exec playwright test <spec>  → passing
+[ ] 5. Lint:                   pnpm lint                → 0 errores
 [ ] 6. Sin console.log:        grep app/ components/ lib/  → 0 hits
 [ ] 7. Sin `: any` nuevos:     grep app/ components/ lib/  → count estable
 [ ] 8. Visual check:           Playwright screenshots      → archivadas

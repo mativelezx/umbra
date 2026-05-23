@@ -15,7 +15,7 @@
 ### Environment variables
 
 ```bash
-npm run docs:env-vars
+pnpm docs:env-vars
 ```
 
 Scans `.env.local.example` + grep for `process.env.*` across `lib/`, `app/`,
@@ -24,7 +24,7 @@ Scans `.env.local.example` + grep for `process.env.*` across `lib/`, `app/`,
 ### API types
 
 ```bash
-npm run docs:api-types
+pnpm docs:api-types
 ```
 
 Post-Phase 3: walks `app/api/**/route.ts`, extracts exported Zod schemas, emits
@@ -33,7 +33,7 @@ Markdown with input + output type signatures per route.
 ### SQL schema
 
 ```bash
-npm run docs:sql-schema
+pnpm docs:sql-schema
 ```
 
 Runs `supabase db dump --schema-only` against the local Supabase instance and
@@ -43,7 +43,7 @@ drift.
 ### Dependency graph
 
 ```bash
-npm run docs:deps
+pnpm docs:deps
 ```
 
 Uses `madge` to produce a text representation of the module graph. Helps

@@ -153,19 +153,19 @@ curl -sf -o /dev/null -w "HTTP %{http_code} in %{time_total}s\n" https://umbra.y
 curl -sf https://umbra.yourdomain.com/api/health | jq .
 
 # 3. Registration flow (via Playwright)
-npx playwright test e2e/smoke/register.spec.ts --config=playwright.prod.config.ts
+pnpm exec playwright test e2e/smoke/register.spec.ts --config=playwright.prod.config.ts
 
 # 4. Consent flow
-npx playwright test e2e/smoke/consent.spec.ts --config=playwright.prod.config.ts
+pnpm exec playwright test e2e/smoke/consent.spec.ts --config=playwright.prod.config.ts
 
 # 5. Analyze flow with test user
-npx playwright test e2e/smoke/analyze.spec.ts --config=playwright.prod.config.ts
+pnpm exec playwright test e2e/smoke/analyze.spec.ts --config=playwright.prod.config.ts
 
 # 6. Chat flow (normal)
-npx playwright test e2e/smoke/chat.spec.ts --config=playwright.prod.config.ts
+pnpm exec playwright test e2e/smoke/chat.spec.ts --config=playwright.prod.config.ts
 
 # 7. Chat crisis flow (CRITICAL — must block)
-npx playwright test e2e/smoke/chat-crisis.spec.ts --config=playwright.prod.config.ts
+pnpm exec playwright test e2e/smoke/chat-crisis.spec.ts --config=playwright.prod.config.ts
 ```
 
 All 7 must pass before marking deploy as stable.

@@ -500,10 +500,10 @@ positivos (bloquear una conversación segura).
 
 ```bash
 # Full eval with regex short-circuit (production pipeline)
-npx tsx scripts/run-crisis-eval.ts
+pnpm exec tsx scripts/run-crisis-eval.ts
 
 # Force classifier on every case (independent evaluation)
-npx tsx scripts/run-crisis-eval.ts --force-classifier
+pnpm exec tsx scripts/run-crisis-eval.ts --force-classifier
 ```
 
 Output goes to `eval-results/crisis-YYYYMMDD-HHmmss.json` with full

@@ -37,6 +37,7 @@ Plataforma de autoconocimiento basada en Big Five (IPIP-NEO) + funciones cogniti
 - **Zod** para validación en todo boundary
 - **Vitest** para unit tests
 - **Playwright** + `@axe-core/playwright` para E2E + a11y automatizada
+- **pnpm workspace metadata + Turborepo baseline** para installs reproducibles y checks cacheables
 
 ### Módulo analítico (`ml/`)
 - **Python** + **Hugging Face Transformers** (Wolf et al. 2020) para cargar DistilBERT (Sanh et al. 2019) y extraer embeddings congelados.
@@ -52,7 +53,7 @@ Plataforma de autoconocimiento basada en Big Five (IPIP-NEO) + funciones cogniti
 ### 1. Dependencias del frontend
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### 2. Env vars
@@ -85,12 +86,13 @@ Detalle completo en [`ml/README.md`](ml/README.md).
 ### 5. Ejecutar la web
 
 ```bash
-npm run dev           # Dev server en http://localhost:3000
-npm run typecheck     # tsc --noEmit
-npm run lint          # next lint
-npm run test          # Vitest units
-npm run build         # Production build
-npm run test:e2e      # Playwright E2E (requiere dev server)
+pnpm dev           # Dev server en http://localhost:3000
+pnpm typecheck     # tsc --noEmit
+pnpm lint          # next lint
+pnpm test          # Vitest units
+pnpm build         # Production build
+pnpm test:e2e      # Playwright E2E (requiere dev server)
+pnpm turbo:build   # Turbo cached build task
 ```
 
 ### 6. Demo mode (sin backend)

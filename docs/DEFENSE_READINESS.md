@@ -38,7 +38,7 @@ afirma validez psicométrica clínica. Integra:
   `development_plans` y `psychological_profiles`.
 - **ML**: Essays integrado; regresión y clasificación binaria reportadas
   por separado; dimensiones bajo umbral quedan `low_confidence`.
-- **Seguridad npm**: vulnerabilidades críticas removidas; highs restantes
+- **Seguridad de dependencias**: vulnerabilidades críticas removidas; highs restantes
   requieren migración mayor Next/Vitest documentada.
 - **E2E live**: flujos dependientes de Supabase/ML/Anthropic quedan opt-in
   con `E2E_REAL_FLOW=true`.
@@ -68,7 +68,7 @@ afirma validez psicométrica clínica. Integra:
 - Demo guionada con datos de prueba.
 - Plan de contingencia: screenshots, export JSON/PDF, video corto del
   flujo completo.
-- Migración mayor opcional para `npm audit --audit-level=high` limpio.
+- Migración mayor opcional para `pnpm audit --audit-level=high` limpio.
 
 ## Frase de defensa
 

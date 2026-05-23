@@ -3,12 +3,12 @@
 Este documento convierte los riesgos residuales del QA fullstack en
 controles verificables para TP2-TP4 y defensa oral.
 
-## 1. npm audit high/moderate
+## 1. pnpm audit high/moderate
 
 Estado actual:
 
 - Vulnerabilidades criticas removidas con `html2pdf.js@0.14.0`.
-- Persisten high/moderate que npm resuelve con migraciones mayores:
+- Persisten high/moderate que pnpm reporta con migraciones mayores:
   `next@16`, `eslint-config-next@16`, `vitest@4`.
 
 Mitigacion total:
@@ -20,16 +20,16 @@ Mitigacion total:
    - ESLint 8 -> 9;
    - Vitest 2 -> 4 y `@vitest/ui` compatible.
 4. Ejecutar gates:
-   - `npm audit --audit-level=high`;
-   - `npm run typecheck`;
-   - `npm run lint`;
-   - `npm run test`;
-   - `npm run build`;
-   - `npm run test:e2e`.
+   - `pnpm audit --audit-level=high`;
+   - `pnpm typecheck`;
+   - `pnpm lint`;
+   - `pnpm test`;
+   - `pnpm build`;
+   - `pnpm test:e2e`.
 
 Criterio de cierre:
 
-- `npm audit --audit-level=high` sale 0.
+- `pnpm audit --audit-level=high` sale 0.
 - Todas las suites pasan sin cambios de comportamiento.
 
 ## 2. E2E live flows
@@ -50,7 +50,7 @@ Mitigacion total:
 5. Ejecutar:
 
 ```bash
-E2E_REAL_FLOW=true npm run test:e2e -- --project=chromium
+E2E_REAL_FLOW=true pnpm test:e2e -- --project=chromium
 ```
 
 Criterio de cierre:

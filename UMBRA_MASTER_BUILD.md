@@ -26,7 +26,7 @@
 ```
 1. Crear proyecto en Supabase → copiar SUPABASE_URL + SUPABASE_ANON_KEY + SUPABASE_SERVICE_ROLE_KEY
 2. Obtener ANTHROPIC_API_KEY desde console.anthropic.com (key nueva, separada de younic)
-3. Tener Node.js 18+ y npm instalados
+3. Tener Node.js 20+ y pnpm instalados
 4. Tener Git configurado
 ```
 
@@ -34,7 +34,7 @@
 
 ```bash
 cd ~/Desktop
-npx create-next-app@14 Umbra --typescript --tailwind --app --src-dir=false --import-alias="@/*"
+pnpm create next-app@14 Umbra --typescript --tailwind --app --src-dir=false --import-alias="@/*"
 cd Umbra
 git init
 ```
@@ -42,8 +42,8 @@ git init
 ### 0.3 Dependencias
 
 ```bash
-npm install zustand @supabase/supabase-js @supabase/auth-helpers-nextjs @anthropic-ai/sdk recharts zod html2pdf.js @phosphor-icons/react
-npm install -D @types/node
+pnpm install zustand @supabase/supabase-js @supabase/auth-helpers-nextjs @anthropic-ai/sdk recharts zod html2pdf.js @phosphor-icons/react
+pnpm install -D @types/node
 ```
 
 ### 0.4 .env.local
@@ -1237,14 +1237,14 @@ TAREAS:
 11. Crear lib/providers/theme.tsx
 12. Crear app/layout.tsx con providers + fonts + cosmic background
 13. Ejecutar SQL migration en Supabase (sección 4)
-14. Verificar que `npm run dev` levanta sin errores
+14. Verificar que `pnpm dev` levanta sin errores
 15. Commit: "feat: project scaffolding with full config"
 ```
 
 **QA FASE 1**:
-- [ ] `npx tsc --noEmit` sin errores
-- [ ] `npm run build` exitoso
-- [ ] `npm run dev` levanta en localhost:3000
+- [ ] `pnpm exec tsc --noEmit` sin errores
+- [ ] `pnpm build` exitoso
+- [ ] `pnpm dev` levanta en localhost:3000
 - [ ] Supabase conecta (verificar en console logs)
 - [ ] Background cósmico visible (gradients + noise)
 - [ ] Fonts cargando (Instrument Serif visible)
@@ -1293,7 +1293,7 @@ TAREAS:
 - [ ] Landing se ve correcta con design system (violet, fonts, glass)
 - [ ] Layout responsive: sidebar en desktop, tabbar en mobile
 - [ ] Navegación entre secciones funciona
-- [ ] `npx tsc --noEmit` sin errores
+- [ ] `pnpm exec tsc --noEmit` sin errores
 
 ---
 
@@ -1353,7 +1353,7 @@ TAREAS:
 - [ ] Redirect a `/dashboard` después del onboarding
 - [ ] Error handling: módulo ML caído → 503 `ml_unavailable` (UI muestra "probá de nuevo")
 - [ ] Error handling: Claude caído → 503 `ai_unavailable`
-- [ ] `npx tsc --noEmit` sin errores
+- [ ] `pnpm exec tsc --noEmit` sin errores
 
 ---
 
@@ -1401,7 +1401,7 @@ TAREAS:
 - [ ] Responsive: se ve bien en mobile y desktop
 - [ ] Loading states mientras carga datos
 - [ ] Empty state si no hay perfil
-- [ ] `npx tsc --noEmit` sin errores
+- [ ] `pnpm exec tsc --noEmit` sin errores
 
 ---
 
@@ -1455,7 +1455,7 @@ TAREAS:
 - [ ] Auto-scroll funciona
 - [ ] UI responsive
 - [ ] Error handling si Claude falla mid-stream
-- [ ] `npx tsc --noEmit` sin errores
+- [ ] `pnpm exec tsc --noEmit` sin errores
 
 ---
 
@@ -1497,7 +1497,7 @@ TAREAS:
 - [ ] PDF se genera con datos correctos
 - [ ] PDF incluye: radar, funciones, arquetipo, narrativa
 - [ ] Responsive
-- [ ] `npx tsc --noEmit` sin errores
+- [ ] `pnpm exec tsc --noEmit` sin errores
 
 ---
 
@@ -1556,10 +1556,10 @@ Ejecutar después de CADA fase:
 
 ```bash
 # TypeScript
-npx tsc --noEmit
+pnpm exec tsc --noEmit
 
 # Build
-npm run build
+pnpm build
 
 # Buscar prompts inline (prohibido)
 grep -r "You are\|Sos un\|Tu tarea" app/ components/ --include="*.tsx" --include="*.ts" | grep -v "lib/prompts/"

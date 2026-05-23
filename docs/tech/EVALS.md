@@ -193,8 +193,8 @@ make all
 cat eval_metrics.json
 
 # Evaluación del clasificador de crisis (frontend repo)
-npm run test -- crisis-eval
-npx tsx scripts/run-crisis-eval.ts
+pnpm test -- crisis-eval
+pnpm exec tsx scripts/run-crisis-eval.ts
 ```
 
 ## Referencias

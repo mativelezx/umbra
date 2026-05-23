@@ -23,6 +23,7 @@
 
 # debug
 npm-debug.log*
+pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
@@ -42,6 +43,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts.bak
 .gstack/
+.turbo/
 
 # TFG academic deliverables (kept locally, not versioned)
 UMBRA_TP*.docx
