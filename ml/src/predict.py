@@ -26,12 +26,34 @@ MODELS_DIR = ROOT / "models"
 EVAL_METRICS = ROOT / "eval_metrics.json"
 BIG_FIVE_DIMS = ["openness", "conscientiousness", "extraversion", "agreeableness", "neuroticism"]
 
+# n minimo para que un bloque de evaluacion pueda decidir el status por dimension.
+# Por debajo de este valor la estimacion de AUC/balanced accuracy por dimension no
+# tiene precision util, asi que el bloque se descarta (ADR-027).
+MIN_BLOCK_N = 30
+
 
 def _load_status_from_eval_metrics(path: Path = EVAL_METRICS) -> Dict[str, str]:
-    """Lee per_dimension_status del bloque latinoamericano_only (idioma de uso real).
+    """Lee el status por dimensión desde eval_metrics.json (ADR-027).
 
-    Si el archivo no existe o falta el bloque, devuelve "low_confidence"
-    para todas las dimensiones por defecto (fail-conservative).
+    Dos reglas gobiernan la selección:
+
+    1. **Lectura binaria como primaria.** ADR-027 declara la lectura binaria
+       (ROC AUC / balanced accuracy) como primaria, porque las etiquetas del
+       corpus Essays son binarias y el R² sobre un objetivo dicotómico es bajo
+       por construcción. Por eso se prefiere `per_dimension_classification_status`
+       sobre `per_dimension_status` (regresión), que queda como respaldo.
+
+    2. **Poder estadístico mínimo por bloque.** Un bloque con n muy chico no
+       sostiene una estimación de AUC por dimensión, así que no puede decidir
+       qué se le muestra a la persona usuaria. Los bloques con `n_samples`
+       declarado por debajo de MIN_BLOCK_N se descartan.
+
+    El orden de preferencia mantiene `latinoamericano_only` primero por ser el
+    idioma de uso real: cuando ese corpus alcance el n comprometido, el status
+    pasa a calcularse sobre él sin tocar código.
+
+    Si el archivo no existe, no es parseable o ningún bloque califica, devuelve
+    "low_confidence" para todas las dimensiones (fail-conservative).
     """
     default = {dim: "low_confidence" for dim in BIG_FIVE_DIMS}
     if not path.exists():
@@ -43,15 +65,25 @@ def _load_status_from_eval_metrics(path: Path = EVAL_METRICS) -> Dict[str, str]:
     except Exception as e:
         log.warning("eval_metrics.json no parseable (%s) — status default low_confidence", e)
         return default
+
     blocks = data.get("blocks", {})
-    # preferencia: latinoamericano_only → combined → english_only
-    for key in ("latinoamericano_only", "combined", "english_only"):
-        block = blocks.get(key, {})
-        status = block.get("per_dimension_status")
-        if status:
-            log.info("Cargando per_dimension_status del bloque '%s'", key)
-            merged = {**default, **status}
-            return merged
+    for status_key in ("per_dimension_classification_status", "per_dimension_status"):
+        for block_key in ("latinoamericano_only", "combined", "english_only"):
+            block = blocks.get(block_key, {})
+            status = block.get(status_key)
+            if not status:
+                continue
+            n_samples = block.get("n_samples")
+            if isinstance(n_samples, int) and n_samples < MIN_BLOCK_N:
+                log.warning(
+                    "Bloque '%s' descartado para status: n=%d < %d (sin poder estadistico)",
+                    block_key,
+                    n_samples,
+                    MIN_BLOCK_N,
+                )
+                continue
+            log.info("Cargando '%s' del bloque '%s'", status_key, block_key)
+            return {**default, **status}
     return default
 
 

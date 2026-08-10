@@ -64,7 +64,13 @@ def test_predictor_returns_expected_shape(tmp_path, monkeypatch):
         assert dim in result["big_five"]
         assert 0.0 <= result["big_five"][dim] <= 100.0
         assert dim in result["per_dimension_status"]
-        assert result["per_dimension_status"][dim] in ("ok", "low_confidence")
+        # Vocabulario de estados del ADR-027. `not_applicable` aparece cuando la
+        # etiqueta de esa dimension no esta balanceada en el corpus.
+        assert result["per_dimension_status"][dim] in (
+            "ok",
+            "low_confidence",
+            "not_applicable",
+        )
 
     assert result["model_version"] == "ridge_v1_test"
 
@@ -97,6 +103,72 @@ def test_status_loads_from_eval_metrics(tmp_path):
     status = _load_status_from_eval_metrics(path)
     assert status["openness"] == "ok"
     assert status["conscientiousness"] == "low_confidence"
+
+
+def test_status_prefiere_lectura_binaria_sobre_regresion(tmp_path):
+    """ADR-027: la lectura primaria es la binaria, no la de regresion.
+
+    Con etiquetas binarias el R² es bajo por construccion, asi que el status
+    de regresion subreporta. Si ambos estan presentes, gana el binario.
+    """
+    import json
+    payload = {
+        "blocks": {
+            "combined": {
+                "n_samples": 250,
+                "per_dimension_status": {dim: "low_confidence" for dim in BIG_FIVE_DIMS},
+                "per_dimension_classification_status": {
+                    "openness": "ok",
+                    "conscientiousness": "low_confidence",
+                    "extraversion": "not_applicable",
+                    "agreeableness": "low_confidence",
+                    "neuroticism": "not_applicable",
+                },
+            }
+        }
+    }
+    path = tmp_path / "eval_metrics.json"
+    with open(path, "w") as f:
+        json.dump(payload, f)
+
+    status = _load_status_from_eval_metrics(path)
+    assert status["openness"] == "ok"
+    assert status["extraversion"] == "not_applicable"
+
+
+def test_status_descarta_bloque_sin_poder_estadistico(tmp_path):
+    """Un bloque con n por debajo de MIN_BLOCK_N no puede decidir el status.
+
+    Caso real: `latinoamericano_only` quedo con n=2 en el conjunto de prueba.
+    El status debe resolverse contra `combined` (n=250), no contra ese bloque.
+    """
+    import json
+    payload = {
+        "blocks": {
+            "latinoamericano_only": {
+                "n_samples": 2,
+                "per_dimension_classification_status": {
+                    dim: "not_applicable" for dim in BIG_FIVE_DIMS
+                },
+            },
+            "combined": {
+                "n_samples": 250,
+                "per_dimension_classification_status": {
+                    "openness": "ok",
+                    "conscientiousness": "low_confidence",
+                    "extraversion": "not_applicable",
+                    "agreeableness": "low_confidence",
+                    "neuroticism": "not_applicable",
+                },
+            },
+        }
+    }
+    path = tmp_path / "eval_metrics.json"
+    with open(path, "w") as f:
+        json.dump(payload, f)
+
+    status = _load_status_from_eval_metrics(path)
+    assert status["openness"] == "ok", "debe resolver contra combined, no contra n=2"
 
 
 def test_predictor_clips_to_0_100(tmp_path):
