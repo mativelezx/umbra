@@ -6,7 +6,7 @@
 -- locale (BCP-47) to consent_records for full auditability under
 -- Ley 25.326 de Protección de Datos Personales (Argentina), específicamente:
 --
---   Art. 6 — El tratamiento de datos personales requiere consentimiento
+--   Art. 5 — El tratamiento de datos personales requiere consentimiento
 --            libre, expreso e informado.
 --   Art. 7 — Los datos sensibles (incluyendo los relativos a salud) solo
 --            pueden ser tratados con consentimiento expreso por escrito
