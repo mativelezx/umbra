@@ -1,16 +1,19 @@
 # Umbra — Consentimiento informado (v1, es-AR)
 
-> Este es el texto verbatim de la versión `2026-04-14-v1` del
-> consentimiento informado para Umbra, en español latinoamericano. Es la
-> fuente única de verdad que la página `/consent` renderiza. Cualquier
-> cambio material bumpea la versión a `2026-04-14-v2` (o equivalente)
-> y crea un nuevo archivo `v2-es-AR.md` — **esta archivo nunca se edita
-> in-place** para preservar la trazabilidad de Ley 25.326 art. 7.
+> **Rol de este archivo: referencia documental extendida.** La fuente
+> canónica del texto que la página `/consent` muestra y hashea es
+> `lib/consent/text-v1-es-AR.ts` (versión `2026-04-13-v1`, locale
+> `es-AR`); su SHA-256 canónico es
+> `dee26e7da2149f7c54a3d037944c687eb216f82070c5a618d035a1ac32d66f62`,
+> verificado en CI por `lib/consent/text-v1-es-AR.test.ts`. Ninguna
+> versión publicada se edita in-place: un cambio material crea la v2 con
+> su propio archivo y su propio hash, para preservar la trazabilidad de
+> la Ley 25.326 art. 7.
 >
-> Identificador de versión: `2026-04-14-v1`
-> Locale: `es-AR`
-> Hash SHA-256: se computa en CI y se verifica contra los valores
-> enviados por los clientes al endpoint `/api/consent`.
+> El cuerpo que sigue corresponde a la redacción documental temprana del
+> consentimiento y puede diferir en detalle del texto operativo vigente;
+> ante cualquier discrepancia, vale el texto del archivo TypeScript
+> canónico.
 
 ## ¿Qué es Umbra?
 
