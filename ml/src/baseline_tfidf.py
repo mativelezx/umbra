@@ -16,7 +16,7 @@ Evaluación adaptativa al tamaño del corpus:
   conjunto disponible. Más honesto cuando el corpus es chico (típico
   cuando Essays no está disponible y solo se entrena con el corpus
   latinoamericano propio n=20). Las métricas LOO se reportan en el bloque
-  `loo_metrics` de metrics.json.
+  `loo_metrics` de metrics_baseline.json.
 """
 
 from __future__ import annotations
@@ -242,9 +242,9 @@ def main():
     joblib.dump(bundle, MODELS / "baseline_tfidf.joblib")
     log.info("Bundle baseline → %s", MODELS / "baseline_tfidf.joblib")
 
-    with open(ROOT / "metrics.json", "w") as f:
+    with open(ROOT / "metrics_baseline.json", "w") as f:
         json.dump(metrics_out, f, indent=2)
-    log.info("Métricas baseline escritas en %s", ROOT / "metrics.json")
+    log.info("Métricas baseline escritas en %s", ROOT / "metrics_baseline.json")
 
 
 if __name__ == "__main__":

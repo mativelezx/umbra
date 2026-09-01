@@ -23,7 +23,7 @@ stages:
     outs:
       - models/baseline_tfidf.joblib
     metrics:
-      - metrics.json:
+      - metrics_baseline.json:
           cache: false
 
   train:
