@@ -16,7 +16,7 @@ services:
     runtime: docker
     dockerfilePath: ./ml/Dockerfile
     dockerContext: ./ml
-    plan: starter  # 7 USD/mes; free tiene cold starts de 30-60s
+    plan: standard  # 2 GB: el servicio ocupa ~810 MB residentes; starter (512 MB) no alcanza
     region: oregon
     healthCheckPath: /health
     envVars:

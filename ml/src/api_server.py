@@ -53,6 +53,22 @@ def _get_predictor() -> Predictor:
     return _predictor
 
 
+@app.on_event("startup")
+def _eager_load() -> None:
+    """Carga el modelo al arrancar (ML_EAGER_LOAD=1, default en despliegue).
+
+    Sin esto, la primera inferencia tras un arranque paga la carga de
+    DistilBERT (~15-20 s). En el despliegue productivo conviene que el
+    servicio ya esté caliente cuando pasa el health check.
+    """
+    if os.getenv("ML_EAGER_LOAD", "0") == "1":
+        try:
+            _get_predictor()
+            log.info("modelo cargado al inicio (ML_EAGER_LOAD=1)")
+        except Exception as exc:  # noqa: BLE001 — no impedir el arranque
+            log.warning("carga anticipada fallida, se reintenta en la primera inferencia: %s", exc)
+
+
 class InferRequest(BaseModel):
     text: str = Field(..., min_length=1, max_length=15000)
 

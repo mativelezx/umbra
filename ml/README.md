@@ -60,7 +60,8 @@ ml/
 ├── requirements.txt                 ← deps Python
 ├── Makefile                         ← targets reproducibles
 ├── Dockerfile                       ← imagen para deploy
-├── render.yaml                      ← deploy ready (Render)
+├── fly.toml                         ← deploy vigente (Fly.io)
+├── render.yaml                      ← alternativa (Render; requiere plan ≥ 2 GB)
 ├── dvc.yaml                         ← pipeline DVC
 ├── .gitignore                       ← venv, mlruns, cache
 ├── data/
@@ -237,12 +238,16 @@ make serve   # FastAPI en localhost:8000
 El frontend Next.js (`ML_API_URL=http://localhost:8000` en `.env.local`)
 consume el endpoint vía `lib/ml-client.ts`.
 
-### Producción (opcional)
-- **Render**: `render.yaml` committeado. Deploy en ~5 min subiendo el
-  repo. Plan free tiene cold starts; recomendado plan starter (~7
-  USD/mes) si Mainero pide demo en vivo en TP4.
-- **Fly.io / Railway**: alternativas equivalentes; configurar `ML_API_URL`
-  en Vercel project settings.
+### Producción
+- **Fly.io** (despliegue vigente): `fly.toml` committeado. Desde `ml/`:
+  `fly launch --copy-config --yes` la primera vez, `fly deploy` después.
+  Máquina compartida de 2 GB (el servicio ocupa ~810 MB residentes con el
+  modelo cargado), siempre encendida (`min_machines_running = 1`) y con
+  carga anticipada del modelo (`ML_EAGER_LOAD=1`), así el primer request
+  no paga los ~15 s de carga. Costo publicado: 10,70 USD/mes.
+- En Vercel: `ML_API_URL=https://umbra-ml.fly.dev`.
+- **Render**: `render.yaml` se conserva como alternativa documentada; su
+  plan `starter` (512 MB) no alcanza para este servicio.
 
 ## Reproducibilidad para tribunal
 
