@@ -43,3 +43,58 @@ describe('crisis pipeline — unit tests for core logic', () => {
     });
   });
 });
+
+describe('semántica de falla cerrada (fail-closed) del pipeline completo', () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.resetModules();
+  });
+
+  it('ante error del clasificador, el caso se trata como situación de riesgo', async () => {
+    // El clasificador falla (timeout, red, respuesta malformada) →
+    // ClassifierFailure → el pipeline DEBE lanzar CrisisDetected, nunca
+    // continuar como si el mensaje fuera seguro.
+    vi.doMock('./classifier', () => ({
+      classifyViaClaude: vi.fn(async () => {
+        const { ClassifierFailure } = await import('@/lib/errors');
+        throw new ClassifierFailure('simulated outage');
+      }),
+    }));
+    const { runSafetyPipeline } = await import('./pipeline');
+
+    await expect(
+      runSafetyPipeline({ message: 'pienso en suicidarme' }),
+    ).rejects.toMatchObject({ name: 'CrisisDetected', severity: 'classifier_error' });
+  });
+
+  it('un error ajeno al clasificador NO se enmascara como crisis (se propaga)', async () => {
+    vi.doMock('./classifier', () => ({
+      classifyViaClaude: vi.fn(async () => {
+        throw new TypeError('bug de programación');
+      }),
+    }));
+    const { runSafetyPipeline } = await import('./pipeline');
+
+    await expect(
+      runSafetyPipeline({ message: 'pienso en suicidarme' }),
+    ).rejects.toBeInstanceOf(TypeError);
+  });
+
+  it('si el clasificador responde con crisis, lanza CrisisDetected con la severidad máxima', async () => {
+    vi.doMock('./classifier', () => ({
+      classifyViaClaude: vi.fn(async () => ({
+        is_crisis: true,
+        severity: 'high',
+        reason: 'ideación explícita',
+      })),
+    }));
+    const { runSafetyPipeline } = await import('./pipeline');
+
+    await expect(
+      runSafetyPipeline({ message: 'pienso en suicidarme' }),
+    ).rejects.toMatchObject({ name: 'CrisisDetected', severity: 'high' });
+  });
+});
