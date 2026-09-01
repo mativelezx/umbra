@@ -20,21 +20,33 @@ export interface InterpretNarrativeParams {
   texts: string[];
   areas?: string[];
   bigFive: BigFive;
-  perDimensionStatus?: Record<keyof BigFive, 'ok' | 'low_confidence'>;
+  perDimensionStatus?: Record<keyof BigFive, 'ok' | 'low_confidence' | 'not_applicable'>;
 }
 
 const SYSTEM =
   'Sos un intérprete narrativo de perfiles psicológicos para Umbra, una plataforma argentina de autoconocimiento. Recibís puntuaciones Big Five medidas por un módulo de aprendizaje automático propio y producís lecturas interpretativas de funciones cognitivas (Jung 1921) y arquetipo (Pearson 1991). Estas lecturas son heurísticas y no diagnósticas, derivadas de los Big Five y de los textos del usuario. Tu output es JSON estricto, sin explicaciones adicionales. Español latinoamericano, voseo, sin lenguaje clínico.';
 
 function formatPerDimStatus(
-  status?: Record<keyof BigFive, 'ok' | 'low_confidence'>,
+  status?: Record<keyof BigFive, 'ok' | 'low_confidence' | 'not_applicable'>,
 ): string {
   if (!status) return '';
-  const flagged = Object.entries(status)
+  const low = Object.entries(status)
     .filter(([, s]) => s === 'low_confidence')
     .map(([k]) => k);
-  if (flagged.length === 0) return '';
-  return `\n\n> Nota: las dimensiones ${flagged.join(', ')} están marcadas como **lectura preliminar** por el módulo ML (umbrales R²/r por debajo del mínimo de aceptación). Tratá esos valores con prudencia interpretativa.`;
+  const na = Object.entries(status)
+    .filter(([, s]) => s === 'not_applicable')
+    .map(([k]) => k);
+  if (low.length === 0 && na.length === 0) return '';
+  const parts: string[] = [];
+  if (low.length)
+    parts.push(
+      `las dimensiones ${low.join(', ')} están por debajo de los umbrales de aceptación (baja confianza)`,
+    );
+  if (na.length)
+    parts.push(
+      `las dimensiones ${na.join(', ')} no tienen evaluación de clasificación aplicable`,
+    );
+  return `\n\n> Nota del módulo ML: ${parts.join('; ')}. NO cites los valores numéricos de esas dimensiones en tu lectura: usalos solo como señal orientativa interna y expresá lo que digas sobre ellas en términos cualitativos y con prudencia.`;
 }
 
 function buildBigFiveBlock(bf: BigFive): string {

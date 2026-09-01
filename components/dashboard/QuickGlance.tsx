@@ -14,6 +14,11 @@ import {
   bigFivePosition,
 } from '@/lib/dimensions/labels';
 import { InfoPopover } from '@/components/ui/InfoPopover';
+import {
+  quantitativeDimensions,
+  RIDGE_V1_STATUS,
+  type PerDimensionStatus,
+} from '@/lib/profile/dimension-display';
 
 interface QuickGlanceProps {
   bigFive: BigFive;
@@ -21,6 +26,7 @@ interface QuickGlanceProps {
   archetypeName: string;
   confidence?: number | null;
   turnsCount?: number | null;
+  perDimensionStatus?: PerDimensionStatus;
 }
 
 const BIG_FIVE_ICON: Record<keyof BigFive, React.ReactNode> = {
@@ -37,17 +43,21 @@ export function QuickGlance({
   archetypeName,
   confidence,
   turnsCount,
+  perDimensionStatus = RIDGE_V1_STATUS,
 }: QuickGlanceProps) {
-  // Big Five: pick the dimension that deviates most from 50 — most
-  // informative for a quick glance.
+  // Big Five: pick the most deviated dimension AMONG those the ML module
+  // measured with committed confidence (HU-06 / ADR-027) — a dimension in
+  // low-confidence or not-applicable state never headlines the glance.
+  const measured = new Set(quantitativeDimensions(perDimensionStatus));
   const bfDev = (
     Object.entries(bigFive) as Array<[keyof BigFive, number]>
   )
+    .filter(([k]) => measured.has(k))
     .map(([k, v]) => ({ key: k, value: v, dev: Math.abs(v - 50) }))
     .sort((a, b) => b.dev - a.dev);
-  const topBf = bfDev[0];
-  const topBfLabel = BIG_FIVE_LABELS[topBf.key];
-  const topBfPos = bigFivePosition(topBf.key, topBf.value);
+  const topBf = bfDev[0] ?? null;
+  const topBfLabel = topBf ? BIG_FIVE_LABELS[topBf.key] : null;
+  const topBfPos = topBf ? bigFivePosition(topBf.key, topBf.value) : null;
 
   // Top Jung function by value
   const jungSorted = (
@@ -68,13 +78,17 @@ export function QuickGlance({
             </p>
             <InfoPopover
               title="¿Qué mido en el vistazo rápido?"
-              body="Elegimos automáticamente tu dimensión Big Five más distintiva, tu función cognitiva dominante y tu arquetipo. Son tres puntos de entrada — no un resumen completo del perfil."
+              body="Elegimos automáticamente tu dimensión Big Five más distintiva entre las medidas con confianza, tu función cognitiva dominante y tu arquetipo. Son tres puntos de entrada — no un resumen completo del perfil."
             />
           </div>
           <div className="flex items-center gap-3">
             <span className="font-mono text-[10px] uppercase tracking-wider text-text-3">
-              Certeza
+              Certeza de la lectura
             </span>
+            <InfoPopover
+              title="Certeza de la lectura"
+              body="Estimación heurística de la capa interpretativa sobre su propia lectura (Jung y arquetipo). No es una métrica del módulo de medición: la confianza de cada dimensión Big Five se declara por separado, dimensión por dimensión."
+            />
             <div
               className="relative h-1 w-24 overflow-hidden rounded-full bg-umbra-shadow/70"
               role="progressbar"
@@ -101,18 +115,27 @@ export function QuickGlance({
         </div>
       )}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <GlanceCard
-          label="Tu rasgo Big Five más marcado"
-          icon={BIG_FIVE_ICON[topBf.key]}
-          title={topBfLabel.label}
-          value={topBf.value}
-          caption={topBfPos.phrase}
-          popover={{
-            title: topBfLabel.label,
-            body: topBfLabel.long,
-            example: topBf.value >= 50 ? topBfLabel.highExample : topBfLabel.lowExample,
-          }}
-        />
+        {topBf && topBfLabel && topBfPos ? (
+          <GlanceCard
+            label="Tu rasgo medido con más confianza"
+            icon={BIG_FIVE_ICON[topBf.key]}
+            title={topBfLabel.label}
+            value={topBf.value}
+            caption={topBfPos.phrase}
+            popover={{
+              title: topBfLabel.label,
+              body: topBfLabel.long,
+              example: topBf.value >= 50 ? topBfLabel.highExample : topBfLabel.lowExample,
+            }}
+          />
+        ) : (
+          <GlanceCard
+            label="Big Five"
+            icon={BIG_FIVE_ICON.openness}
+            title="Sin dimensión medida"
+            caption="ninguna dimensión superó los umbrales comprometidos"
+          />
+        )}
         <GlanceCard
           label="Cómo tu mente capta el mundo"
           icon={<Lightbulb size={18} weight="duotone" />}

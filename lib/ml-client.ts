@@ -20,7 +20,10 @@ import type { BigFive, BigFiveDimension } from '@/types';
 const DEFAULT_BASE = 'http://localhost:8000';
 const INFER_TIMEOUT_MS = 15_000;
 
-export type PerDimensionStatus = Record<BigFiveDimension, 'ok' | 'low_confidence'>;
+export type PerDimensionStatus = Record<
+  BigFiveDimension,
+  'ok' | 'low_confidence' | 'not_applicable'
+>;
 
 export interface MlInferResponse {
   bigFive: BigFive;
@@ -83,7 +86,8 @@ function parseInferPayload(json: unknown): MlInferResponse {
   for (const dim of dims) {
     bigFive[dim] = clamp01_100(bf[dim]);
     const s = status[dim];
-    perDimensionStatus[dim] = s === 'ok' ? 'ok' : 'low_confidence';
+    perDimensionStatus[dim] =
+      s === 'ok' || s === 'not_applicable' ? s : 'low_confidence';
   }
   // sanity check: rechazo silencioso de keys desconocidas
   for (const k of Object.keys(bf)) {

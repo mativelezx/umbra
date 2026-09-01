@@ -1,4 +1,17 @@
 import type { PsychologicalProfile } from '@/types';
+import {
+  extractPerDimensionStatus,
+  quantitativeDimensions,
+  BIG_FIVE_KEYS,
+} from '@/lib/profile/dimension-display';
+
+const DIM_ES: Record<string, string> = {
+  openness: 'Apertura',
+  conscientiousness: 'Responsabilidad',
+  extraversion: 'Extraversión',
+  agreeableness: 'Amabilidad',
+  neuroticism: 'Neuroticismo',
+};
 
 const SYSTEM =
   'Sos un narrador y psicólogo junguiano. Escribís en español latinoamericano (voseo) narrativas personalizadas sobre la psique de una persona a partir de su perfil. Tu tono es reflexivo, cálido, profundo pero accesible. Como un mentor sabio que conoce bien a quien le escribe.';
@@ -8,6 +21,13 @@ export function buildNarrativePrompt(profile: PsychologicalProfile): {
   prompt: string;
 } {
   const { bigFive, jungFunctions, archetype, archetypeSecondary } = profile;
+  const dimStatus = extractPerDimensionStatus(profile.analysisRaw);
+  const measured = new Set(quantitativeDimensions(dimStatus));
+  const bigFiveLines = BIG_FIVE_KEYS.map((k) =>
+    measured.has(k)
+      ? `- ${DIM_ES[k]}: ${bigFive[k]}/100 (medida con confianza)`
+      : `- ${DIM_ES[k]}: sin valor reportado (${dimStatus[k] === 'not_applicable' ? 'no evaluable' : 'baja confianza'}; el valor interno ${bigFive[k]} es solo señal orientativa — NO lo cites)`,
+  ).join('\n');
 
   // Top 2 + bottom 2 functions for focus
   const functionEntries = Object.entries(jungFunctions).sort(([, a], [, b]) => b - a);
@@ -16,12 +36,8 @@ export function buildNarrativePrompt(profile: PsychologicalProfile): {
 
   const prompt = `## Perfil de la persona
 
-Big Five:
-- Apertura: ${bigFive.openness}/100
-- Responsabilidad: ${bigFive.conscientiousness}/100
-- Extraversión: ${bigFive.extraversion}/100
-- Amabilidad: ${bigFive.agreeableness}/100
-- Neuroticismo: ${bigFive.neuroticism}/100
+Big Five (solo las dimensiones "medidas con confianza" pueden citarse con números; las demás tratálas de forma cualitativa, sin cifras):
+${bigFiveLines}
 
 Funciones cognitivas Jung (escala 0-100):
 - Sensación: Se=${jungFunctions.Se} Si=${jungFunctions.Si}

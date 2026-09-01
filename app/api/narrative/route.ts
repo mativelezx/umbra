@@ -146,6 +146,7 @@ export async function POST(req: Request) {
     },
     archetype: profileRow.archetype,
     archetypeSecondary: profileRow.archetype_secondary ?? '',
+    analysisRaw: profileRow.analysis_raw ?? undefined,
     inputMode: profileRow.input_mode,
     inputTexts: profileRow.input_texts ?? [],
     createdAt: profileRow.created_at,

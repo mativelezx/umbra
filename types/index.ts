@@ -407,11 +407,12 @@ export interface AnalyzeResponse {
   reasoning: string;
   /**
    * Dimension-by-dimension confidence flag from the ML module
-   * (ADR-027). `low_confidence` means the regressor's R²/r for that
-   * dimension is below the minimum threshold; the UI surfaces a
-   * "Preliminar" badge so the user reads it with margin.
+   * (ADR-027). Only dimensions in `ok` state show their numeric value
+   * in the dashboard's quantitative component; `low_confidence` and
+   * `not_applicable` dimensions are declared with their state instead
+   * of a figure (see lib/profile/dimension-display.ts).
    */
-  perDimensionStatus?: Record<keyof BigFive, 'ok' | 'low_confidence'>;
+  perDimensionStatus?: Record<keyof BigFive, 'ok' | 'low_confidence' | 'not_applicable'>;
 }
 
 export interface NarrativeRequest {

@@ -5,7 +5,7 @@ import { ArchetypeCard } from '@/components/dashboard/ArchetypeCard';
 import { NarrativeSection } from '@/components/dashboard/NarrativeSection';
 import { NarrativeTOC } from '@/components/dashboard/NarrativeTOC';
 import { DashboardDepth } from '@/components/dashboard/DashboardDepth';
-import { BigFiveRadar } from '@/components/dashboard/BigFiveRadar';
+import { BigFiveDimensions } from '@/components/dashboard/BigFiveDimensions';
 import { JungAxisView } from '@/components/dashboard/JungAxisView';
 import { QuickGlance } from '@/components/dashboard/QuickGlance';
 import { ArchetypeMap } from '@/components/dashboard/ArchetypeMap';
@@ -13,6 +13,11 @@ import { CartaFuturaCard } from '@/components/dashboard/CartaFuturaCard';
 import { Card } from '@/components/ui/Card';
 import { ARCHETYPE_INFO } from '@/types';
 import type { Archetype, BigFive, JungFunctions as JF } from '@/types';
+import {
+  extractPerDimensionStatus,
+  RIDGE_V1_STATUS,
+  type PerDimensionStatus,
+} from '@/lib/profile/dimension-display';
 import {
   DEMO_BIG_FIVE,
   DEMO_JUNG_FUNCTIONS,
@@ -31,6 +36,7 @@ interface DashboardData {
   fullName: string | null;
   createdAt: string;
   bigFive: BigFive;
+  perDimensionStatus: PerDimensionStatus;
   jungFunctions: JF;
   archetype: Archetype;
   secondary: string;
@@ -96,6 +102,7 @@ function DashboardView({ data }: { data: DashboardData }) {
           archetypeName={archetypeName}
           confidence={data.confidence}
           turnsCount={data.turnsCount}
+          perDimensionStatus={data.perDimensionStatus}
         />
 
         {/* NARRATIVA — sectioned with iconography + sticky TOC on desktop.
@@ -132,10 +139,10 @@ function DashboardView({ data }: { data: DashboardData }) {
                 Cinco grandes rasgos
               </p>
               <p className="mt-2 max-w-prose text-pretty font-body text-sm leading-relaxed text-text-2">
-                Las cinco dimensiones del modelo Big Five (también llamado OCEAN). Cada barra es una de tus inclinaciones generales sobre 100. No son percentiles ni diagnósticos.
+                Las cinco dimensiones del modelo Big Five (también llamado OCEAN). Solo mostramos la cifra de las dimensiones que el módulo de análisis midió con la confianza comprometida; las demás se declaran con su estado, sin número. No son percentiles ni diagnósticos.
               </p>
               <div className="mt-4">
-                <BigFiveRadar bigFive={data.bigFive} />
+                <BigFiveDimensions bigFive={data.bigFive} status={data.perDimensionStatus} />
               </div>
             </Card>
             <Card>
@@ -174,6 +181,7 @@ export default async function DashboardPage() {
           fullName: DEMO_USER.full_name,
           createdAt: DEMO_USER.created_at,
           bigFive: DEMO_BIG_FIVE,
+          perDimensionStatus: RIDGE_V1_STATUS,
           jungFunctions: DEMO_JUNG_FUNCTIONS,
           archetype: DEMO_ARCHETYPE,
           secondary: DEMO_ARCHETYPE_SECONDARY,
@@ -240,6 +248,7 @@ export default async function DashboardPage() {
   const analysisRaw = profileRow.analysis_raw as
     | { confidence?: number }
     | null;
+  const perDimensionStatus = extractPerDimensionStatus(profileRow.analysis_raw);
   const rawConfidence =
     typeof analysisRaw?.confidence === 'number' ? analysisRaw.confidence : null;
   // Strict `< 1` so a legitimate integer `1` (meaning 1%) does not get
@@ -284,6 +293,7 @@ export default async function DashboardPage() {
         fullName: profileMeta?.full_name ?? null,
         createdAt: profileMeta?.created_at ?? profileRow.created_at,
         bigFive,
+        perDimensionStatus,
         jungFunctions,
         archetype,
         secondary,
