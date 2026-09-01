@@ -37,11 +37,14 @@ def _load_status_from_eval_metrics(path: Path = EVAL_METRICS) -> Dict[str, str]:
 
     Dos reglas gobiernan la selección:
 
-    1. **Lectura binaria como primaria.** ADR-027 declara la lectura binaria
-       (ROC AUC / balanced accuracy) como primaria, porque las etiquetas del
-       corpus Essays son binarias y el R² sobre un objetivo dicotómico es bajo
-       por construcción. Por eso se prefiere `per_dimension_classification_status`
-       sobre `per_dimension_status` (regresión), que queda como respaldo.
+    1. **Lectura binaria como primaria.** ADR-027 fija el reporte por
+       dimensión contra umbrales prerregistrados (regresión). Las etiquetas
+       del corpus Essays son binarias y el R² sobre un objetivo dicotómico es
+       bajo por construcción, de modo que la lectura apropiada para decidir el
+       status es la de clasificación (ROC AUC / balanced accuracy), con los
+       umbrales fijados al instrumentar esa evaluación. Por eso se prefiere
+       `per_dimension_classification_status` sobre `per_dimension_status`
+       (regresión), que queda como respaldo.
 
     2. **Poder estadístico mínimo por bloque.** Un bloque con n muy chico no
        sostiene una estimación de AUC por dimensión, así que no puede decidir
