@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { ChatShell, type ChatShellProfile } from '@/components/chat/ChatShell';
 import type { Archetype, BigFive, JungFunctions } from '@/types';
+import { extractPerDimensionStatus } from '@/lib/profile/dimension-display';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,7 +19,7 @@ export default async function ChatPage() {
     supabase
       .from('psychological_profiles')
       .select(
-        'openness, conscientiousness, extraversion, agreeableness, neuroticism, jung_functions, archetype',
+        'openness, conscientiousness, extraversion, agreeableness, neuroticism, jung_functions, archetype, analysis_raw',
       )
       .eq('user_id', user.id)
       .eq('version', 1)
@@ -47,6 +48,7 @@ export default async function ChatPage() {
       };
     profile = {
       firstName: profileMeta?.full_name?.split(' ')[0] ?? null,
+      perDimensionStatus: extractPerDimensionStatus(profileRow.analysis_raw),
       archetype: (profileRow.archetype ?? 'sage') as Archetype,
       bigFive,
       jungFunctions,

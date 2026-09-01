@@ -1,4 +1,9 @@
 import type { PsychologicalProfile } from '@/types';
+import {
+  extractPerDimensionStatus,
+  quantitativeDimensions,
+  BIG_FIVE_KEYS,
+} from '@/lib/profile/dimension-display';
 
 const SYSTEM =
   'Sos un coach de desarrollo personal basado en Jung y Big Five. Escribís planes de crecimiento en español latinoamericano, concretos, accionables, sin lenguaje motivacional vacío. Tu output es JSON estricto.';
@@ -8,6 +13,14 @@ export function buildDevelopmentPlanPrompt(profile: PsychologicalProfile): {
   prompt: string;
 } {
   const { bigFive, jungFunctions, archetype } = profile;
+  const dimStatus = extractPerDimensionStatus(profile.analysisRaw);
+  const measured = new Set(quantitativeDimensions(dimStatus));
+  const bfLine = BIG_FIVE_KEYS.map((k) => {
+    const code = k[0].toUpperCase();
+    return measured.has(k)
+      ? `${code}=${bigFive[k]} (medida)`
+      : `${code}=${bigFive[k]} (sin confianza — señal interna, NO citar la cifra)`;
+  }).join(' ');
 
   // Identify weakest 2 functions for development areas
   const weakest = Object.entries(jungFunctions)
@@ -17,8 +30,8 @@ export function buildDevelopmentPlanPrompt(profile: PsychologicalProfile): {
 
   const prompt = `## Perfil del usuario
 
-Big Five:
-O=${bigFive.openness} C=${bigFive.conscientiousness} E=${bigFive.extraversion} A=${bigFive.agreeableness} N=${bigFive.neuroticism}
+Big Five (solo las dimensiones "(medida)" pueden citarse con números; las demás usalas de forma cualitativa, sin cifras):
+${bfLine}
 
 Funciones Jung (escala 0-100):
 Se=${jungFunctions.Se} Si=${jungFunctions.Si} Ne=${jungFunctions.Ne} Ni=${jungFunctions.Ni}

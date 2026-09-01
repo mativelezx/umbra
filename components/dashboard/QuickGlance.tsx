@@ -117,7 +117,7 @@ export function QuickGlance({
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {topBf && topBfLabel && topBfPos ? (
           <GlanceCard
-            label="Tu rasgo medido con más confianza"
+            label="Tu rasgo más marcado (medido con confianza)"
             icon={BIG_FIVE_ICON[topBf.key]}
             title={topBfLabel.label}
             value={topBf.value}

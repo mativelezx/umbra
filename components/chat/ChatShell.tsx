@@ -12,6 +12,7 @@ import { ContextualGreeting } from '@/components/chat/ContextualGreeting';
 import { ConversationsSidebar } from '@/components/chat/ConversationsSidebar';
 import type { CrisisResource } from '@/lib/chat/crisis-resources';
 import type { Archetype, BigFive, JungFunctions, MessageRole } from '@/types';
+import type { PerDimensionStatus } from '@/lib/profile/dimension-display';
 
 interface Message {
   id: string;
@@ -31,6 +32,7 @@ export interface ChatShellProfile {
   archetype: Archetype;
   bigFive: BigFive;
   jungFunctions: JungFunctions;
+  perDimensionStatus?: PerDimensionStatus;
 }
 
 interface ChatShellProps {

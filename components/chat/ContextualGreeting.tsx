@@ -2,6 +2,10 @@ import { ARCHETYPE_INFO } from '@/types';
 import { JUNG_LABELS, BIG_FIVE_LABELS } from '@/lib/dimensions/labels';
 import type { BigFive, JungFunctions } from '@/types';
 import type { ChatShellProfile } from './ChatShell';
+import {
+  quantitativeDimensions,
+  RIDGE_V1_STATUS,
+} from '@/lib/profile/dimension-display';
 
 interface ContextualGreetingProps {
   profile: ChatShellProfile;
@@ -20,13 +24,15 @@ export function ContextualGreeting({ profile }: ContextualGreetingProps) {
   )[0][0] as keyof JungFunctions;
   const topJung = JUNG_LABELS[topJungKey];
 
+  const measured = quantitativeDimensions(profile.perDimensionStatus ?? RIDGE_V1_STATUS);
   const topBf = (
     Object.entries(profile.bigFive) as Array<[keyof BigFive, number]>
   )
+    .filter(([k]) => measured.includes(k))
     .map(([k, v]) => ({ k, v, delta: Math.abs(v - 50) }))
-    .sort((a, b) => b.delta - a.delta)[0];
-  const topBfLabel = BIG_FIVE_LABELS[topBf.k];
-  const isHigh = topBf.v >= 50;
+    .sort((a, b) => b.delta - a.delta)[0] ?? null;
+  const topBfLabel = topBf ? BIG_FIVE_LABELS[topBf.k] : null;
+  const isHigh = topBf ? topBf.v >= 50 : false;
 
   return (
     <div className="relative rounded-2xl border border-violet-400/10 bg-umbra-shadow/30 p-6 md:p-7">
@@ -39,9 +45,14 @@ export function ContextualGreeting({ profile }: ContextualGreetingProps) {
       <p className="mt-3 max-w-xl text-pretty font-body text-sm leading-relaxed text-text-2 md:text-base">
         Tu mente trabaja sobre todo en modo{' '}
         <span className="text-violet-200">{topJung.label.toLowerCase()}</span>{' '}
-        — {topJung.short}. Y tu{' '}
-        <span className="text-violet-200">{topBfLabel.label.toLowerCase()}</span>{' '}
-        está {isHigh ? 'arriba' : 'abajo'}: {isHigh ? topBfLabel.highExample : topBfLabel.lowExample}{' '}
+        — {topJung.short}.{' '}
+        {topBf && topBfLabel ? (
+          <>
+            Y tu{' '}
+            <span className="text-violet-200">{topBfLabel.label.toLowerCase()}</span>{' '}
+            está {isHigh ? 'arriba' : 'abajo'}: {isHigh ? topBfLabel.highExample : topBfLabel.lowExample}{' '}
+          </>
+        ) : null}
         ¿Sobre qué querés pensar hoy?
       </p>
     </div>

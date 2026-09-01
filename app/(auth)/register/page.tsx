@@ -34,7 +34,7 @@ export default function RegisterPage() {
       email,
       password,
       options: {
-        data: { full_name: name },
+        data: { full_name: name.trim() || null },
         emailRedirectTo: `${window.location.origin}/auth/callback?next=/consent`,
       },
     });

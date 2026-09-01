@@ -10,6 +10,10 @@ import { formatDateEs } from '@/lib/utils';
 import { ARCHETYPE_INFO } from '@/types';
 import type { Archetype, BigFive, JungFunctions, PsychologicalProfile } from '@/types';
 import './print.css';
+import {
+  extractPerDimensionStatus,
+  STATUS_LABEL,
+} from '@/lib/profile/dimension-display';
 
 /**
  * Minimal shape of the html2pdf.js chain — the library itself has no
@@ -38,114 +42,6 @@ const BIG_FIVE_ORDER: Array<keyof BigFive> = [
   'neuroticism',
 ];
 
-function BigFiveRadar({ values }: { values: BigFive }) {
-  // Wide viewBox: 520x360 with radius ~120. Extra horizontal room (260 on
-  // each side of center) leaves space for the longest axis labels
-  // ("Responsabilidad · 100") without clipping, while the vertical extent
-  // stays compact for PDF page flow.
-  const width = 520;
-  const height = 360;
-  const center = { x: width / 2, y: height / 2 };
-  const radius = 120;
-  const axes = BIG_FIVE_ORDER.length;
-
-  const angleFor = (i: number) => -Math.PI / 2 + (i * 2 * Math.PI) / axes;
-  const point = (i: number, value: number) => {
-    const angle = angleFor(i);
-    const r = (value / 100) * radius;
-    return [center.x + r * Math.cos(angle), center.y + r * Math.sin(angle)] as const;
-  };
-
-  const polygon = BIG_FIVE_ORDER.map((key, i) => point(i, values[key]).join(','))
-    .join(' ');
-
-  const gridRings = [20, 40, 60, 80, 100].map((pct) => {
-    const points = Array.from({ length: axes }, (_, i) => {
-      const angle = angleFor(i);
-      const r = (pct / 100) * radius;
-      return `${center.x + r * Math.cos(angle)},${center.y + r * Math.sin(angle)}`;
-    }).join(' ');
-    return (
-      <polygon
-        key={pct}
-        points={points}
-        fill="none"
-        stroke="#d4b3ff"
-        strokeOpacity="0.22"
-        strokeWidth="1"
-      />
-    );
-  });
-
-  const axisLines = BIG_FIVE_ORDER.map((_, i) => {
-    const [x, y] = point(i, 100);
-    return (
-      <line
-        key={i}
-        x1={center.x}
-        y1={center.y}
-        x2={x}
-        y2={y}
-        stroke="#d4b3ff"
-        strokeOpacity="0.2"
-        strokeWidth="1"
-      />
-    );
-  });
-
-  const labels = BIG_FIVE_ORDER.map((key, i) => {
-    const angle = angleFor(i);
-    const labelRadius = radius + 22;
-    const x = center.x + labelRadius * Math.cos(angle);
-    const y = center.y + labelRadius * Math.sin(angle);
-    const anchor =
-      Math.abs(Math.cos(angle)) < 0.1
-        ? 'middle'
-        : Math.cos(angle) > 0
-          ? 'start'
-          : 'end';
-    return (
-      <text
-        key={key}
-        x={x}
-        y={y}
-        fontSize={11}
-        fontFamily="Inter, Arial, sans-serif"
-        fill="#3d1575"
-        textAnchor={anchor}
-        dominantBaseline="middle"
-      >
-        {BIG_FIVE_LABELS[key]} · {values[key]}
-      </text>
-    );
-  });
-
-  return (
-    <svg
-      width={width}
-      height={height}
-      viewBox={`0 0 ${width} ${height}`}
-      aria-label="Radar Big Five"
-      role="img"
-      style={{ display: 'block', margin: '0 auto', maxWidth: '100%' }}
-    >
-      {gridRings}
-      {axisLines}
-      <polygon
-        points={polygon}
-        fill="#b466ff"
-        fillOpacity="0.25"
-        stroke="#7a2eff"
-        strokeWidth="2"
-      />
-      {BIG_FIVE_ORDER.map((key, i) => {
-        const [x, y] = point(i, values[key]);
-        return <circle key={key} cx={x} cy={y} r={4} fill="#7a2eff" />;
-      })}
-      {labels}
-    </svg>
-  );
-}
 
 const JUNG_LABELS: Record<keyof JungFunctions, string> = {
   Se: 'Sensación extravertida',
@@ -246,6 +142,7 @@ export default function ExportPage() {
           jungFunctions: profileRow.jung_functions ?? { Se: 50, Si: 50, Ne: 50, Ni: 50, Te: 50, Ti: 50, Fe: 50, Fi: 50 },
           archetype: profileRow.archetype,
           archetypeSecondary: profileRow.archetype_secondary ?? '',
+          analysisRaw: profileRow.analysis_raw ?? undefined,
           inputMode: profileRow.input_mode,
           inputTexts: profileRow.input_texts ?? [],
           createdAt: profileRow.created_at,
@@ -374,24 +271,42 @@ export default function ExportPage() {
             </div>
 
             <div className="pdf-section pdf-card">
-              <h3 style={{ margin: '0 0 16px' }}>Big Five (IPIP-NEO)</h3>
-              <BigFiveRadar values={data.profile.bigFive} />
-              <div style={{ height: '16px' }} />
-              {(Object.keys(BIG_FIVE_LABELS) as Array<keyof BigFive>).map((key) => (
-                <div key={key} style={{ marginBottom: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '13px' }}>
-                    <span>{BIG_FIVE_LABELS[key]}</span>
-                    <span style={{ fontFamily: 'monospace' }}>{data.profile.bigFive[key]}</span>
-                  </div>
-                  <div className="pdf-bar">
-                    <div className="pdf-bar-fill" style={{ width: `${data.profile.bigFive[key]}%` }} />
-                  </div>
-                </div>
-              ))}
+              <h3 style={{ margin: '0 0 16px' }}>Big Five — inferencia del módulo analítico propio</h3>
+              <p style={{ margin: '0 0 12px', fontSize: '12px', lineHeight: '1.5', color: '#555' }}>
+                Solo se reporta la cifra de las dimensiones medidas con la confianza
+                comprometida; las restantes se declaran con su estado, sin valor.
+              </p>
+              {(() => {
+                const dimStatus = extractPerDimensionStatus(data.profile.analysisRaw);
+                return BIG_FIVE_ORDER.map((key) => {
+                  const measured = dimStatus[key] === 'ok';
+                  return (
+                    <div key={key} style={{ marginBottom: '12px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '13px' }}>
+                        <span>{BIG_FIVE_LABELS[key]}</span>
+                        {measured ? (
+                          <span style={{ fontFamily: 'monospace' }}>{data.profile.bigFive[key]}</span>
+                        ) : (
+                          <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#777' }}>
+                            {STATUS_LABEL[dimStatus[key]]}
+                          </span>
+                        )}
+                      </div>
+                      {measured ? (
+                        <div className="pdf-bar">
+                          <div className="pdf-bar-fill" style={{ width: `${data.profile.bigFive[key]}%` }} />
+                        </div>
+                      ) : (
+                        <div className="pdf-bar" style={{ background: 'transparent', border: '1px dashed #ccc' }} />
+                      )}
+                    </div>
+                  );
+                });
+              })()}
             </div>
 
             <div className="pdf-section pdf-card">
-              <h3 style={{ margin: '0 0 16px' }}>Funciones cognitivas Jung</h3>
+              <h3 style={{ margin: '0 0 16px' }}>Funciones cognitivas Jung — lectura interpretativa (heurística)</h3>
               {(Object.keys(JUNG_LABELS) as Array<keyof JungFunctions>).map((key) => (
                 <div key={key} style={{ marginBottom: '10px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '12px' }}>

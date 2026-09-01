@@ -5,6 +5,10 @@ import {
   Lightbulb,
   Wind,
 } from '@phosphor-icons/react/dist/ssr';
+import {
+  quantitativeDimensions,
+  RIDGE_V1_STATUS,
+} from '@/lib/profile/dimension-display';
 import { JUNG_LABELS, BIG_FIVE_LABELS } from '@/lib/dimensions/labels';
 import type { JungFunctions } from '@/types';
 import type { ChatShellProfile } from './ChatShell';
@@ -109,11 +113,16 @@ function buildPrompts(profile: ChatShellProfile): QuickPrompt[] {
   const topJung = JUNG_LABELS[topJungKey];
   const weakJung = JUNG_LABELS[weakJungKey];
 
-  const bfSorted = Object.entries(profile.bigFive).sort(
-    ([, a], [, b]) => b - a,
-  );
-  const topBfKey = bfSorted[0][0] as keyof typeof profile.bigFive;
-  const topBfLabel = BIG_FIVE_LABELS[topBfKey];
+  // Solo las dimensiones que el módulo midió con confianza pueden
+  // afirmarse (con o sin cifra) en los accesos rápidos del chat.
+  const status = profile.perDimensionStatus ?? RIDGE_V1_STATUS;
+  const measured = quantitativeDimensions(status);
+  const bfSorted = (Object.entries(profile.bigFive) as Array<[keyof typeof profile.bigFive, number]>)
+    .filter(([k]) => measured.includes(k))
+    .sort(([, a], [, b]) => b - a);
+  const topBfKey = bfSorted[0]?.[0] ?? null;
+  const topBfLabel = topBfKey ? BIG_FIVE_LABELS[topBfKey] : null;
+  const neuroticismMeasured = status.neuroticism === 'ok';
   const maxNeuroticism = profile.bigFive.neuroticism;
 
   const prompts: QuickPrompt[] = [
@@ -129,16 +138,16 @@ function buildPrompts(profile: ChatShellProfile): QuickPrompt[] {
     },
   ];
 
-  if (maxNeuroticism > 55) {
+  if (neuroticismMeasured && maxNeuroticism > 55) {
     prompts.push({
       label: 'Una práctica para bajar la intensidad emocional',
-      prompt: `Tengo sensibilidad emocional alta (neuroticism ${maxNeuroticism}/100). ¿Qué práctica concreta y chica me recomendás para empezar a regularla esta semana? Evitá consejos genéricos.`,
+      prompt: 'Mi perfil sugiere una sensibilidad emocional alta. ¿Qué práctica concreta y chica me recomendás para empezar a regularla esta semana? Evitá consejos genéricos.',
       icon: <Heart size={16} weight="duotone" />,
     });
-  } else {
+  } else if (topBfKey && topBfLabel) {
     prompts.push({
       label: `Cómo aprovechar mi ${topBfLabel.label.toLowerCase()}`,
-      prompt: `Mi ${topBfLabel.label.toLowerCase()} está alta (${profile.bigFive[topBfKey]}/100). ¿Cómo puedo aprovecharla más conscientemente en mi trabajo o relaciones? Dame 2 o 3 movimientos concretos.`,
+      prompt: `Mi ${topBfLabel.label.toLowerCase()} es mi dimensión medida con más señal. ¿Cómo puedo aprovecharla más conscientemente en mi trabajo o relaciones? Dame 2 o 3 movimientos concretos.`,
       icon: <Heart size={16} weight="duotone" />,
     });
   }

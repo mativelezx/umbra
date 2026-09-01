@@ -65,6 +65,9 @@ export function LiveProfilePanel({
         <div className="flex items-center justify-between">
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
             Tu perfil en vivo
+            <span className="ml-2 normal-case tracking-normal text-text-4">
+              — estimación provisoria de la conversación, no la medición final
+            </span>
           </p>
           <span className="font-mono text-[10px] text-text-3">
             turno {turnNumber}/{maxTurns}

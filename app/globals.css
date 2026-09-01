@@ -164,8 +164,11 @@
 
   /* Entrada escalonada de secciones del tablero */
   .dash-enter {
-    opacity: 0;
-    animation: dash-enter 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    /* backwards: el fill cubre el delay inicial; al terminar, el elemento
+       vuelve a sus estilos naturales (sin transform residual, que
+       convertiría al contenedor en containing block de position: fixed
+       y rompería los modales hijos). */
+    animation: dash-enter 520ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
   }
   .dash-enter-1 { animation-delay: 40ms; }
   .dash-enter-2 { animation-delay: 140ms; }
@@ -221,9 +224,5 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-  .dash-enter {
-    opacity: 1;
-    transform: none;
   }
 }

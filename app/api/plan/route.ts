@@ -145,6 +145,7 @@ export const POST = withErrorHandler(async (req) => {
       Se: 50, Si: 50, Ne: 50, Ni: 50, Te: 50, Ti: 50, Fe: 50, Fi: 50,
     },
     archetype: profileRow.archetype,
+    analysisRaw: profileRow.analysis_raw ?? undefined,
     archetypeSecondary: profileRow.archetype_secondary ?? '',
     inputMode: profileRow.input_mode,
     inputTexts: profileRow.input_texts ?? [],

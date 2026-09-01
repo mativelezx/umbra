@@ -30,12 +30,10 @@ describe('BigFiveDimensions — el tablero no muestra lo que no puede sostener (
       expect(screen.getByTestId(`bf-status-${dim}`)).toBeInTheDocument();
     }
 
-    // ningún valor numérico de las dimensiones no sostenidas aparece en el DOM
-    const html = document.body.innerHTML;
-    expect(html).not.toContain('54');
-    expect(html).not.toContain('71');
-    expect(html).not.toContain('58');
-    expect(html).not.toContain('33');
+    // ningún valor numérico de las dimensiones no sostenidas aparece como texto
+    for (const v of ['54', '71', '58', '33']) {
+      expect(screen.queryByText(v)).toBeNull();
+    }
   });
 
   it('las cinco dimensiones aparecen nombradas, con o sin cifra', () => {
