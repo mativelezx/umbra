@@ -11,7 +11,7 @@ export function Card({ children, className, glow = false }: CardProps) {
   return (
     <div
       className={cn(
-        'rounded-lg p-6',
+        'card-lift rounded-lg p-6',
         glow ? 'card-glow' : 'bg-umbra-shadow/30 border border-violet-400/10',
         className,
       )}

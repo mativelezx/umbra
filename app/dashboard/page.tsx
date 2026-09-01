@@ -62,7 +62,7 @@ function DashboardView({ data }: { data: DashboardData }) {
     <LayoutShell>
       <div className="flex flex-col gap-10 md:gap-12">
         {/* HEADER */}
-        <div className="flex items-start justify-between gap-4">
+        <div className="dash-enter dash-enter-1 flex items-start justify-between gap-4">
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
               Hola{data.fullName ? `, ${data.fullName.split(' ')[0]}` : ''}
@@ -96,6 +96,7 @@ function DashboardView({ data }: { data: DashboardData }) {
         />
 
         {/* QUICK GLANCE — 3 cards above the fold */}
+        <div className="dash-enter dash-enter-2">
         <QuickGlance
           bigFive={data.bigFive}
           jungFunctions={data.jungFunctions}
@@ -104,12 +105,14 @@ function DashboardView({ data }: { data: DashboardData }) {
           turnsCount={data.turnsCount}
           perDimensionStatus={data.perDimensionStatus}
         />
+        </div>
 
         {/* NARRATIVA — sectioned with iconography + sticky TOC on desktop.
             TOC only renders when the narrative has at least one `##` heading,
             because legacy narratives (pre-5-section prompt) parse as a single
             fallback block with no section ids to spy on — rendering the TOC
             anyway would leave it pointing at nothing. */}
+        <div className="dash-enter dash-enter-3">
         {data.narrativeContent && /^##\s+/m.test(data.narrativeContent) ? (
           <div className="lg:grid lg:grid-cols-[180px_1fr] lg:gap-10">
             <NarrativeTOC />
@@ -131,6 +134,9 @@ function DashboardView({ data }: { data: DashboardData }) {
             mapa comparativo de arquetipos, carta futura) se revelan al
             expandir. Reduce carga cognitiva inicial y crea un momento de
             "exploración elegida" en vez de bombardeo. */}
+        </div>
+
+        <div className="dash-enter dash-enter-4">
         <DashboardDepth>
           {/* DATA VIZ — 2 columns */}
           <div className="grid gap-6 md:grid-cols-2">
@@ -168,6 +174,7 @@ function DashboardView({ data }: { data: DashboardData }) {
             />
           )}
         </DashboardDepth>
+        </div>
       </div>
     </LayoutShell>
   );

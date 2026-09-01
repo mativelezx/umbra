@@ -58,7 +58,7 @@ export function BigFiveDimensions({ bigFive, status }: BigFiveDimensionsProps) {
                 aria-valuemax={100}
               >
                 <div
-                  className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-violet-500 to-violet-200 transition-[width] duration-700 ease-out motion-reduce:transition-none"
+                  className="bf-bar-grow absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-violet-500 to-violet-200"
                   style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
                 />
               </div>

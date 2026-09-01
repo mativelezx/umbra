@@ -161,4 +161,69 @@
       background-position: -200% 0;
     }
   }
+
+  /* Entrada escalonada de secciones del tablero */
+  .dash-enter {
+    opacity: 0;
+    animation: dash-enter 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .dash-enter-1 { animation-delay: 40ms; }
+  .dash-enter-2 { animation-delay: 140ms; }
+  .dash-enter-3 { animation-delay: 240ms; }
+  .dash-enter-4 { animation-delay: 340ms; }
+
+  @keyframes dash-enter {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Barras de dimensiones: crecen desde cero al montar */
+  .bf-bar-grow {
+    transform-origin: left center;
+    animation: bf-bar-grow 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes bf-bar-grow {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* Elevación sutil de tarjetas interactivas */
+  .card-lift {
+    transition:
+      border-color 220ms ease-out,
+      box-shadow 220ms ease-out,
+      transform 220ms ease-out;
+  }
+  .card-lift:hover {
+    border-color: rgba(180, 102, 255, 0.28);
+    box-shadow: 0 6px 28px -12px rgba(180, 102, 255, 0.25);
+    transform: translateY(-2px);
+  }
+}
+
+/* Accesibilidad: sin movimiento para quien lo pide (WCAG 2.3.3 / Positive Computing) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .dash-enter {
+    opacity: 1;
+    transform: none;
+  }
 }
