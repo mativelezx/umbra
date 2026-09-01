@@ -245,7 +245,7 @@ consume el endpoint vía `lib/ml-client.ts`.
   modelo cargado), siempre encendida (`min_machines_running = 1`) y con
   carga anticipada del modelo (`ML_EAGER_LOAD=1`), así el primer request
   no paga los ~15 s de carga. Costo publicado: 10,70 USD/mes.
-- En Vercel: `ML_API_URL=https://umbra-ml.fly.dev`.
+- En Vercel: `ML_API_URL=https://umbra-ml-velez.fly.dev`.
 - **Render**: `render.yaml` se conserva como alternativa documentada; su
   plan `starter` (512 MB) no alcanza para este servicio.
 
