@@ -56,7 +56,7 @@
     "login_subtitle": "Ingresá para volver a tu retrato y a tu plan.",
     "login_cta": "Entrar",
     "field_name": "Tu nombre",
-    "field_name_hint": "Cómo querés que te llamemos cuando te hablemos.",
+    "field_name_hint": "Opcional. Cómo querés que te llamemos cuando te hablemos.",
     "field_email": "Email",
     "field_email_hint": "Lo usamos para volver a entrar y para mandarte el link de borrado si algún día lo pedís.",
     "field_password": "Contraseña",

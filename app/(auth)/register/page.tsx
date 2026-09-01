@@ -109,7 +109,6 @@ export default function RegisterPage() {
             hint={t('auth.field_name_hint')}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            required
             autoComplete="name"
           />
           <Input
