@@ -27,7 +27,7 @@ const SeedRequestSchema = z.object({
 });
 
 const DAILY_TOKEN_CAP = Number(process.env.DAILY_TOKEN_CAP ?? 400000);
-const DAILY_COST_CAP_CENTS = Number(process.env.DAILY_COST_CAP_CENTS ?? 1500);
+const DAILY_COST_CAP_CENTS = Number(process.env.DAILY_COST_CAP_CENTS ?? 200);
 
 function extractJsonObject(text: string): string | null {
   let s = text.trim();

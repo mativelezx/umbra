@@ -186,6 +186,8 @@ Update this table when Anthropic pricing changes or new models ship. Use
 
 ## Global budget circuit breaker
 
+> **Estado (2026-08): NO implementado en el prototipo entregado.** `GLOBAL_DAILY_BUDGET_USD` existe como parámetro de configuración declarado; el corte automático descripto a continuación es el diseño previsto (ADR-016) y queda como trabajo pendiente. El control operativo vigente es el presupuesto por persona (`DAILY_COST_CAP_CENTS`, default 200 = USD 2/día) aplicado con reserva previa y conciliación en cada punto de invocación.
+
 Cannot be checked "at app startup" in Edge runtime (no singleton lifecycle).
 Instead uses `unstable_cache` from Next.js with 5-min TTL (ADR-016):
 
