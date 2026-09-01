@@ -48,7 +48,7 @@ all: prepare baseline train evaluate
 clean:
 	rm -rf mlruns
 	rm -rf $(DATA)/splits
-	rm -f metrics.json eval_metrics.json
+	rm -f metrics.json metrics_baseline.json eval_metrics.json
 	rm -f models/ridge_v1.joblib
 	rm -f models/baseline_tfidf.joblib
 

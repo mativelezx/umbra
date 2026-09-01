@@ -398,6 +398,10 @@ export interface AnalyzeSuccess extends AnalyzeResponse {
   profileId: string;
 }
 
+export type DimensionStatus = 'ok' | 'low_confidence' | 'not_applicable';
+
+export type PerDimensionStatus = Record<keyof BigFive, DimensionStatus>;
+
 export interface AnalyzeResponse {
   bigFive: BigFive;
   jungFunctions: JungFunctions;
@@ -412,7 +416,7 @@ export interface AnalyzeResponse {
    * `not_applicable` dimensions are declared with their state instead
    * of a figure (see lib/profile/dimension-display.ts).
    */
-  perDimensionStatus?: Record<keyof BigFive, 'ok' | 'low_confidence' | 'not_applicable'>;
+  perDimensionStatus?: PerDimensionStatus;
 }
 
 export interface NarrativeRequest {

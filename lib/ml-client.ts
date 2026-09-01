@@ -15,15 +15,13 @@
  * Five) está documentada en ADR-026.
  */
 
+import type { PerDimensionStatus } from '@/types';
 import type { BigFive, BigFiveDimension } from '@/types';
 
 const DEFAULT_BASE = 'http://localhost:8000';
 const INFER_TIMEOUT_MS = 15_000;
 
-export type PerDimensionStatus = Record<
-  BigFiveDimension,
-  'ok' | 'low_confidence' | 'not_applicable'
->;
+export type { PerDimensionStatus } from '@/types';
 
 export interface MlInferResponse {
   bigFive: BigFive;

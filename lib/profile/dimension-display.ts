@@ -1,4 +1,4 @@
-import type { BigFive } from '@/types';
+import type { BigFive, DimensionStatus, PerDimensionStatus } from '@/types';
 
 /**
  * Estado de confianza por dimensión que reporta el módulo ML propio.
@@ -13,9 +13,7 @@ import type { BigFive } from '@/types';
  *                      (etiquetas no estrictamente dicotómicas): tampoco
  *                      se muestra cifra.
  */
-export type DimensionStatus = 'ok' | 'low_confidence' | 'not_applicable';
-
-export type PerDimensionStatus = Record<keyof BigFive, DimensionStatus>;
+export type { DimensionStatus, PerDimensionStatus } from '@/types';
 
 export const BIG_FIVE_KEYS: Array<keyof BigFive> = [
   'openness',

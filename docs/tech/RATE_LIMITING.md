@@ -179,7 +179,7 @@ Update this table when Anthropic pricing changes or new models ship. Use
 
 | Env var | Default | Scope |
 |---|---|---|
-| `DAILY_TOKEN_CAP` | 15000 | Per user, per day. ~30 chat turns. |
+| `DAILY_TOKEN_CAP` | 400000 | Per user, per day. ~30 chat turns. |
 | `DAILY_COST_CAP_CENTS` | 200 | Per user, per day. USD 2.00. |
 | `GLOBAL_DAILY_BUDGET_USD` | 50 | Total across all users. Circuit breaker. |
 | `ANTHROPIC_MAX_BUDGET_USD_PER_CI_RUN` | 5 | CI eval cost ceiling. |

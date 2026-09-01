@@ -141,4 +141,29 @@ describe('isMlApiHealthy', () => {
     }) as unknown as typeof fetch;
     expect(await isMlApiHealthy()).toBe(false);
   });
+  it('preserva not_applicable sin colapsarlo a low_confidence', async () => {
+    globalThis.fetch = mockFetch(200, {
+      big_five: {
+        openness: 61,
+        conscientiousness: 54,
+        extraversion: 71,
+        agreeableness: 58,
+        neuroticism: 33,
+      },
+      per_dimension_status: {
+        openness: 'ok',
+        conscientiousness: 'low_confidence',
+        extraversion: 'not_applicable',
+        agreeableness: 'low_confidence',
+        neuroticism: 'not_applicable',
+      },
+      model_version: 'ridge_v1',
+      elapsed_ms: 100,
+    });
+    const r = await inferBigFive('otro texto');
+    expect(r.perDimensionStatus.extraversion).toBe('not_applicable');
+    expect(r.perDimensionStatus.neuroticism).toBe('not_applicable');
+    expect(r.perDimensionStatus.conscientiousness).toBe('low_confidence');
+    expect(r.perDimensionStatus.openness).toBe('ok');
+  });
 });

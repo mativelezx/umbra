@@ -28,7 +28,8 @@ BIG_FIVE_DIMS = ["openness", "conscientiousness", "extraversion", "agreeableness
 
 # n minimo para que un bloque de evaluacion pueda decidir el status por dimension.
 # Por debajo de este valor la estimacion de AUC/balanced accuracy por dimension no
-# tiene precision util, asi que el bloque se descarta (ADR-027).
+# tiene precision util, asi que el bloque se descarta (criterio operativo,
+# en linea con la omision por poder estadistico declarada en el Anexo B).
 MIN_BLOCK_N = 30
 
 

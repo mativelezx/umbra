@@ -62,3 +62,25 @@ describe('quantitativeDimensions (HU-06: el componente cuantitativo solo integra
     expect(quantitativeDimensions(none)).toEqual([]);
   });
 });
+
+describe('coherencia con la evaluación versionada del repositorio (HU-06)', () => {
+  it('RIDGE_V1_STATUS coincide con per_dimension_classification_status de ml/eval_metrics.json', async () => {
+    const { readFileSync } = await import('node:fs');
+    const { resolve } = await import('node:path');
+    const evalMetrics = JSON.parse(
+      readFileSync(resolve(process.cwd(), 'ml/eval_metrics.json'), 'utf-8'),
+    ) as {
+      blocks: {
+        combined: {
+          n_samples: number;
+          per_dimension_classification_status: Record<string, string>;
+        };
+      };
+    };
+    const combined = evalMetrics.blocks.combined;
+    // El bloque que decide el estado debe tener poder estadístico (n >= 30),
+    // la misma regla que aplica ml/src/predict.py.
+    expect(combined.n_samples).toBeGreaterThanOrEqual(30);
+    expect(combined.per_dimension_classification_status).toEqual(RIDGE_V1_STATUS);
+  });
+});

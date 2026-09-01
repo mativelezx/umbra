@@ -4,7 +4,7 @@ name: ML · validate
 # Verifica:
 #   1. Tests Python pasan (pytest).
 #   2. Pipeline reproduce: prepare_data + baseline_tfidf corren sin error.
-#   3. Métricas committeadas en metrics.json y eval_metrics.json son
+#   3. Métricas committeadas en metrics.json / metrics_baseline.json / eval_metrics.json son
 #      coherentes (mantienen umbrales R²>0.20 y r>0.30 por dimensión, o
 #      la dimensión está marcada explícitamente como low_confidence —
 #      ADR-027).
@@ -63,14 +63,14 @@ jobs:
           python -m src.prepare_data
           python -m src.baseline_tfidf
 
-      - name: Verify metrics.json structure
+      - name: Verify metrics_baseline.json structure
         working-directory: ml
         run: |
           python -c "
           import json, sys
-          m = json.load(open('metrics.json'))
-          assert 'model' in m and 'evaluation_method' in m, 'metrics.json malformado'
-          print('metrics.json OK')
+          m = json.load(open('metrics_baseline.json'))
+          assert 'model' in m and 'evaluation_method' in m, 'metrics_baseline.json malformado'
+          print('metrics_baseline.json OK')
           print(json.dumps(m, indent=2)[:500])
           "
 
@@ -88,6 +88,7 @@ jobs:
           name: ml-metrics
           path: |
             ml/metrics.json
+            ml/metrics_baseline.json
             ml/eval_metrics.json
             ml/data/splits/summary.json
           if-no-files-found: warn
