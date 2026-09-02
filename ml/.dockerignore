@@ -1,0 +1,24 @@
+# Contexto de build del módulo ML (Dockerfile copia solo src/, models/ y las métricas).
+# Todo lo demás queda fuera para que `fly deploy` no suba datasets ni entornos locales.
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+mlruns/
+.dvc/
+.hf_cache/
+.cache/
+.ipynb_checkpoints/
+*.log
+.DS_Store
+data/
+scripts/
+tests/
+fly.toml
+render.yaml
+*.md

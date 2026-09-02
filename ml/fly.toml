@@ -1,7 +1,10 @@
 # Umbra — Módulo ML propio en Fly.io
-# Deploy: desde ml/  →  fly launch --copy-config --yes   (primera vez)
+# Deploy: desde ml/  →  fly apps create umbra-ml-velez   (primera vez: crea la app vacía)
+#                       fly deploy --ha=false             (construye la imagen y levanta UNA máquina)
 #                       fly deploy                        (siguientes)
-# La app queda en https://umbra-ml-velez.fly.dev ; en Vercel: ML_API_URL=https://umbra-ml.fly.dev
+# No usar `fly launch`: regenera este archivo con la configuración por defecto
+# (1 GB, suspensión automática, dos máquinas, sin carga anticipada).
+# La app queda en https://umbra-ml-velez.fly.dev ; en Vercel: ML_API_URL=https://umbra-ml-velez.fly.dev
 app = "umbra-ml-velez"
 primary_region = "gru"
 

@@ -18,7 +18,7 @@ from typing import Optional
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from .predict import Predictor, get_default_predictor, BIG_FIVE_DIMS
 
@@ -74,6 +74,10 @@ class InferRequest(BaseModel):
 
 
 class InferResponse(BaseModel):
+    # `model_version` colisiona con el espacio de nombres protegido `model_` de
+    # pydantic v2; se libera para que el arranque no emita la advertencia.
+    model_config = ConfigDict(protected_namespaces=())
+
     big_five: dict
     per_dimension_status: dict
     model_version: str
