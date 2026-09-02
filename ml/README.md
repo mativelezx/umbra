@@ -240,7 +240,9 @@ consume el endpoint vía `lib/ml-client.ts`.
 
 ### Producción
 - **Fly.io** (despliegue vigente): `fly.toml` committeado. Desde `ml/`:
-  `fly launch --copy-config --yes` la primera vez, `fly deploy` después.
+  `fly apps create umbra-ml-velez` y `fly deploy --ha=false` la primera vez,
+  `fly deploy` después. (No usar `fly launch`: regenera `fly.toml` con la
+  configuración por defecto e ignora la del repo.)
   Máquina compartida de 2 GB (el servicio ocupa ~810 MB residentes con el
   modelo cargado), siempre encendida (`min_machines_running = 1`) y con
   carga anticipada del modelo (`ML_EAGER_LOAD=1`), así el primer request
