@@ -4,13 +4,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { House, ChatCircle, Path, DownloadSimple, Gear } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
+import { Brand } from './Brand';
 
 const NAV_ITEMS = [
-  { href: '/dashboard', label: 'Dashboard', Icon: House },
+  { href: '/dashboard', label: 'Mi resultado', Icon: House },
+  { href: '/plan', label: 'Actividades', Icon: Path },
   { href: '/chat', label: 'Chat', Icon: ChatCircle },
-  { href: '/plan', label: 'Plan', Icon: Path },
-  { href: '/export', label: 'Export', Icon: DownloadSimple },
-  { href: '/settings/profile', label: 'Settings', Icon: Gear },
+  { href: '/export', label: 'Informe', Icon: DownloadSimple },
+  { href: '/settings/profile', label: 'Mi cuenta', Icon: Gear },
 ] as const;
 
 export function Sidebar() {
@@ -18,12 +19,10 @@ export function Sidebar() {
   return (
     <nav
       aria-label="Navegación principal"
-      className="hidden lg:flex fixed inset-y-0 left-0 z-20 w-60 flex-col border-r border-violet-400/10 bg-umbra-abyss/40 backdrop-blur-xl"
+      className="hidden lg:flex fixed inset-y-0 left-0 z-20 w-60 flex-col border-r border-violet-400/10 bg-umbra-abyss/40 "
     >
       <div className="px-6 py-8">
-        <Link href="/dashboard" className="font-display text-3xl text-text-1">
-          Umbra
-        </Link>
+        <Brand href="/dashboard" />
       </div>
       <ul className="flex flex-col gap-1 px-3">
         {NAV_ITEMS.map(({ href, label, Icon }) => {
@@ -33,9 +32,9 @@ export function Sidebar() {
               <Link
                 href={href}
                 className={cn(
-                  'flex items-center gap-3 rounded-md px-3 py-2.5 font-heading text-sm transition-colors',
+                  'flex min-h-12 items-center gap-3 rounded-md px-3 py-3 font-heading text-sm transition-colors',
                   active
-                    ? 'bg-violet-400/10 text-violet-200 shadow-[inset_2px_0_0_rgb(180,102,255)]'
+                    ? 'bg-text-1 font-semibold text-white'
                     : 'text-text-2 hover:text-text-1 hover:bg-violet-400/5',
                 )}
                 aria-current={active ? 'page' : undefined}
@@ -48,7 +47,7 @@ export function Sidebar() {
         })}
       </ul>
       <div className="mt-auto px-6 py-6">
-        <p className="font-mono text-[10px] text-text-4">
+        <p className="font-body text-sm text-text-4">
           Umbra v0.1 · TFG Siglo 21
         </p>
       </div>

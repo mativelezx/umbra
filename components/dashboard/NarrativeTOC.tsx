@@ -56,7 +56,7 @@ export function NarrativeTOC() {
       aria-label="Secciones de la narrativa"
       className="sticky top-24 hidden h-fit flex-col gap-2 lg:flex"
     >
-      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-text-3">
+      <p className="font-body text-sm normal-case tracking-normal text-text-3">
         Tu narrativa
       </p>
       <ul className="flex flex-col gap-1 border-l border-violet-400/15">

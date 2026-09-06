@@ -67,10 +67,10 @@ export default function SettingsProfilePage() {
     <LayoutShell>
       <div className="flex flex-col gap-8 max-w-2xl">
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+          <p className="font-body text-sm normal-case tracking-normal text-text-3">
             Configuración
           </p>
-          <h1 className="mt-2 font-display text-4xl italic text-text-1 md:text-5xl">
+          <h1 className="mt-2 font-heading font-semibold text-4xl not-italic text-text-1 md:text-5xl">
             Tu perfil
           </h1>
         </div>
@@ -114,7 +114,7 @@ export default function SettingsProfilePage() {
                 onChange={(e) => setFullName(e.target.value)}
               />
               <Input type="email" label="Email" value={email} disabled />
-              <p className="font-mono text-[10px] text-text-4">
+              <p className="font-body text-sm text-text-4">
                 Para cambiar tu email contactanos por email.
               </p>
               {error && (

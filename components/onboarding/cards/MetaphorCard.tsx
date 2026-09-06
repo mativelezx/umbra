@@ -29,7 +29,7 @@ export function MetaphorCard({ question, onSubmit, submitting }: MetaphorCardPro
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-2">
-        <h2 className="font-display text-3xl italic text-text-1 md:text-4xl">
+        <h2 className="font-heading font-semibold text-3xl not-italic text-text-1 md:text-4xl">
           {question.prompt}
         </h2>
         <p className="font-body text-sm text-text-3">{question.instruction}</p>
@@ -47,7 +47,7 @@ export function MetaphorCard({ question, onSubmit, submitting }: MetaphorCardPro
               className={cn(
                 'group flex flex-col items-start gap-3 rounded-lg border p-4 text-left transition-all duration-200',
                 isSelected
-                  ? 'border-violet-400/80 bg-violet-400/10 shadow-[0_0_32px_rgba(180,102,255,0.22)]'
+                  ? 'border-violet-400/80 bg-violet-400/10 '
                   : 'border-violet-400/15 bg-umbra-shadow/40 hover:border-violet-400/40 hover:bg-violet-400/5',
               )}
             >
@@ -62,7 +62,7 @@ export function MetaphorCard({ question, onSubmit, submitting }: MetaphorCardPro
               />
               <h3
                 className={cn(
-                  'font-display text-lg italic',
+                  'font-heading font-semibold text-lg not-italic',
                   isSelected ? 'text-text-1' : 'text-text-2',
                 )}
               >

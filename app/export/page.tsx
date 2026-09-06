@@ -223,14 +223,11 @@ export default function ExportPage() {
     <LayoutShell>
       <div className="flex flex-col gap-8">
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
-            Descargar tu perfil
-          </p>
-          <h1 className="mt-2 font-display text-4xl italic text-text-1 md:text-5xl">
+          <h1 className="mt-2 font-heading font-semibold text-4xl not-italic text-text-1 md:text-5xl">
             Tu informe en PDF
           </h1>
           <p className="mt-3 max-w-2xl font-body text-text-2">
-            Un informe con tu perfil, tu narrativa y tu plan de desarrollo. Podés
+            Un informe con tu resultado, tu lectura y tus actividades. Podés
             guardarlo, imprimirlo, volver a él cuando quieras.
           </p>
         </div>
@@ -246,20 +243,20 @@ export default function ExportPage() {
         <div className="rounded-lg border border-violet-400/20 bg-white p-0 overflow-hidden">
           <div ref={pdfRef} className="pdf-root">
             <div className="pdf-section">
-              <h1 style={{ fontSize: '48px', margin: '0 0 8px', fontStyle: 'italic' }}>
+              <h1 style={{ fontSize: '48px', margin: '0 0 8px', fontStyle: 'normal' }}>
                 Umbra
               </h1>
-              <p style={{ fontSize: '14px', color: '#6b6490', margin: 0 }}>
+              <p style={{ fontSize: '14px', color: '#62625c', margin: 0 }}>
                 Tu perfil — {formatDateEs(new Date())}
                 {data.userName && ` · ${data.userName}`}
               </p>
             </div>
 
             <div className="pdf-section pdf-card">
-              <p style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px', margin: 0 }}>
-                Tu arquetipo dominante
+              <p style={{ fontSize: '11px', textTransform: 'none', letterSpacing: '0', margin: 0 }}>
+                Arquetipo · interpretación de IA inspirada en Jung
               </p>
-              <h2 style={{ fontSize: '36px', margin: '8px 0 4px', fontStyle: 'italic' }}>
+              <h2 style={{ fontSize: '36px', margin: '8px 0 4px', fontStyle: 'normal' }}>
                 {info.name}
               </h2>
               {data.profile.archetypeSecondary && (
@@ -268,13 +265,13 @@ export default function ExportPage() {
               <p style={{ marginTop: '12px', fontSize: '14px', lineHeight: '1.6' }}>
                 {info.description}
               </p>
+              <p style={{ fontSize: '13px', lineHeight: '1.6' }}>Figura simbólica para reflexionar. No es un diagnóstico ni una descripción definitiva de vos.</p>
             </div>
 
             <div className="pdf-section pdf-card">
-              <h3 style={{ margin: '0 0 16px' }}>Big Five — inferencia del módulo analítico propio</h3>
+              <h3 style={{ margin: '0 0 16px' }}>Big Five · estimación experimental de ML</h3>
               <p style={{ margin: '0 0 12px', fontSize: '12px', lineHeight: '1.5', color: '#555' }}>
-                Solo se reporta la cifra de las dimensiones medidas con la confianza
-                comprometida; las restantes se declaran con su estado, sin valor.
+                Escala de 0 a 100. Solo se reporta la cifra de dimensiones habilitadas por los umbrales del modelo; las restantes se declaran con su estado, sin valor. No son percentiles ni permiten comparaciones con la población. No hay precisión individual validada.
               </p>
               {(() => {
                 const dimStatus = extractPerDimensionStatus(data.profile.analysisRaw);
@@ -285,9 +282,9 @@ export default function ExportPage() {
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '13px' }}>
                         <span>{BIG_FIVE_LABELS[key]}</span>
                         {measured ? (
-                          <span style={{ fontFamily: 'monospace' }}>{data.profile.bigFive[key]}</span>
+                          <span style={{ fontVariantNumeric: 'tabular-nums' }}>{data.profile.bigFive[key]}</span>
                         ) : (
-                          <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#777' }}>
+                          <span style={{ fontSize: '11px', textTransform: 'none', letterSpacing: '0', color: '#777' }}>
                             {STATUS_LABEL[dimStatus[key]]}
                           </span>
                         )}
@@ -306,12 +303,13 @@ export default function ExportPage() {
             </div>
 
             <div className="pdf-section pdf-card">
-              <h3 style={{ margin: '0 0 16px' }}>Funciones cognitivas Jung — lectura interpretativa (heurística)</h3>
+              <h3 style={{ margin: '0 0 16px' }}>Funciones de Jung · interpretación de IA</h3>
+              <p style={{ fontSize: '13px', marginBottom: '16px' }}>Valores de la capa interpretativa, en escala de 0 a 100. No son medidas psicométricas ni probabilidades.</p>
               {(Object.keys(JUNG_LABELS) as Array<keyof JungFunctions>).map((key) => (
                 <div key={key} style={{ marginBottom: '10px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '12px' }}>
                     <span>{key} · {JUNG_LABELS[key]}</span>
-                    <span style={{ fontFamily: 'monospace' }}>{data.profile.jungFunctions[key]}</span>
+                    <span style={{ fontVariantNumeric: 'tabular-nums' }}>{data.profile.jungFunctions[key]}</span>
                   </div>
                   <div className="pdf-bar">
                     <div className="pdf-bar-fill" style={{ width: `${data.profile.jungFunctions[key]}%` }} />
@@ -322,9 +320,10 @@ export default function ExportPage() {
 
             {data.narrative && (
               <div className="pdf-section">
-                <h2 style={{ fontSize: '24px', margin: '0 0 16px', fontStyle: 'italic' }}>
-                  Tu narrativa
+                <h2 style={{ fontSize: '24px', margin: '0 0 16px', fontStyle: 'normal' }}>
+                  Tu lectura
                 </h2>
+                <p style={{ fontSize: '13px', marginBottom: '16px' }}>Texto generado por IA. Puede equivocarse; revisá qué te resulta útil.</p>
                 {data.narrative.split('\n\n').map((p, i) => (
                   <p key={i} style={{ fontSize: '14px', lineHeight: '1.7', marginBottom: '12px' }}>
                     {p}
@@ -335,19 +334,19 @@ export default function ExportPage() {
 
             {data.plan && (
               <div className="pdf-section">
-                <h2 style={{ fontSize: '24px', margin: '0 0 16px', fontStyle: 'italic' }}>
-                  Tu plan de desarrollo
+                <h2 style={{ fontSize: '24px', margin: '0 0 16px', fontStyle: 'normal' }}>
+                  Actividades de reflexión
                 </h2>
                 {data.plan.areas.map((area, i) => (
                   <div key={area.id} className="pdf-card">
                     <h3 style={{ margin: '0 0 8px' }}>
                       {i + 1}. {area.name}
                     </h3>
-                    <p style={{ fontSize: '12px', fontStyle: 'italic', margin: '0 0 12px' }}>
+                    <p style={{ fontSize: '12px', fontStyle: 'normal', margin: '0 0 12px' }}>
                       {area.rationale}
                     </p>
                     {area.actions.map((action) => (
-                      <div key={action.id} style={{ marginBottom: '12px', paddingLeft: '12px', borderLeft: '2px solid #d4b3ff' }}>
+                      <div key={action.id} style={{ marginBottom: '12px', paddingLeft: '12px', borderLeft: '1px solid #deded8' }}>
                         <div style={{ fontSize: '13px', fontWeight: 600 }}>{action.title}</div>
                         <div style={{ fontSize: '12px', marginTop: '4px' }}>{action.description}</div>
                         <ul style={{ fontSize: '12px', marginTop: '6px', paddingLeft: '16px' }}>
@@ -363,6 +362,7 @@ export default function ExportPage() {
             )}
 
             <div className="pdf-footer">
+              {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && <p>Ejemplo local con datos ficticios. No representa un análisis real.</p>}
               <p style={{ margin: 0 }}>
                 Generado por Umbra · TFG Ingeniería en Software, Universidad Siglo 21
               </p>

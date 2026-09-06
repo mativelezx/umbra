@@ -34,7 +34,7 @@ export function BigFiveDimensions({ bigFive, status }: BigFiveDimensionsProps) {
               {measured ? (
                 <span
                   data-testid={`bf-value-${key}`}
-                  className="font-mono text-sm tabular-nums text-violet-200"
+                  className="font-body text-sm tabular-nums text-violet-200"
                 >
                   {Math.round(value)}
                   <span className="text-text-4"> / 100</span>
@@ -42,7 +42,7 @@ export function BigFiveDimensions({ bigFive, status }: BigFiveDimensionsProps) {
               ) : (
                 <span
                   data-testid={`bf-status-${key}`}
-                  className="rounded-full border border-violet-400/15 bg-umbra-shadow/40 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-text-3"
+                  className="rounded-full border border-violet-400/15 bg-umbra-shadow/40 px-2 py-0.5 font-body text-sm normal-case tracking-normal text-text-3"
                 >
                   {STATUS_LABEL[status[key]]}
                 </span>
@@ -58,7 +58,7 @@ export function BigFiveDimensions({ bigFive, status }: BigFiveDimensionsProps) {
                 aria-valuemax={100}
               >
                 <div
-                  className="bf-bar-grow absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-violet-500 to-violet-200"
+                  className="bf-bar-grow absolute inset-y-0 left-0 rounded-full bg-violet-400"
                   style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
                 />
               </div>

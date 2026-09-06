@@ -47,27 +47,28 @@ export function InfoPopover({ title, body, example, className }: InfoPopoverProp
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          'inline-flex h-5 w-5 items-center justify-center rounded-full text-text-3 transition-colors duration-200',
+          'inline-flex h-11 w-11 items-center justify-center rounded-full text-text-3 transition-colors duration-200',
           'hover:bg-violet-400/10 hover:text-violet-200',
           open && 'bg-violet-400/15 text-violet-200',
         )}
       >
-        <Info size={12} weight="bold" />
+        <Info size={18} weight="regular" />
       </button>
 
       {open && (
         <div
           role="dialog"
-          className="absolute left-1/2 top-6 z-30 w-64 -translate-x-1/2 rounded-lg border border-violet-400/30 bg-umbra-void/95 p-4 shadow-[0_8px_40px_rgba(0,0,0,0.5)] backdrop-blur-sm md:w-72"
+          aria-label={title}
+          className="absolute right-0 top-12 z-30 w-64 max-w-[80vw] rounded-lg border border-violet-400/30 bg-white p-4 md:w-72"
         >
-          <p className="font-heading text-xs font-semibold uppercase tracking-wider text-violet-200">
+          <p className="font-heading text-xs font-semibold normal-case tracking-normal text-violet-200">
             {title}
           </p>
           <p className="mt-2 font-body text-xs leading-relaxed text-text-2">
             {body}
           </p>
           {example && (
-            <p className="mt-3 border-t border-violet-400/15 pt-2 font-body text-[11px] italic leading-relaxed text-text-3">
+            <p className="mt-3 border-t border-violet-400/15 pt-2 font-body text-sm not-italic leading-relaxed text-text-3">
               Ejemplo: {example}
             </p>
           )}

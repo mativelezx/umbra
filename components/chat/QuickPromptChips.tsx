@@ -72,7 +72,7 @@ export function QuickPromptChips({
 
   return (
     <div className="mb-6 flex flex-col gap-3">
-      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-text-3">
+      <p className="font-body text-sm normal-case tracking-normal text-text-3">
         Atajos para empezar
       </p>
       <div className="grid grid-cols-1 gap-2 md:grid-cols-2">

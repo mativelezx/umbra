@@ -5,15 +5,15 @@
 
 .pdf-root {
   background: #ffffff !important;
-  color: #1a1a2a !important;
+  color: #242424 !important;
   padding: 40px;
   max-width: 800px;
   margin: 0 auto;
-  font-family: 'Inter', -apple-system, Arial, sans-serif;
+  font-family: var(--font-inter), sans-serif;
 }
 
 .pdf-root * {
-  color: #1a1a2a !important;
+  color: #242424 !important;
   background-image: none !important;
   backdrop-filter: none !important;
   box-shadow: none !important;
@@ -22,19 +22,27 @@
 .pdf-root h1,
 .pdf-root h2,
 .pdf-root h3 {
-  font-family: 'Instrument Serif', Georgia, serif;
-  color: #3d1575 !important;
+  font-family: var(--font-inter), sans-serif;
+  color: #242424 !important;
 }
 
 .pdf-root .pdf-section {
-  page-break-inside: avoid;
-  break-inside: avoid;
   margin-bottom: 40px;
 }
 
+.pdf-root h2, .pdf-root h3 { break-after: avoid; }
+.pdf-root p, .pdf-root li { orphans: 3; widows: 3; }
+
+@media (max-width: 600px) { .pdf-root { padding: 24px 18px; } }
+@media print {
+  body { background: white; }
+  nav, header, button { display: none !important; }
+  .pdf-root { padding: 0; }
+}
+
 .pdf-root .pdf-card {
-  background: #f5f3fa !important;
-  border: 1px solid #d4b3ff !important;
+  background: #f7f7f4 !important;
+  border: 1px solid #deded8 !important;
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -42,20 +50,20 @@
 
 .pdf-root .pdf-bar {
   height: 8px;
-  background: #e8d5ff;
+  background: #e6e6e0;
   border-radius: 4px;
   overflow: hidden;
 }
 
 .pdf-root .pdf-bar-fill {
   height: 100%;
-  background: #7b2fcc;
+  background: #4b4b47;
 }
 
 .pdf-root .pdf-footer {
   margin-top: 60px;
   padding-top: 20px;
-  border-top: 1px solid #d4b3ff;
+  border-top: 1px solid #deded8;
   font-size: 11px;
-  color: #6b6490 !important;
+  color: #62625c !important;
 }

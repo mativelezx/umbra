@@ -33,22 +33,22 @@ export function BigFiveRadar({ bigFive }: BigFiveRadarProps) {
     <div className="relative h-[340px] w-full">
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart data={data} margin={{ top: 20, right: 30, bottom: 20, left: 30 }}>
-          <PolarGrid stroke="rgba(180,102,255,0.18)" strokeDasharray="2 4" />
+          <PolarGrid stroke="rgba(75,75,71,0.18)" strokeDasharray="2 4" />
           <PolarAngleAxis
             dataKey="subject"
-            tick={{ fill: '#A8A0C8', fontSize: 11, fontFamily: 'Space Grotesk' }}
+            tick={{ fill: '#53534f', fontSize: 11, fontFamily: 'Inter' }}
           />
           <PolarRadiusAxis
             angle={90}
             domain={[0, 100]}
-            tick={{ fill: '#6B6490', fontSize: 9, fontFamily: 'JetBrains Mono' }}
-            stroke="rgba(107,100,144,0.3)"
+            tick={{ fill: '#62625c', fontSize: 9, fontFamily: 'Inter' }}
+            stroke="rgba(98,98,92,0.3)"
           />
           <Radar
             name="tu perfil"
             dataKey="value"
-            stroke="#B466FF"
-            fill="#B466FF"
+            stroke="#454543"
+            fill="#454543"
             fillOpacity={0.2}
             strokeWidth={2}
           />

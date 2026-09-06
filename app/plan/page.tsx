@@ -36,6 +36,7 @@ export default function PlanPage() {
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [profileId, setProfileId] = useState<string | null>(null);
+  const isDemo = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
   useEffect(() => {
     async function init() {
@@ -94,7 +95,7 @@ export default function PlanPage() {
   }, []);
 
   async function generatePlan(regenerate: boolean) {
-    if (!profileId) return;
+    if (!profileId || profileId.startsWith('demo-')) return;
     setGenerating(true);
     setError(null);
     try {
@@ -148,15 +149,13 @@ export default function PlanPage() {
     <LayoutShell>
       <div className="flex flex-col gap-8">
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
-            Tu plan de desarrollo
-          </p>
-          <h1 className="mt-2 text-balance font-display text-4xl italic text-text-1 md:text-5xl">
-            Caminos para explorar
+          <h1 className="mt-2 text-balance font-heading font-semibold text-4xl not-italic text-text-1 md:text-5xl">
+            Actividades
           </h1>
           <p className="mt-3 max-w-2xl text-pretty font-body text-lg leading-relaxed text-text-2">
-            Tres áreas de crecimiento, pensadas a partir de tu perfil. Pequeños pasos chequeables. Ningún plazo te apura — el ritmo lo ponés vos. Tildá los pasos a medida que los hacés; se guardan solos.
+            Elegí una propuesta y empezá por un paso pequeño. Son sugerencias de reflexión generadas por IA a partir de tu perfil; el ritmo lo ponés vos.
           </p>
+          <p className="mt-4 text-sm text-text-3">{isDemo ? 'En este ejemplo, las casillas cambian solo en esta pantalla. No se guarda tu progreso.' : 'Marcá los pasos que completaste para actualizar tu progreso.'}</p>
         </div>
 
         {loading && (
@@ -194,14 +193,11 @@ export default function PlanPage() {
         {areas && (
           <>
             <div className="flex flex-col gap-6">
-              {areas.map((area, index) => (
-                <article key={area.id} className="card-glow rounded-lg p-6 md:p-8">
+              {areas.map((area) => (
+                <article key={area.id} className="border-t border-violet-400/20 py-8">
                   <div className="flex items-start gap-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-violet-400/15 font-display text-2xl text-violet-200">
-                      {index + 1}
-                    </div>
                     <div className="flex-1">
-                      <h2 className="font-display text-2xl italic text-text-1 md:text-3xl">
+                      <h2 className="font-heading font-semibold text-2xl not-italic text-text-1 md:text-3xl">
                         {area.name}
                       </h2>
                       <p className="mt-2 font-body text-sm text-text-2">
@@ -214,7 +210,7 @@ export default function PlanPage() {
                     {area.actions.map((action) => (
                       <div
                         key={action.id}
-                        className="rounded-md border border-violet-400/10 bg-umbra-shadow/30 p-5"
+                        className="rounded-lg bg-white p-5 md:p-6"
                       >
                         <h3 className="font-heading text-sm font-semibold text-text-1">
                           {action.title}
@@ -227,7 +223,7 @@ export default function PlanPage() {
                             <li key={goal.id}>
                               <label
                                 className={cn(
-                                  'flex w-full cursor-pointer items-start gap-3 rounded-md px-3 py-2 text-left transition-colors',
+                                  'flex min-h-11 w-full cursor-pointer items-start gap-3 rounded-md px-3 py-3 text-left transition-colors',
                                   goal.completed
                                     ? 'bg-accent-emerald/5 text-text-2 hover:bg-accent-emerald/10'
                                     : 'hover:bg-violet-400/5',
@@ -271,7 +267,7 @@ export default function PlanPage() {
               ))}
             </div>
 
-            <div className="flex justify-end">
+            {!isDemo && <div className="flex justify-end">
               <Button
                 variant="ghost"
                 onClick={() => generatePlan(true)}
@@ -280,7 +276,7 @@ export default function PlanPage() {
                 <ArrowClockwise size={14} />
                 Regenerar plan
               </Button>
-            </div>
+            </div>}
           </>
         )}
       </div>

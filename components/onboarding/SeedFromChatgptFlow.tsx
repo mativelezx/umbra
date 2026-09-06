@@ -55,6 +55,10 @@ export function SeedFromChatgptFlow({
 
   async function handleSeed() {
     setError(null);
+    if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+      onSeeded('demo-session');
+      return;
+    }
     setStep('seeding');
 
     try {
@@ -93,10 +97,7 @@ export function SeedFromChatgptFlow({
       <BackButton onClick={onBack} disabled={step === 'seeding'} />
 
       <header className="flex flex-col gap-2">
-        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">
-          Traelo desde ChatGPT
-        </p>
-        <h1 className="font-display text-4xl italic text-text-1 md:text-5xl">
+        <h1 className="font-heading font-semibold text-4xl not-italic text-text-1 md:text-5xl">
           {step === 'copy' && 'Copiá este prompt'}
           {step === 'paste' && 'Pegá la respuesta acá'}
           {step === 'seeding' && 'Leyendo el retrato...'}
@@ -114,6 +115,7 @@ export function SeedFromChatgptFlow({
           </p>
         )}
       </header>
+      {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && <p className="rounded-md bg-umbra-shadow/50 p-4 text-sm text-text-2">Ejemplo local: tu texto no se envía ni se analiza. Continuar abre preguntas preparadas con datos ficticios.</p>}
 
       {error && <ErrorBanner error={error} />}
 
@@ -147,7 +149,7 @@ function CopyStep({
     <>
       <GlassCard className="flex flex-col gap-4 p-6">
         <div className="flex items-center justify-between">
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+          <p className="font-body text-sm normal-case tracking-normal text-text-3">
             Prompt para ChatGPT
           </p>
           <Button
@@ -170,33 +172,34 @@ function CopyStep({
           </Button>
         </div>
         <textarea
+          aria-label="Prompt para copiar en ChatGPT"
           readOnly
           value={CHATGPT_SEED_PROMPT}
           rows={14}
-          className="w-full resize-none rounded-md border border-violet-400/15 bg-umbra-shadow/40 p-4 font-mono text-[11px] leading-relaxed text-text-2 focus:outline-none focus:ring-1 focus:ring-violet-400/40"
+          className="w-full resize-none rounded-md border border-violet-400/15 bg-umbra-shadow/40 p-4 font-body text-sm leading-relaxed text-text-2 focus:outline-none focus:ring-1 focus:ring-violet-400/40"
         />
       </GlassCard>
 
       <Card className="flex flex-col gap-3 p-5">
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+        <p className="font-body text-sm normal-case tracking-normal text-text-3">
           Pasos
         </p>
         <ol className="flex flex-col gap-2 font-body text-sm text-text-2">
           <li>
-            <span className="mr-2 font-mono text-text-3">1.</span>
+            <span className="mr-2 font-body text-text-3">1.</span>
             Copiá el prompt y pegalo en una conversación nueva de ChatGPT.
           </li>
           <li>
-            <span className="mr-2 font-mono text-text-3">2.</span>
+            <span className="mr-2 font-body text-text-3">2.</span>
             Funciona mejor si venís charlando con ChatGPT hace tiempo o tenés
             memoria persistente activada.
           </li>
           <li>
-            <span className="mr-2 font-mono text-text-3">3.</span>
+            <span className="mr-2 font-body text-text-3">3.</span>
             Esperá a que termine de escribir toda la respuesta (prosa + JSON).
           </li>
           <li>
-            <span className="mr-2 font-mono text-text-3">4.</span>
+            <span className="mr-2 font-body text-text-3">4.</span>
             Volvé acá, tocá <em className="not-italic text-text-1">Pegué la respuesta</em>, y pegala
             completa.
           </li>
@@ -246,15 +249,16 @@ function PasteStep({
     <>
       <GlassCard className="flex flex-col gap-4 p-6">
         <Textarea
+          label="Respuesta de ChatGPT"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Pegá acá la respuesta completa de ChatGPT..."
           rows={16}
           maxLength={MAX_PASTE_LENGTH}
           aria-label="Respuesta de ChatGPT"
-          className="min-h-[320px] font-mono text-xs leading-relaxed"
+          className="min-h-[320px] font-body text-xs leading-relaxed"
         />
-        <p className={`font-mono text-[11px] ${helperTone}`}>{helperText}</p>
+        <p className={`font-body text-sm ${helperTone}`}>{helperText}</p>
       </GlassCard>
 
       <div className="flex justify-end">
@@ -265,7 +269,7 @@ function PasteStep({
           disabled={!canAnalyze}
           type="button"
         >
-          Continuar con verificación
+          {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' ? 'Continuar con el ejemplo' : 'Continuar con verificación'}
           <ArrowRight size={18} weight="bold" />
         </Button>
       </div>
@@ -277,10 +281,10 @@ function SeedingReveal() {
   return (
     <div className="flex min-h-[320px] flex-col items-center justify-center gap-6">
       <ChatCircleText size={40} weight="duotone" className="text-violet-300" />
-      <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">
+      <p className="font-body text-sm normal-case tracking-normal text-text-3">
         Leyendo el retrato
       </p>
-      <h2 className="max-w-xl text-center font-display text-3xl italic text-text-1 md:text-4xl">
+      <h2 className="max-w-xl text-center font-heading font-semibold text-3xl not-italic text-text-1 md:text-4xl">
         Extrayendo los ejes y preparando 2 o 3 preguntas de verificación...
       </h2>
       <div className="flex items-center gap-1.5">
@@ -321,7 +325,7 @@ function BackButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="inline-flex w-fit items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-text-3 transition-colors hover:text-violet-300 disabled:opacity-40"
+      className="inline-flex w-fit items-center gap-2 font-body text-sm normal-case tracking-normal text-text-3 transition-colors hover:text-violet-300 disabled:opacity-40"
     >
       <ArrowLeft size={14} weight="bold" />
       Volver

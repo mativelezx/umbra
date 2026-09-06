@@ -78,7 +78,7 @@ test.describe('QA screenshots (visual evidence)', () => {
 
     // 1. Landing
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /Hablás de vos/i }))
+    await expect(page.getByRole('heading', { name: /Un espacio para mirarte con atención/i }))
       .toBeVisible();
     await shot(page, '01-landing');
 
@@ -101,15 +101,15 @@ test.describe('QA screenshots (visual evidence)', () => {
 
     // 4. Mode selector → pick dynamic flow
     await page.waitForURL('**/onboarding', { timeout: 15_000 });
-    await expect(page.getByRole('heading', { name: /Por dónde te gusta entrar/i }))
+    await expect(page.getByRole('heading', { name: /Cómo querés empezar/i }))
       .toBeVisible({ timeout: 15_000 });
     await shot(page, '03b-mode-selector');
     await page
-      .getByRole('button', { name: /Opción A/i })
+      .getByRole('button', { name: /Responder preguntas/i })
       .click();
 
     // 5. Dynamic flow — screenshot each turn
-    await expect(page.getByRole('heading', { name: /^Conversemos$/i }))
+    await expect(page.getByRole('heading', { name: /^Un momento para responder$/i }))
       .toBeVisible({ timeout: 15_000 });
     await shot(page, '04-onboarding-start');
 
@@ -137,7 +137,7 @@ test.describe('QA screenshots (visual evidence)', () => {
     // 6. Dashboard (narrative streams)
     await page.waitForURL('**/dashboard', { timeout: 30_000 });
     await expect(
-      page.getByRole('heading', { name: /Tu perfil interior/i }),
+      page.getByRole('heading', { name: /Mi resultado/i }),
     ).toBeVisible({ timeout: 15_000 });
     await page.waitForTimeout(10_000); // let narrative start streaming
     await shot(page, '08-dashboard');
@@ -145,7 +145,7 @@ test.describe('QA screenshots (visual evidence)', () => {
     // 7. Plan
     await page.goto('/plan');
     await expect(
-      page.getByRole('heading', { name: /Caminos para explorar/i }),
+      page.getByRole('heading', { name: /Actividades/i }),
     ).toBeVisible({ timeout: 15_000 });
     await shot(page, '09-plan-empty');
     await page.getByRole('button', { name: /Generar mi plan/i }).click();

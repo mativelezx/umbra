@@ -51,7 +51,7 @@ export function DimensionBar({
         </div>
         <span
           className={cn(
-            'font-mono text-xs tabular-nums',
+            'font-body text-xs tabular-nums',
             emphasized ? 'text-violet-300' : 'text-text-3',
           )}
         >
@@ -60,12 +60,7 @@ export function DimensionBar({
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-umbra-shadow/60">
         <div
-          className={cn(
-            'h-full rounded-full transition-all duration-700 ease-out',
-            emphasized
-              ? 'bg-gradient-to-r from-violet-500 to-violet-300 shadow-[0_0_16px_rgba(180,102,255,0.5)]'
-              : 'bg-gradient-to-r from-violet-600 to-violet-400',
-          )}
+          className="h-full rounded-full bg-violet-400 transition-all duration-200 ease-out"
           style={{ width: `${percent}%` }}
           role="progressbar"
           aria-valuenow={value}

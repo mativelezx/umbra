@@ -5,7 +5,7 @@ export function CrisisBanner() {
     <div
       role="complementary"
       aria-label="Aviso de seguridad permanente"
-      className="sticky top-0 z-10 flex items-start gap-3 border-b border-accent-amber/30 bg-amber-400/5 px-4 py-3 backdrop-blur-lg md:items-center"
+      className="sticky top-0 z-10 flex items-start gap-3 border-b border-accent-amber/30 bg-amber-400/5 px-4 py-3  md:items-center"
     >
       <Warning size={18} weight="regular" className="mt-0.5 shrink-0 text-accent-amber md:mt-0" />
       <p className="font-body text-xs leading-relaxed text-text-2">

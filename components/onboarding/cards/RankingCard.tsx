@@ -39,7 +39,7 @@ export function RankingCard({ question, onSubmit, submitting }: RankingCardProps
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-2">
-        <h2 className="font-display text-3xl italic text-text-1 md:text-4xl">
+        <h2 className="font-heading font-semibold text-3xl not-italic text-text-1 md:text-4xl">
           {question.prompt}
         </h2>
         <p className="font-body text-sm text-text-3">{question.instruction}</p>
@@ -48,7 +48,7 @@ export function RankingCard({ question, onSubmit, submitting }: RankingCardProps
       {ordered.length > 0 && (
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">
+            <p className="font-body text-sm normal-case tracking-normal text-text-3">
               Tu orden
             </p>
             <button
@@ -67,7 +67,7 @@ export function RankingCard({ question, onSubmit, submitting }: RankingCardProps
                   key={id}
                   className="flex items-center gap-3 rounded-lg border border-violet-400/40 bg-violet-400/10 px-4 py-3"
                 >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-violet-400/20 font-mono text-xs text-violet-200">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-violet-400/20 font-body text-xs text-violet-200">
                     {idx + 1}
                   </span>
                   <span className="font-body text-sm text-text-1">{item?.label}</span>
@@ -80,7 +80,7 @@ export function RankingCard({ question, onSubmit, submitting }: RankingCardProps
 
       {remaining.length > 0 && (
         <div className="flex flex-col gap-2">
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">
+          <p className="font-body text-sm normal-case tracking-normal text-text-3">
             {ordered.length === 0 ? 'Tocá en orden' : 'Disponibles'}
           </p>
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">

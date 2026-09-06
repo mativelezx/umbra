@@ -55,11 +55,11 @@ function LoginContent() {
         <Link
           href="/"
           prefetch={false}
-          className="font-display text-3xl text-text-1 transition-colors duration-150 hover:text-violet-300"
+          className="font-heading font-semibold text-3xl text-text-1 transition-colors duration-150 hover:text-violet-300"
         >
           Umbra
         </Link>
-        <h1 className="mt-6 text-balance font-display text-4xl italic text-text-1">
+        <h1 className="mt-6 text-balance font-heading font-semibold text-4xl not-italic text-text-1">
           {t('auth.login_title')}
         </h1>
         <p className="mt-2 text-pretty font-body text-sm text-text-3">

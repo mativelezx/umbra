@@ -1,228 +1,37 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    color-scheme: dark;
-  }
-
-  html,
-  body {
-    background-color: #050510;
-    color: #f0ecff;
-    font-family: 'Inter', system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    min-height: 100%;
-  }
-
-  body {
-    position: relative;
-    overflow-x: hidden;
-  }
-
-  /* Noise overlay — aplicado a body::before */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.03;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1' /%3E%3C/svg%3E");
-  }
+  :root { color-scheme: light; }
+  html, body { min-height: 100%; background: #f7f7f4; color: #242424; -webkit-font-smoothing: antialiased; }
+  body { font-family: var(--font-inter), sans-serif; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+  button, input, textarea, select { font: inherit; }
+  input, textarea { caret-color: #242424; }
+  ::selection { background: #deded8; color: #171717; }
+  :focus-visible { outline: 2px solid #242424; outline-offset: 4px; }
+  a { text-underline-offset: 4px; }
+  * { scrollbar-color: #aaa9a3 #f7f7f4; scrollbar-width: thin; }
 }
 
 @layer components {
-  /* Glass effect */
-  .glass {
-    background: rgba(180, 102, 255, 0.04);
-    border: 1px solid rgba(180, 102, 255, 0.1);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-
-  .glass:hover {
-    background: rgba(180, 102, 255, 0.08);
-    border-color: rgba(180, 102, 255, 0.2);
-  }
-
-  /* Glow card */
-  .card-glow {
-    background: linear-gradient(
-      135deg,
-      rgba(180, 102, 255, 0.06),
-      rgba(99, 102, 241, 0.03)
-    );
-    border: 1px solid rgba(180, 102, 255, 0.18);
-    box-shadow: 0 0 60px rgba(180, 102, 255, 0.04);
-  }
-
-  /* Gradient orb — elemento posicionado absoluto */
-  .orb {
-    position: absolute;
-    border-radius: 9999px;
-    filter: blur(80px);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .orb-violet {
-    background: radial-gradient(
-      circle,
-      rgba(180, 102, 255, 0.12),
-      transparent 65%
-    );
-  }
-
-  .orb-indigo {
-    background: radial-gradient(
-      circle,
-      rgba(99, 102, 241, 0.1),
-      transparent 65%
-    );
-  }
-
-  /* Dynamic onboarding — card entrance */
-  .onboarding-card-enter {
-    animation: onboarding-card-enter 380ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  @keyframes onboarding-card-enter {
-    from {
-      opacity: 0;
-      transform: translateY(12px) scale(0.98);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
-
-  /* Dynamic onboarding — thinking dots */
-  .thinking-dot {
-    animation: thinking-pulse 1.1s ease-in-out infinite;
-  }
-  .thinking-dot:nth-child(2) {
-    animation-delay: 0.15s;
-  }
-  .thinking-dot:nth-child(3) {
-    animation-delay: 0.3s;
-  }
-
-  @keyframes thinking-pulse {
-    0%,
-    100% {
-      opacity: 0.3;
-      transform: translateY(0);
-    }
-    50% {
-      opacity: 1;
-      transform: translateY(-2px);
-    }
-  }
-
-  /* Dynamic onboarding — insight ping slide-in */
-  .insight-ping-enter {
-    animation: insight-ping-enter 420ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  @keyframes insight-ping-enter {
-    from {
-      opacity: 0;
-      transform: translateX(12px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  /* Dynamic onboarding — skeleton shimmer */
-  .skeleton-line {
-    background: linear-gradient(
-      90deg,
-      rgba(180, 102, 255, 0.06) 0%,
-      rgba(180, 102, 255, 0.12) 50%,
-      rgba(180, 102, 255, 0.06) 100%
-    );
-    background-size: 200% 100%;
-    animation: skeleton-shimmer 1.6s ease-in-out infinite;
-  }
-
-  @keyframes skeleton-shimmer {
-    0% {
-      background-position: 200% 0;
-    }
-    100% {
-      background-position: -200% 0;
-    }
-  }
-
-  /* Entrada escalonada de secciones del tablero */
-  .dash-enter {
-    /* backwards: el fill cubre el delay inicial; al terminar, el elemento
-       vuelve a sus estilos naturales (sin transform residual, que
-       convertiría al contenedor en containing block de position: fixed
-       y rompería los modales hijos). */
-    animation: dash-enter 520ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
-  }
-  .dash-enter-1 { animation-delay: 40ms; }
-  .dash-enter-2 { animation-delay: 140ms; }
-  .dash-enter-3 { animation-delay: 240ms; }
-  .dash-enter-4 { animation-delay: 340ms; }
-
-  @keyframes dash-enter {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* Barras de dimensiones: crecen desde cero al montar */
-  .bf-bar-grow {
-    transform-origin: left center;
-    animation: bf-bar-grow 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
-  @keyframes bf-bar-grow {
-    from {
-      transform: scaleX(0);
-    }
-    to {
-      transform: scaleX(1);
-    }
-  }
-
-  /* Elevación sutil de tarjetas interactivas */
-  .card-lift {
-    transition:
-      border-color 220ms ease-out,
-      box-shadow 220ms ease-out,
-      transform 220ms ease-out;
-  }
-  .card-lift:hover {
-    border-color: rgba(180, 102, 255, 0.28);
-    box-shadow: 0 6px 28px -12px rgba(180, 102, 255, 0.25);
-    transform: translateY(-2px);
-  }
+  /* Compatibility names for existing consumers; all now use the light surface contract. */
+  .glass, .card-glow { background: #fff; border: 1px solid #deded8; }
+  .card-lift { transition: border-color 160ms ease-out; }
+  .card-lift:hover { border-color: #aaa9a3; }
+  .skeleton-line { background: #e6e6e0; }
+  .thinking-dot { animation: thinking-pulse 1.2s ease-in-out infinite; }
+  .thinking-dot:nth-child(2) { animation-delay: .15s; }
+  .thinking-dot:nth-child(3) { animation-delay: .3s; }
+  .onboarding-card-enter { animation: question-enter 200ms cubic-bezier(.22, 1, .36, 1); }
+  @keyframes question-enter { from { transform: translateY(6px); } to { transform: translateY(0); } }
+  @keyframes thinking-pulse { 50% { opacity: .4; } }
+  .primary-link { @apply inline-flex min-h-12 items-center justify-center gap-3 rounded-md bg-text-1 px-6 py-3 font-medium text-white transition-colors hover:bg-neutral-700; }
+  .secondary-link { @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-violet-400/30 px-5 py-3 font-medium text-text-1 transition-colors hover:bg-umbra-shadow; }
 }
 
-/* Accesibilidad: sin movimiento para quien lo pide (WCAG 2.3.3 / Positive Computing) */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }

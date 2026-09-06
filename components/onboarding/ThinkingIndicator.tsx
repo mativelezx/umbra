@@ -6,7 +6,7 @@ export function ThinkingIndicator() {
   return (
     <GlassCard className="onboarding-card-enter p-6 md:p-8">
       <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">
+        <div className="flex items-center gap-2 font-body text-sm normal-case tracking-normal text-text-3">
           <span>Pensando</span>
           <span className="flex items-center gap-1">
             <span className="thinking-dot h-1.5 w-1.5 rounded-full bg-violet-300" />

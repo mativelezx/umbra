@@ -1,253 +1,62 @@
 import Link from 'next/link';
-import { ChatCircleDots, Sparkle, ArrowRight, Shield } from '@phosphor-icons/react/dist/ssr';
-import { Button } from '@/components/ui/Button';
-import { LandingReveal, LandingItem } from '@/components/landing/LandingReveal';
+import { ArrowRight } from '@phosphor-icons/react/dist/ssr';
+import { Brand } from '@/components/layout/Brand';
 import { t } from '@/lib/i18n/dict';
-
-const HOW_STEPS = [
-  {
-    n: '01',
-    labelKey: 'landing.how_step_1_label',
-    titleKey: 'landing.how_step_1_title',
-    descKey: 'landing.how_step_1_desc',
-  },
-  {
-    n: '02',
-    labelKey: 'landing.how_step_2_label',
-    titleKey: 'landing.how_step_2_title',
-    descKey: 'landing.how_step_2_desc',
-  },
-  {
-    n: '03',
-    labelKey: 'landing.how_step_3_label',
-    titleKey: 'landing.how_step_3_title',
-    descKey: 'landing.how_step_3_desc',
-  },
-] as const;
-
-const PILLARS = [
-  { titleKey: 'landing.pillar_rigor_title', descKey: 'landing.pillar_rigor_desc' },
-  { titleKey: 'landing.pillar_jung_title', descKey: 'landing.pillar_jung_desc' },
-  { titleKey: 'landing.pillar_pc_title', descKey: 'landing.pillar_pc_desc' },
-  { titleKey: 'landing.pillar_ar_title', descKey: 'landing.pillar_ar_desc' },
-] as const;
-
-const TRUST = [
-  { Icon: Shield, key: 'landing.trust_law' },
-  { Icon: Shield, key: 'landing.trust_export' },
-  { Icon: Shield, key: 'landing.trust_delete' },
-  { Icon: Shield, key: 'landing.trust_research' },
-] as const;
 
 export default function LandingPage() {
   return (
-    <main className="relative">
-      {/* HERO */}
-      <section className="relative mx-auto flex min-h-[88vh] max-w-6xl flex-col items-start justify-center px-6 py-24 md:px-10">
-        <LandingReveal>
-          <LandingItem>
-            <div className="inline-flex items-center gap-2 rounded-full border border-violet-400/20 bg-violet-400/5 px-4 py-1.5 backdrop-blur-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-violet-400 shadow-[0_0_12px_rgba(180,102,255,0.8)]" />
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-2">
-                {t('landing.eyebrow')}
-              </span>
-            </div>
-          </LandingItem>
-
-          <LandingItem>
-            <h1 className="mt-8 text-balance font-display text-5xl leading-[1.05] text-text-1 md:text-7xl lg:text-[7.5rem]">
-              {t('landing.hero_title_1')}
-              <br />
-              <span className="italic text-violet-300">{t('landing.hero_title_2')}</span>
-            </h1>
-          </LandingItem>
-
-          <LandingItem>
-            <p className="mt-8 max-w-2xl text-pretty font-body text-xl leading-relaxed text-text-2 md:text-2xl">
-              {t('landing.hero_subtitle')}
-            </p>
-          </LandingItem>
-
-          <LandingItem>
-            <div className="mt-12 flex flex-wrap items-center gap-3">
-              <Link href="/register">
-                <Button variant="primary" size="lg" className="pl-7 pr-6">
-                  <span>{t('landing.cta_start')}</span>
-                  <ArrowRight size={18} weight="bold" />
-                </Button>
-              </Link>
-              <Link href="#como">
-                <Button variant="ghost" size="lg">
-                  {t('landing.cta_learn')}
-                </Button>
-              </Link>
-            </div>
-          </LandingItem>
-
-          <LandingItem>
-            <p className="mt-20 max-w-xl text-pretty font-body text-sm text-text-3">
-              {t('landing.footer_not_therapy')}
-            </p>
-          </LandingItem>
-        </LandingReveal>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section id="como" className="relative mx-auto max-w-6xl px-6 py-24 md:px-10">
-        <LandingReveal>
-          <LandingItem>
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">
-              {t('landing.how_eyebrow')}
-            </p>
-          </LandingItem>
-          <LandingItem>
-            <h2 className="mt-4 max-w-3xl text-balance font-display text-4xl italic text-text-1 md:text-5xl">
-              {t('landing.how_title')}
-            </h2>
-          </LandingItem>
-        </LandingReveal>
-
-        <ol className="mt-16 grid gap-6 md:grid-cols-3">
-          {HOW_STEPS.map((step, i) => (
-            <LandingReveal key={step.n} delay={0.15 + i * 0.12} as="li">
-              <LandingItem>
-                <article className="group relative h-full rounded-2xl border border-violet-400/10 bg-umbra-fog/40 p-7 backdrop-blur-sm transition-[box-shadow,border-color] duration-200 ease-out hover:border-violet-400/25 hover:shadow-[0_0_0_1px_rgba(180,102,255,0.15),0_8px_32px_-12px_rgba(180,102,255,0.25)]">
-                  <div className="flex items-start justify-between">
-                    <span className="font-mono text-xs tracking-[0.2em] text-violet-300/70 tabular-nums">
-                      {step.n}
-                    </span>
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
-                      {t(step.labelKey)}
-                    </span>
-                  </div>
-                  <h3 className="mt-6 text-pretty font-display text-3xl text-text-1">{t(step.titleKey)}</h3>
-                  <p className="mt-3 text-pretty font-body text-base leading-relaxed text-text-2">
-                    {t(step.descKey)}
-                  </p>
-                </article>
-              </LandingItem>
-            </LandingReveal>
-          ))}
-        </ol>
-      </section>
-
-      {/* PILLARS */}
-      <section id="pilares" className="relative mx-auto max-w-6xl px-6 py-24 md:px-10">
-        <LandingReveal>
-          <LandingItem>
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">
-              {t('landing.pillars_eyebrow')}
-            </p>
-          </LandingItem>
-          <LandingItem>
-            <h2 className="mt-4 max-w-2xl text-balance font-display text-4xl italic text-text-1 md:text-5xl">
-              {t('landing.pillars_title')}
-            </h2>
-          </LandingItem>
-        </LandingReveal>
-
-        <div className="mt-16 grid gap-6 md:grid-cols-2">
-          {PILLARS.map(({ titleKey, descKey }, i) => (
-            <LandingReveal key={titleKey} delay={0.1 + i * 0.1} as="div">
-              <LandingItem>
-                <article
-                  className={`relative h-full rounded-2xl border border-violet-400/10 bg-umbra-fog/30 p-8 backdrop-blur-sm transition-[box-shadow,border-color] duration-200 ease-out hover:border-violet-400/25 hover:shadow-[0_0_0_1px_rgba(180,102,255,0.15),0_8px_32px_-12px_rgba(180,102,255,0.25)] ${
-                    i % 2 === 0 ? 'md:translate-y-3' : ''
-                  }`}
-                >
-                  <Sparkle size={26} weight="duotone" className="text-violet-300" />
-                  <h3 className="mt-5 text-pretty font-display text-3xl text-text-1">{t(titleKey)}</h3>
-                  <p className="mt-3 text-pretty font-body text-base leading-relaxed text-text-2">
-                    {t(descKey)}
-                  </p>
-                </article>
-              </LandingItem>
-            </LandingReveal>
-          ))}
-        </div>
-      </section>
-
-      {/* TRUST / DATA */}
-      <section className="relative mx-auto max-w-6xl px-6 py-24 md:px-10">
-        <LandingReveal>
-          <LandingItem>
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">
-              {t('landing.trust_eyebrow')}
-            </p>
-          </LandingItem>
-          <LandingItem>
-            <h2 className="mt-4 max-w-2xl text-balance font-display text-4xl italic text-text-1 md:text-5xl">
-              {t('landing.trust_title')}
-            </h2>
-          </LandingItem>
-        </LandingReveal>
-
-        <ul className="mt-12 grid gap-3 md:grid-cols-2">
-          {TRUST.map((row, i) => (
-            <LandingReveal key={row.key} delay={0.05 + i * 0.06} as="li">
-              <LandingItem>
-                <div className="flex items-start gap-3 rounded-xl border border-violet-400/8 bg-umbra-fog/20 p-5 transition-[border-color] duration-200 hover:border-violet-400/20">
-                  <ChatCircleDots size={20} weight="duotone" className="mt-0.5 shrink-0 text-violet-300" />
-                  <p className="text-pretty font-body text-base leading-relaxed text-text-2">
-                    {t(row.key)}
-                  </p>
-                </div>
-              </LandingItem>
-            </LandingReveal>
-          ))}
-        </ul>
-      </section>
-
-      {/* CLOSING */}
-      <section className="relative mx-auto max-w-4xl px-6 py-24 text-center md:px-10">
-        <LandingReveal>
-          <LandingItem>
-            <h2 className="text-balance font-display text-4xl italic text-text-1 md:text-6xl">
-              {t('landing.closing_title')}
-            </h2>
-          </LandingItem>
-          <LandingItem>
-            <p className="mx-auto mt-6 max-w-xl text-pretty font-body text-lg text-text-2 md:text-xl">
-              {t('landing.closing_desc')}
-            </p>
-          </LandingItem>
-          <LandingItem>
-            <div className="mt-10">
-              <Link href="/register">
-                <Button variant="primary" size="lg" className="pl-7 pr-6">
-                  <span>{t('landing.cta_start')}</span>
-                  <ArrowRight size={18} weight="bold" />
-                </Button>
-              </Link>
-            </div>
-          </LandingItem>
-        </LandingReveal>
-      </section>
-
-      {/* FOOTER */}
-      <footer className="relative border-t border-violet-400/10 px-6 py-12 md:px-10">
-        <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-          <div>
-            <div className="font-display text-2xl text-text-1">Umbra</div>
-            <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-text-4">
-              {t('landing.footer_credits')}
-            </p>
+    <main>
+      <header className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-7 md:px-10">
+        <Brand />
+        <Link href="/login" className="secondary-link">Ingresar</Link>
+      </header>
+      <section className="mx-auto grid max-w-6xl items-center gap-12 px-6 pb-20 pt-12 md:px-10 md:pb-28 md:pt-20 lg:grid-cols-[1.2fr_0.8fr] lg:gap-20">
+        <div>
+          <h1 className="max-w-2xl text-5xl font-semibold leading-[1.08] tracking-normal md:text-6xl lg:text-7xl">Un espacio para mirarte con atención.</h1>
+          <p className="mt-7 max-w-xl text-lg leading-relaxed text-text-2">Respondé preguntas sobre vos, explorá una lectura experimental y elegí una actividad para reflexionar. A tu ritmo.</p>
+          <div className="mt-9 flex flex-wrap gap-3">
+            <Link href="/register" className="primary-link">Empezar <ArrowRight size={20} /></Link>
+            <Link href="#como" className="secondary-link">Cómo funciona</Link>
           </div>
-          <nav className="flex flex-wrap items-center gap-5 font-heading text-xs text-text-3">
-            <Link href="/privacy" className="transition-colors duration-150 hover:text-text-1">
-              Privacidad
-            </Link>
-            <Link href="/terms" className="transition-colors duration-150 hover:text-text-1">
-              Términos
-            </Link>
-            <Link href="/login" className="transition-colors duration-150 hover:text-text-1">
-              Ingresar
-            </Link>
-          </nav>
+          {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && <Link href="/onboarding" className="mt-5 inline-flex min-h-11 items-center text-sm underline">Recorrer el ejemplo local</Link>}
+          <p className="mt-7 max-w-lg text-sm leading-relaxed text-text-3">Un proyecto académico de autoconocimiento. No reemplaza el acompañamiento profesional.</p>
         </div>
-        <p className="mx-auto mt-6 max-w-6xl text-pretty font-body text-xs text-text-4">
-          {t('landing.footer_not_therapy')}
-        </p>
+        <div className="rounded-lg border border-violet-400/20 bg-white p-8 md:p-10">
+          <h2 className="text-2xl font-semibold tracking-tight">Empezá por una pregunta.</h2>
+          <p className="mt-8 text-2xl leading-relaxed text-text-2">¿En qué momentos sentís que podés ser vos?</p>
+          <div aria-hidden="true" className="mt-10 space-y-7"><div className="border-b border-violet-400/20" /><div className="border-b border-violet-400/20" /><div className="w-2/3 border-b border-violet-400/20" /></div>
+          <p className="mt-8 text-sm text-text-3">Una pregunta de reflexión como ejemplo. No hay una respuesta correcta.</p>
+        </div>
+      </section>
+      <section id="como" className="border-y border-violet-400/20 bg-white">
+        <div className="mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-20">
+          <h2 className="max-w-xl text-3xl font-semibold tracking-tight md:text-4xl">De tus respuestas a una próxima acción.</h2>
+          <ol className="mt-10 grid gap-8 md:grid-cols-3">
+            {[
+              ['Respondé', 'Compartí tus respuestas después de revisar el consentimiento. Elegí conversar o traer un texto que ya tengas.'],
+              ['Explorá tu lectura', 'Leé el resultado con su origen y sus límites: estimación experimental de Big Five e interpretación de IA inspirada en Jung.'],
+              ['Elegí una actividad', 'Encontrá una sugerencia para reflexionar y marcá los pasos que vas haciendo. También podés descargar tu informe.'],
+            ].map(([title, body], i) => <li key={title} className="border-t border-violet-400/20 pt-5"><span className="text-sm tabular-nums text-text-3">Paso {i + 1}</span><h3 className="mt-4 text-xl font-semibold">{title}</h3><p className="mt-3 leading-relaxed text-text-2">{body}</p></li>)}
+          </ol>
+        </div>
+      </section>
+      <section id="pilares" className="mx-auto grid max-w-6xl gap-10 px-6 py-20 md:grid-cols-[1fr_1.4fr] md:px-10">
+        <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Una lectura para pensar. Con sus límites a la vista.</h2>
+        <div className="space-y-8">
+          {[
+            ['Big Five experimental', 'El módulo de aprendizaje automático estima dimensiones a partir de texto. No es un test validado de precisión individual; las dimensiones sin respaldo quedan sin cifra.'],
+            ['Jung como interpretación', 'La IA propone una lectura simbólica, no una etiqueta definitiva sobre quién sos. Puede equivocarse.'],
+            ['Actividades de reflexión', 'Sugerencias vinculadas con Positive Computing para explorar lo que te resulte útil, sin promesas de resultados.'],
+            ['Tus datos y tus decisiones', 'Podés consultar los controles de acceso, exportación y eliminación de datos. Revisá el alcance en la política de privacidad.'],
+          ].map(([title, body]) => <article key={title} className="border-b border-violet-400/20 pb-8"><h3 className="text-xl font-semibold">{title}</h3><p className="mt-3 leading-relaxed text-text-2">{body}</p></article>)}
+        </div>
+      </section>
+      <footer className="border-t border-violet-400/20 px-6 py-10 md:px-10">
+        <div className="mx-auto max-w-6xl">
+          <div className="flex flex-wrap items-center justify-between gap-6"><Brand /><nav aria-label="Información" className="flex gap-6 text-sm"><Link href="/privacy">Privacidad</Link><Link href="/terms">Términos</Link><Link href="/login">Ingresar</Link></nav></div>
+          <p className="mt-6 max-w-3xl text-sm leading-relaxed text-text-3">{t('landing.footer_not_therapy')}</p>
+          <p className="mt-4 text-sm text-text-3">Umbra · Trabajo Final de Graduación · Universidad Siglo 21</p>
+        </div>
       </footer>
     </main>
   );

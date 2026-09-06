@@ -40,18 +40,18 @@ export function ProfileContextPill({ profile }: ProfileContextPillProps) {
   return (
     <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-md border border-violet-400/15 bg-umbra-shadow/40 px-4 py-3">
       <Sparkle size={14} weight="duotone" className="text-violet-300" />
-      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-text-3">
+      <span className="font-body text-sm normal-case tracking-normal text-text-3">
         Umbra ya sabe de vos:
       </span>
       <span className="font-heading text-xs text-violet-200">{archName}</span>
       <span className="text-text-4">·</span>
-      <span className="font-body text-[11px] text-text-2">
+      <span className="font-body text-sm text-text-2">
         mente {topJungLabel.toLowerCase()}
       </span>
       {topBfLabel ? (
         <>
           <span className="text-text-4">·</span>
-          <span className="font-body text-[11px] text-text-2">
+          <span className="font-body text-sm text-text-2">
             {topBfLabel.toLowerCase()} marcada
           </span>
         </>

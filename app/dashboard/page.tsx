@@ -3,7 +3,6 @@ import { createClient } from '@/lib/supabase/server';
 import { LayoutShell } from '@/components/layout/LayoutShell';
 import { ArchetypeCard } from '@/components/dashboard/ArchetypeCard';
 import { NarrativeSection } from '@/components/dashboard/NarrativeSection';
-import { NarrativeTOC } from '@/components/dashboard/NarrativeTOC';
 import { DashboardDepth } from '@/components/dashboard/DashboardDepth';
 import { BigFiveDimensions } from '@/components/dashboard/BigFiveDimensions';
 import { JungAxisView } from '@/components/dashboard/JungAxisView';
@@ -62,28 +61,23 @@ function DashboardView({ data }: { data: DashboardData }) {
     <LayoutShell>
       <div className="flex flex-col gap-10 md:gap-12">
         {/* HEADER */}
-        <div className="dash-enter dash-enter-1 flex items-start justify-between gap-4">
+        <div className="flex flex-col items-start justify-between gap-6 md:flex-row">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
-              Hola{data.fullName ? `, ${data.fullName.split(' ')[0]}` : ''}
-            </p>
-            <h1 className="mt-2 text-balance font-display text-4xl italic text-text-1 md:text-5xl">
-              Tu retrato, en una sola página
+            <h1 className="mt-2 text-balance font-heading font-semibold text-4xl not-italic text-text-1 md:text-5xl">
+              Mi resultado
             </h1>
             <p className="mt-2 max-w-xl text-pretty font-body text-base text-text-3">
-              Esto que ves no es un diagnóstico. Es un espejo escrito a partir de lo que contaste.
-              Tomalo como punto de partida, no como veredicto.
+              {data.fullName ? `${data.fullName.split(' ')[0]}, esta` : 'Esta'} es una lectura para explorar con calma. Partí de lo que te resuena y volvé a tus respuestas cuando lo necesites.
             </p>
-            <p className="mt-3 font-mono text-xs tabular-nums text-text-4">
-              Analizado hace {createdDays} {createdDays === 1 ? 'día' : 'días'}
+            <p className="mt-3 font-body text-xs tabular-nums text-text-4">
+              {data.profileId.startsWith('demo-') ? 'Resultado ilustrativo · datos ficticios' : `Cuenta creada hace ${createdDays} ${createdDays === 1 ? 'día' : 'días'}`}
             </p>
           </div>
           <a
-            href="/export"
-            className="group inline-flex shrink-0 items-center gap-2 rounded-full border border-violet-400/20 bg-umbra-shadow/30 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-text-2 transition-[border-color,background-color,color] duration-200 ease-out hover:border-violet-400/50 hover:bg-violet-400/10 hover:text-text-1"
-            aria-label="Descargar perfil en PDF"
+            href="/plan"
+            className="primary-link shrink-0"
           >
-            <span>Descargar PDF</span>
+            <span>Ver actividades</span>
           </a>
         </div>
 
@@ -114,8 +108,7 @@ function DashboardView({ data }: { data: DashboardData }) {
             anyway would leave it pointing at nothing. */}
         <div className="dash-enter dash-enter-3">
         {data.narrativeContent && /^##\s+/m.test(data.narrativeContent) ? (
-          <div className="lg:grid lg:grid-cols-[180px_1fr] lg:gap-10">
-            <NarrativeTOC />
+          <div>
             <NarrativeSection
               profileId={data.profileId}
               initialContent={data.narrativeContent}
@@ -137,11 +130,11 @@ function DashboardView({ data }: { data: DashboardData }) {
         </div>
 
         <div className="dash-enter dash-enter-4">
-        <DashboardDepth>
+        <DashboardDepth collapsedLabel="Ver detalles del resultado" expandedLabel="Ocultar detalles del resultado">
           {/* DATA VIZ — 2 columns */}
           <div className="grid gap-6 md:grid-cols-2">
             <Card>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+              <p className="font-body text-sm normal-case tracking-normal text-text-3">
                 Cinco grandes rasgos
               </p>
               <p className="mt-2 max-w-prose text-pretty font-body text-sm leading-relaxed text-text-2">
@@ -152,7 +145,7 @@ function DashboardView({ data }: { data: DashboardData }) {
               </div>
             </Card>
             <Card>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+              <p className="font-body text-sm normal-case tracking-normal text-text-3">
                 Cómo procesás la información
               </p>
               <p className="mt-2 max-w-prose text-pretty font-body text-sm leading-relaxed text-text-2">

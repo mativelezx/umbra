@@ -27,7 +27,7 @@ export function JungFunctions({ jungFunctions }: JungFunctionsProps) {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3 mb-4">
+        <p className="font-body text-sm normal-case tracking-normal text-text-3 mb-4">
           Percepción
         </p>
         <div className="flex flex-col gap-4">
@@ -43,7 +43,7 @@ export function JungFunctions({ jungFunctions }: JungFunctionsProps) {
       </div>
 
       <div>
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3 mb-4">
+        <p className="font-body text-sm normal-case tracking-normal text-text-3 mb-4">
           Juicio
         </p>
         <div className="flex flex-col gap-4">

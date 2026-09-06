@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/Button';
 export default function NotFound() {
   return (
     <main className="relative mx-auto flex min-h-[80vh] max-w-2xl flex-col items-start justify-center px-6 py-24 md:px-10">
-      <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">404 — página no encontrada</p>
-      <h1 className="mt-4 text-balance font-display text-6xl italic text-text-1 md:text-7xl">
+      <p className="font-body text-sm normal-case tracking-normal text-text-3">404 — página no encontrada</p>
+      <h1 className="mt-4 text-balance font-heading font-semibold text-6xl not-italic text-text-1 md:text-7xl">
         Te perdiste en la sombra.
       </h1>
       <p className="mt-6 max-w-xl text-pretty font-body text-lg leading-relaxed text-text-2">

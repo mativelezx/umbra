@@ -50,7 +50,7 @@ export function DashboardDepth({
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="group mx-auto flex items-center gap-3 rounded-full border border-violet-400/20 bg-umbra-shadow/30 px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-text-2 transition-all duration-200 hover:border-violet-400/50 hover:bg-violet-400/10 hover:text-text-1"
+        className="group mx-auto flex items-center gap-3 rounded-full border border-violet-400/20 bg-umbra-shadow/30 px-5 py-2.5 font-body text-sm normal-case tracking-normal text-text-2 transition-all duration-200 hover:border-violet-400/50 hover:bg-violet-400/10 hover:text-text-1"
       >
         <span>{open ? expandedLabel : collapsedLabel}</span>
         <CaretDown

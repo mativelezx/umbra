@@ -21,17 +21,17 @@ export default function GlobalError({
 
   return (
     <main className="relative mx-auto flex min-h-[80vh] max-w-2xl flex-col items-start justify-center px-6 py-24 md:px-10">
-      <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">
+      <p className="font-body text-sm normal-case tracking-normal text-text-3">
         Algo se rompió de nuestro lado
       </p>
-      <h1 className="mt-4 text-balance font-display text-5xl italic text-text-1 md:text-6xl">
+      <h1 className="mt-4 text-balance font-heading font-semibold text-5xl not-italic text-text-1 md:text-6xl">
         Tropezamos con un error.
       </h1>
       <p className="mt-6 max-w-xl text-pretty font-body text-lg leading-relaxed text-text-2">
         No es tu culpa. Lo registramos y lo estamos mirando. Volvé a intentar o regresá al inicio.
       </p>
       {error.digest && (
-        <p className="mt-4 font-mono text-xs tabular-nums text-text-4">
+        <p className="mt-4 font-body text-xs tabular-nums text-text-4">
           Código de referencia: <span className="text-text-3">{error.digest}</span>
         </p>
       )}

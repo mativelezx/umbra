@@ -1,28 +1,28 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Landing page', () => {
-  test('shows hero with Instrument Serif title + both CTAs', async ({ page }) => {
+  test('shows the reflection headline and both entry links', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /Hablás de vos/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Un espacio para mirarte con atención/i })).toBeVisible();
     await expect(page.getByRole('link', { name: /Empezar/i }).first()).toBeVisible();
     await expect(page.getByRole('link', { name: /Cómo funciona/i })).toBeVisible();
   });
 
-  test('shows 4 pilar cards without 3-column grid (AI slop avoidance)', async ({ page }) => {
+  test('explains each source and the user data controls', async ({ page }) => {
     await page.goto('/');
     // Use heading role so the pillar cards aren't confused with the hero
     // copy paragraph that also mentions "Positive Computing".
     await expect(
-      page.getByRole('heading', { name: /Una sola teoría medida/i }),
+      page.getByRole('heading', { name: /Big Five experimental/i }),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: /Jung como espejo/i }),
+      page.getByRole('heading', { name: /Jung como interpretación/i }),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: /Pensado para tu bienestar/i }),
+      page.getByRole('heading', { name: /Actividades de reflexión/i }),
     ).toBeVisible();
     await expect(
-      page.getByRole('heading', { name: /Te hablamos en argentino/i }),
+      page.getByRole('heading', { name: /Tus datos y tus decisiones/i }),
     ).toBeVisible();
   });
 

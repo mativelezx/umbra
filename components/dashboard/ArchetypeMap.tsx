@@ -48,17 +48,14 @@ export function ArchetypeMap({ userArchetype }: ArchetypeMapProps) {
 
   return (
     <section className="flex flex-col gap-5">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
-            Los 6 arquetipos
-          </p>
-          <h2 className="mt-1 font-display text-2xl italic text-text-1 md:text-3xl">
-            Quién sos frente a los demás
+          <h2 className="mt-1 font-heading font-semibold text-2xl not-italic text-text-1 md:text-3xl">
+            Explorá otros arquetipos
           </h2>
         </div>
-        <p className="max-w-xs text-right font-body text-xs italic text-text-3">
-          Tocá cualquier arquetipo para ver cómo se diferencia del tuyo.
+        <p className="max-w-xs font-body text-sm text-text-3">
+          Son figuras simbólicas. Tocá una para leer sus diferencias, sin compararte con otras personas.
         </p>
       </div>
 
@@ -102,13 +99,13 @@ function ArchetypeTile({ archetype, isUser, onClick }: ArchetypeTileProps) {
         'group relative flex flex-col gap-3 rounded-lg border p-5 text-left transition-all duration-300',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400',
         isUser
-          ? 'border-violet-400/50 bg-violet-400/10 shadow-[0_0_32px_rgba(180,102,255,0.25)] hover:-translate-y-0.5'
-          : 'border-violet-400/10 bg-umbra-shadow/40 opacity-70 hover:-translate-y-0.5 hover:border-violet-400/30 hover:opacity-100',
+          ? 'border-violet-400/50 bg-violet-400/10  hover:-translate-y-0.5'
+          : 'border-violet-400/10 bg-white hover:border-violet-400/30',
       )}
     >
       {isUser && (
-        <span className="absolute right-3 top-3 font-mono text-[9px] uppercase tracking-wider text-violet-200">
-          Vos
+        <span className="absolute right-3 top-3 font-body text-sm normal-case tracking-normal text-violet-200">
+          Tu lectura
         </span>
       )}
       <span
@@ -121,7 +118,7 @@ function ArchetypeTile({ archetype, isUser, onClick }: ArchetypeTileProps) {
       </span>
       <h3
         className={cn(
-          'font-display text-xl italic',
+          'font-heading font-semibold text-xl not-italic',
           isUser ? 'text-text-1' : 'text-text-2',
         )}
       >
@@ -155,12 +152,12 @@ function CompareDrawer({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-40 flex items-end justify-center bg-umbra-void/80 backdrop-blur-sm md:items-center md:p-8"
+      className="fixed inset-0 z-40 flex items-end justify-center bg-umbra-void/80  md:items-center md:p-8"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-2xl overflow-hidden rounded-t-2xl border border-violet-400/30 bg-umbra-void shadow-[0_-10px_60px_rgba(0,0,0,0.6)] md:rounded-2xl md:shadow-[0_20px_80px_rgba(0,0,0,0.6)]"
+        className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl border border-violet-400/30 bg-white md:rounded-2xl"
       >
         <button
           type="button"
@@ -173,13 +170,13 @@ function CompareDrawer({
 
         <div className="flex flex-col gap-6 p-7 md:p-10">
           <header className="flex flex-col gap-2">
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-text-3">
-              {isSelf ? 'Sos vos' : `${userInfo.name} × ${otherInfo.name}`}
+            <p className="font-body text-sm normal-case tracking-normal text-text-3">
+              {isSelf ? 'Arquetipo de tu lectura' : `${userInfo.name} y ${otherInfo.name}`}
             </p>
-            <h2 className="font-display text-3xl italic text-text-1 md:text-4xl">
+            <h2 className="font-heading font-semibold text-3xl not-italic text-text-1 md:text-4xl">
               {otherInfo.name}
             </h2>
-            <p className="font-body text-sm italic text-violet-200">
+            <p className="font-body text-sm not-italic text-violet-200">
               {otherCompare.motto}
             </p>
           </header>
@@ -190,10 +187,10 @@ function CompareDrawer({
           <DrawerRow label="Su sombra" body={otherCompare.shadow} />
 
           <div className="rounded-lg border border-violet-400/30 bg-violet-400/5 p-5">
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-violet-200">
+            <p className="font-body text-sm normal-case tracking-normal text-violet-200">
               {isSelf ? 'Vos mismo' : `Frente a ${userInfo.name}`}
             </p>
-            <p className="mt-2 font-display text-lg italic leading-snug text-text-1 md:text-xl">
+            <p className="mt-2 font-heading font-semibold text-lg not-italic leading-snug text-text-1 md:text-xl">
               {vsYou}
             </p>
           </div>
@@ -206,7 +203,7 @@ function CompareDrawer({
 function DrawerRow({ label, body }: { label: string; body: string }) {
   return (
     <div className="flex flex-col gap-1">
-      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+      <p className="font-body text-sm normal-case tracking-normal text-text-3">
         {label}
       </p>
       <p className="font-body text-sm leading-relaxed text-text-2">{body}</p>

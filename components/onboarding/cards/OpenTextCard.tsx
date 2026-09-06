@@ -31,7 +31,7 @@ export function OpenTextCard({ question, onSubmit, submitting }: OpenTextCardPro
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-2">
-        <h2 className="font-display text-3xl italic text-text-1 md:text-4xl">
+        <h2 className="font-heading font-semibold text-3xl not-italic text-text-1 md:text-4xl">
           {question.prompt}
         </h2>
         {question.helper && (

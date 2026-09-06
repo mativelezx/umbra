@@ -6,8 +6,8 @@ interface ArchetypeSvgProps {
 }
 
 const VIEWBOX = '0 0 256 256';
-const STROKE = '#B466FF';
-const ACCENT = '#D4B3FF';
+const STROKE = '#454543';
+const ACCENT = '#53534f';
 
 // Hero — a shield with ascending arrow (conquest, protection)
 function Hero({ size = 128, className }: ArchetypeSvgProps) {

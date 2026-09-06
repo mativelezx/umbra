@@ -77,13 +77,13 @@ export function ConversationsSidebar({
   return (
     <aside className="flex h-full flex-col gap-3 border-r border-violet-400/10 pr-4">
       <div className="flex items-center justify-between gap-2">
-        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-text-3">
+        <p className="font-body text-sm normal-case tracking-normal text-text-3">
           Tus conversaciones
         </p>
         <button
           type="button"
           onClick={onNewChat}
-          className="inline-flex items-center gap-1.5 rounded-full border border-violet-400/20 bg-umbra-shadow/40 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-violet-200 transition-all duration-200 hover:border-violet-400/50 hover:bg-violet-400/10"
+          className="inline-flex items-center gap-1.5 rounded-full border border-violet-400/20 bg-umbra-shadow/40 px-3 py-1 font-body text-sm normal-case tracking-normal text-violet-200 transition-all duration-200 hover:border-violet-400/50 hover:bg-violet-400/10"
           aria-label="Empezar una conversación nueva"
         >
           <Plus size={12} weight="bold" />
@@ -92,7 +92,7 @@ export function ConversationsSidebar({
       </div>
 
       {loading && (
-        <p className="font-body text-xs italic text-text-3/70">Cargando…</p>
+        <p className="font-body text-xs not-italic text-text-3/70">Cargando…</p>
       )}
 
       {error && (
@@ -100,7 +100,7 @@ export function ConversationsSidebar({
       )}
 
       {!loading && !error && conversations.length === 0 && (
-        <p className="font-body text-xs italic text-text-3/70">
+        <p className="font-body text-xs not-italic text-text-3/70">
           Todavía no empezaste una conversación.
         </p>
       )}
@@ -139,7 +139,7 @@ export function ConversationsSidebar({
                     >
                       {c.title}
                     </span>
-                    <span className="font-mono text-[9px] uppercase tracking-wider text-text-4">
+                    <span className="font-body text-sm normal-case tracking-normal text-text-4">
                       {formatRelative(c.lastMessageAt)} · {c.messageCount}{' '}
                       {c.messageCount === 1 ? 'mensaje' : 'mensajes'}
                     </span>

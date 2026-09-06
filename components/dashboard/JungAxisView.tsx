@@ -77,7 +77,7 @@ function AxisBar({
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-2 text-text-3">
         <span className="text-violet-300">{axis.icon}</span>
-        <p className="font-mono text-[10px] uppercase tracking-[0.18em]">
+        <p className="font-body text-sm normal-case tracking-normal">
           {JUNG_AXIS_LABEL[axis.key]}
         </p>
         <InfoPopover
@@ -102,9 +102,9 @@ function AxisBar({
               example={leftLabel.example}
             />
           </div>
-          <p className="mt-0.5 flex items-center gap-1.5 font-body text-[10px] italic text-text-3">
-            <span className="font-mono text-text-4">{axis.left}</span>
-            <span className="font-mono tabular-nums">{leftVal}/100</span>
+          <p className="mt-0.5 flex items-center gap-1.5 font-body text-sm not-italic text-text-3">
+            <span className="font-body text-text-4">{axis.left}</span>
+            <span className="font-body tabular-nums">{leftVal}/100</span>
           </p>
         </div>
         <div className="flex-1 text-right">
@@ -122,16 +122,16 @@ function AxisBar({
               {rightLabel.label}
             </span>
           </div>
-          <p className="mt-0.5 flex items-center justify-end gap-1.5 font-body text-[10px] italic text-text-3">
-            <span className="font-mono tabular-nums">{rightVal}/100</span>
-            <span className="font-mono text-text-4">{axis.right}</span>
+          <p className="mt-0.5 flex items-center justify-end gap-1.5 font-body text-sm not-italic text-text-3">
+            <span className="font-body tabular-nums">{rightVal}/100</span>
+            <span className="font-body text-text-4">{axis.right}</span>
           </p>
         </div>
       </div>
 
       <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-umbra-shadow/70">
         <div
-          className="absolute inset-y-0 left-0 bg-gradient-to-r from-violet-500/80 to-violet-300/80"
+          className="absolute inset-y-0 left-0 bg-violet-400"
           style={{ width: `${leftPct}%` }}
         />
         <div className="absolute inset-y-0 left-1/2 h-full w-px bg-violet-400/30" />

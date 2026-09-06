@@ -77,7 +77,7 @@ export function ChatInput({ onSend, disabled, placeholder = 'Escribí tu reflexi
           'flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all',
           disabled || !value.trim()
             ? 'bg-umbra-shadow text-text-4 cursor-not-allowed'
-            : 'bg-violet-400 text-umbra-void hover:bg-violet-300 shadow-[0_0_20px_rgba(180,102,255,0.4)]',
+            : 'bg-violet-400 text-umbra-void hover:bg-violet-300 ',
         )}
         aria-label="Enviar mensaje"
       >

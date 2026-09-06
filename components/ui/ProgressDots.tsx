@@ -18,7 +18,7 @@ export function ProgressDots({ current, total, className }: ProgressDotsProps) {
             className={cn(
               'h-1.5 rounded-full transition-all duration-300',
               isActive
-                ? 'w-8 bg-violet-400 shadow-[0_0_12px_rgba(180,102,255,0.8)]'
+                ? 'w-8 bg-violet-400 '
                 : isDone
                   ? 'w-4 bg-violet-600'
                   : 'w-4 bg-umbra-shadow',

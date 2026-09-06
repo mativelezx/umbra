@@ -53,10 +53,10 @@ export default function SettingsDeletePage() {
     <LayoutShell>
       <div className="flex max-w-2xl flex-col gap-8">
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+          <p className="font-body text-sm normal-case tracking-normal text-text-3">
             Configuración
           </p>
-          <h1 className="mt-2 text-balance font-display text-4xl italic text-text-1 md:text-5xl">
+          <h1 className="mt-2 text-balance font-heading font-semibold text-4xl not-italic text-text-1 md:text-5xl">
             Eliminar tu cuenta
           </h1>
           <p className="mt-3 max-w-xl text-pretty font-body leading-relaxed text-text-2">
@@ -95,7 +95,7 @@ export default function SettingsDeletePage() {
           <div className="flex items-start gap-3">
             <Warning size={24} className="mt-1 shrink-0 text-accent-rose" />
             <div>
-              <h2 className="text-balance font-display text-2xl italic text-text-1">Esto es irreversible</h2>
+              <h2 className="text-balance font-heading font-semibold text-2xl not-italic text-text-1">Esto es irreversible</h2>
               <p className="mt-3 text-pretty font-body text-sm leading-relaxed text-text-2">
                 Si confirmás, borramos tu cuenta y todos tus datos personales: perfil psicológico, narrativas, conversaciones, plan, carta al futuro y tu historial de consentimientos. Es tu derecho de cancelación bajo Ley 25.326.
               </p>
@@ -140,7 +140,7 @@ export default function SettingsDeletePage() {
                 <div className="mt-3 break-all">
                   <a
                     href={devLink}
-                    className="font-mono text-xs underline decoration-accent-emerald/50 hover:decoration-accent-emerald"
+                    className="font-body text-xs underline decoration-accent-emerald/50 hover:decoration-accent-emerald"
                   >
                     {devLink}
                   </a>

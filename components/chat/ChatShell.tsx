@@ -76,8 +76,8 @@ function AutonomyDial({
             onClick={() => onChange(opt.value)}
             className={
               active
-                ? 'rounded-full bg-violet-400/20 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-violet-200 transition-[scale] duration-150 ease-out active:scale-[0.96]'
-                : 'rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-text-3 transition-[color,scale] duration-150 ease-out hover:text-text-1 active:scale-[0.96]'
+                ? 'rounded-full bg-violet-400/20 px-3 py-1 font-body text-sm normal-case tracking-normal text-violet-200 transition-[scale] duration-150 ease-out active:scale-[0.96]'
+                : 'rounded-full px-3 py-1 font-body text-sm normal-case tracking-normal text-text-3 transition-[color,scale] duration-150 ease-out hover:text-text-1 active:scale-[0.96]'
             }
           >
             {opt.label}

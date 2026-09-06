@@ -25,7 +25,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
       {label && (
         <label
           htmlFor={textareaId}
-          className="font-heading text-xs uppercase tracking-wider text-text-3"
+          className="font-heading text-sm font-medium text-text-2"
         >
           {label}
         </label>
@@ -55,7 +55,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
         {showCount && (
           <span
             className={cn(
-              'font-mono text-xs',
+              'font-body text-xs',
               meetsMin ? 'text-accent-emerald' : 'text-text-3',
             )}
           >

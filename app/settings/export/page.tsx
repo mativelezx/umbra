@@ -37,10 +37,10 @@ export default function SettingsExportPage() {
     <LayoutShell>
       <div className="flex flex-col gap-8 max-w-2xl">
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+          <p className="font-body text-sm normal-case tracking-normal text-text-3">
             Configuración
           </p>
-          <h1 className="mt-2 font-display text-4xl italic text-text-1 md:text-5xl">
+          <h1 className="mt-2 font-heading font-semibold text-4xl not-italic text-text-1 md:text-5xl">
             Exportar tus datos
           </h1>
         </div>
@@ -73,7 +73,7 @@ export default function SettingsExportPage() {
         </nav>
 
         <Card>
-          <h2 className="font-display text-2xl italic text-text-1">
+          <h2 className="font-heading font-semibold text-2xl not-italic text-text-1">
             Derecho de acceso (Ley 25.326)
           </h2>
           <p className="mt-3 font-body text-sm text-text-2 leading-relaxed">

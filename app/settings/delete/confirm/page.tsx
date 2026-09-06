@@ -54,7 +54,7 @@ function ConfirmContent() {
         <div className="flex items-start gap-3">
           <CheckCircle size={24} className="text-accent-emerald mt-1" />
           <div>
-            <h1 className="font-display text-3xl italic text-text-1">Cuenta eliminada</h1>
+            <h1 className="font-heading font-semibold text-3xl not-italic text-text-1">Cuenta eliminada</h1>
             <p className="mt-3 font-body text-sm text-text-2">
               Tus datos fueron borrados. Gracias por haber usado Umbra. Te estamos
               redirigiendo al inicio.
@@ -70,7 +70,7 @@ function ConfirmContent() {
       <div className="flex items-start gap-3">
         <Warning size={24} className="text-accent-rose mt-1" />
         <div>
-          <h1 className="font-display text-3xl italic text-text-1">
+          <h1 className="font-heading font-semibold text-3xl not-italic text-text-1">
             Confirmá la eliminación
           </h1>
           <p className="mt-3 font-body text-sm text-text-2">

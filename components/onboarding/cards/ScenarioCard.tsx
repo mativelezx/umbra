@@ -33,10 +33,10 @@ export function ScenarioCard({ question, onSubmit, submitting }: ScenarioCardPro
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-2">
-        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">
+        <p className="font-body text-sm normal-case tracking-normal text-text-3">
           {question.prompt}
         </p>
-        <p className="font-display text-2xl italic leading-snug text-text-1 md:text-3xl">
+        <p className="font-heading font-semibold text-2xl not-italic leading-snug text-text-1 md:text-3xl">
           {question.scene}
         </p>
       </header>
@@ -85,7 +85,7 @@ function OptionButton({
       className={cn(
         'group relative flex items-start gap-3 rounded-lg border p-4 text-left transition-all duration-200',
         selected
-          ? 'border-violet-400/80 bg-violet-400/10 shadow-[0_0_24px_rgba(180,102,255,0.18)]'
+          ? 'border-violet-400/80 bg-violet-400/10 '
           : 'border-violet-400/15 bg-umbra-shadow/40 hover:border-violet-400/40 hover:bg-violet-400/5',
       )}
     >

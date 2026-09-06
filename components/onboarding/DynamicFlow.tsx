@@ -11,6 +11,7 @@ import { useOnboardingStore } from '@/lib/store/onboarding-store';
 import { serializeDynamicTranscript } from '@/lib/onboarding/serialize';
 import { DEMO_ONBOARDING_SCRIPT } from '@/lib/demo/onboarding-script';
 import { emptyWorkingProfile } from '@/lib/prompts/onboarding-conductor';
+import { Brand } from '@/components/layout/Brand';
 import type {
   InsightPing as InsightPingType,
   OnboardingAnswer,
@@ -80,6 +81,15 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
   );
 
   const undoLastTurn = useCallback(async () => {
+    if (isDemo) {
+      if (demoStep.current === 0) return;
+      demoStep.current -= 1;
+      const step = DEMO_ONBOARDING_SCRIPT[demoStep.current];
+      setCurrentQuestion(step.question);
+      setTurnNumber(demoStep.current + 1);
+      setLocalInsights([]);
+      return;
+    }
     const api = useOnboardingStore.getState();
     if (!api.sessionId) return;
     if (api.turns.filter((t) => t.answer !== null).length === 0) return;
@@ -107,7 +117,7 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
     } finally {
       setThinking(false);
     }
-  }, []);
+  }, [isDemo]);
 
   const fetchNextRef = useRef<
     ((previousAnswer: OnboardingAnswer | null) => Promise<OnboardingNextResponse | null>) | null
@@ -196,6 +206,7 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
       api.startSession('demo-session');
       api.applyProfileUpdate(emptyWorkingProfile());
       demoStep.current = 0;
+      setMaxTurns(DEMO_ONBOARDING_SCRIPT.length);
       advanceDemo();
       return;
     }
@@ -273,10 +284,7 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
         const step = DEMO_ONBOARDING_SCRIPT[demoStep.current];
         if (step?.done) {
           setSubmitting(false);
-          setSynthesizing(true);
-          setTimeout(() => {
-            onComplete('demo-profile-0000-0000-000000000001');
-          }, 2200);
+          onComplete('demo-profile-0000-0000-000000000001');
           return;
         }
         demoStep.current += 1;
@@ -295,45 +303,43 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
 
   return (
     <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-8 px-6 py-10 md:px-10">
-      <DisclaimerCard />
+      <Brand />
 
       <header className="flex flex-col gap-2">
-        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">
-          Exploración dinámica
-        </p>
-        <h1 className="font-display text-4xl italic text-text-1 md:text-5xl">
-          Conversemos
+        <h1 className="font-heading font-semibold text-4xl not-italic text-text-1 md:text-5xl">
+          Un momento para responder
         </h1>
         <p className="max-w-2xl font-body text-base text-text-2">
-          Respondé con naturalidad. A medida que avanzás, tu perfil se construye al lado.
-          Podés parar y volver en otro momento — la conversación se guarda.
+          Respondé con naturalidad y con el detalle que te resulte cómodo. No hay respuestas correctas.
         </p>
       </header>
+      <DisclaimerCard />
+      {isDemo && <p role="status" className="rounded-md bg-umbra-shadow/50 p-4 text-sm text-text-2">Ejemplo local con preguntas preparadas. Tus respuestas no se envían a un proveedor ni generan un perfil real.</p>}
 
       {error && <ErrorBanner error={error} onRetry={() => fetchNext(null)} />}
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,340px)]">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_240px]">
         <div className="flex min-h-[420px] flex-col gap-3">
           {synthesizing ? (
             <SynthesisReveal />
-          ) : thinking || !currentQuestion ? (
+          ) : !currentQuestion ? (
             <ThinkingIndicator />
           ) : (
             <>
               <QuestionCard
                 question={currentQuestion}
                 onSubmit={handleAnswer}
-                submitting={submitting}
+                submitting={submitting || thinking}
               />
               {turnNumber > 1 && (
                 <button
                   type="button"
                   onClick={undoLastTurn}
                   disabled={submitting || thinking}
-                  className="self-start font-mono text-[10px] uppercase tracking-[0.22em] text-text-3 underline-offset-4 transition-colors hover:text-violet-200 hover:underline disabled:opacity-40"
+                  className="min-h-11 self-start text-sm text-text-2 underline underline-offset-4 hover:text-text-1 disabled:opacity-50"
                   aria-label="Revisar la respuesta anterior"
                 >
-                  ← revisar la anterior
+                  Revisar la respuesta anterior
                 </button>
               )}
             </>
@@ -402,10 +408,10 @@ function ErrorBanner({
 function SynthesisReveal() {
   return (
     <div className="flex h-full min-h-[420px] flex-col items-center justify-center gap-6">
-      <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">
+      <p className="font-body text-sm normal-case tracking-normal text-text-3">
         Listo
       </p>
-      <h2 className="max-w-xl text-center font-display text-3xl italic text-text-1 md:text-4xl">
+      <h2 className="max-w-xl text-center font-heading font-semibold text-3xl not-italic text-text-1 md:text-4xl">
         Estamos uniendo todo lo que contaste...
       </h2>
       <div className="flex items-center gap-1.5">
@@ -416,4 +422,3 @@ function SynthesisReveal() {
     </div>
   );
 }
-

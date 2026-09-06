@@ -141,46 +141,32 @@ export function SectionedNarrative({
         <section
           key={`${i}-${section.heading}`}
           id={section.heading ? slugFromHeading(section.heading) : undefined}
-          className="relative scroll-mt-24 border-l border-violet-400/15 pl-6 md:pl-8"
+          className="scroll-mt-24"
         >
-          <div className="absolute -left-[11px] top-1 flex h-5 w-5 items-center justify-center rounded-full border border-violet-400/40 bg-umbra-void text-violet-300">
-            {section.icon}
-          </div>
           {section.heading && (
-            <h3 className="font-mono text-[11px] uppercase tracking-[0.22em] text-text-3">
+            <h3 className="text-xl font-semibold text-text-1">
               {section.heading}
             </h3>
           )}
           <div
-            className={`font-display italic text-text-1 ${
+            className={`font-body font-normal text-text-2 ${
               section.heading ? 'mt-3' : ''
-            } max-w-[68ch] text-lg leading-[1.85] md:text-xl md:leading-[1.75]`}
+            } max-w-[70ch] text-base leading-[1.85] md:text-lg md:leading-[1.8]`}
           >
             {section.blocks.map((block, idx) => {
               if (block.kind === 'quote') {
                 return (
                   <blockquote
                     key={idx}
-                    className="my-6 border-l-2 border-violet-400/50 pl-5 font-display text-xl not-italic text-text-1/95 md:pl-6 md:text-2xl"
+                    className="my-6 border-l border-violet-400/40 pl-5 text-lg font-medium text-text-1"
                   >
-                    <span className="italic">{block.text}</span>
+                    <span className="not-italic">{block.text}</span>
                   </blockquote>
                 );
               }
-              const isFirstParagraphOfOpener =
-                idx === 0 && i === 0 && block.text.length > 0;
               return (
                 <p key={idx} className={idx > 0 ? 'mt-4' : ''}>
-                  {isFirstParagraphOfOpener ? (
-                    <>
-                      <span className="float-left mr-2 mt-1 font-display text-5xl leading-none italic text-violet-300 md:text-6xl">
-                        {block.text.charAt(0)}
-                      </span>
-                      {block.text.slice(1)}
-                    </>
-                  ) : (
-                    block.text
-                  )}
+                  {block.text}
                 </p>
               );
             })}

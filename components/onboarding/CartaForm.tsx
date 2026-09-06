@@ -33,6 +33,7 @@ export function CartaForm({ profileId }: CartaFormProps) {
       return;
     }
 
+    try {
     const res = await fetch('/api/carta', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -44,6 +45,10 @@ export function CartaForm({ profileId }: CartaFormProps) {
       return;
     }
     router.push('/dashboard');
+    } catch {
+      setError('No pudimos conectar. Tu texto sigue acá; intentá guardarlo otra vez.');
+      setLoading(false);
+    }
   }
 
   function skip() {
@@ -53,28 +58,30 @@ export function CartaForm({ profileId }: CartaFormProps) {
   return (
     <GlassCard className="w-full">
       <div className="mb-6">
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
-          Una última cosa · opcional
-        </p>
-        <h2 className="mt-3 font-display text-3xl italic text-text-1 md:text-4xl">
+        <h2 className="mt-3 font-heading font-semibold text-3xl not-italic text-text-1 md:text-4xl">
           Escribile a tu vos de 6 meses
         </h2>
         <p className="mt-3 font-body text-text-2">
           ¿Qué querés que recuerde? ¿Qué te gustaría decirle a la persona que serás
-          en {unlockDate}? La carta se guarda cifrada y se abre sola ese día.
+          en {unlockDate}? Es opcional: también podés ir directo al resultado.
         </p>
       </div>
 
       <Textarea
+        label="Tu carta para dentro de seis meses"
+        minWords={20}
+        showCount
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Querida yo del futuro..."
         rows={8}
         maxLength={1500}
       />
+      <p className="mt-3 text-sm leading-relaxed text-text-3">Escribí al menos 20 palabras y hasta 1500 caracteres para poder continuar.</p>
+      {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && <p className="mt-3 text-sm text-text-2">Ejemplo local: esta carta no se guarda. Al continuar vas al resultado ficticio.</p>}
 
       {error && (
-        <p className="mt-4 font-body text-xs text-accent-rose">{error}</p>
+        <p role="alert" className="mt-4 font-body text-sm text-accent-rose">{error}</p>
       )}
 
       <div className="mt-6 flex items-center justify-between">
@@ -88,7 +95,7 @@ export function CartaForm({ profileId }: CartaFormProps) {
           loading={loading}
           type="button"
         >
-          Guardar mi carta
+          {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' ? 'Continuar al ejemplo' : 'Guardar mi carta'}
         </Button>
       </div>
     </GlassCard>

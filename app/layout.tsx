@@ -1,14 +1,16 @@
 import type { Metadata, Viewport } from 'next';
+import { Inter } from 'next/font/google';
 import { AuthProvider } from '@/lib/providers/auth-context';
 import { MotionProvider } from '@/components/motion/MotionProvider';
 import { ThemeProvider } from '@/lib/providers/theme';
 import './globals.css';
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 const SITE_NAME = 'Umbra';
-const SITE_TAGLINE = 'Conocé tu sombra. Iluminá tu camino.';
+const SITE_TAGLINE = 'Un espacio para mirarte con atención.';
 const SITE_DESCRIPTION =
-  'Plataforma de autoconocimiento que triangula Jung, Big Five y Positive Computing para generar perfiles profundos y narrativas personalizadas en español latinoamericano.';
+  'Un espacio de autoconocimiento con Big Five experimental, interpretación de IA inspirada en Jung y actividades de reflexión. Proyecto académico en español.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -53,13 +55,10 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  icons: {
-    icon: '/favicon.ico',
-  },
 };
 
 export const viewport: Viewport = {
-  themeColor: '#0c0a1a',
+  themeColor: '#f7f7f4',
   width: 'device-width',
   initialScale: 1,
 };
@@ -70,13 +69,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className="dark">
-      <body className="font-body bg-umbra-void text-text-1 antialiased">
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <span className="orb orb-violet left-[-20%] top-[-10%] h-[60vh] w-[60vh]" />
-          <span className="orb orb-indigo right-[-15%] top-[20%] h-[50vh] w-[50vh]" />
-          <span className="orb orb-violet bottom-[-25%] left-[20%] h-[55vh] w-[55vh]" />
-        </div>
+    <html lang="es" className={inter.variable}>
+      {/* direction29378ec1 · Operate: light reflection journal. Original geometric U,
+          sans, grayscale, whitespace and typographic hierarchy. No cosmic decoration,
+          clinical or precision claims. Verify desktop and mobile snapshots. */}
+      <body data-design-direction="29378ec1" className="font-body bg-umbra-void text-text-1 antialiased">
         <ThemeProvider>
           <AuthProvider>
             <MotionProvider>

@@ -52,7 +52,7 @@ test.describe('Phase 7 — SEO + error boundaries + metadata', () => {
     await page.goto('/');
     await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
       'content',
-      '#0c0a1a',
+      '#f7f7f4',
     );
   });
 

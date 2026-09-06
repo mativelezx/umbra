@@ -103,12 +103,12 @@ export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
             </div>
           )}
           <div className="flex-1">
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+            <p className="font-body text-sm normal-case tracking-normal text-text-3">
               Tu carta al futuro
             </p>
             {isUnlocked ? (
               <>
-                <h3 className="mt-2 font-display text-2xl italic text-text-1">
+                <h3 className="mt-2 font-heading font-semibold text-2xl not-italic text-text-1">
                   Ya pasó el tiempo. Leéla.
                 </h3>
                 <p className="mt-2 font-body text-sm text-text-2">
@@ -126,7 +126,7 @@ export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
               </>
             ) : (
               <>
-                <h3 className="mt-2 font-display text-2xl italic text-text-1">
+                <h3 className="mt-2 font-heading font-semibold text-2xl not-italic text-text-1">
                   Tu carta se abre el {formatDateEs(unlockDate)}
                 </h3>
                 <p className="mt-2 font-body text-sm text-text-2">
@@ -147,7 +147,7 @@ export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
           aria-modal="true"
           aria-labelledby={titleId}
           aria-describedby={descriptionId}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-umbra-void/80 p-4 backdrop-blur-xl"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-umbra-void/80 p-4 "
           onClick={close}
         >
           <div
@@ -165,13 +165,13 @@ export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
             </button>
             <p
               id={titleId}
-              className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3"
+              className="font-body text-sm normal-case tracking-normal text-text-3"
             >
               Carta escrita el {formatDateEs(letter.written_at)}
             </p>
             <article
               id={descriptionId}
-              className="mt-6 font-display text-xl italic leading-relaxed text-text-1 md:text-2xl md:leading-[1.7]"
+              className="mt-6 font-heading font-semibold text-xl not-italic leading-relaxed text-text-1 md:text-2xl md:leading-[1.7]"
             >
               {letter.content.split('\n\n').map((p, i) => (
                 <p key={i} className={i > 0 ? 'mt-4' : ''}>
@@ -180,12 +180,12 @@ export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
               ))}
             </article>
             <div className="mt-10 rounded-md bg-umbra-shadow/50 p-4 font-body text-sm text-text-2">
-              <p className="font-heading text-xs uppercase tracking-wider text-text-3 mb-2">
+              <p className="font-heading text-xs normal-case tracking-normal text-text-3 mb-2">
                 Cuando escribiste esto eras
               </p>
               <p>
                 {ARCHETYPE_INFO[snapshot.archetype].name} · funciones dominantes:{' '}
-                <span className="font-mono">{topJung.join(', ')}</span>
+                <span className="font-body">{topJung.join(', ')}</span>
               </p>
             </div>
             <button

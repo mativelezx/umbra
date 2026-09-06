@@ -53,10 +53,10 @@ export default function ConsentPage() {
   return (
     <main className="relative mx-auto max-w-3xl px-6 py-16 md:px-10">
       <div className="mb-10">
-        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-text-3">
+        <p className="font-body text-sm normal-case tracking-normal text-text-3">
           {t('consent.eyebrow')}
         </p>
-        <h1 className="mt-3 text-balance font-display text-5xl italic text-text-1 md:text-6xl">
+        <h1 className="mt-3 text-balance font-heading font-semibold text-5xl not-italic text-text-1 md:text-6xl">
           {t('consent.title')}
         </h1>
         <p className="mt-4 max-w-2xl text-pretty font-body text-lg leading-relaxed text-text-2">
@@ -67,7 +67,7 @@ export default function ConsentPage() {
       <GlassCard className="mb-8 max-h-[60vh] overflow-y-auto">
         <article className="prose-sm prose-invert font-body text-sm leading-relaxed text-text-2">
           <section>
-            <h2 className="mt-0 font-display text-2xl text-text-1">{t('consent.section_data_title')}</h2>
+            <h2 className="mt-0 font-heading font-semibold text-2xl text-text-1">{t('consent.section_data_title')}</h2>
             <p className="mt-2 text-pretty">{t('consent.section_data_intro')}</p>
             <ul className="mt-2 space-y-1.5">
               <li>{t('consent.section_data_email')}</li>
@@ -78,7 +78,7 @@ export default function ConsentPage() {
           </section>
 
           <section className="mt-6">
-            <h2 className="font-display text-2xl text-text-1">{t('consent.section_who_title')}</h2>
+            <h2 className="font-heading font-semibold text-2xl text-text-1">{t('consent.section_who_title')}</h2>
             <p className="mt-2 text-pretty">{t('consent.section_who_intro')}</p>
             <ul className="mt-2 space-y-1.5">
               <li>{t('consent.section_who_supabase')}</li>
@@ -88,7 +88,7 @@ export default function ConsentPage() {
           </section>
 
           <section className="mt-6">
-            <h2 className="font-display text-2xl text-text-1">{t('consent.section_rights_title')}</h2>
+            <h2 className="font-heading font-semibold text-2xl text-text-1">{t('consent.section_rights_title')}</h2>
             <p className="mt-2 text-pretty">{t('consent.section_rights_intro')}</p>
             <ul className="mt-2 space-y-1.5">
               <li>{t('consent.section_rights_export')}</li>
@@ -98,7 +98,7 @@ export default function ConsentPage() {
           </section>
 
           <section className="mt-6">
-            <h2 className="font-display text-2xl text-text-1">Umbra no es terapia</h2>
+            <h2 className="font-heading font-semibold text-2xl text-text-1">Umbra no es terapia</h2>
             <p className="mt-2 text-pretty">
               Es una herramienta de autoconocimiento. Si en algún momento sentís crisis,
               llamá al 135 (Centro de Asistencia al Suicida, Argentina), al 911 o al
@@ -117,7 +117,7 @@ export default function ConsentPage() {
             required
             className="mt-1 h-5 w-5 cursor-pointer accent-violet-400"
           />
-          <span className="text-pretty font-body text-sm leading-relaxed text-text-1 transition-colors duration-150 group-hover:text-white">
+          <span className="text-pretty font-body text-sm leading-relaxed text-text-1 transition-colors duration-150 group-hover:text-text-1">
             {t('consent.accept_label')}
           </span>
         </label>

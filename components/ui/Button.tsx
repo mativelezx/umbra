@@ -14,20 +14,20 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-md font-heading font-medium transition-[box-shadow,background-color,color,border-color,scale] duration-200 ease-out active:not-disabled:scale-[0.96] disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-umbra-void';
+  'inline-flex items-center justify-center gap-2 rounded-md font-heading font-medium transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4';
 
 const variants: Record<Variant, string> = {
   primary:
-    'bg-violet-400 text-umbra-void hover:bg-violet-300 shadow-glow hover:shadow-[0_0_80px_rgba(180,102,255,0.2)]',
+    'bg-text-1 text-white hover:bg-neutral-700',
   secondary:
-    'glass text-text-1 hover:text-white border border-violet-400/20 hover:border-violet-400/40',
+    'bg-white text-text-1 border border-violet-400/30 hover:bg-umbra-shadow',
   ghost: 'text-text-2 hover:text-text-1 hover:bg-violet-400/5',
   danger: 'bg-accent-rose/90 text-white hover:bg-accent-rose',
 };
 
 const sizes: Record<Size, string> = {
-  sm: 'text-xs h-8 px-3',
-  md: 'text-sm h-10 px-5',
+  sm: 'text-sm min-h-11 px-3',
+  md: 'text-sm min-h-12 px-5',
   lg: 'text-base h-12 px-7',
 };
 

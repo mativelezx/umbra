@@ -58,10 +58,10 @@ export default function SettingsPage() {
     <LayoutShell>
       <div className="flex max-w-3xl flex-col gap-10">
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-3">
+          <p className="font-body text-sm normal-case tracking-normal text-text-3">
             Tu espacio
           </p>
-          <h1 className="mt-2 text-balance font-display text-4xl italic text-text-1 md:text-5xl">
+          <h1 className="mt-2 text-balance font-heading font-semibold text-4xl not-italic text-text-1 md:text-5xl">
             Configuración
           </h1>
           <p className="mt-4 max-w-2xl text-pretty font-body text-lg leading-relaxed text-text-2">
@@ -78,8 +78,8 @@ export default function SettingsPage() {
                 <Card
                   className={
                     isDanger
-                      ? 'rounded-2xl border-accent-rose/20 transition-[border-color,box-shadow] duration-200 ease-out group-hover:border-accent-rose/40 group-hover:shadow-[0_0_0_1px_rgba(244,63,94,0.18),0_8px_28px_-12px_rgba(244,63,94,0.25)]'
-                      : 'rounded-2xl transition-[border-color,box-shadow] duration-200 ease-out group-hover:border-violet-400/30 group-hover:shadow-[0_0_0_1px_rgba(180,102,255,0.18),0_8px_28px_-12px_rgba(180,102,255,0.22)]'
+                      ? 'rounded-2xl border-accent-rose/20 transition-[border-color,box-shadow] duration-200 ease-out group-hover:border-accent-rose/40 '
+                      : 'rounded-2xl transition-[border-color,box-shadow] duration-200 ease-out group-hover:border-violet-400/30 '
                   }
                 >
                   <div className="flex items-start gap-4">
@@ -96,8 +96,8 @@ export default function SettingsPage() {
                       <h2
                         className={
                           isDanger
-                            ? 'text-balance font-display text-2xl text-accent-rose'
-                            : 'text-balance font-display text-2xl text-text-1'
+                            ? 'text-balance font-heading font-semibold text-2xl text-accent-rose'
+                            : 'text-balance font-heading font-semibold text-2xl text-text-1'
                         }
                       >
                         {entry.title}

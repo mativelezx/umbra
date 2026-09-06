@@ -36,10 +36,10 @@ export function ContextualGreeting({ profile }: ContextualGreetingProps) {
 
   return (
     <div className="relative rounded-2xl border border-violet-400/10 bg-umbra-shadow/30 p-6 md:p-7">
-      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-text-3">
+      <p className="font-body text-sm normal-case tracking-normal text-text-3">
         {firstName ? `Hola, ${firstName}` : 'Hola'}
       </p>
-      <h2 className="mt-3 text-balance font-display text-2xl italic text-text-1 md:text-3xl">
+      <h2 className="mt-3 text-balance font-heading font-semibold text-2xl not-italic text-text-1 md:text-3xl">
         Tenemos un punto de partida, {archName.toLowerCase()}.
       </h2>
       <p className="mt-3 max-w-xl text-pretty font-body text-sm leading-relaxed text-text-2 md:text-base">

@@ -51,7 +51,7 @@ export function PolarityCard({ question, onSubmit, submitting }: PolarityCardPro
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
-        <h2 className="font-display text-3xl italic text-text-1 md:text-4xl">
+        <h2 className="font-heading font-semibold text-3xl not-italic text-text-1 md:text-4xl">
           {question.prompt}
         </h2>
         {question.helper && (
@@ -94,7 +94,7 @@ export function PolarityCard({ question, onSubmit, submitting }: PolarityCardPro
             'h-2 [&::-webkit-slider-runnable-track]:h-2 [&::-webkit-slider-runnable-track]:rounded-full',
             '[&::-webkit-slider-runnable-track]:bg-gradient-to-r [&::-webkit-slider-runnable-track]:from-violet-600 [&::-webkit-slider-runnable-track]:to-violet-400',
             '[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:-mt-1.5',
-            '[&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-violet-200 [&::-webkit-slider-thumb]:shadow-[0_0_16px_rgba(180,102,255,0.55)]',
+            '[&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-violet-200 [&::-webkit-slider-thumb]:',
             '[&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-violet-200',
           )}
           aria-label={question.prompt}
@@ -102,7 +102,7 @@ export function PolarityCard({ question, onSubmit, submitting }: PolarityCardPro
           aria-valuemax={100}
           aria-valuenow={value}
         />
-        <div className="mt-2 flex items-center justify-between font-mono text-[10px] uppercase tracking-wider text-text-3">
+        <div className="mt-2 flex items-center justify-between font-body text-sm normal-case tracking-normal text-text-3">
           <span>{question.leftPole.label.split(' ').slice(0, 2).join(' ')}</span>
           <span className="text-violet-300">{value}</span>
           <span>{question.rightPole.label.split(' ').slice(0, 2).join(' ')}</span>
