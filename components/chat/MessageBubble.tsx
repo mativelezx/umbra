@@ -15,8 +15,8 @@ export function MessageBubble({ role, content, streaming = false }: MessageBubbl
         className={cn(
           'max-w-[85%] rounded-2xl px-5 py-3.5',
           isUser
-            ? 'bg-umbra-mist/60 text-text-1 rounded-br-sm'
-            : 'glass text-text-1 rounded-bl-sm',
+            ? 'bg-text-1 text-white rounded-br-sm'
+            : 'bg-umbra-fog text-text-1 rounded-bl-sm',
         )}
       >
         <p className="whitespace-pre-wrap font-body text-sm leading-relaxed md:text-base">

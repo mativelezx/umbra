@@ -275,6 +275,7 @@ export function ChatShell({ profile }: ChatShellProps) {
 
   return (
     <LayoutShell>
+      <h1 className="mb-4 font-bold">Chat</h1>
       <CrisisBanner />
       {profile && (
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -290,7 +291,7 @@ export function ChatShell({ profile }: ChatShellProps) {
             onNewChat={handleNewChat}
           />
         </div>
-        <div className="flex min-h-[70vh] flex-col justify-between">
+        <div className="flex min-h-[70vh] flex-col justify-between rounded-2xl bg-white p-4 md:p-6">
           {crisis ? (
             <CrisisCard
               resources={crisis.resources}

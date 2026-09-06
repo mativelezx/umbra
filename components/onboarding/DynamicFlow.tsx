@@ -302,7 +302,7 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
   );
 
   return (
-    <main className="relative z-10 mx-auto flex max-w-6xl flex-col gap-5 px-6 py-6 md:px-10 md:py-8">
+    <main className="relative z-10 mx-auto flex max-w-3xl flex-col gap-5 px-6 py-5 md:px-10 md:py-8">
       <header>
         <Brand />
         <h1 className="sr-only">
@@ -316,11 +316,13 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
 
       {error && <ErrorBanner error={error} onRetry={() => fetchNext(null)} />}
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_240px]">
+      <div className="grid grid-cols-1 gap-8">
         <div className="flex min-h-[420px] flex-col gap-3">
           <div className="mb-1" aria-label="Tu recorrido">
             <p className="text-sm text-text-2">Pregunta {turnNumber} de {maxTurns}</p>
-            <div role="progressbar" aria-label="Preguntas completadas" aria-valuenow={Math.max(0, turnNumber - 1)} aria-valuemin={0} aria-valuemax={maxTurns} className="mt-3 h-1.5 overflow-hidden rounded-full bg-umbra-shadow"><div className="h-full bg-text-1" style={{ width: `${Math.min(100, (turnNumber - 1) / maxTurns * 100)}%` }} /></div>
+            <div role="progressbar" aria-label="Preguntas completadas" aria-valuenow={Math.max(0, turnNumber - 1)} aria-valuemin={0} aria-valuemax={maxTurns} className="mb-4 mt-3 flex gap-1">
+              {Array.from({ length: maxTurns }, (_, index) => <span key={index} aria-hidden="true" className={`h-1.5 min-w-0 flex-1 rounded-full ${index < turnNumber - 1 ? 'bg-text-1' : index === turnNumber - 1 ? 'bg-text-3' : 'bg-umbra-shadow'}`} />)}
+            </div>
           </div>
           {synthesizing ? (
             <SynthesisReveal />

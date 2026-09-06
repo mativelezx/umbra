@@ -33,7 +33,7 @@ export function QuestionCard({ question, onSubmit, submitting }: QuestionCardPro
 
   return (
     <div ref={containerRef} className="scroll-mt-20">
-      <GlassCard key={question.id} className="onboarding-card-enter p-6 md:p-8">
+      <GlassCard key={question.id} className="onboarding-card-enter p-5 md:p-8">
         {renderInner(question, onSubmit, submitting)}
       </GlassCard>
     </div>

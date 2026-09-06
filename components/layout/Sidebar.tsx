@@ -11,7 +11,7 @@ const NAV_ITEMS = [
   { href: '/plan', label: 'Actividades', Icon: Path },
   { href: '/chat', label: 'Chat', Icon: ChatCircle },
   { href: '/export', label: 'Informe', Icon: DownloadSimple },
-  { href: '/settings/profile', label: 'Mi cuenta', Icon: Gear },
+  { href: '/settings', label: 'Mi cuenta', Icon: Gear },
 ] as const;
 
 export function Sidebar() {
@@ -19,7 +19,7 @@ export function Sidebar() {
   return (
     <nav
       aria-label="Navegación principal"
-      className="hidden lg:flex fixed inset-y-0 left-0 z-20 w-60 flex-col border-r border-violet-400/10 bg-umbra-abyss/40 "
+      className="hidden lg:flex fixed inset-y-0 left-0 z-20 w-60 flex-col border-r border-violet-400/10 bg-umbra-void"
     >
       <div className="px-6 py-8">
         <Brand href="/dashboard" />
@@ -34,12 +34,12 @@ export function Sidebar() {
                 className={cn(
                   'flex min-h-12 items-center gap-3 rounded-md px-3 py-3 font-heading text-sm transition-colors',
                   active
-                    ? 'bg-text-1 font-semibold text-white'
+                    ? 'font-bold text-text-1'
                     : 'text-text-2 hover:text-text-1 hover:bg-violet-400/5',
                 )}
                 aria-current={active ? 'page' : undefined}
               >
-                <Icon size={18} weight={active ? 'fill' : 'regular'} />
+                <span className={cn('flex h-9 w-9 items-center justify-center rounded-full', active && 'bg-text-1 text-white')}><Icon size={18} weight={active ? 'fill' : 'regular'} /></span>
                 {label}
               </Link>
             </li>

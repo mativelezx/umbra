@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { GlassCard } from '@/components/ui/Card';
 import { t } from '@/lib/i18n/dict';
+import { Brand } from '@/components/layout/Brand';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -64,17 +65,11 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="relative mx-auto flex min-h-screen max-w-md items-center justify-center px-6 py-24">
+    <main className="relative mx-auto flex min-h-screen max-w-lg items-center justify-center px-5 py-12">
       <GlassCard className="w-full">
         <div className="mb-8">
-          <Link
-            href="/"
-            prefetch={false}
-            className="font-heading font-semibold text-3xl text-text-1 transition-colors duration-150 hover:text-violet-300"
-          >
-            Umbra
-          </Link>
-          <h1 className="mt-6 text-balance font-heading font-semibold text-4xl not-italic text-text-1">
+          <Brand />
+          <h1 className="mt-8 text-balance text-3xl font-bold text-text-1">
             {t('auth.register_title')}
           </h1>
           <p className="mt-2 text-pretty font-body text-sm text-text-3">

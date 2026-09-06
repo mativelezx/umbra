@@ -35,7 +35,7 @@ export function ContextualGreeting({ profile }: ContextualGreetingProps) {
   const isHigh = topBf ? topBf.v >= 50 : false;
 
   return (
-    <div className="relative rounded-2xl border border-violet-400/10 bg-umbra-shadow/30 p-6 md:p-7">
+    <div className="relative border-b border-violet-400/15 pb-6">
       <p className="font-body text-sm normal-case tracking-normal text-text-3">
         {firstName ? `Hola, ${firstName}` : 'Hola'}
       </p>

@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { ArrowRight } from '@phosphor-icons/react/dist/ssr';
 import { createClient } from '@/lib/supabase/server';
 import { LayoutShell } from '@/components/layout/LayoutShell';
 import { ArchetypeCard } from '@/components/dashboard/ArchetypeCard';
@@ -59,7 +60,7 @@ function DashboardView({ data }: { data: DashboardData }) {
 
   return (
     <LayoutShell>
-      <div className="flex flex-col gap-10 md:gap-12">
+      <div className="flex flex-col gap-6 md:gap-8">
         {/* HEADER */}
         <div className="flex flex-col items-start justify-between gap-6 md:flex-row">
           <div>
@@ -73,12 +74,6 @@ function DashboardView({ data }: { data: DashboardData }) {
               {data.profileId.startsWith('demo-') ? 'Resultado ilustrativo · datos ficticios' : `Cuenta creada hace ${createdDays} ${createdDays === 1 ? 'día' : 'días'}`}
             </p>
           </div>
-          <a
-            href="/plan"
-            className="primary-link shrink-0"
-          >
-            <span>Ver actividades</span>
-          </a>
         </div>
 
         {/* ARCHETYPE HERO */}
@@ -89,8 +84,13 @@ function DashboardView({ data }: { data: DashboardData }) {
           turnsCount={data.turnsCount}
         />
 
-        {/* QUICK GLANCE — 3 cards above the fold */}
-        <div className="dash-enter dash-enter-2">
+        <a href="/plan" className="group flex items-center justify-between gap-5 rounded-2xl bg-white p-5 transition-colors hover:bg-umbra-shadow md:p-6">
+          <span><span className="block text-lg font-bold">Ver actividades</span><span className="mt-1 block text-sm text-text-2">Elegí una propuesta y empezá por un paso pequeño.</span></span>
+          <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-text-1 text-white"><ArrowRight size={20} /></span>
+        </a>
+
+        {/* Sources stay visibly separate from the symbolic reading. */}
+        <div className="dash-enter dash-enter-2 rounded-2xl border border-violet-400/15 p-5 md:p-6">
         <QuickGlance
           bigFive={data.bigFive}
           jungFunctions={data.jungFunctions}

@@ -232,8 +232,9 @@ export default function ExportPage() {
           </p>
         </div>
 
-        <div className="flex justify-start">
-          <Button onClick={downloadPdf} loading={downloading} size="lg">
+        <div className="dark-surface flex flex-wrap items-center justify-between gap-5 rounded-2xl p-6">
+          <p className="text-lg font-semibold">Tu lectura, para volver a ella.</p>
+          <Button onClick={downloadPdf} loading={downloading} size="lg" variant="secondary">
             <DownloadSimple size={18} />
             Descargar PDF
           </Button>
@@ -244,7 +245,7 @@ export default function ExportPage() {
           <div ref={pdfRef} className="pdf-root">
             <div className="pdf-section pdf-keep">
               <h1 style={{ fontSize: '48px', margin: '0 0 8px', fontStyle: 'normal' }}>
-                Umbra
+                umbra
               </h1>
               <p style={{ fontSize: '14px', color: '#62625c', margin: 0 }}>
                 Tu perfil — {formatDateEs(new Date())}

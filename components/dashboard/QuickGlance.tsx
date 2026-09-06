@@ -16,14 +16,14 @@ export function QuickGlance({ bigFive, jungFunctions, perDimensionStatus = RIDGE
   const strongest = [...measured].sort((a, b) => Math.abs(bigFive[b] - 50) - Math.abs(bigFive[a] - 50))[0];
   const topJung = (Object.entries(jungFunctions) as Array<[keyof JungFunctions, number]>).sort(([, a], [, b]) => b - a)[0][0];
   return (
-    <section aria-label="Fuentes del resultado" className="grid gap-6 md:grid-cols-2">
+    <section aria-label="Fuentes del resultado" className="grid gap-5 md:grid-cols-2 md:gap-8">
       <div>
-        <h2 className="text-lg font-semibold">Lo que estima el modelo</h2>
+        <h2 className="text-base font-bold">Lo que estima el modelo</h2>
         <p className="mt-2 leading-relaxed text-text-2">{strongest ? BIG_FIVE_LABELS[strongest].label : 'Sin dimensión disponible'}{strongest ? `: ${Math.round(bigFive[strongest])} / 100.` : '.'}</p>
         <p className="mt-2 text-sm leading-relaxed text-text-3">Estimación experimental de Big Five mediante ML. No es un percentil ni permite compararte con otras personas. Las dimensiones sin respaldo se muestran sin cifra en el detalle.</p>
       </div>
       <div>
-        <h2 className="text-lg font-semibold">Lo que propone la interpretación</h2>
+        <h2 className="text-base font-bold">Lo que propone la interpretación</h2>
         <p className="mt-2 leading-relaxed text-text-2">{JUNG_LABELS[topJung].label}.</p>
         <p className="mt-2 text-sm leading-relaxed text-text-3">Interpretación de IA inspirada en funciones de Jung. Es una invitación a explorar cómo te reconocés en el texto.</p>
       </div>

@@ -45,7 +45,7 @@ export function ChatInput({ onSend, disabled, placeholder = 'Escribí tu reflexi
         e.preventDefault();
         handleSend();
       }}
-      className="glass sticky bottom-20 lg:bottom-6 flex items-end gap-2 rounded-2xl p-3"
+      className="sticky bottom-24 lg:bottom-6 flex items-end gap-2 rounded-2xl border border-violet-400/25 bg-white p-3"
     >
       <label htmlFor="chat-input" className="sr-only">
         Tu mensaje

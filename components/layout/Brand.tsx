@@ -6,6 +6,6 @@ export function Brand({ href = '/' }: { href?: string }) {
       <path d="M4 3V19C4 25.075 8.925 30 15 30C21.075 30 26 25.075 26 19V3" stroke="currentColor" strokeWidth="5" />
       <path d="M15 3V18" stroke="currentColor" strokeWidth="5" opacity=".3" />
     </svg>
-    Umbra
+    umbra
   </Link>;
 }

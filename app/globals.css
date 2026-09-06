@@ -17,6 +17,12 @@
 }
 
 @layer components {
+  .app-content h1 { font-size: 1.875rem; line-height: 1.15; font-weight: 700; }
+  .dark-surface { background: #242424; color: #f7f7f4; }
+  .dark-surface :focus-visible { outline-color: #f7f7f4; }
+  .dark-surface .reflection-art { color: #f7f7f4; }
+  .dark-surface .reflection-art svg { --art-paper: #242424; }
+  .dark-surface.mode-choice:hover { background: #343434; }
   /* Compatibility names for existing consumers; all now use the light surface contract. */
   .glass, .card-glow { background: #fff; border: 1px solid #deded8; }
   .card-lift { transition: border-color 160ms ease-out; }
@@ -32,7 +38,8 @@
   .mode-choice .reflection-art { transition: transform 220ms cubic-bezier(.16, 1, .3, 1); }
   .mode-choice:hover .reflection-art { transform: translateX(3px); }
   .answer-choice { transition: background-color 220ms ease-out, border-color 220ms ease-out, transform 220ms cubic-bezier(.16, 1, .3, 1); }
-  .answer-choice[aria-pressed='true'] { transform: translateX(3px); }
+  .answer-choice[aria-pressed='true'] { transform: translateX(3px); background: #242424; border-color: #242424; color: #fff; }
+  .answer-choice[aria-pressed='true'] :is(span, svg, h3, p) { color: inherit; }
   .goal-mark { transition: color 150ms ease-out, background-color 150ms ease-out, border-color 150ms ease-out; }
   .goal-check { animation: goal-confirm 150ms cubic-bezier(.16, 1, .3, 1); }
   @keyframes mirror-reveal {

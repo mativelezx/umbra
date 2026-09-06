@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { GlassCard } from '@/components/ui/Card';
 import { t } from '@/lib/i18n/dict';
+import { Brand } from '@/components/layout/Brand';
 import {
   CONSENT_VERSION_V1,
   CONSENT_LOCALE_V1,
@@ -51,12 +52,10 @@ export default function ConsentPage() {
   }
 
   return (
-    <main className="relative mx-auto max-w-3xl px-6 py-16 md:px-10">
-      <div className="mb-10">
-        <p className="font-body text-sm normal-case tracking-normal text-text-3">
-          {t('consent.eyebrow')}
-        </p>
-        <h1 className="mt-3 text-balance font-heading font-semibold text-5xl not-italic text-text-1 md:text-6xl">
+    <main className="relative mx-auto max-w-3xl px-6 py-8 md:px-10">
+      <Brand />
+      <div className="mb-6 mt-8">
+        <h1 className="text-balance text-3xl font-bold text-text-1 md:text-4xl">
           {t('consent.title')}
         </h1>
         <p className="mt-4 max-w-2xl text-pretty font-body text-lg leading-relaxed text-text-2">

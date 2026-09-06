@@ -12,7 +12,7 @@ export function Card({ children, className, glow = false }: CardProps) {
     <div
       className={cn(
         'card-lift rounded-lg p-6',
-        glow ? 'card-glow' : 'bg-umbra-shadow/30 border border-violet-400/10',
+        glow ? 'card-glow' : 'bg-white',
         className,
       )}
     >
@@ -22,5 +22,5 @@ export function Card({ children, className, glow = false }: CardProps) {
 }
 
 export function GlassCard({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn('glass rounded-lg p-6', className)}>{children}</div>;
+  return <div className={cn('rounded-2xl bg-white p-6 md:p-8', className)}>{children}</div>;
 }

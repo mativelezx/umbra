@@ -8,7 +8,6 @@ import {
   ArrowRight,
 } from '@phosphor-icons/react/dist/ssr';
 import { LayoutShell } from '@/components/layout/LayoutShell';
-import { Card } from '@/components/ui/Card';
 
 export const metadata = {
   title: 'Configuración',
@@ -56,38 +55,28 @@ const ENTRIES: SettingsEntry[] = [
 export default function SettingsPage() {
   return (
     <LayoutShell>
-      <div className="flex max-w-3xl flex-col gap-10">
+      <div className="flex max-w-3xl flex-col gap-6">
         <div>
-          <p className="font-body text-sm normal-case tracking-normal text-text-3">
-            Tu espacio
-          </p>
           <h1 className="mt-2 text-balance font-heading font-semibold text-4xl not-italic text-text-1 md:text-5xl">
             Configuración
           </h1>
-          <p className="mt-4 max-w-2xl text-pretty font-body text-lg leading-relaxed text-text-2">
+          <p className="mt-3 max-w-2xl text-pretty font-body text-base leading-relaxed text-text-2">
             Tus datos, tu participación en investigación y tu cuenta. Todo está pensado para que tengas control. Cada acción se explica antes de ejecutarse.
           </p>
         </div>
 
-        <div className="grid gap-4">
+        <div className="overflow-hidden rounded-2xl bg-white divide-y divide-violet-400/15">
           {ENTRIES.map((entry) => {
             const Icon = entry.icon;
             const isDanger = entry.accent === 'danger';
             return (
-              <Link key={entry.href} href={entry.href} className="group">
-                <Card
-                  className={
-                    isDanger
-                      ? 'rounded-2xl border-accent-rose/20 transition-[border-color,box-shadow] duration-200 ease-out group-hover:border-accent-rose/40 '
-                      : 'rounded-2xl transition-[border-color,box-shadow] duration-200 ease-out group-hover:border-violet-400/30 '
-                  }
-                >
+              <Link key={entry.href} href={entry.href} className="group block p-5 transition-colors hover:bg-umbra-fog md:p-6">
                   <div className="flex items-start gap-4">
                     <div
                       className={
                         isDanger
-                          ? 'mt-1 shrink-0 rounded-xl bg-accent-rose/10 p-2.5 text-accent-rose'
-                          : 'mt-1 shrink-0 rounded-xl bg-violet-400/10 p-2.5 text-violet-300'
+                          ? 'mt-1 shrink-0 text-accent-rose'
+                          : 'mt-1 shrink-0 text-text-1'
                       }
                     >
                       <Icon size={22} />
@@ -96,13 +85,13 @@ export default function SettingsPage() {
                       <h2
                         className={
                           isDanger
-                            ? 'text-balance font-heading font-semibold text-2xl text-accent-rose'
-                            : 'text-balance font-heading font-semibold text-2xl text-text-1'
+                            ? 'text-balance text-base font-bold text-accent-rose'
+                            : 'text-balance text-base font-bold text-text-1'
                         }
                       >
                         {entry.title}
                       </h2>
-                      <p className="mt-1.5 text-pretty font-body text-base leading-relaxed text-text-2">
+                      <p className="mt-1.5 text-pretty font-body text-sm leading-relaxed text-text-2">
                         {entry.description}
                       </p>
                     </div>
@@ -111,7 +100,6 @@ export default function SettingsPage() {
                       className="mt-2 shrink-0 text-text-3 transition-transform duration-200 group-hover:translate-x-0.5"
                     />
                   </div>
-                </Card>
               </Link>
             );
           })}

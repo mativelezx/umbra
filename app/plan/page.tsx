@@ -149,12 +149,11 @@ export default function PlanPage() {
   return (
     <LayoutShell>
       <div className="flex flex-col gap-8">
-        <div className="relative">
-          <ReflectionArt variant="steps" className="float-right ml-5 w-20 md:w-28" />
+        <div>
           <h1 className="mt-2 text-balance font-heading font-bold text-4xl text-text-1 md:text-5xl">
             Actividades
           </h1>
-          <p className="mt-3 max-w-2xl text-pretty font-body text-lg leading-relaxed text-text-2">
+          <p className="mt-3 max-w-2xl text-pretty font-body text-base leading-relaxed text-text-2">
             Elegí una propuesta y empezá por un paso pequeño. Son sugerencias de reflexión generadas por IA a partir de tu perfil; el ritmo lo ponés vos.
           </p>
           <p className="mt-4 text-sm text-text-3">{isDemo ? 'En este ejemplo, las casillas cambian solo en esta pantalla. No se guarda tu progreso.' : 'Marcá los pasos que completaste para actualizar tu progreso.'}</p>
@@ -195,24 +194,25 @@ export default function PlanPage() {
         {areas && (
           <>
             <div className="flex flex-col gap-6">
-              {areas.map((area) => (
-                <article key={area.id} className="border-t border-violet-400/20 py-8">
-                  <div className="flex items-start gap-4">
+              {areas.map((area, index) => (
+                <article key={area.id} className="overflow-hidden rounded-2xl bg-white">
+                  <div className={cn('flex items-center gap-4 p-6 md:p-7', index === 0 ? 'dark-surface' : 'bg-umbra-shadow')}>
                     <div className="flex-1">
-                      <h2 className="font-heading font-semibold text-2xl not-italic text-text-1 md:text-3xl">
+                      <h2 className="text-2xl font-bold">
                         {area.name}
                       </h2>
-                      <p className="mt-2 font-body text-sm text-text-2">
+                      <p className={cn('mt-3 text-sm leading-relaxed', index === 0 ? 'text-white/80' : 'text-text-2')}>
                         {area.rationale}
                       </p>
                     </div>
+                    {index === 0 && <ReflectionArt variant="steps" className="w-16 shrink-0 md:w-24" />}
                   </div>
 
-                  <div className="mt-6 flex flex-col gap-5">
+                  <div className="flex flex-col divide-y divide-violet-400/15">
                     {area.actions.map((action) => (
                       <div
                         key={action.id}
-                        className="rounded-lg bg-white p-5 md:p-6"
+                        className="p-5 md:p-7"
                       >
                         <h3 className="font-heading text-lg font-bold text-text-1">
                           {action.title}
