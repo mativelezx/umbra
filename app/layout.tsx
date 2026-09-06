@@ -70,9 +70,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className={dmSans.variable}>
-      {/* direction29378ec1 · Operate: light reflection journal. Original geometric U,
-          DM Sans, grayscale, authored mirror geometry and finite state motion. No cosmic decoration,
-          clinical or precision claims. Verify desktop and mobile snapshots. */}
+      {/* THESIS: A personal reflection journal with distinct stages, not a clinical scorecard.
+          OWN-WORLD: lowercase umbra, DM Sans, graphite and ivory, original vector contours;
+          black primary surfaces, white reading panels, compact navigation and grouped controls.
+          STORY: Answer, explore an experimental reading, choose an activity; chat and PDF complement it.
+          FIRST VIEWPORT: Dark editorial hero, large left heading and entry action, fluid contour field
+          around a white three-state illustrative panel. Interiors remain light and task-centered.
+          FORM: User-pinned Stoic patterns override exploration direction29378ec1; code-first approved.
+          Signature: switch the example between questions, reading and activities; ambient motion pauses
+          manually, offscreen and in hidden documents, and remains static with reduced motion.
+          FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review,
+          the verdict, DESIGN.md, and every shipping raster carrying its provenance */}
       <body data-design-direction="29378ec1" className="font-body bg-umbra-void text-text-1 antialiased">
         <ThemeProvider>
           <AuthProvider>
