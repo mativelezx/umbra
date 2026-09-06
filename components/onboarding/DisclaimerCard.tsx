@@ -1,7 +1,18 @@
 import { Warning } from '@phosphor-icons/react/dist/ssr';
 import { t } from '@/lib/i18n/dict';
 
-export function DisclaimerCard() {
+export function DisclaimerCard({ compact = false }: { compact?: boolean }) {
+  if (compact) {
+    return <aside role="note" className="text-sm text-text-2">
+      <div className="flex flex-wrap items-center gap-x-4">
+        <p className="font-medium text-text-1">{t('onboarding.disclaimer_title')}</p>
+        <details className="group">
+          <summary className="min-h-11 cursor-pointer py-3 underline underline-offset-4">Recursos de apoyo</summary>
+          <p className="max-w-2xl pb-3 leading-relaxed">{t('onboarding.disclaimer_text')}</p>
+        </details>
+      </div>
+    </aside>;
+  }
   return (
     <aside
       role="note"

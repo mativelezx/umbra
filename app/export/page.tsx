@@ -242,7 +242,7 @@ export default function ExportPage() {
         {/* Preview */}
         <div className="rounded-lg border border-violet-400/20 bg-white p-0 overflow-hidden">
           <div ref={pdfRef} className="pdf-root">
-            <div className="pdf-section">
+            <div className="pdf-section pdf-keep">
               <h1 style={{ fontSize: '48px', margin: '0 0 8px', fontStyle: 'normal' }}>
                 Umbra
               </h1>
@@ -278,7 +278,7 @@ export default function ExportPage() {
                 return BIG_FIVE_ORDER.map((key) => {
                   const measured = dimStatus[key] === 'ok';
                   return (
-                    <div key={key} style={{ marginBottom: '12px' }}>
+                    <div key={key} className="pdf-row" style={{ marginBottom: '12px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '13px' }}>
                         <span>{BIG_FIVE_LABELS[key]}</span>
                         {measured ? (
@@ -306,7 +306,7 @@ export default function ExportPage() {
               <h3 style={{ margin: '0 0 16px' }}>Funciones de Jung · interpretación de IA</h3>
               <p style={{ fontSize: '13px', marginBottom: '16px' }}>Valores de la capa interpretativa, en escala de 0 a 100. No son medidas psicométricas ni probabilidades.</p>
               {(Object.keys(JUNG_LABELS) as Array<keyof JungFunctions>).map((key) => (
-                <div key={key} style={{ marginBottom: '10px' }}>
+                <div key={key} className="pdf-row" style={{ marginBottom: '10px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '12px' }}>
                     <span>{key} · {JUNG_LABELS[key]}</span>
                     <span style={{ fontVariantNumeric: 'tabular-nums' }}>{data.profile.jungFunctions[key]}</span>
@@ -320,10 +320,12 @@ export default function ExportPage() {
 
             {data.narrative && (
               <div className="pdf-section">
+                <div className="pdf-keep">
                 <h2 style={{ fontSize: '24px', margin: '0 0 16px', fontStyle: 'normal' }}>
                   Tu lectura
                 </h2>
                 <p style={{ fontSize: '13px', marginBottom: '16px' }}>Texto generado por IA. Puede equivocarse; revisá qué te resulta útil.</p>
+                </div>
                 {data.narrative.split('\n\n').map((p, i) => (
                   <p key={i} style={{ fontSize: '14px', lineHeight: '1.7', marginBottom: '12px' }}>
                     {p}
@@ -334,11 +336,10 @@ export default function ExportPage() {
 
             {data.plan && (
               <div className="pdf-section">
-                <h2 style={{ fontSize: '24px', margin: '0 0 16px', fontStyle: 'normal' }}>
-                  Actividades de reflexión
-                </h2>
                 {data.plan.areas.map((area, i) => (
-                  <div key={area.id} className="pdf-card">
+                  <div key={area.id} className={i === 0 ? 'pdf-keep' : undefined}>
+                  {i === 0 && <h2 style={{ fontSize: '24px', margin: '0 0 16px', fontStyle: 'normal' }}>Actividades de reflexión</h2>}
+                  <div className="pdf-card">
                     <h3 style={{ margin: '0 0 8px' }}>
                       {i + 1}. {area.name}
                     </h3>
@@ -346,7 +347,7 @@ export default function ExportPage() {
                       {area.rationale}
                     </p>
                     {area.actions.map((action) => (
-                      <div key={action.id} style={{ marginBottom: '12px', paddingLeft: '12px', borderLeft: '1px solid #deded8' }}>
+                      <div key={action.id} className="pdf-action" style={{ marginBottom: '12px', paddingLeft: '12px', borderLeft: '1px solid #deded8' }}>
                         <div style={{ fontSize: '13px', fontWeight: 600 }}>{action.title}</div>
                         <div style={{ fontSize: '12px', marginTop: '4px' }}>{action.description}</div>
                         <ul style={{ fontSize: '12px', marginTop: '6px', paddingLeft: '16px' }}>
@@ -356,6 +357,7 @@ export default function ExportPage() {
                         </ul>
                       </div>
                     ))}
+                  </div>
                   </div>
                 ))}
               </div>

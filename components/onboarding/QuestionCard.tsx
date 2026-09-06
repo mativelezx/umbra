@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { GlassCard } from '@/components/ui/Card';
 import type { OnboardingAnswer, OnboardingQuestion } from '@/types';
 import { OpenTextCard } from './cards/OpenTextCard';
@@ -16,10 +17,26 @@ interface QuestionCardProps {
 }
 
 export function QuestionCard({ question, onSubmit, submitting }: QuestionCardProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const previousQuestionId = useRef(question.id);
+
+  useEffect(() => {
+    if (previousQuestionId.current === question.id) return;
+    previousQuestionId.current = question.id;
+    const heading = containerRef.current?.querySelector('h2');
+    if (heading) {
+      heading.tabIndex = -1;
+      heading.focus({ preventScroll: true });
+      containerRef.current?.scrollIntoView({ block: 'start', behavior: 'auto' });
+    }
+  }, [question.id]);
+
   return (
-    <GlassCard key={question.id} className="onboarding-card-enter p-6 md:p-8">
-      {renderInner(question, onSubmit, submitting)}
-    </GlassCard>
+    <div ref={containerRef} className="scroll-mt-20">
+      <GlassCard key={question.id} className="onboarding-card-enter p-6 md:p-8">
+        {renderInner(question, onSubmit, submitting)}
+      </GlassCard>
+    </div>
   );
 }
 

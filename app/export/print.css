@@ -33,6 +33,23 @@
 .pdf-root h2, .pdf-root h3 { break-after: avoid; }
 .pdf-root p, .pdf-root li { orphans: 3; widows: 3; }
 
+/* html2pdf's CSS mode honors break-inside: avoid for elements shorter
+   than one page. Keep readable units together instead of cutting canvas
+   glyph rows. Oversized user content may still span pages. */
+.pdf-root .pdf-keep,
+.pdf-root .pdf-card,
+.pdf-root .pdf-row,
+.pdf-root .pdf-action,
+.pdf-root .pdf-footer,
+.pdf-root p,
+.pdf-root li,
+.pdf-root h1,
+.pdf-root h2,
+.pdf-root h3 {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
 @media (max-width: 600px) { .pdf-root { padding: 24px 18px; } }
 @media print {
   body { background: white; }

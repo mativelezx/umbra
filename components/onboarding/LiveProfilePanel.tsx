@@ -11,13 +11,8 @@ interface LiveProfilePanelProps {
   onExpireInsight?: (id: string) => void;
 }
 
-export function LiveProfilePanel({ insights, turnNumber, maxTurns }: LiveProfilePanelProps) {
+export function LiveProfilePanel({ insights }: LiveProfilePanelProps) {
   return <aside className="space-y-6">
-    <div>
-      <h2 className="text-lg font-semibold">Tu recorrido</h2>
-      <p className="mt-2 text-sm text-text-2">Pregunta {turnNumber} de {maxTurns}</p>
-      <div role="progressbar" aria-label="Preguntas completadas" aria-valuenow={Math.max(0, turnNumber - 1)} aria-valuemin={0} aria-valuemax={maxTurns} className="mt-4 h-1.5 overflow-hidden rounded-full bg-umbra-shadow"><div className="h-full bg-text-1" style={{ width: `${Math.min(100, (turnNumber - 1) / maxTurns * 100)}%` }} /></div>
-    </div>
     <p className="text-sm leading-relaxed text-text-3">Durante la conversación pueden aparecer ideas provisorias de IA. El resultado experimental se presenta al terminar.</p>
     {insights.length > 0 && <details className="border-t border-violet-400/20 pt-4"><summary className="cursor-pointer py-2 text-sm font-medium">Ver ideas de la conversación ({insights.length})</summary><div className="mt-4 space-y-3">{insights.map(ping => <InsightPing key={ping.id} ping={ping} />)}</div></details>}
   </aside>;

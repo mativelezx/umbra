@@ -302,24 +302,26 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
   );
 
   return (
-    <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-8 px-6 py-10 md:px-10">
-      <Brand />
-
-      <header className="flex flex-col gap-2">
-        <h1 className="font-heading font-semibold text-4xl not-italic text-text-1 md:text-5xl">
+    <main className="relative z-10 mx-auto flex max-w-6xl flex-col gap-5 px-6 py-6 md:px-10 md:py-8">
+      <header>
+        <Brand />
+        <h1 className="sr-only">
           Un momento para responder
         </h1>
-        <p className="max-w-2xl font-body text-base text-text-2">
-          Respondé con naturalidad y con el detalle que te resulte cómodo. No hay respuestas correctas.
-        </p>
       </header>
-      <DisclaimerCard />
-      {isDemo && <p role="status" className="rounded-md bg-umbra-shadow/50 p-4 text-sm text-text-2">Ejemplo local con preguntas preparadas. Tus respuestas no se envían a un proveedor ni generan un perfil real.</p>}
+      <div className="border-y border-violet-400/15 py-2">
+        <DisclaimerCard compact />
+        {isDemo && <p role="status" className="pb-2 text-sm leading-relaxed text-text-2">Ejemplo local: preguntas preparadas. Tus respuestas no se envían ni generan un perfil real.</p>}
+      </div>
 
       {error && <ErrorBanner error={error} onRetry={() => fetchNext(null)} />}
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_240px]">
         <div className="flex min-h-[420px] flex-col gap-3">
+          <div className="mb-1" aria-label="Tu recorrido">
+            <p className="text-sm text-text-2">Pregunta {turnNumber} de {maxTurns}</p>
+            <div role="progressbar" aria-label="Preguntas completadas" aria-valuenow={Math.max(0, turnNumber - 1)} aria-valuemin={0} aria-valuemax={maxTurns} className="mt-3 h-1.5 overflow-hidden rounded-full bg-umbra-shadow"><div className="h-full bg-text-1" style={{ width: `${Math.min(100, (turnNumber - 1) / maxTurns * 100)}%` }} /></div>
+          </div>
           {synthesizing ? (
             <SynthesisReveal />
           ) : !currentQuestion ? (
@@ -354,7 +356,7 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
           onExpireInsight={expireInsight}
         />
       </div>
-    </div>
+    </main>
   );
 }
 
