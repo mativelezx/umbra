@@ -12,7 +12,7 @@
 .landing ::selection { background: #d4d8ce; color: var(--landing-ink); }
 .darkOpening { position: relative; overflow: hidden; background: var(--landing-ink); color: var(--landing-paper); }
 .header, .hero, .openingFooter, .howSection, .pillarsSection, .footer { width: min(100% - 96px, 1280px); margin-inline: auto; }
-.header { position: relative; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 27px; }
+.header { position: relative; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 27px; background: var(--landing-ink); }
 .headerNav { display: flex; align-items: center; gap: 34px; font-size: 14px; }
 .headerAbout, .loginLink { display: inline-flex; align-items: center; min-height: 44px; }
 .headerAbout { color: var(--landing-muted); }
@@ -38,6 +38,15 @@
 .experience[data-motion='running'] .fluidContour { animation-play-state: running; }
 .experience[data-motion='reduced'] .fluidContour { animation: none; }
 @keyframes current-flow { from { d: var(--flow-from); } to { d: var(--flow-to); } }
+/* WebKit versions without CSS path morphing keep the authored contours moving
+   through a gentle shear. Both paths use the same visibility and pause gates. */
+@supports not (d: path("M 0 0 L 1 1")) {
+  .fluidContour { animation-name: current-drift; transform-box: view-box; transform-origin: center; }
+}
+@keyframes current-drift {
+  from { transform: translate(-12px, -8px) skewX(-5deg); }
+  to { transform: translate(15px, 10px) skewX(5deg); }
+}
 
 .example { position: relative; z-index: 1; display: grid; width: 100%; max-width: 452px; margin-inline: auto; border-radius: 16px; background: var(--landing-paper); color: var(--landing-ink); overflow: hidden; }
 .exampleHeader { display: flex; align-items: center; justify-content: space-between; padding: 21px 27px 15px; font-size: 12px; font-weight: 500; color: var(--landing-body); }
@@ -60,10 +69,10 @@
 .activityIcon { margin-bottom: 19px; }
 .activityDescription { margin-top: 15px; font-size: 14px; line-height: 1.55; color: var(--landing-body); }
 .exampleFooter { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 17px 27px; background: #dfe2d8; font-size: 11px; font-weight: 500; }
-.motionControl { position: absolute; z-index: 1; right: 0; bottom: -3px; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding-inline: 9px; color: var(--landing-muted); font-size: 11px; }
+.motionControl { position: absolute; z-index: 1; right: 0; bottom: -3px; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding-inline: 9px; border-radius: 5px; background: var(--landing-ink); color: var(--landing-muted); font-size: 11px; }
 .motionControl:hover:not(:disabled) { color: #fff; }
 .motionControl:disabled { cursor: default; }
-.openingFooter { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 23px; border-top: 1px solid #41443f; font-size: 13px; }
+.openingFooter { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 23px; border-top: 1px solid #41443f; background: var(--landing-ink); font-size: 13px; }
 .openingFooter > p { color: var(--landing-muted); }
 .companionLinks { display: flex; align-items: center; flex-wrap: wrap; column-gap: 27px; row-gap: 8px; }
 .companionLinks > span { color: var(--landing-muted); font-size: 11px; }
