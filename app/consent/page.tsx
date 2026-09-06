@@ -3,7 +3,6 @@
 import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { GlassCard } from '@/components/ui/Card';
 import { t } from '@/lib/i18n/dict';
 import { Brand } from '@/components/layout/Brand';
 import {
@@ -63,7 +62,7 @@ export default function ConsentPage() {
         </p>
       </div>
 
-      <GlassCard className="mb-8 max-h-[60vh] overflow-y-auto">
+      <div role="region" aria-label="Información sobre el consentimiento" tabIndex={0} className="mb-8 max-h-[60vh] overflow-y-auto rounded-2xl bg-white p-6 md:p-8">
         <article className="prose-sm prose-invert font-body text-sm leading-relaxed text-text-2">
           <section>
             <h2 className="mt-0 font-heading font-semibold text-2xl text-text-1">{t('consent.section_data_title')}</h2>
@@ -105,7 +104,7 @@ export default function ConsentPage() {
             </p>
           </section>
         </article>
-      </GlassCard>
+      </div>
 
       <form onSubmit={onSubmit} className="flex flex-col gap-5">
         <label className="group flex cursor-pointer items-start gap-3 rounded-xl border border-violet-400/15 bg-umbra-fog/30 p-4 transition-[border-color,background-color] duration-150 hover:border-violet-400/30 hover:bg-umbra-fog/50">
