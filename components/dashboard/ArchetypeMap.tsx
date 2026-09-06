@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useId, useRef } from 'react';
 import {
   Brain,
   Compass,
@@ -147,33 +147,51 @@ function CompareDrawer({
   const otherCompare = ARCHETYPE_COMPARE[otherArchetype];
   const isSelf = userArchetype === otherArchetype;
   const vsYou = otherCompare.comparisonTo[userArchetype];
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const titleId = useId();
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    const trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    // Native modal top layer provides focus containment and makes the
+    // background inert. Explicit focus keeps the opening action predictable.
+    dialog?.showModal();
+    closeRef.current?.focus();
+    return () => {
+      dialog?.close();
+      trigger?.focus();
+    };
+  }, []);
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-40 flex items-end justify-center bg-umbra-void/80  md:items-center md:p-8"
-      onClick={onClose}
+    <dialog
+      ref={dialogRef}
+      aria-labelledby={titleId}
+      className="fixed inset-x-0 bottom-0 top-auto m-0 max-h-[90dvh] w-full max-w-2xl overflow-y-auto rounded-t-2xl border border-violet-400/30 bg-white p-0 text-text-1 backdrop:bg-text-1/30 md:inset-0 md:m-auto md:rounded-2xl"
+      onCancel={(event) => { event.preventDefault(); onClose(); }}
+      onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl border border-violet-400/30 bg-white md:rounded-2xl"
+        className="relative"
       >
         <button
+          ref={closeRef}
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-full p-2 text-text-3 transition-colors hover:bg-violet-400/10 hover:text-violet-200"
+          className="absolute right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full text-text-3 transition-colors hover:bg-violet-400/10 hover:text-violet-200"
           aria-label="Cerrar comparación"
         >
           <X size={18} weight="bold" />
         </button>
 
         <div className="flex flex-col gap-6 p-7 md:p-10">
-          <header className="flex flex-col gap-2">
+          <header className="flex flex-col gap-2 pr-10">
             <p className="font-body text-sm normal-case tracking-normal text-text-3">
               {isSelf ? 'Arquetipo de tu lectura' : `${userInfo.name} y ${otherInfo.name}`}
             </p>
-            <h2 className="font-heading font-semibold text-3xl not-italic text-text-1 md:text-4xl">
+            <h2 id={titleId} className="font-heading font-semibold text-3xl not-italic text-text-1 md:text-4xl">
               {otherInfo.name}
             </h2>
             <p className="font-body text-sm not-italic text-violet-200">
@@ -196,7 +214,7 @@ function CompareDrawer({
           </div>
         </div>
       </div>
-    </div>
+    </dialog>
   );
 }
 

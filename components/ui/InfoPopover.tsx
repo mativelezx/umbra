@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Info } from '@phosphor-icons/react';
+import { Info, X } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
 interface InfoPopoverProps {
@@ -20,6 +20,7 @@ interface InfoPopoverProps {
 export function InfoPopover({ title, body, example, className }: InfoPopoverProps) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -29,7 +30,10 @@ export function InfoPopover({ title, body, example, className }: InfoPopoverProp
       }
     }
     function onEsc(e: KeyboardEvent) {
-      if (e.key === 'Escape') setOpen(false);
+      if (e.key === 'Escape') {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
     }
     window.addEventListener('mousedown', onClick);
     window.addEventListener('keydown', onEsc);
@@ -42,6 +46,7 @@ export function InfoPopover({ title, body, example, className }: InfoPopoverProp
   return (
     <div ref={wrapRef} className={cn('relative inline-block', className)}>
       <button
+        ref={triggerRef}
         type="button"
         aria-label={`¿Qué es ${title}?`}
         aria-expanded={open}
@@ -59,12 +64,15 @@ export function InfoPopover({ title, body, example, className }: InfoPopoverProp
         <div
           role="dialog"
           aria-label={title}
-          className="absolute right-0 top-12 z-30 w-64 max-w-[80vw] rounded-lg border border-violet-400/30 bg-white p-4 md:w-72"
+          className="fixed inset-x-4 bottom-24 z-30 mx-auto max-h-[calc(100dvh-8rem)] max-w-md overflow-y-auto rounded-lg border border-violet-400/30 bg-white p-5 text-left md:bottom-8"
         >
-          <p className="font-heading text-xs font-semibold normal-case tracking-normal text-violet-200">
-            {title}
-          </p>
-          <p className="mt-2 font-body text-xs leading-relaxed text-text-2">
+          <div className="flex items-center justify-between gap-3">
+            <p className="font-heading text-base font-semibold text-text-1">{title}</p>
+            <button type="button" aria-label="Cerrar ayuda" onClick={() => { setOpen(false); triggerRef.current?.focus(); }} className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-text-2 hover:bg-umbra-shadow">
+              <X size={18} />
+            </button>
+          </div>
+          <p className="mt-2 font-body text-sm leading-relaxed text-text-2">
             {body}
           </p>
           {example && (
