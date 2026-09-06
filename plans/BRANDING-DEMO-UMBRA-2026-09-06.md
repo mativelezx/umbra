@@ -78,6 +78,23 @@ La revisión amplía la expresión gráfica dentro de la misma dirección: vecto
 
 Fuentes de tipografía: [sitio oficial de Stoic](https://www.getstoic.com/), [Visuelt — distribuidor oficial](https://www.myfonts.com/collections/visuelt-font-colophon-foundry), [DM Sans](https://fonts.google.com/specimen/DM+Sans), [licencia de DM Sans](https://github.com/google/fonts/blob/main/ofl/dmsans/OFL.txt).
 
+### Segunda revisión visual solicitada
+
+Matías pidió después el logo `umbra` en minúsculas, un hero oscuro, fluido y animado que muestre el alcance de la app, y trasladar los patrones de Stoic a toda la experiencia. Esto reemplaza la primera portada clara, no el alcance funcional ni los límites académicos. La identidad visible del logo pasa a minúsculas; el nombre del proyecto en prosa continúa siendo Umbra.
+
+Nueva inspección visual directa de Mobbin, 6 de septiembre de 2026:
+
+| Referencia observada | Patrón que se traslada | Superficie Umbra |
+| --- | --- | --- |
+| [Today](https://mobbin.com/flows/b72044fc-f724-4356-9805-2a17626668bd) | Encabezado compacto, acción principal oscura y módulos claros de distinto énfasis; navegación inferior discreta sin grandes bloques activos. | Resultado y navegación compartida. Sin calendario, rachas o métricas nuevas. |
+| [Reflexión matutina](https://mobbin.com/flows/655eb98d-12b4-43de-b6b2-5cdcb33edd93) | Una tarea central, avance segmentado, espacio limpio para responder y control de continuidad claro. | Preguntas existentes, incluida lectura por teclado y estados de recuperación. |
+| [Library](https://mobbin.com/flows/c5ea06fa-93c5-4b43-ba3f-a5c03b79e87c) | Colección de piezas claras y oscuras, jerarquía entre propuesta y detalle. | Actividades existentes. No agregar biblioteca, búsqueda ni funciones de meditación. |
+| [Journey](https://mobbin.com/flows/f338c549-c18a-45db-81f1-12819c1eadfa) | Resumen oscuro reconocible, contenido de lectura claro y listas agrupadas. | Resultado y su lectura, distinguiendo fuentes y límites. No inventar historial o estadísticas. |
+| [Profile](https://mobbin.com/flows/eee28256-463d-467a-85da-a28fa4a20ddd) | Filas de configuración agrupadas sobre fondo claro, acciones de cuenta localizables. | Cuenta y derechos de datos, sin cambiar contratos. |
+| [Lectura asistida por IA](https://mobbin.com/flows/e6ca1bb5-350b-49b6-9074-e35ddd18f046) | Editor despejado, contexto visible y acciones próximas al contenido. | Chat y texto de reflexión existentes. No copiar mentores, gradientes ni nuevas funciones. |
+
+El sitio oficial muestra una gran composición editorial de diario y tipografía compacta. La nueva portada de Umbra adopta esa presencia, con el contraste oscuro y fluidez solicitados expresamente: geometría/ondas originales en movimiento, contenido legible, controles para pausar cualquier movimiento continuo y alternativa estática con movimiento reducido. Mostrar preguntas, lectura experimental, actividades, chat e informe sin aparentar que una vista ilustrativa es un análisis real. No descargar ni reutilizar ilustraciones o fuentes propietarias de Stoic.
+
 Reutilizar Next.js, Tailwind y componentes existentes. Secuencia: fundaciones compartidas → navegación → preguntas → resultado → actividades → exportación. Evitar una segunda aplicación, una nueva biblioteca de componentes o una pantalla falsa solo para grabar.
 
 La base candidata es `entrega-tribunal` en `c3fff06`; preservar el árbol `beta` y sus cambios ML. Resolver la implementación en un entorno aislado antes de integrar.
