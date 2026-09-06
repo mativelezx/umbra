@@ -23,3 +23,16 @@ it('preserves an answer during a request and focuses the heading only when the q
   expect(screen.getByRole('heading', { name: secondQuestion.prompt })).toHaveFocus();
   expect(scrollIntoView).toHaveBeenCalledOnce();
 });
+
+it('focuses and scrolls to the visible scene when advancing into a scenario', () => {
+  const scrollIntoView = vi.fn();
+  Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', { configurable: true, value: scrollIntoView });
+  const onSubmit = vi.fn();
+  const scenario = DEMO_ONBOARDING_SCRIPT.find(step => step.question.type === 'scenario')?.question;
+  if (!scenario || scenario.type !== 'scenario') throw new Error('Scenario fixture missing');
+  const { rerender } = render(<QuestionCard question={DEMO_ONBOARDING_SCRIPT[0].question} onSubmit={onSubmit} submitting={false} />);
+  screen.getByRole('textbox').focus();
+  rerender(<QuestionCard question={scenario} onSubmit={onSubmit} submitting={false} />);
+  expect(screen.getByRole('heading', { name: scenario.scene })).toHaveFocus();
+  expect(scrollIntoView).toHaveBeenCalledOnce();
+});

@@ -36,9 +36,9 @@ export function ScenarioCard({ question, onSubmit, submitting }: ScenarioCardPro
         <p className="font-body text-sm normal-case tracking-normal text-text-3">
           {question.prompt}
         </p>
-        <p className="font-heading font-semibold text-2xl not-italic leading-snug text-text-1 md:text-3xl">
+        <h2 className="font-heading font-semibold text-2xl not-italic leading-snug text-text-1 md:text-3xl">
           {question.scene}
-        </p>
+        </h2>
       </header>
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
