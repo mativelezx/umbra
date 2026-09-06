@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { DM_Sans } from 'next/font/google';
 import { AuthProvider } from '@/lib/providers/auth-context';
 import { MotionProvider } from '@/components/motion/MotionProvider';
 import { ThemeProvider } from '@/lib/providers/theme';
 import './globals.css';
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
+const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-dm-sans', display: 'swap' });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 const SITE_NAME = 'Umbra';
@@ -69,9 +69,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className={inter.variable}>
+    <html lang="es" className={dmSans.variable}>
       {/* direction29378ec1 · Operate: light reflection journal. Original geometric U,
-          sans, grayscale, whitespace and typographic hierarchy. No cosmic decoration,
+          DM Sans, grayscale, authored mirror geometry and finite state motion. No cosmic decoration,
           clinical or precision claims. Verify desktop and mobile snapshots. */}
       <body data-design-direction="29378ec1" className="font-body bg-umbra-void text-text-1 antialiased">
         <ThemeProvider>

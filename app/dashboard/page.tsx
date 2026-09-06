@@ -63,7 +63,7 @@ function DashboardView({ data }: { data: DashboardData }) {
         {/* HEADER */}
         <div className="flex flex-col items-start justify-between gap-6 md:flex-row">
           <div>
-            <h1 className="mt-2 text-balance font-heading font-semibold text-4xl not-italic text-text-1 md:text-5xl">
+            <h1 className="mt-2 text-balance font-heading font-bold text-4xl not-italic text-text-1 md:text-5xl">
               Mi resultado
             </h1>
             <p className="mt-2 max-w-xl text-pretty font-body text-base text-text-3">

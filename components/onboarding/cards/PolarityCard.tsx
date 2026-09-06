@@ -51,7 +51,7 @@ export function PolarityCard({ question, onSubmit, submitting }: PolarityCardPro
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
-        <h2 className="font-heading font-semibold text-3xl not-italic text-text-1 md:text-4xl">
+        <h2 className="font-heading font-bold text-3xl not-italic text-text-1 md:text-4xl">
           {question.prompt}
         </h2>
         {question.helper && (

@@ -39,7 +39,7 @@ export function RankingCard({ question, onSubmit, submitting }: RankingCardProps
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-2">
-        <h2 className="font-heading font-semibold text-3xl not-italic text-text-1 md:text-4xl">
+        <h2 className="font-heading font-bold text-3xl not-italic text-text-1 md:text-4xl">
           {question.prompt}
         </h2>
         <p className="font-body text-sm text-text-3">{question.instruction}</p>

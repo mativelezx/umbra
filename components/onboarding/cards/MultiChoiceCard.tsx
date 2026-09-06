@@ -47,7 +47,7 @@ export function MultiChoiceCard({
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-2">
-        <h2 className="font-heading font-semibold text-3xl not-italic text-text-1 md:text-4xl">
+        <h2 className="font-heading font-bold text-3xl not-italic text-text-1 md:text-4xl">
           {question.prompt}
         </h2>
         {question.helper && (
@@ -102,7 +102,7 @@ function OptionButton({
       onClick={onClick}
       aria-pressed={selected}
       className={cn(
-        'group relative flex items-start gap-3 rounded-lg border p-4 text-left transition-all duration-200',
+        'answer-choice group relative flex items-start gap-3 rounded-lg border p-4 text-left transition-all duration-200',
         selected
           ? 'border-violet-400/80 bg-violet-400/10 '
           : 'border-violet-400/15 bg-umbra-shadow/40 hover:border-violet-400/40 hover:bg-violet-400/5',

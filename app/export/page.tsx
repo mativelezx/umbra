@@ -223,7 +223,7 @@ export default function ExportPage() {
     <LayoutShell>
       <div className="flex flex-col gap-8">
         <div>
-          <h1 className="mt-2 font-heading font-semibold text-4xl not-italic text-text-1 md:text-5xl">
+          <h1 className="mt-2 font-heading font-bold text-4xl not-italic text-text-1 md:text-5xl">
             Tu informe en PDF
           </h1>
           <p className="mt-3 max-w-2xl font-body text-text-2">

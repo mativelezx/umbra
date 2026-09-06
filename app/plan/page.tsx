@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/LoadingDimension';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
+import { ReflectionArt } from '@/components/ui/ReflectionArt';
 
 interface MicroGoal {
   id: string;
@@ -148,8 +149,9 @@ export default function PlanPage() {
   return (
     <LayoutShell>
       <div className="flex flex-col gap-8">
-        <div>
-          <h1 className="mt-2 text-balance font-heading font-semibold text-4xl not-italic text-text-1 md:text-5xl">
+        <div className="relative">
+          <ReflectionArt variant="steps" className="float-right ml-5 w-20 md:w-28" />
+          <h1 className="mt-2 text-balance font-heading font-bold text-4xl text-text-1 md:text-5xl">
             Actividades
           </h1>
           <p className="mt-3 max-w-2xl text-pretty font-body text-lg leading-relaxed text-text-2">
@@ -212,7 +214,7 @@ export default function PlanPage() {
                         key={action.id}
                         className="rounded-lg bg-white p-5 md:p-6"
                       >
-                        <h3 className="font-heading text-sm font-semibold text-text-1">
+                        <h3 className="font-heading text-lg font-bold text-text-1">
                           {action.title}
                         </h3>
                         <p className="mt-1 font-body text-sm text-text-2">
@@ -240,13 +242,13 @@ export default function PlanPage() {
                                 <span
                                   aria-hidden="true"
                                   className={cn(
-                                    'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-violet-400 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-umbra-void',
+                                    'goal-mark mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border peer-focus-visible:ring-2 peer-focus-visible:ring-violet-400 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-umbra-void',
                                     goal.completed
                                       ? 'border-accent-emerald bg-accent-emerald/20 text-accent-emerald'
                                       : 'border-violet-400/40',
                                   )}
                                 >
-                                  {goal.completed && <Check size={12} weight="bold" />}
+                                  {goal.completed && <span className="goal-check inline-flex"><Check size={12} weight="bold" /></span>}
                                 </span>
                                 <span
                                   className={cn(

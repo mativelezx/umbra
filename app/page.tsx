@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight } from '@phosphor-icons/react/dist/ssr';
 import { Brand } from '@/components/layout/Brand';
+import { ReflectionArt } from '@/components/ui/ReflectionArt';
 import { t } from '@/lib/i18n/dict';
 
 export default function LandingPage() {
@@ -10,9 +11,9 @@ export default function LandingPage() {
         <Brand />
         <Link href="/login" className="secondary-link">Ingresar</Link>
       </header>
-      <section className="mx-auto grid max-w-6xl items-center gap-12 px-6 pb-20 pt-12 md:px-10 md:pb-28 md:pt-20 lg:grid-cols-[1.2fr_0.8fr] lg:gap-20">
+      <section className="mx-auto grid max-w-6xl items-center gap-10 px-6 pb-20 pt-10 md:px-10 md:pb-28 md:pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
         <div>
-          <h1 className="max-w-2xl text-5xl font-semibold leading-[1.08] tracking-normal md:text-6xl lg:text-7xl">Un espacio para mirarte con atención.</h1>
+          <h1 className="max-w-2xl text-5xl font-bold leading-[1.04] tracking-[-0.035em] md:text-6xl lg:text-7xl">Un espacio para mirarte con atención.</h1>
           <p className="mt-7 max-w-xl text-lg leading-relaxed text-text-2">Respondé preguntas sobre vos, explorá una lectura experimental y elegí una actividad para reflexionar. A tu ritmo.</p>
           <div className="mt-9 flex flex-wrap gap-3">
             <Link href="/register" className="primary-link">Empezar <ArrowRight size={20} /></Link>
@@ -21,11 +22,10 @@ export default function LandingPage() {
           {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && <Link href="/onboarding" className="mt-5 inline-flex min-h-11 items-center text-sm underline">Recorrer el ejemplo local</Link>}
           <p className="mt-7 max-w-lg text-sm leading-relaxed text-text-3">Un proyecto académico de autoconocimiento. No reemplaza el acompañamiento profesional.</p>
         </div>
-        <div className="rounded-lg border border-violet-400/20 bg-white p-8 md:p-10">
-          <h2 className="text-2xl font-semibold tracking-tight">Empezá por una pregunta.</h2>
-          <p className="mt-8 text-2xl leading-relaxed text-text-2">¿En qué momentos sentís que podés ser vos?</p>
-          <div aria-hidden="true" className="mt-10 space-y-7"><div className="border-b border-violet-400/20" /><div className="border-b border-violet-400/20" /><div className="w-2/3 border-b border-violet-400/20" /></div>
-          <p className="mt-8 text-sm text-text-3">Una pregunta de reflexión como ejemplo. No hay una respuesta correcta.</p>
+        <div className="mx-auto w-full max-w-[300px] md:max-w-[420px] lg:max-w-none">
+          <ReflectionArt reveal />
+          <p className="mx-auto mt-4 max-w-xs text-center text-base font-medium leading-relaxed text-text-2">¿En qué momentos sentís que podés ser vos?</p>
+          <p className="mt-2 text-center text-sm text-text-3">Una pregunta de reflexión como ejemplo.</p>
         </div>
       </section>
       <section id="como" className="border-y border-violet-400/20 bg-white">

@@ -49,10 +49,13 @@ const config: Config = {
         },
       },
       fontFamily: {
-        display: ['var(--font-inter)', 'sans-serif'],
-        heading: ['var(--font-inter)', 'sans-serif'],
-        body: ['var(--font-inter)', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'monospace'],
+        display: ['var(--font-dm-sans)', 'sans-serif'],
+        heading: ['var(--font-dm-sans)', 'sans-serif'],
+        body: ['var(--font-dm-sans)', 'sans-serif'],
+        mono: ['var(--font-dm-sans)', 'sans-serif'],
+      },
+      fontSize: {
+        xs: ['0.875rem', { lineHeight: '1.45' }],
       },
       borderRadius: {
         sm: '8px',

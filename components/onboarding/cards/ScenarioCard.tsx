@@ -36,7 +36,7 @@ export function ScenarioCard({ question, onSubmit, submitting }: ScenarioCardPro
         <p className="font-body text-sm normal-case tracking-normal text-text-3">
           {question.prompt}
         </p>
-        <h2 className="font-heading font-semibold text-2xl not-italic leading-snug text-text-1 md:text-3xl">
+        <h2 className="font-heading font-bold text-2xl not-italic leading-snug text-text-1 md:text-3xl">
           {question.scene}
         </h2>
       </header>
@@ -83,7 +83,7 @@ function OptionButton({
       onClick={onClick}
       aria-pressed={selected}
       className={cn(
-        'group relative flex items-start gap-3 rounded-lg border p-4 text-left transition-all duration-200',
+        'answer-choice group relative flex items-start gap-3 rounded-lg border p-4 text-left transition-all duration-200',
         selected
           ? 'border-violet-400/80 bg-violet-400/10 '
           : 'border-violet-400/15 bg-umbra-shadow/40 hover:border-violet-400/40 hover:bg-violet-400/5',

@@ -68,6 +68,16 @@ La pantalla de resultado es la prueba principal del sistema visual: marca y nave
 
 ## Implementación autorizada
 
+### Revisión pedida durante la implementación
+
+Matías observó que la primera versión resultaba demasiado austera y pidió «la misma fuente, más SVGs, vectores, animaciones». Se verificó el 6 de septiembre de 2026 que el sitio oficial de Stoic declara `Visuelt Pro` (pesos 400, 500 y 700) en los estilos calculados de su navegación, títulos y párrafos. Esto verifica la web, no identifica la fuente de las capturas nativas de Mobbin. Visuelt se comercializa con licencia; no se descargaron sus archivos.
+
+Matías aprobó después «usa una similar gratis pero así estilada». Se selecciona **DM Sans**, distribuida por Google Fonts con SIL Open Font License, como interpretación cercana, no como fuente idéntica. Carga con el mecanismo Next/font existente; sustituye a Inter, no agrega una segunda familia. Ajustar títulos compactos, cuerpo legible y jerarquía consistente.
+
+La revisión amplía la expresión gráfica dentro de la misma dirección: vectores geométricos originales de luz, sombra y reflexión en portada, elección de entrada, resultado y actividades. No se copia el pájaro ni los activos de Stoic. Un movimiento de composición finito en portada y transiciones breves de selección, avance y tarea completada; sin bucles, nuevas dependencias ni demoras obligatorias. Con movimiento reducido la geometría permanece estática y la confirmación de estados sigue visible. Los flujos, límites académicos, datos sintéticos y controles de privacidad no cambian.
+
+Fuentes de tipografía: [sitio oficial de Stoic](https://www.getstoic.com/), [Visuelt — distribuidor oficial](https://www.myfonts.com/collections/visuelt-font-colophon-foundry), [DM Sans](https://fonts.google.com/specimen/DM+Sans), [licencia de DM Sans](https://github.com/google/fonts/blob/main/ofl/dmsans/OFL.txt).
+
 Reutilizar Next.js, Tailwind y componentes existentes. Secuencia: fundaciones compartidas → navegación → preguntas → resultado → actividades → exportación. Evitar una segunda aplicación, una nueva biblioteca de componentes o una pantalla falsa solo para grabar.
 
 La base candidata es `entrega-tribunal` en `c3fff06`; preservar el árbol `beta` y sus cambios ML. Resolver la implementación en un entorno aislado antes de integrar.
