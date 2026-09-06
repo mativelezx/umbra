@@ -30,7 +30,7 @@
 .howLink { display: inline-flex; align-items: center; gap: 12px; min-height: 48px; font-size: 14px; }
 .howLink:hover { text-decoration: underline; }
 .demoLink { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; margin-top: 9px; color: #d4d7ce; font-size: 13px; text-decoration: underline; }
-.heroLimit { max-width: 47ch; margin-top: 25px; font-size: 12px; line-height: 1.6; color: var(--landing-muted); }
+.heroLimit { max-width: 47ch; margin-top: 25px; background: var(--landing-ink); font-size: 12px; line-height: 1.6; color: var(--landing-muted); }
 
 .experience { position: relative; min-width: 0; padding-block: 35px 45px; }
 .fluidField { position: absolute; width: 185%; height: auto; left: -37%; top: 50%; transform: translateY(-49%); pointer-events: none; }
