@@ -12,7 +12,7 @@ interface ContextualGreetingProps {
 }
 
 /**
- * Contextual greeting that shows the chat is aware of who the user is.
+ * Contextual greeting grounded in the user's experimental reading.
  * Uses plain-spanish labels only — no Ni/Ti/etc jargon.
  */
 export function ContextualGreeting({ profile }: ContextualGreetingProps) {
@@ -40,17 +40,17 @@ export function ContextualGreeting({ profile }: ContextualGreetingProps) {
         {firstName ? `Hola, ${firstName}` : 'Hola'}
       </p>
       <h2 className="mt-3 text-balance font-heading font-semibold text-2xl not-italic text-text-1 md:text-3xl">
-        Tenemos un punto de partida, {archName.toLowerCase()}.
+        Un punto de partida: {archName.toLowerCase()}.
       </h2>
       <p className="mt-3 max-w-xl text-pretty font-body text-sm leading-relaxed text-text-2 md:text-base">
-        Tu mente trabaja sobre todo en modo{' '}
+        En tu lectura aparece{' '}
         <span className="text-violet-200">{topJung.label.toLowerCase()}</span>{' '}
-        — {topJung.short}.{' '}
+        — {topJung.short} — como una interpretación de IA para explorar, no una descripción definitiva de vos.{' '}
         {topBf && topBfLabel ? (
           <>
-            Y tu{' '}
-            <span className="text-violet-200">{topBfLabel.label.toLowerCase()}</span>{' '}
-            está {isHigh ? 'arriba' : 'abajo'}: {isHigh ? topBfLabel.highExample : topBfLabel.lowExample}{' '}
+            La estimación experimental de Big Five incluye{' '}
+            <span className="text-violet-200">{topBfLabel.label.toLowerCase()}</span>
+            . Un ejemplo para contrastar con tu experiencia: «{isHigh ? topBfLabel.highExample : topBfLabel.lowExample}»{' '}
           </>
         ) : null}
         ¿Sobre qué querés pensar hoy?
