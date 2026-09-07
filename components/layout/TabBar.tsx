@@ -17,7 +17,7 @@ export function TabBar() {
   return (
     <nav
       aria-label="Navegación móvil"
-      className="lg:hidden fixed inset-x-0 bottom-0 z-20 border-t border-violet-400/10 bg-white pb-[env(safe-area-inset-bottom)]"
+      className="workspace-tabbar"
     >
       <ul className="grid grid-cols-4">
         {NAV_ITEMS.map(({ href, label, Icon }) => {
@@ -28,11 +28,11 @@ export function TabBar() {
                 href={href}
                 className={cn(
                   'flex flex-col items-center justify-center gap-1 py-3 transition-colors',
-                  active ? 'font-bold text-text-1' : 'text-text-3 hover:text-text-2',
+                  active ? 'is-active' : '',
                 )}
                 aria-current={active ? 'page' : undefined}
               >
-                <span className={cn('flex h-7 w-10 items-center justify-center rounded-full', active && 'bg-umbra-shadow')}><Icon size={22} weight={active ? 'fill' : 'regular'} /></span>
+                <span className="flex h-7 w-10 items-center justify-center rounded-full"><Icon size={22} weight={active ? 'fill' : 'regular'} /></span>
                 <span className="font-heading text-xs">
                   {label}
                 </span>

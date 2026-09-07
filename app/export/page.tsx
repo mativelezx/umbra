@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { DownloadSimple } from '@phosphor-icons/react';
 import { LayoutShell } from '@/components/layout/LayoutShell';
+import { SectionedNarrative } from '@/components/dashboard/SectionedNarrative';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/LoadingDimension';
 import { createClient } from '@/lib/supabase/client';
@@ -327,11 +328,7 @@ export default function ExportPage() {
                 </h2>
                 <p style={{ fontSize: '13px', marginBottom: '16px' }}>Texto generado por IA. Puede equivocarse; revisá qué te resulta útil.</p>
                 </div>
-                {data.narrative.split('\n\n').map((p, i) => (
-                  <p key={i} style={{ fontSize: '14px', lineHeight: '1.7', marginBottom: '12px' }}>
-                    {p}
-                  </p>
-                ))}
+                <SectionedNarrative content={data.narrative} presentation="document" />
               </div>
             )}
 

@@ -1,34 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ArrowClockwise, Check } from '@phosphor-icons/react';
+import { ArrowClockwise } from '@phosphor-icons/react';
 import { LayoutShell } from '@/components/layout/LayoutShell';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/LoadingDimension';
 import { createClient } from '@/lib/supabase/client';
-import { cn } from '@/lib/utils';
 import { ReflectionArt } from '@/components/ui/ReflectionArt';
+import { ActivityWorkspace } from '@/components/plan/ActivityWorkspace';
+import type { DevelopmentArea as Area } from '@/types';
 
-interface MicroGoal {
-  id: string;
-  text: string;
-  completed: boolean;
-}
-
-interface Action {
-  id: string;
-  title: string;
-  description: string;
-  microGoals: MicroGoal[];
-}
-
-interface Area {
-  id: string;
-  name: string;
-  rationale: string;
-  actions: Action[];
-}
 
 export default function PlanPage() {
   const [planId, setPlanId] = useState<string | null>(null);
@@ -148,16 +130,18 @@ export default function PlanPage() {
 
   return (
     <LayoutShell>
-      <div className="flex flex-col gap-8">
-        <div>
-          <h1 className="mt-2 text-balance font-heading font-bold text-4xl text-text-1 md:text-5xl">
+      <div className="plan-experience flex flex-col gap-8">
+        <header className="experience-heading">
+          <div>
+          <h1>
             Actividades
           </h1>
-          <p className="mt-3 max-w-2xl text-pretty font-body text-base leading-relaxed text-text-2">
-            Elegí una propuesta y empezá por un paso pequeño. Son sugerencias de reflexión generadas por IA a partir de tu perfil; el ritmo lo ponés vos.
-          </p>
-          <p className="mt-4 text-sm text-text-3">{isDemo ? 'En este ejemplo, las casillas cambian solo en esta pantalla. No se guarda tu progreso.' : 'Marcá los pasos que completaste para actualizar tu progreso.'}</p>
-        </div>
+          <p className="experience-lead">Lo que leíste,<br />en un pequeño paso.</p>
+          <p className="experience-caption">Propuestas de reflexión generadas por IA. Elegí una que te sirva; no hace falta hacerlas todas.</p>
+          <p className="mt-4 text-sm text-text-3">{isDemo ? 'En este ejemplo, las casillas cambian solo en esta pantalla. No se guarda tu progreso.' : 'Podés marcar los pasos que hiciste. No hay rachas ni metas obligatorias.'}</p>
+          </div>
+          <div className="reflection-composition activity-heading-art" aria-hidden="true"><ReflectionArt variant="steps" reveal /></div>
+        </header>
 
         {loading && (
           <div className="flex flex-col gap-4">
@@ -193,81 +177,7 @@ export default function PlanPage() {
 
         {areas && (
           <>
-            <div className="flex flex-col gap-6">
-              {areas.map((area, index) => (
-                <article key={area.id} className="overflow-hidden rounded-2xl bg-white">
-                  <div className={cn('flex items-center gap-4 p-6 md:p-7', index === 0 ? 'dark-surface' : 'bg-umbra-shadow')}>
-                    <div className="flex-1">
-                      <h2 className="text-2xl font-bold">
-                        {area.name}
-                      </h2>
-                      <p className={cn('mt-3 text-sm leading-relaxed', index === 0 ? 'text-white/80' : 'text-text-2')}>
-                        {area.rationale}
-                      </p>
-                    </div>
-                    {index === 0 && <ReflectionArt variant="steps" className="w-16 shrink-0 md:w-24" />}
-                  </div>
-
-                  <div className="flex flex-col divide-y divide-violet-400/15">
-                    {area.actions.map((action) => (
-                      <div
-                        key={action.id}
-                        className="p-5 md:p-7"
-                      >
-                        <h3 className="font-heading text-lg font-bold text-text-1">
-                          {action.title}
-                        </h3>
-                        <p className="mt-1 font-body text-sm text-text-2">
-                          {action.description}
-                        </p>
-                        <ul className="mt-4 flex flex-col gap-2">
-                          {action.microGoals.map((goal) => (
-                            <li key={goal.id}>
-                              <label
-                                className={cn(
-                                  'flex min-h-11 w-full cursor-pointer items-start gap-3 rounded-md px-3 py-3 text-left transition-colors',
-                                  goal.completed
-                                    ? 'bg-accent-emerald/5 text-text-2 hover:bg-accent-emerald/10'
-                                    : 'hover:bg-violet-400/5',
-                                )}
-                              >
-                                <input
-                                  type="checkbox"
-                                  className="peer sr-only"
-                                  checked={goal.completed}
-                                  onChange={() =>
-                                    toggleMicroGoal(area.id, action.id, goal.id)
-                                  }
-                                />
-                                <span
-                                  aria-hidden="true"
-                                  className={cn(
-                                    'goal-mark mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border peer-focus-visible:ring-2 peer-focus-visible:ring-violet-400 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-umbra-void',
-                                    goal.completed
-                                      ? 'border-accent-emerald bg-accent-emerald/20 text-accent-emerald'
-                                      : 'border-violet-400/40',
-                                  )}
-                                >
-                                  {goal.completed && <span className="goal-check inline-flex"><Check size={12} weight="bold" /></span>}
-                                </span>
-                                <span
-                                  className={cn(
-                                    'font-body text-sm',
-                                    goal.completed && 'line-through',
-                                  )}
-                                >
-                                  {goal.text}
-                                </span>
-                              </label>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                </article>
-              ))}
-            </div>
+            <ActivityWorkspace areas={areas} onToggle={toggleMicroGoal} />
 
             {!isDemo && <div className="flex justify-end">
               <Button

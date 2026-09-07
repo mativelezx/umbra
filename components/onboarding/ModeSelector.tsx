@@ -8,7 +8,7 @@ export type OnboardingEntryMode = 'dynamic' | 'chatgpt-seed';
 interface ModeSelectorProps { onPick: (mode: OnboardingEntryMode) => void; }
 
 export function ModeSelector({ onPick }: ModeSelectorProps) {
-  return <main className="mx-auto max-w-3xl px-6 py-8 md:py-12">
+  return <div className="focus-backdrop"><main className="focus-entry mx-auto max-w-3xl px-6 py-8 md:py-12">
     <Brand />
     <header className="mb-6 mt-8 md:mt-12">
       <h1 className="text-3xl font-bold tracking-[-0.025em] md:text-4xl">¿Cómo querés empezar?</h1>
@@ -26,5 +26,5 @@ export function ModeSelector({ onPick }: ModeSelectorProps) {
       </button>)}
     </div>
     <p className="mt-8 text-sm leading-relaxed text-text-3">Umbra ofrece una lectura experimental para reflexionar. No es terapia ni un diagnóstico.</p>
-  </main>;
+  </main></div>;
 }

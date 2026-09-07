@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { ArrowClockwise, BookOpen } from '@phosphor-icons/react';
+import { ArrowClockwise } from '@phosphor-icons/react';
 import { Skeleton } from '@/components/ui/LoadingDimension';
 import { SectionedNarrative } from './SectionedNarrative';
 
@@ -75,12 +75,9 @@ export function NarrativeSection({ profileId, initialContent }: NarrativeSection
   }, [initialContent, generate, profileId]);
 
   return (
-    <section className="rounded-lg bg-white p-6 md:p-10" aria-label="Tu lectura">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <BookOpen size={20} weight="duotone" className="text-violet-300" />
-          <h2 className="text-2xl font-semibold">Tu lectura</h2>
-        </div>
+    <section className="narrative-surface" aria-label="Tu lectura">
+      <div className={isDemo ? 'sr-only' : 'flex flex-wrap items-center justify-end gap-4'}>
+        <h2 className="sr-only">Tu lectura</h2>
         {!isDemo && !streaming && (content || error) && (
           <button
             onClick={() => generate(true)}
@@ -91,8 +88,7 @@ export function NarrativeSection({ profileId, initialContent }: NarrativeSection
           </button>
         )}
       </div>
-      <p className="mb-8 text-sm leading-relaxed text-text-2">Interpretación generada por IA a partir de tus respuestas. Puede equivocarse; elegí qué te sirve para reflexionar.</p>
-      {isDemo && <p className="mb-6 rounded-md bg-umbra-fog p-3 text-sm text-text-2">Texto de ejemplo: no se genera ni se guarda contenido nuevo.</p>}
+      <p className="reading-source">{isDemo ? 'Ejemplo de lectura interpretativa de IA. No se genera ni se guarda contenido nuevo.' : 'Interpretación de IA a partir de tus respuestas. Puede equivocarse; elegí qué te sirve.'}</p>
       {streaming && <p role="status" className="mb-4 text-sm text-text-2">Preparando una nueva lectura…</p>}
 
       {streaming && !content && (

@@ -7,6 +7,7 @@ import type { Archetype, JungFunctions } from '@/types';
 import { ARCHETYPE_INFO } from '@/types';
 
 interface CartaFuturaCardProps {
+  example?: boolean;
   letter: {
     id: string;
     content: string;
@@ -22,7 +23,7 @@ interface CartaFuturaCardProps {
 const FOCUSABLE_SELECTOR =
   'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
+export function CartaFuturaCard({ letter, snapshot, example = false }: CartaFuturaCardProps) {
   const [open, setOpen] = useState(false);
   const unlockDate = new Date(letter.unlock_at);
   const isUnlocked = unlockDate <= new Date();
@@ -93,7 +94,7 @@ export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
     <>
       <section className="glass rounded-lg p-6 md:p-8">
         <div className="flex items-start gap-4">
-          {isUnlocked ? (
+          {isUnlocked || example ? (
             <div className="flex h-12 w-12 items-center justify-center rounded-md bg-violet-400/20 text-violet-200">
               <Envelope size={22} weight="regular" />
             </div>
@@ -103,7 +104,16 @@ export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
             </div>
           )}
           <div className="flex-1">
-            {isUnlocked ? (
+            {example ? (
+              <>
+                <h3 className="font-heading font-semibold text-2xl not-italic text-text-1">
+                  Ejemplo de carta al futuro
+                </h3>
+                <p className="mt-2 font-body text-sm text-text-2">
+                  Una nota para volver a leer más adelante. En este ejemplo no se guardó una carta tuya ni se programó una apertura.
+                </p>
+              </>
+            ) : isUnlocked ? (
               <>
                 <h3 className="font-heading font-semibold text-2xl not-italic text-text-1">
                   Tu carta al futuro está lista.

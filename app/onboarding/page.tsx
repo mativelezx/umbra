@@ -37,10 +37,10 @@ export default function OnboardingPage() {
 
   if (stage === 'seed-copy') {
     return (
-      <SeedFromChatgptFlow
+      <div className="focus-backdrop"><div className="focus-entry mx-auto max-w-3xl p-6 md:p-10"><SeedFromChatgptFlow
         onSeeded={handleSeeded}
         onBack={handleBackToModeSelect}
-      />
+      /></div></div>
     );
   }
 
@@ -55,9 +55,9 @@ export default function OnboardingPage() {
 
   if (stage === 'carta' && profileId) {
     return (
-      <main className="relative mx-auto max-w-3xl px-6 py-16 md:px-10">
+      <div className="focus-backdrop"><main className="focus-entry relative mx-auto max-w-3xl px-6 py-16 md:px-10">
         <CartaForm profileId={profileId} />
-      </main>
+      </main></div>
     );
   }
 

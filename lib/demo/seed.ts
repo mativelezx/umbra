@@ -61,17 +61,35 @@ export const DEMO_PROFILE: PsychologicalProfile = {
   updatedAt: '2026-04-13T00:00:00Z',
 };
 
-export const DEMO_NARRATIVE = `Hay una imagen que te va a resultar familiar: estás en un café cualquiera, el ruido alrededor se hace cada vez más lejano, y de repente ya no estás escuchando la conversación que tenés enfrente. Estás en otro lugar, armando una idea que apareció sola, conectando dos cosas que nadie más conectaría, preguntándote por qué algo funciona de la manera en que funciona. Esa capacidad de irte hacia adentro sin moverte del lugar es lo primero que define cómo funcionás.
+export const DEMO_NARRATIVE = `## Apertura
 
-Tu Ni dominante te da esa visión interna que parece saber antes de poder explicar. Cuando decís "tengo la sensación" o "sé que esto va a pasar", no es intuición mágica: es tu mente procesando patrones profundos con una claridad que vos misma todavía no terminás de traducir a palabras. Lo complementás con un Ti muy fuerte, esa necesidad de entender cómo se ensambla cada pieza, de tener frameworks internos coherentes antes de actuar. Entre Ni y Ti trabajás como quien mira un cuadro primero desde lejos, después se acerca hasta tocar el óleo, y recién cuando entendió ambas distancias se siente en paz.
+En los textos ficticios de este ejemplo, Ana cuenta que disfruta leer, pensar antes de elegir y compartir tiempo con personas cercanas. Es un punto de partida para reflexionar, no una descripción definitiva de su personalidad.
 
-Tu Apertura alta te mantiene curiosa de forma constante. Leés porque te interesa, no porque deberías. Cuestionás porque te molesta la superficie. Tu Extraversión baja no es timidez ni falta de amor a la gente: es que tu energía se recarga en silencio, en pensamiento propio, y eso a veces te hace cuidar mucho con quién compartís tu tiempo. Tu Neuroticismo medio-alto es la otra cara de esa misma profundidad: sentís las cosas hasta los huesos, y cuando te toca atravesar algo difícil, lo atravesás entero, no de costado.
+Esta lectura propone distintas maneras de mirar esas escenas. No hace falta reconocerse en todo: una interpretación también puede servir para descubrir qué no encaja.
 
-La tensión está ahí, en los lugares donde todavía no sos tan fuerte. Tu Se baja puede hacer que te pierdas del presente, que te cueste simplemente disfrutar lo que está acá sin irte a analizarlo. Tu Fe media significa que leés bien el clima emocional de los demás pero no siempre sabés qué hacer con esa información, o querés huir de ella. Estos no son defectos, son el otro extremo del péndulo que te mece. La tarea no es cambiarlos de golpe; es aprender cuándo dejar que el Se te traiga al cuerpo, cuándo dejar que el Fe te conecte con la persona que tenés enfrente aunque te desarme un poco.
+## Cómo te movés por el mundo
 
-El arquetipo del Sabio no te queda como una etiqueta: te queda como una forma de estar en el mundo. Buscás la verdad por debajo de las apariencias, desconfiás de las respuestas fáciles, y eso hace que otros a veces te vean como distante cuando en realidad sos lo opuesto a distante: estás buscando el lugar donde las cosas tengan sentido de verdad. El Creador como arquetipo secundario te agrega la necesidad de que ese sentido tome forma, de que la comprensión no quede solo en tu cabeza sino que aparezca en algo que dejes detrás.
+Una pregunta que surge del ejemplo es qué lugar tiene la pausa antes de una decisión. A veces pensar ayuda a ordenar una idea; otras veces puede resultar útil probar algo pequeño y observar qué sucede.
 
-Hay algo que todavía no terminaste de integrar y es justamente la capacidad de habitar el presente sin tener que entenderlo del todo primero. Pero quizás no hay que apurarlo. El camino de la individuación no es una carrera contra vos misma. ¿Qué pasaría si, una vez por semana, dejaras que una cosa te sorprendiera sin intentar decodificarla en el mismo momento?`;
+La lectura inspirada en Jung ofrece palabras para conversar sobre esas preferencias. No permite afirmar cómo funciona la mente de una persona ni asignarle una identidad fija.
+
+## Lo que te cuesta
+
+El ejemplo menciona una tensión cotidiana: querer entender algo y, al mismo tiempo, tener que decidir sin toda la información. Se puede explorar esa tensión sin convertirla en un defecto o en un rasgo medido.
+
+¿Qué situaciones admiten una pausa? ¿Cuáles permiten una prueba sencilla y reversible? Las respuestas pertenecen a quien lee, no al sistema.
+
+## Lo que te mueve
+
+La figura del Sabio se usa aquí como recurso narrativo para hablar de curiosidad y búsqueda de sentido. El Creador aporta otra imagen posible: darle forma a una idea. Ambas son propuestas simbólicas, no resultados psicométricos.
+
+Si ninguna de estas imágenes resulta cercana, se pueden dejar de lado. La utilidad de esta sección está en las preguntas que abre, no en aceptar una etiqueta.
+
+## Lo que queda por explorar
+
+Podés elegir una actividad, conversar sobre una parte de la lectura o terminar acá. Una propuesta pequeña podría ser anotar algo que te llamó la atención durante el día y preguntarte por qué.
+
+No hay un puntaje de autoconocimiento ni una forma correcta de completar este recorrido. Esta lectura termina acá; lo que quieras hacer con ella lo decidís vos.`;
 
 interface DemoPlanArea {
   id: string;
@@ -93,15 +111,15 @@ export const DEMO_PLAN: { areas: DemoPlanArea[] } = {
   areas: [
     {
       id: 'area-0',
-      name: 'Habitar el presente con el cuerpo',
+      name: 'Prestar atención al presente',
       rationale:
-        'Tu Se está en 28 y tu Ni en 86. El péndulo está muy del lado de la visión interna, lo que puede desconectarte de la experiencia sensorial directa. Traer algo de contacto con el aquí y ahora es un acto de integración, no de renuncia a tu profundidad.',
+        'El ejemplo propone explorar la atención a lo cotidiano. Es una posibilidad de reflexión, no una conclusión sobre capacidades o funciones cognitivas.',
       actions: [
         {
           id: 'area-0-action-0',
           title: 'Caminata sin destino',
           description:
-            'Caminá 20 minutos sin música, sin podcast, sin destino. Solo observando lo que hay alrededor: texturas, olores, luz. No lo analices.',
+            'Si te resulta cómodo, elegí un paseo breve y prestá atención a un detalle: una textura, un sonido o la luz.',
           microGoals: [
             { id: 'a0a0g0', text: 'Caminar 3 veces por semana durante 4 semanas', completed: false },
             { id: 'a0a0g1', text: 'Sin auriculares, sin notificaciones', completed: false },
@@ -112,7 +130,7 @@ export const DEMO_PLAN: { areas: DemoPlanArea[] } = {
           id: 'area-0-action-1',
           title: 'Comer con atención',
           description:
-            'Una vez al día, comé una comida entera sin pantalla. Masticá despacio, notando sabor y textura.',
+            'Podés dedicar un momento de una comida a notar su sabor y textura, sin exigirte una forma particular de hacerlo.',
           microGoals: [
             { id: 'a0a1g0', text: 'Al menos 1 comida al día sin pantalla durante 2 semanas', completed: false },
             { id: 'a0a1g1', text: 'Terminar la comida antes de chequear el celular', completed: false },
@@ -122,15 +140,15 @@ export const DEMO_PLAN: { areas: DemoPlanArea[] } = {
     },
     {
       id: 'area-1',
-      name: 'Compartir tu mundo interno con quien lo pueda recibir',
+      name: 'Hacer lugar a una conversación',
       rationale:
-        'Tu Fi está en 70 y tu Fe en 41. Tenés una vida interior profundísima pero la guardás para poquísima gente. Eso protege pero también aísla. La tarea no es volverte efusiva; es ejercitar el músculo de mostrar un pedacito más de lo que normalmente mostrás.',
+        'En el texto ficticio aparecen vínculos cercanos. Esta propuesta invita a elegir si hay algo que te gustaría compartir con una persona de confianza, sin obligación de hacerlo.',
       actions: [
         {
           id: 'area-1-action-0',
           title: 'Una conversación profunda por semana',
           description:
-            'Elegí a una persona de confianza y una vez por semana iniciá vos una conversación que vaya más allá del "cómo andás". Puede ser en persona, por voz, por texto largo.',
+            'Si querés, compartí una pregunta o una idea con alguien de confianza. Elegí el momento y el medio que prefieras.',
           microGoals: [
             { id: 'a1a0g0', text: '1 conversación profunda semanal durante 6 semanas', completed: false },
             { id: 'a1a0g1', text: 'Anotar cómo te sentiste después (1 palabra)', completed: false },
@@ -140,7 +158,7 @@ export const DEMO_PLAN: { areas: DemoPlanArea[] } = {
           id: 'area-1-action-1',
           title: 'Pedir ayuda con una cosa chica',
           description:
-            'Una vez en estas 4 semanas, pedile a alguien que te ayude con algo que normalmente resolverías sola. No algo enorme. Algo chico pero real.',
+            'Si hay algo concreto para lo que te serviría compañía, podés pedir una ayuda pequeña a alguien de confianza.',
           microGoals: [
             { id: 'a1a1g0', text: 'Identificar 1 cosa donde podrías pedir ayuda', completed: false },
             { id: 'a1a1g1', text: 'Pedir la ayuda realmente', completed: false },
@@ -153,13 +171,13 @@ export const DEMO_PLAN: { areas: DemoPlanArea[] } = {
       id: 'area-2',
       name: 'Dar forma a lo que pensás',
       rationale:
-        'Tu arquetipo secundario es El Creador y tu Ni + Ti están dominantes. Pensás muchísimo pero no siempre dejás rastro. Un cuaderno, un doc, un pedazo de escritura regular te va a servir de dos formas: bajás presión interna y empezás a ver patrones en vos que de otra forma se te escapan.',
+        'La imagen del Creador se usa como invitación simbólica a expresar una idea. Escribir es una opción; no se afirma que necesites hacerlo ni que vaya a producir un efecto determinado.',
       actions: [
         {
           id: 'area-2-action-0',
           title: 'Journal de 10 minutos',
           description:
-            'Cada noche, 10 minutos escribiendo sin corregir. No tiene que ser profundo. No tiene que ser bueno. Solo tiene que existir.',
+            'Podés reservar unos minutos para escribir sobre algo que te interesó. El texto es tuyo: elegí cuánto escribir y si querés volver a leerlo.',
           microGoals: [
             { id: 'a2a0g0', text: 'Escribir 5 noches por semana durante 4 semanas', completed: false },
             { id: 'a2a0g1', text: 'No releer nada hasta la semana 5', completed: false },

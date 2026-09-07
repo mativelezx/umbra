@@ -65,7 +65,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="relative mx-auto flex min-h-screen max-w-lg items-center justify-center px-5 py-12">
+    <div className="focus-backdrop"><main className="auth-entry relative mx-auto flex min-h-screen max-w-lg items-center justify-center px-5 py-12">
       <GlassCard className="w-full">
         <div className="mb-8">
           <Brand />
@@ -153,6 +153,6 @@ export default function RegisterPage() {
           </p>
         )}
       </GlassCard>
-    </main>
+    </main></div>
   );
 }

@@ -63,6 +63,15 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+const DESIGN_CONTRACT = `<!--
+THESIS: A continuous reflection workspace; the reader chooses the pace and the next action.
+OWN-WORLD: lowercase umbra, Bricolage, graphite navigation, paper workspace, white reading surface, original vectors.
+STORY: Answer, read one section, inspect sources, choose an optional activity, export or finish. Synthetic examples stay identified.
+FIRST VIEWPORT: Compact dark navigation frames a clear task title, a large reflective illustration and a chapter reader. Experimental data and symbolic reading have separate tabs.
+FORM: User-pinned Stoic principles; code-first direction29378ec1. Approved interior reconstruction September 6, 2026. Signature: a chosen chapter unfolds; an activity opens into a focused illustrated workspace. Reduced motion preserves all content and controls.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+-->`;
+
 export default function RootLayout({
   children,
 }: {
@@ -70,18 +79,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className={bricolage.variable}>
-      {/* THESIS: A personal reflection journal with distinct stages, not a clinical scorecard.
-          OWN-WORLD: lowercase umbra, Bricolage Grotesque, graphite and ivory, original ink illustrations;
-          black primary surfaces, white reading panels, compact navigation and grouped controls.
-          STORY: Answer, explore an experimental reading, choose an activity; chat and PDF complement it.
-          FIRST VIEWPORT: Dark editorial hero, large left heading and entry action, fluid contour field
-          around a white three-state illustrative panel. Interiors remain light and task-centered.
-          FORM: User-pinned Stoic patterns override exploration direction29378ec1; code-first approved.
-          Signature: switch the example between questions, reading and activities; ambient motion pauses
-          manually, offscreen and in hidden documents, and remains static with reduced motion.
-          FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review,
-          the verdict, DESIGN.md, and every shipping raster carrying its provenance */}
       <body data-design-direction="29378ec1" className="font-body bg-umbra-void text-text-1 antialiased">
+        <template dangerouslySetInnerHTML={{ __html: DESIGN_CONTRACT }} />
         <ThemeProvider>
           <AuthProvider>
             <MotionProvider>

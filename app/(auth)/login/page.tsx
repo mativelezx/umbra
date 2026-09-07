@@ -110,10 +110,10 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <main className="relative mx-auto flex min-h-screen max-w-lg items-center justify-center px-5 py-12">
+    <div className="focus-backdrop"><main className="auth-entry relative mx-auto flex min-h-screen max-w-lg items-center justify-center px-5 py-12">
       <Suspense fallback={<div className="font-body text-text-3">Cargando...</div>}>
         <LoginContent />
       </Suspense>
-    </main>
+    </main></div>
   );
 }

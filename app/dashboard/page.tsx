@@ -1,17 +1,14 @@
 import { redirect } from 'next/navigation';
-import { ArrowRight } from '@phosphor-icons/react/dist/ssr';
 import { createClient } from '@/lib/supabase/server';
 import { LayoutShell } from '@/components/layout/LayoutShell';
 import { ArchetypeCard } from '@/components/dashboard/ArchetypeCard';
 import { NarrativeSection } from '@/components/dashboard/NarrativeSection';
-import { DashboardDepth } from '@/components/dashboard/DashboardDepth';
 import { BigFiveDimensions } from '@/components/dashboard/BigFiveDimensions';
 import { JungAxisView } from '@/components/dashboard/JungAxisView';
-import { QuickGlance } from '@/components/dashboard/QuickGlance';
 import { ArchetypeMap } from '@/components/dashboard/ArchetypeMap';
 import { CartaFuturaCard } from '@/components/dashboard/CartaFuturaCard';
-import { Card } from '@/components/ui/Card';
-import { ARCHETYPE_INFO } from '@/types';
+import { ProfileWorkspace } from '@/components/dashboard/ProfileWorkspace';
+import { ReflectionArt } from '@/components/ui/ReflectionArt';
 import type { Archetype, BigFive, JungFunctions as JF } from '@/types';
 import {
   extractPerDimensionStatus,
@@ -53,122 +50,43 @@ interface DashboardData {
 }
 
 function DashboardView({ data }: { data: DashboardData }) {
-  const createdDays = Math.floor(
-    (Date.now() - new Date(data.createdAt).getTime()) / (1000 * 60 * 60 * 24),
-  );
-  const archetypeName = ARCHETYPE_INFO[data.archetype].name;
-
   return (
     <LayoutShell>
-      <div className="flex flex-col gap-6 md:gap-8">
-        {/* HEADER */}
-        <div className="flex flex-col items-start justify-between gap-6 md:flex-row">
+      <header className="experience-heading">
+        <div>
+          <h1>Mi resultado</h1>
+          <p className="experience-lead">{data.fullName ? `${data.fullName.split(' ')[0]}, una` : 'Una'} lectura.<br />Muchas formas de mirarte.</p>
+          <p className="experience-caption">Perfil experimental para reflexionar. No es una evaluación clínica ni una medida de tu valor personal.</p>
+        </div>
+        <div className="reflection-composition" aria-hidden="true">
+          <svg viewBox="0 0 300 260" className="reflection-contours" fill="none">
+            {[0, 1, 2, 3, 4].map(i => <path key={i} d={`M${22 + i * 17} 230 C${-30 + i * 18} 60, ${240 - i * 14} -50, ${268 - i * 14} 145 S150 285, ${65 + i * 16} 205`} />)}
+          </svg>
+          <ReflectionArt variant="mirror" reveal />
+        </div>
+      </header>
+      <ProfileWorkspace
+        reading={<NarrativeSection profileId={data.profileId} initialContent={data.narrativeContent} />}
+        measurement={<div className="measurement-view">
           <div>
-            <h1 className="mt-2 text-balance font-heading font-bold text-4xl not-italic text-text-1 md:text-5xl">
-              Mi resultado
-            </h1>
-            <p className="mt-2 max-w-xl text-pretty font-body text-base text-text-3">
-              {data.fullName ? `${data.fullName.split(' ')[0]}, esta` : 'Esta'} es una lectura para explorar con calma. Partí de lo que te resuena y volvé a tus respuestas cuando lo necesites.
-            </p>
-            <p className="mt-3 font-body text-xs tabular-nums text-text-4">
-              {data.profileId.startsWith('demo-') ? 'Resultado ilustrativo · datos ficticios' : `Cuenta creada hace ${createdDays} ${createdDays === 1 ? 'día' : 'días'}`}
-            </p>
+            <h2 className="focus-title">Qué puede estimar el modelo</h2>
+            <p className="reading-copy mt-5">El módulo propio de ML ofrece estimaciones experimentales de Big Five. Solo se muestra una cifra cuando la dimensión supera el criterio de evaluación comprometido.</p>
+            <p className="mt-4 text-sm leading-relaxed text-text-2">Estos resultados no son percentiles ni permiten compararte con otras personas. Superar ese criterio no demuestra precisión individual en español.</p>
           </div>
-        </div>
-
-        {/* ARCHETYPE HERO */}
-        <ArchetypeCard
-          archetype={data.archetype}
-          secondary={data.secondary}
-          confidence={data.confidence}
-          turnsCount={data.turnsCount}
-        />
-
-        <a href="/plan" className="group flex items-center justify-between gap-5 rounded-2xl bg-white p-5 transition-colors hover:bg-umbra-shadow md:p-6">
-          <span><span className="block text-lg font-bold">Ver actividades</span><span className="mt-1 block text-sm text-text-2">Elegí una propuesta y empezá por un paso pequeño.</span></span>
-          <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-text-1 text-white"><ArrowRight size={20} /></span>
-        </a>
-
-        {/* Sources stay visibly separate from the symbolic reading. */}
-        <div className="dash-enter dash-enter-2 rounded-2xl border border-violet-400/15 p-5 md:p-6">
-        <QuickGlance
-          bigFive={data.bigFive}
-          jungFunctions={data.jungFunctions}
-          archetypeName={archetypeName}
-          confidence={data.confidence}
-          turnsCount={data.turnsCount}
-          perDimensionStatus={data.perDimensionStatus}
-        />
-        </div>
-
-        {/* NARRATIVA — sectioned with iconography + sticky TOC on desktop.
-            TOC only renders when the narrative has at least one `##` heading,
-            because legacy narratives (pre-5-section prompt) parse as a single
-            fallback block with no section ids to spy on — rendering the TOC
-            anyway would leave it pointing at nothing. */}
-        <div className="dash-enter dash-enter-3">
-        {data.narrativeContent && /^##\s+/m.test(data.narrativeContent) ? (
-          <div>
-            <NarrativeSection
-              profileId={data.profileId}
-              initialContent={data.narrativeContent}
-            />
-          </div>
-        ) : (
-          <NarrativeSection
-            profileId={data.profileId}
-            initialContent={data.narrativeContent}
-          />
-        )}
-
-        {/* VISTA PROFUNDA — opt-in progressive disclosure.
-            El usuario ve el archetype hero + quick glance + narrativa por
-            default. Los datos más densos (radar Big Five, 4 ejes Jung,
-            mapa comparativo de arquetipos, carta futura) se revelan al
-            expandir. Reduce carga cognitiva inicial y crea un momento de
-            "exploración elegida" en vez de bombardeo. */}
-        </div>
-
-        <div className="dash-enter dash-enter-4">
-        <DashboardDepth collapsedLabel="Ver detalles del resultado" expandedLabel="Ocultar detalles del resultado">
-          {/* DATA VIZ — 2 columns */}
-          <div className="grid gap-6 md:grid-cols-2">
-            <Card>
-              <p className="font-body text-sm normal-case tracking-normal text-text-3">
-                Cinco grandes rasgos
-              </p>
-              <p className="mt-2 max-w-prose text-pretty font-body text-sm leading-relaxed text-text-2">
-                Las cinco dimensiones del modelo Big Five (también llamado OCEAN). Solo mostramos la cifra de las dimensiones que el módulo de análisis midió con la confianza comprometida; las demás se declaran con su estado, sin número. No son percentiles ni diagnósticos.
-              </p>
-              <div className="mt-4">
-                <BigFiveDimensions bigFive={data.bigFive} status={data.perDimensionStatus} />
-              </div>
-            </Card>
-            <Card>
-              <p className="font-body text-sm normal-case tracking-normal text-text-3">
-                Cómo procesás la información
-              </p>
-              <p className="mt-2 max-w-prose text-pretty font-body text-sm leading-relaxed text-text-2">
-                Una lectura inspirada en las ocho funciones cognitivas que describió Jung en 1921. Lo usamos como espejo interpretativo, no como tipología cerrada.
-              </p>
-              <div className="mt-4">
-                <JungAxisView jungFunctions={data.jungFunctions} />
-              </div>
-            </Card>
-          </div>
-
-          {/* ARCHETYPE MAP — comparison with the other 5 */}
-          <ArchetypeMap userArchetype={data.archetype} />
-
-          {data.letter && (
-            <CartaFuturaCard
-              letter={data.letter}
-              snapshot={{ archetype: data.archetype, jungFunctions: data.jungFunctions }}
-            />
-          )}
-        </DashboardDepth>
-        </div>
-      </div>
+          <BigFiveDimensions bigFive={data.bigFive} status={data.perDimensionStatus} />
+        </div>}
+        interpretation={<div className="symbolic-view">
+          <div className="mb-7"><h2 className="focus-title">Una mirada simbólica</h2><p className="mt-4 max-w-2xl text-text-2">Jung y los arquetipos aportan un lenguaje para explorar el texto. Son interpretaciones de IA, no mediciones ni identidades que tengas que aceptar.</p></div>
+          <ArchetypeCard archetype={data.archetype} secondary={data.secondary} />
+          <details className="activity-rationale">
+            <summary>Explorar funciones cognitivas y otros arquetipos</summary>
+            <p className="my-5 text-sm text-text-2">Las intensidades de esta lectura son heurísticas del modelo generativo: no tienen respaldo psicométrico.</p>
+            <JungAxisView jungFunctions={data.jungFunctions} />
+            <div className="mt-8"><ArchetypeMap userArchetype={data.archetype} /></div>
+          </details>
+          {data.letter && <div className="mt-8"><CartaFuturaCard example={isDemoMode()} letter={data.letter} snapshot={{ archetype: data.archetype, jungFunctions: data.jungFunctions }} /></div>}
+        </div>}
+      />
     </LayoutShell>
   );
 }

@@ -51,7 +51,7 @@ export default function ConsentPage() {
   }
 
   return (
-    <main className="relative mx-auto max-w-3xl px-6 py-8 md:px-10">
+    <div className="focus-backdrop"><main className="focus-entry relative mx-auto max-w-3xl px-6 py-8 md:px-10">
       <Brand />
       <div className="mb-6 mt-8">
         <h1 className="text-balance text-3xl font-bold text-text-1 md:text-4xl">
@@ -142,6 +142,6 @@ export default function ConsentPage() {
           {t('consent.cta')}
         </Button>
       </form>
-    </main>
+    </main></div>
   );
 }

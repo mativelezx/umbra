@@ -302,7 +302,7 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
   );
 
   return (
-    <main className="relative z-10 mx-auto flex max-w-3xl flex-col gap-5 px-6 py-5 md:px-10 md:py-8">
+    <div className="focus-backdrop"><main className="focus-entry relative z-10 mx-auto flex max-w-3xl flex-col gap-5 px-6 py-5 md:px-10 md:py-8">
       <header>
         <Brand />
         <h1 className="sr-only">
@@ -358,7 +358,7 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
           onExpireInsight={expireInsight}
         />
       </div>
-    </main>
+    </main></div>
   );
 }
 

@@ -275,6 +275,7 @@ export function ChatShell({ profile }: ChatShellProps) {
 
   return (
     <LayoutShell>
+      <div className="chat-experience">
       <h1 className="mb-4 font-bold">Chat</h1>
       <CrisisBanner />
       {profile && (
@@ -283,15 +284,15 @@ export function ChatShell({ profile }: ChatShellProps) {
           <AutonomyDial value={autonomyMode} onChange={setAutonomyMode} />
         </div>
       )}
-      <div className="mt-4 grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
-        <div className="hidden lg:block">
+      <div className="mt-4 grid gap-6 xl:grid-cols-[200px_minmax(0,1fr)]">
+        <div className="hidden xl:block">
           <ConversationsSidebar
             activeConversationId={conversationId ?? null}
             onSelect={handleSelectConversation}
             onNewChat={handleNewChat}
           />
         </div>
-        <div className="flex min-h-[70vh] flex-col justify-between rounded-2xl bg-white p-4 md:p-6">
+        <div className="chat-reading-surface">
           {crisis ? (
             <CrisisCard
               resources={crisis.resources}
@@ -300,7 +301,7 @@ export function ChatShell({ profile }: ChatShellProps) {
             />
           ) : (
             <>
-              <div className="flex flex-col gap-6 pb-6">
+              <div className="chat-messages flex flex-col gap-6 pb-6">
                 {isEmpty && profile && (
                   <ContextualGreeting profile={profile} />
                 )}
@@ -330,6 +331,7 @@ export function ChatShell({ profile }: ChatShellProps) {
             </>
           )}
         </div>
+      </div>
       </div>
     </LayoutShell>
   );

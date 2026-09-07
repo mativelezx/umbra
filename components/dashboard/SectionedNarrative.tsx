@@ -1,3 +1,7 @@
+'use client';
+
+import { useRef, useState } from 'react';
+import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
 import {
   Sparkle,
   Wind,
@@ -10,6 +14,7 @@ import { slugFromHeading } from '@/lib/dimensions/narrative-sections';
 interface SectionedNarrativeProps {
   content: string;
   streaming?: boolean;
+  presentation?: 'reader' | 'document';
 }
 
 type Block =
@@ -93,11 +98,11 @@ function parseSections(content: string): Section[] {
   let currentBody: string[] = [];
 
   const flush = () => {
-    if (currentHeading !== null) {
+    if (currentHeading !== null || currentBody.join('').trim()) {
       sections.push({
-        heading: currentHeading,
+        heading: currentHeading ?? '',
         blocks: parseBlocks(currentBody.join('\n')),
-        icon: iconForHeading(currentHeading),
+        icon: iconForHeading(currentHeading ?? ''),
       });
     }
     currentHeading = null;
@@ -111,9 +116,7 @@ function parseSections(content: string): Section[] {
       currentHeading = headingMatch[1];
       continue;
     }
-    if (currentHeading !== null) {
-      currentBody.push(line);
-    }
+    currentBody.push(line);
   }
   flush();
 
@@ -132,26 +135,52 @@ function parseSections(content: string): Section[] {
 export function SectionedNarrative({
   content,
   streaming = false,
+  presentation = 'reader',
 }: SectionedNarrativeProps) {
   const sections = parseSections(content);
+  const [selected, setSelected] = useState(0);
+  const [showAll, setShowAll] = useState(false);
+  const passageRef = useRef<HTMLDivElement>(null);
+  const current = Math.min(selected, Math.max(0, sections.length - 1));
+  const guided = presentation === 'reader' && sections.length > 1 && !streaming && !showAll;
+  const visibleSections = guided ? [sections[current]] : sections;
+
+  function goTo(index: number) {
+    setSelected(index);
+    requestAnimationFrame(() => {
+      const passage = passageRef.current;
+      if (!passage) return;
+      passage.focus({ preventScroll: true });
+      const heading = passage.querySelector('h3') ?? passage;
+      const bounds = heading.getBoundingClientRect();
+      if (bounds.top < 24 || bounds.bottom > window.innerHeight - 96) {
+        passage.scrollIntoView({ block: 'start', behavior: 'auto' });
+      }
+    });
+  }
 
   return (
-    <div className="flex flex-col gap-10">
-      {sections.map((section, i) => (
+    <div className={presentation === 'document' ? 'reading-document' : 'reading-journey'}>
+      {presentation === 'reader' && sections.length > 1 && !streaming && <div className="reading-controls">
+        <p className="text-sm text-text-3" aria-live="polite">{showAll ? 'Lectura completa' : `Sección ${current + 1} de ${sections.length}`}</p>
+        <button className="quiet-button" onClick={() => setShowAll(!showAll)}>{showAll ? 'Leer por secciones' : 'Ver lectura completa'}</button>
+      </div>}
+      <div ref={passageRef} tabIndex={-1} className="reading-passage" key={guided ? current : 'all'}>
+      {visibleSections.map((section, i) => (
         <section
           key={`${i}-${section.heading}`}
           id={section.heading ? slugFromHeading(section.heading) : undefined}
-          className="scroll-mt-24"
+          className="narrative-chapter scroll-mt-24"
         >
           {section.heading && (
-            <h3 className="text-xl font-semibold text-text-1">
+            <h3 className="reading-heading">
               {section.heading}
             </h3>
           )}
           <div
-            className={`font-body font-normal text-text-2 ${
+            className={`reading-copy ${
               section.heading ? 'mt-3' : ''
-            } max-w-[70ch] text-base leading-[1.85] md:text-lg md:leading-[1.8]`}
+            }`}
           >
             {section.blocks.map((block, idx) => {
               if (block.kind === 'quote') {
@@ -173,6 +202,11 @@ export function SectionedNarrative({
           </div>
         </section>
       ))}
+      </div>
+      {guided && <div className="reading-navigation">
+        <button type="button" className="quiet-button" disabled={current === 0} onClick={() => goTo(current - 1)} aria-label="Sección anterior"><ArrowLeft size={20} /> Anterior</button>
+        {current < sections.length - 1 ? <button type="button" className="focus-button" onClick={() => goTo(current + 1)} aria-label="Siguiente sección">Seguir leyendo <ArrowRight size={20} /></button> : <p className="text-sm text-text-2">La lectura termina acá. Podés volver cuando quieras.</p>}
+      </div>}
       {streaming && (
         <span className="inline-block h-5 w-0.5 animate-pulse self-start bg-violet-400" />
       )}
