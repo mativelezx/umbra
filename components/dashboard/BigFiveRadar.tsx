@@ -36,12 +36,12 @@ export function BigFiveRadar({ bigFive }: BigFiveRadarProps) {
           <PolarGrid stroke="rgba(75,75,71,0.18)" strokeDasharray="2 4" />
           <PolarAngleAxis
             dataKey="subject"
-            tick={{ fill: '#53534f', fontSize: 14, fontFamily: 'var(--font-dm-sans)' }}
+            tick={{ fill: '#53534f', fontSize: 14, fontFamily: 'var(--font-bricolage)' }}
           />
           <PolarRadiusAxis
             angle={90}
             domain={[0, 100]}
-            tick={{ fill: '#62625c', fontSize: 14, fontFamily: 'var(--font-dm-sans)' }}
+            tick={{ fill: '#62625c', fontSize: 14, fontFamily: 'var(--font-bricolage)' }}
             stroke="rgba(98,98,92,0.3)"
           />
           <Radar

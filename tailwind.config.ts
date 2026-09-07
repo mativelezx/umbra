@@ -49,10 +49,10 @@ const config: Config = {
         },
       },
       fontFamily: {
-        display: ['var(--font-dm-sans)', 'sans-serif'],
-        heading: ['var(--font-dm-sans)', 'sans-serif'],
-        body: ['var(--font-dm-sans)', 'sans-serif'],
-        mono: ['var(--font-dm-sans)', 'sans-serif'],
+        display: ['var(--font-bricolage)', 'sans-serif'],
+        heading: ['var(--font-bricolage)', 'sans-serif'],
+        body: ['var(--font-bricolage)', 'sans-serif'],
+        mono: ['var(--font-bricolage)', 'sans-serif'],
       },
       fontSize: {
         xs: ['0.875rem', { lineHeight: '1.45' }],

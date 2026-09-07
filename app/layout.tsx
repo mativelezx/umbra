@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from 'next';
-import { DM_Sans } from 'next/font/google';
+import { Bricolage_Grotesque } from 'next/font/google';
 import { AuthProvider } from '@/lib/providers/auth-context';
 import { MotionProvider } from '@/components/motion/MotionProvider';
 import { ThemeProvider } from '@/lib/providers/theme';
 import './globals.css';
-const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-dm-sans', display: 'swap' });
+const bricolage = Bricolage_Grotesque({ subsets: ['latin'], weight: 'variable', axes: ['opsz'], variable: '--font-bricolage', display: 'swap' });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 const SITE_NAME = 'Umbra';
@@ -69,9 +69,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className={dmSans.variable}>
+    <html lang="es" className={bricolage.variable}>
       {/* THESIS: A personal reflection journal with distinct stages, not a clinical scorecard.
-          OWN-WORLD: lowercase umbra, DM Sans, graphite and ivory, original vector contours;
+          OWN-WORLD: lowercase umbra, Bricolage Grotesque, graphite and ivory, original ink illustrations;
           black primary surfaces, white reading panels, compact navigation and grouped controls.
           STORY: Answer, explore an experimental reading, choose an activity; chat and PDF complement it.
           FIRST VIEWPORT: Dark editorial hero, large left heading and entry action, fluid contour field
