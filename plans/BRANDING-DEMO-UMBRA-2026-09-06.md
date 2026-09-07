@@ -14,7 +14,7 @@ Estado: dirección aprobada por Matías el 6 de septiembre de 2026: «dale para 
 
 ## Fuentes e inspección
 
-Acceso a Mobbin mediante sesión existente en navegador. Solo lectura; no se guardaron referencias en la cuenta, descargaron bibliotecas ni copiaron capturas o activos al repositorio. Las notas siguientes son análisis transformado, no reproducción de pantallas. Las capturas examinadas son las versiones archivadas por Mobbin, no pruebas ejecutadas dentro de esas aplicaciones.
+Acceso a Mobbin mediante sesión existente en navegador. Solo lectura; no se guardaron referencias en la cuenta, descargaron bibliotecas ni copiaron capturas o activos al producto. Las notas siguientes son análisis transformado, no reproducción de pantallas. Las capturas examinadas son las versiones archivadas por Mobbin, no pruebas ejecutadas dentro de esas aplicaciones. La segunda revisión conserva capturas de referencia únicamente en el directorio de QA ignorado, para contrastar el resultado; no se distribuyen como recursos de Umbra.
 
 | Fuente y superficie examinada | Observación | Adaptación propuesta para Umbra | Límite |
 | --- | --- | --- | --- |
@@ -94,6 +94,12 @@ Nueva inspección visual directa de Mobbin, 6 de septiembre de 2026:
 | [Lectura asistida por IA](https://mobbin.com/flows/a84f10c7-df4b-4efa-add8-7d7f8438196d) | Editor despejado, contexto visible y acciones próximas al contenido. | Chat y texto de reflexión existentes. No copiar mentores, gradientes ni nuevas funciones. |
 
 El sitio oficial muestra una gran composición editorial de diario y tipografía compacta. La nueva portada de Umbra adopta esa presencia, con el contraste oscuro y fluidez solicitados expresamente: geometría/ondas originales en movimiento, contenido legible, controles para pausar cualquier movimiento continuo y alternativa estática con movimiento reducido. Mostrar preguntas, lectura experimental, actividades, chat e informe sin aparentar que una vista ilustrativa es un análisis real. No descargar ni reutilizar ilustraciones o fuentes propietarias de Stoic.
+
+### Revisión de tipografía e ilustración
+
+Al revisar la nueva portada, Matías pidió otra fuente con más personalidad y más ilustraciones de lo que hace la aplicación. Se reemplaza DM Sans por **Bricolage Grotesque**, manteniendo una sola familia con pesos de lectura e interfaz y ajuste óptico automático. Se verificaron la muestra y la licencia SIL OFL en el [sitio de Atelier Triay](https://ateliertriay.github.io/bricolage/) y en el [repositorio oficial de la fuente](https://github.com/ateliertriay/bricolage). Su carácter más expresivo es una elección visual para Umbra, no una atribución tipográfica a Stoic.
+
+Los vectores pasan de arcos abstractos a escenas propias de tinta y papel: cuaderno y lápiz para responder, persona y página para explorar una lectura, caminata para actividades y hojas para el informe. Se reutiliza una familia de SVG en el ejemplo de portada, la explicación del recorrido y las pantallas interiores; no se crean métricas, servicios ni funciones por ilustrarlos. La animación ambiental del hero mantiene pausa, suspensión fuera de pantalla y movimiento reducido.
 
 Reutilizar Next.js, Tailwind y componentes existentes. Secuencia: fundaciones compartidas → navegación → preguntas → resultado → actividades → exportación. Evitar una segunda aplicación, una nueva biblioteca de componentes o una pantalla falsa solo para grabar.
 
