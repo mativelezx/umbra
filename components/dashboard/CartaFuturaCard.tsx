@@ -103,13 +103,10 @@ export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
             </div>
           )}
           <div className="flex-1">
-            <p className="font-body text-sm normal-case tracking-normal text-text-3">
-              Tu carta al futuro
-            </p>
             {isUnlocked ? (
               <>
-                <h3 className="mt-2 font-heading font-semibold text-2xl not-italic text-text-1">
-                  Ya pasó el tiempo. Leéla.
+                <h3 className="font-heading font-semibold text-2xl not-italic text-text-1">
+                  Tu carta al futuro está lista.
                 </h3>
                 <p className="mt-2 font-body text-sm text-text-2">
                   Escribiste esto hace {formatDateEs(letter.written_at)}. Tu yo de
@@ -126,7 +123,7 @@ export function CartaFuturaCard({ letter, snapshot }: CartaFuturaCardProps) {
               </>
             ) : (
               <>
-                <h3 className="mt-2 font-heading font-semibold text-2xl not-italic text-text-1">
+                <h3 className="font-heading font-semibold text-2xl not-italic text-text-1">
                   Tu carta se abre el {formatDateEs(unlockDate)}
                 </h3>
                 <p className="mt-2 font-body text-sm text-text-2">

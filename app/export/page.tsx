@@ -254,15 +254,15 @@ export default function ExportPage() {
             </div>
 
             <div className="pdf-section pdf-card">
-              <p style={{ fontSize: '11px', textTransform: 'none', letterSpacing: '0', margin: 0 }}>
-                Arquetipo · interpretación de IA inspirada en Jung
-              </p>
-              <h2 style={{ fontSize: '36px', margin: '8px 0 4px', fontStyle: 'normal' }}>
+              <h2 style={{ fontSize: '36px', margin: '0 0 4px', fontStyle: 'normal' }}>
                 {info.name}
               </h2>
               {data.profile.archetypeSecondary && (
                 <p style={{ fontSize: '13px', margin: 0 }}>+ {data.profile.archetypeSecondary}</p>
               )}
+              <p style={{ fontSize: '11px', textTransform: 'none', letterSpacing: '0', margin: '8px 0 0' }}>
+                Arquetipo · interpretación de IA inspirada en Jung
+              </p>
               <p style={{ marginTop: '12px', fontSize: '14px', lineHeight: '1.6' }}>
                 {info.description}
               </p>

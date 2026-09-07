@@ -188,12 +188,12 @@ function CompareDrawer({
 
         <div className="flex flex-col gap-6 p-7 md:p-10">
           <header className="flex flex-col gap-2 pr-10">
-            <p className="font-body text-sm normal-case tracking-normal text-text-3">
-              {isSelf ? 'Arquetipo de tu lectura' : `${userInfo.name} y ${otherInfo.name}`}
-            </p>
             <h2 id={titleId} className="font-heading font-semibold text-3xl not-italic text-text-1 md:text-4xl">
               {otherInfo.name}
             </h2>
+            <p className="font-body text-sm normal-case tracking-normal text-text-3">
+              {isSelf ? 'Arquetipo de tu lectura' : `${userInfo.name} y ${otherInfo.name}`}
+            </p>
             <p className="font-body text-sm not-italic text-violet-200">
               {otherCompare.motto}
             </p>
