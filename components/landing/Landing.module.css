@@ -60,13 +60,15 @@
    their text and focus targets from the accessibility tree. No tab layout jump. */
 .examplePanel[hidden] { display: flex; visibility: hidden; pointer-events: none; }
 .examplePanel:focus-visible { outline-offset: -7px; }
-.sampleQuestion { max-width: 17ch; font-size: clamp(26px, 2.35vw, 34px); font-weight: 500; line-height: 1.18; letter-spacing: -.025em; text-wrap: balance; }
+.exampleLead { display: grid; grid-template-columns: minmax(0, 1fr) 126px; align-items: center; gap: 17px; }
+.exampleArt { --art-paper: var(--landing-paper); width: 126px; height: 132px; color: var(--landing-ink); }
+.exampleArt > svg, .stepArt > svg { width: 100%; height: 100%; }
+.sampleQuestion { max-width: 17ch; font-size: clamp(25px, 2vw, 28px); font-weight: 500; line-height: 1.18; letter-spacing: -.025em; text-wrap: balance; }
 .sampleHelper { margin-top: 18px; max-width: 30ch; color: var(--landing-body); font-size: 14px; line-height: 1.55; }
 .sampleNote { padding-top: 18px; border-top: 1px solid #d4d7cd; color: var(--landing-body); font-size: 11px; line-height: 1.65; }
 .readingTitle { font-size: 25px; font-weight: 500; letter-spacing: -.02em; line-height: 1.16; max-width: 16ch; }
 .readingSource { margin-top: 15px; font-size: 11px; color: var(--landing-body); }
 .readingExcerpt { margin-top: 12px; font-size: 16px; line-height: 1.55; }
-.activityIcon { margin-bottom: 19px; }
 .activityDescription { margin-top: 15px; font-size: 14px; line-height: 1.55; color: var(--landing-body); }
 .exampleFooter { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 17px 27px; background: #dfe2d8; font-size: 11px; font-weight: 500; }
 .motionControl { position: absolute; z-index: 1; right: 0; bottom: -3px; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding-inline: 9px; border-radius: 5px; background: var(--landing-ink); color: var(--landing-muted); font-size: 11px; }
@@ -86,7 +88,8 @@
 .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 60px; }
 .steps li { border-top: 1px solid #bfc4b9; padding-top: 19px; }
 .stepNumber { font-size: 12px; color: var(--landing-body); }
-.steps h3 { margin-top: 29px; font-size: 23px; font-weight: 500; line-height: 1.25; }
+.stepArt { --art-paper: #f7f7f4; width: 100%; height: 170px; margin-block: 20px 24px; color: var(--landing-ink); }
+.steps h3 { margin-top: 0; font-size: 23px; font-weight: 500; line-height: 1.25; }
 .steps p { margin-top: 14px; max-width: 34ch; color: var(--landing-body); font-size: 15px; line-height: 1.7; }
 .pillarsSection { display: grid; grid-template-columns: 1fr 1.08fr; gap: 0; padding-bottom: 100px; }
 .pillarsIntro { display: flex; flex-direction: column; align-items: flex-start; padding: 50px; border-radius: 16px 0 0 16px; background: #dfe2d8; }
@@ -114,7 +117,9 @@
   .heroActions { gap: 18px; }
   .primaryAction { min-width: 148px; gap: 22px; }
   .examplePanel { padding-inline: 23px; min-height: 340px; }
-  .sampleQuestion { font-size: 28px; }
+  .exampleLead { grid-template-columns: minmax(0, 1fr) 110px; gap: 12px; }
+  .exampleArt { width: 110px; height: 116px; }
+  .sampleQuestion { font-size: 25px; }
   .pillarsIntro { padding: 36px; }
   .pillarsList { padding: 32px; }
 }
@@ -131,7 +136,7 @@
   .experience { width: min(100%, 460px); margin-inline: auto; padding-block: 17px 49px; }
   .fluidField { width: 173%; left: -37%; top: 46%; }
   .examplePanel { min-height: 330px; padding: 29px 27px 24px; }
-  .sampleQuestion { font-size: 32px; }
+  .sampleQuestion { font-size: 26px; }
   .readingExcerpt { font-size: 16px; }
   .motionControl { right: 0; bottom: -1px; }
   .openingFooter { display: block; padding-block: 23px 25px; }
@@ -145,7 +150,8 @@
   .steps { grid-template-columns: 1fr; gap: 30px; margin-top: 34px; }
   .steps li { display: grid; grid-template-columns: 48px 1fr; column-gap: 17px; }
   .stepNumber { padding-top: 4px; }
-  .steps h3 { margin-top: 0; font-size: 21px; }
+  .stepArt { grid-column: 2; grid-row: 2; width: 180px; height: 145px; margin-block: 14px 8px; }
+  .steps h3 { grid-column: 2; grid-row: 1; margin-top: 0; font-size: 21px; }
   .steps p { grid-column: 2; max-width: 42ch; margin-top: 11px; font-size: 14px; }
   .pillarsSection { grid-template-columns: 1fr; padding-bottom: 61px; }
   .pillarsIntro { border-radius: 16px 16px 0 0; padding: 33px 28px; }
@@ -164,7 +170,9 @@
   .tabs { margin-inline: 14px; }
   .tabs button { font-size: 12px; }
   .examplePanel { padding-inline: 22px; }
-  .sampleQuestion { font-size: 28px; }
+  .exampleLead { grid-template-columns: minmax(0, 1fr) 94px; gap: 10px; }
+  .exampleArt { width: 94px; height: 104px; }
+  .sampleQuestion { font-size: 24px; }
   .companionLinks { column-gap: 17px; }
 }
 @media (prefers-reduced-motion: reduce) {

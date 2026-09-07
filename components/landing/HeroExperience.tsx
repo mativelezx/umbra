@@ -2,7 +2,8 @@
 
 import { useEffect, useId, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
-import { ArrowRight, Pause, Play, Footprints } from '@phosphor-icons/react';
+import { ArrowRight, Pause, Play } from '@phosphor-icons/react';
+import { ReflectionArt } from '@/components/ui/ReflectionArt';
 import { FluidField } from './FluidField';
 import styles from './Landing.module.css';
 
@@ -82,14 +83,20 @@ export function HeroExperience() {
             Static demonstration content, never a submitted or generated result. */}
         <div role="tabpanel" id={`${id}-panel-0`} aria-labelledby={`${id}-tab-0`} tabIndex={0} hidden={selected !== 0} className={styles.examplePanel}>
           <div>
-            <p className={styles.sampleQuestion}>¿Qué te pasa cuando todo parece ir bien pero sentís que algo falta?</p>
+            <div className={styles.exampleLead}>
+              <p className={styles.sampleQuestion}>¿Qué te pasa cuando todo parece ir bien pero sentís que algo falta?</p>
+              <ReflectionArt variant="dialogue" className={styles.exampleArt} />
+            </div>
             <p className={styles.sampleHelper}>No hay respuesta correcta. Escribí lo que te salga.</p>
           </div>
           <p className={styles.sampleNote}>Una pregunta del recorrido. Tus respuestas empiezan después del consentimiento.</p>
         </div>
         <div role="tabpanel" id={`${id}-panel-1`} aria-labelledby={`${id}-tab-1`} tabIndex={0} hidden={selected !== 1} className={styles.examplePanel}>
           <div>
-            <p className={styles.readingTitle}>Una lectura para seguir pensando.</p>
+            <div className={styles.exampleLead}>
+              <p className={styles.readingTitle}>Una lectura para seguir pensando.</p>
+              <ReflectionArt variant="mirror" className={styles.exampleArt} />
+            </div>
             <p className={styles.readingSource}>Interpretación de ejemplo</p>
             <blockquote className={styles.readingExcerpt}>¿Qué pasaría si, una vez por semana, dejaras que una cosa te sorprendiera sin intentar decodificarla en el mismo momento?</blockquote>
           </div>
@@ -97,8 +104,10 @@ export function HeroExperience() {
         </div>
         <div role="tabpanel" id={`${id}-panel-2`} aria-labelledby={`${id}-tab-2`} tabIndex={0} hidden={selected !== 2} className={styles.examplePanel}>
           <div>
-            <Footprints size={30} weight="light" aria-hidden="true" className={styles.activityIcon} />
-            <p className={styles.readingTitle}>Caminata sin destino</p>
+            <div className={styles.exampleLead}>
+              <p className={styles.readingTitle}>Caminata sin destino</p>
+              <ReflectionArt variant="steps" className={styles.exampleArt} />
+            </div>
             <p className={styles.activityDescription}>Caminá 20 minutos sin música, sin podcast, sin destino. Solo observando lo que hay alrededor: texturas, olores, luz. No lo analices.</p>
           </div>
           <p className={styles.sampleNote}>Actividad de la muestra local. En la app podés elegir una propuesta y marcar sus pasos.</p>

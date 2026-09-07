@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ArrowRight, ArrowDown, ChatCircleText, FilePdf } from '@phosphor-icons/react/dist/ssr';
 import { Brand } from '@/components/layout/Brand';
 import { HeroExperience } from '@/components/landing/HeroExperience';
+import { ReflectionArt } from '@/components/ui/ReflectionArt';
 import { t } from '@/lib/i18n/dict';
 import styles from '@/components/landing/Landing.module.css';
 
@@ -59,6 +60,7 @@ export default function LandingPage() {
           ].map(([title, body], index) => (
             <li key={title}>
               <span className={styles.stepNumber}>Paso {index + 1}</span>
+              <ReflectionArt variant={(['dialogue', 'mirror', 'steps'] as const)[index]} className={styles.stepArt} />
               <h3>{title}</h3>
               <p>{body}</p>
             </li>
