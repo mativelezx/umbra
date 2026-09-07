@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-07T00:21:29Z",
+  "title": "Design System: umbra",
+  "extensions": {
+    "colorMeta": {
+      "text-1": { "role": "primary", "displayName": "Grafito de trabajo" },
+      "landing-ink": { "role": "primary", "displayName": "Tinta de portada" },
+      "umbra-void": { "role": "neutral", "displayName": "Papel de fondo" },
+      "umbra-abyss": { "role": "neutral", "displayName": "Hoja blanca" },
+      "umbra-fog": { "role": "neutral", "displayName": "Papel suave" },
+      "umbra-shadow": { "role": "neutral", "displayName": "Papel de control" },
+      "umbra-mist": { "role": "neutral", "displayName": "Línea de papel" },
+      "control-stroke": { "role": "neutral", "displayName": "Trazo de control; alias heredado violet-400" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Portada", "purpose": "Título editorial fluido; sus ajustes responsivos permanecen en Landing.module.css." },
+      "headline": { "displayName": "Encabezado de trabajo", "purpose": "Regla compartida de app-content h1." },
+      "title": { "displayName": "Título de sección", "purpose": "Jerarquía compacta de lectura y bloques." },
+      "body": { "displayName": "Lectura", "purpose": "Una sola familia Bricolage Grotesque, con ajuste óptico automático." },
+      "label": { "displayName": "Control", "purpose": "Etiquetas y navegación habituales; las notas pequeñas locales no definen este rol." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "control-color", "value": "150ms", "purpose": "Transición de color de Button y confirmaciones breves." },
+      { "name": "card-border", "value": "160ms ease-out", "purpose": "Cambio de borde de card-lift; no desplaza la tarjeta." },
+      { "name": "choice-state", "value": "220ms ease-out", "purpose": "Fondo y borde de opciones de entrada y respuesta." },
+      { "name": "question-enter", "value": "220ms cubic-bezier(.16, 1, .3, 1)", "purpose": "Entrada breve de pregunta; se elimina con movimiento reducido." },
+      { "name": "reflection-reveal", "value": "760ms cubic-bezier(.16, 1, .3, 1)", "purpose": "Revelado opcional de ReflectionArt; se elimina con movimiento reducido." },
+      { "name": "goal-confirm", "value": "150ms cubic-bezier(.16, 1, .3, 1)", "purpose": "Confirmación del paso marcado; estado visible sin animación." },
+      { "name": "thinking-pulse", "value": "1.2s ease-in-out infinite", "purpose": "Indicador existente de espera; no representa avance porcentual." },
+      { "name": "ambient-field", "value": "16s ease-in-out infinite alternate", "purpose": "Contornos SVG de portada: solo corren sin pausa manual, en pantalla, con documento visible y sin movimiento reducido. Sin IntersectionObserver permanecen estáticos. WebKit sin interpolación de trazados usa una transformación bajo los mismos controles." },
+      { "name": "reduced-motion", "value": "prefers-reduced-motion: reduce", "purpose": "Animaciones y transiciones globales se reducen a .01ms y una iteración; revelado, entrada y confirmación se eliminan. La selección pierde traslación, conserva contraste y texto. El campo ambiental queda estático." }
+    ],
+    "breakpoints": [
+      { "name": "app-md", "value": "768px" },
+      { "name": "app-lg-sidebar", "value": "1024px" },
+      { "name": "landing-max-narrow", "value": "360px" },
+      { "name": "landing-max-single-column", "value": "760px" },
+      { "name": "landing-max-compact", "value": "1050px" },
+      { "name": "landing-min-wide", "value": "1500px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botón principal",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Button, variante primary y tamaño md. El componente real también incluye secondary, ghost y danger.",
+      "html": "<button type=\"button\" class=\"ds-button\">Continuar</button>",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:3rem;padding:0 1.25rem;border:0;border-radius:14px;background:#242424;color:#fff;font-family:var(--font-bricolage,sans-serif);font-size:.875rem;line-height:1.25rem;font-weight:500;transition:color 150ms,background-color 150ms;cursor:pointer}.ds-button:hover{background:#404040}.ds-button:focus-visible{outline:2px solid #242424;outline-offset:4px}.ds-button:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-button{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Campo de texto",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Input con etiqueta asociada. El foco actual cambia borde y fondo; los errores conservan texto y aria-invalid.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-label\" for=\"ds-name\">Tu nombre</label><input class=\"ds-input\" id=\"ds-name\" type=\"text\" placeholder=\"Escribí tu nombre\" aria-invalid=\"false\"></div>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:.5rem;font-family:var(--font-bricolage,sans-serif)}.ds-label{font-size:.875rem;line-height:1.25rem;font-weight:500;color:#53534f}.ds-input{width:100%;padding:.75rem 1rem;border:1px solid rgba(75,75,71,.2);border-radius:14px;background:rgba(230,230,224,.5);color:#242424;font-family:var(--font-bricolage,sans-serif);font-size:1rem;line-height:1.6;transition:border-color 150ms ease-out,background-color 150ms ease-out}.ds-input::placeholder{color:#62625c}.ds-input:focus,.ds-input:focus-visible{outline:none;border-color:#4b4b47;background:rgba(222,222,216,.3)}.ds-input[aria-invalid=true]{border-color:rgba(161,61,61,.6)}.ds-input[aria-invalid=true]:focus{border-color:#a13d3d}@media(prefers-reduced-motion:reduce){.ds-input{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Panel de lectura",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Card blanco con padding compartido. La tarjeta no es interactiva por sí misma ni recibe elevación ornamental.",
+      "html": "<article class=\"ds-card\"><h2 class=\"ds-card-title\">Tu lectura</h2><p class=\"ds-card-body\">Una interpretación para seguir pensando.</p></article>",
+      "css": ".ds-card{padding:1.5rem;border-radius:16px;background:#fff;color:#242424;font-family:var(--font-bricolage,sans-serif);transition:border-color 160ms ease-out}.ds-card:hover{border-color:#aaa9a3}.ds-card-title{margin:0;font-size:1.5rem;line-height:2rem;font-weight:600;letter-spacing:-.025em;text-wrap:balance}.ds-card-body{margin:1rem 0 0;color:#53534f;font-size:1rem;line-height:1.6;text-wrap:pretty}@media(prefers-reduced-motion:reduce){.ds-card{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Badge de apoyo",
+      "kind": "chip",
+      "refersTo": "badge-default",
+      "description": "Badge default: etiqueta informativa, sin interacción inventada ni significado basado solo en color.",
+      "html": "<span class=\"ds-badge\">Datos ficticios</span>",
+      "css": ".ds-badge{display:inline-flex;align-items:center;padding:.25rem .75rem;border:1px solid rgba(75,75,71,.1);border-radius:9999px;background:rgba(230,230,224,.5);color:#53534f;font-family:var(--font-bricolage,sans-serif);font-size:.875rem;line-height:1.45;font-weight:400}"
+    },
+    {
+      "name": "Navegación principal",
+      "kind": "nav",
+      "refersTo": "navigation-item",
+      "description": "Extracto textual del estado activo de Sidebar. Los iconos Phosphor y la adaptación móvil pertenecen a Sidebar y TabBar; esta muestra no recrea el shell completo.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Navegación principal\"><a class=\"ds-nav-item\" href=\"/dashboard\" aria-current=\"page\">Mi resultado</a><a class=\"ds-nav-item\" href=\"/plan\">Actividades</a><a class=\"ds-nav-item\" href=\"/export\">Informe</a></nav>",
+      "css": ".ds-nav{display:flex;flex-direction:column;gap:.25rem;padding:.75rem;background:#f7f7f4;font-family:var(--font-bricolage,sans-serif)}.ds-nav-item{display:flex;align-items:center;min-height:3rem;padding:.75rem;border-radius:14px;color:#53534f;font-size:.875rem;line-height:1.25rem;text-decoration:none;transition:color 150ms,background-color 150ms}.ds-nav-item:hover{color:#242424;background:rgba(75,75,71,.05)}.ds-nav-item[aria-current=page]{color:#242424;font-weight:700}.ds-nav-item:focus-visible{outline:2px solid #242424;outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-nav-item{transition-duration:.01ms}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Un espacio personal de reflexión",
+    "overview": "Umbra se presenta como un cuaderno personal de tinta y papel: cercano, expresivo y legible. La marca visible es `umbra`, en minúsculas. Bricolage Grotesque aporta personalidad a títulos compactos; las escenas de escribir, leer y caminar explican acciones reconocibles. Esta dirección aplica los principios de contraste, foco y agrupación elegidos por Matías al revisar Stoic, con identidad e ilustraciones propias.\n\nLa portada usa un campo oscuro de contornos fluidos y una vista clara del recorrido. Las pantallas de trabajo conservan fondo claro, paneles de lectura blancos y bloques oscuros de énfasis. Las preguntas, la interpretación experimental y las actividades se distinguen visualmente y mantienen sus límites junto al contenido. La ilustración acompaña; el texto y los controles explican qué hacer.",
+    "keyCharacteristics": [
+      "Tinta grafito y papel claro, con contraste invertido en portada y bloques principales.",
+      "Una familia tipográfica gratuita con personalidad, pesos legibles y ajuste óptico automático.",
+      "Ilustraciones SVG propias de escribir, leer, caminar y guardar un informe.",
+      "Navegación compacta, tareas agrupadas y detalle elegido por la persona.",
+      "Movimiento ambiental controlable y estados comprensibles también sin animación."
+    ],
+    "rules": [
+      { "name": "The Tinta y papel Rule", "body": "El énfasis principal se construye con contraste entre tinta y papel; los acentos de estado conservan su significado funcional.", "section": "colors" },
+      { "name": "The Título primero Rule", "body": "El nombre del contenido encabeza el bloque; la procedencia o atribución se presenta como apoyo cercano y no como un rótulo ornamental que compite con él.", "section": "typography" },
+      { "name": "The Superficie por tarea Rule", "body": "Un bloque oscuro destaca una unidad de trabajo o lectura; los paneles claros y los divisores agrupan su contenido sin añadir elevación ornamental.", "section": "elevation" }
+    ],
+    "dos": [
+      "**Do** mantener `umbra` en minúsculas en la marca visible y Bricolage Grotesque como familia compartida.",
+      "**Do** empezar los bloques por su título y mantener la procedencia y los límites junto al contenido.",
+      "**Do** reutilizar controles, navegación y escenas SVG existentes antes de crear variantes locales.",
+      "**Do** conservar texto y marcas de estado además del color, con foco y operación por teclado.",
+      "**Do** mantener pausa, suspensión fuera de pantalla y alternativa estática en el campo ambiental.",
+      "**Do** contrastar los cambios de tokens con las pantallas de escritorio y móvil y actualizar este registro desde el código."
+    ],
+    "donts": [
+      "**Don't** recuperar la paleta violeta, las transparencias o las fuentes anteriores a partir de nombres heredados.",
+      "**Don't** copiar la identidad, tipografía propietaria, ilustraciones, textos o capturas de Stoic al producto.",
+      "**Don't** usar ilustración, animación o una figura simbólica como evidencia de análisis real o validación clínica.",
+      "**Don't** convertir notas pequeñas, estilos locales del PDF o helpers sin consumidores en reglas generales.",
+      "**Don't** agregar funcionalidades, métricas o capas de tokens que el recorrido y la implementación no contienen."
+    ]
+  }
+}

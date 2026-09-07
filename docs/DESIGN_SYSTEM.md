@@ -1,3 +1,5 @@
+> **Histórico / sustituido — 6 de septiembre de 2026.** Este documento conserva el sistema oscuro/violeta anterior como evidencia histórica. No rige la UI de la rama `codex/stoic-demo`: consultar [DESIGN.md](../DESIGN.md) y su [sidecar](../.impeccable/design.json), derivados de la implementación `c9bf16a`. La portada oscura actual, Bricolage Grotesque, la marca `umbra` y las ilustraciones propias pertenecen a la dirección vigente; no reutilizar los tokens ni la afirmación de referencia canónica que siguen debajo. Este aviso no certifica aceptación final, aprobación académica ni preparación de servicios reales.
+
 # Umbra — Design System
 
 > Visual language, design tokens, typography, colors, spacing, iconography.
