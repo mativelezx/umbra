@@ -12,7 +12,7 @@ describe('print report preserves and explains the result', () => {
     expect(container.querySelector('.pdf-self-report')).not.toHaveClass('pdf-new-page');
     expect(container).toHaveTextContent('no las predice la IA');
     expect(container).toHaveTextContent('No son percentiles');
-    expect(screen.getByRole('img', { name: 'umbra', exact: true })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /^umbra$/ })).toBeInTheDocument();
   });
   it('retains full saved content, explains terms, and prints no unvalidated bars', () => {
     const { container } = render(<ReportContent data={{ profile: DEMO_PROFILE, userName: 'Persona ficticia', narrative: DEMO_NARRATIVE + '\n\nÚltimo párrafo conservado.', plan: { areas: [{ id: 'a', name: 'Una propuesta', rationale: 'Se en 18 y Ti alto (78).', actions: [{ id: 'b', title: 'Mirar un detalle', description: 'Descripción conservada.', microGoals: [{ text: 'Primer paso conservado.' }] }] }] } }} />);
