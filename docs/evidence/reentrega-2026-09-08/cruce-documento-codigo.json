@@ -1,0 +1,932 @@
+{
+  "checks": [
+    {
+      "control": "1-consignas",
+      "check": "Resumen",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Abstract",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Introducción",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Justificación",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Objetivo general del proyecto",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Objetivos específicos del proyecto",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Marco teórico referencial",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Diseño metodológico",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Relevamiento",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Procesos de negocio",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Diagnóstico y propuesta",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Objetivo, límites y alcances del prototipo",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Descripción del sistema",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Seguridad",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Análisis de costos",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Análisis de riesgos",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Conclusiones",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Demo",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Referencias",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Anexos",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Demo entre conclusiones y referencias",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Resumen y abstract entre 150 y 250 palabras",
+      "passed": true,
+      "detail": "[207, 190]"
+    },
+    {
+      "control": "1-consignas",
+      "check": "Resumen y abstract en páginas separadas",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Tres capturas del proceso núcleo",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Scrum: backlog, historias y primer sprint",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "DER, diccionario y arquitectura",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Fuentes y limitación del cronograma",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Diferencia entre fechas históricas explicitada",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Versión Next.js coincide",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Runtimes largos de seis rutas de IA",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Cinco dimensiones insuficientes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Tabla 29 openness constant_training_mean",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Tabla 29 openness shipped_tfidf_ridge",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Tabla 29 openness shipped_distilbert_ridge",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas english_only openness r2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas english_only openness r",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "MSE english_only openness",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas combined openness r2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas combined openness r",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "MSE combined openness",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Tabla 29 conscientiousness constant_training_mean",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Tabla 29 conscientiousness shipped_tfidf_ridge",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Tabla 29 conscientiousness shipped_distilbert_ridge",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas english_only conscientiousness r2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas english_only conscientiousness r",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "MSE english_only conscientiousness",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas combined conscientiousness r2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas combined conscientiousness r",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "MSE combined conscientiousness",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Tabla 29 extraversion constant_training_mean",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Tabla 29 extraversion shipped_tfidf_ridge",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Tabla 29 extraversion shipped_distilbert_ridge",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas english_only extraversion r2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas english_only extraversion r",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "MSE english_only extraversion",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas combined extraversion r2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas combined extraversion r",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "MSE combined extraversion",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Tabla 29 agreeableness constant_training_mean",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Tabla 29 agreeableness shipped_tfidf_ridge",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Tabla 29 agreeableness shipped_distilbert_ridge",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas english_only agreeableness r2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas english_only agreeableness r",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "MSE english_only agreeableness",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas combined agreeableness r2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas combined agreeableness r",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "MSE combined agreeableness",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Tabla 29 neuroticism constant_training_mean",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Tabla 29 neuroticism shipped_tfidf_ridge",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Tabla 29 neuroticism shipped_distilbert_ridge",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas english_only neuroticism r2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas english_only neuroticism r",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "MSE english_only neuroticism",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas combined neuroticism r2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Métricas combined neuroticism r",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "MSE combined neuroticism",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Partición train",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Partición val",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Partición test",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "IDs de particiones sin solapamiento",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Artefacto sin cambios: models/ridge_v1.joblib",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Artefacto sin cambios: models/baseline_tfidf.joblib",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Artefacto sin cambios: data/embeddings/test.npy",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Artefacto sin cambios: data/splits/train.csv",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Artefacto sin cambios: data/splits/val.csv",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Artefacto sin cambios: data/splits/test.csv",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "BFI-2-S: treinta ítems, 1–5 e inversión",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Autoinforme separado del entrenamiento",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Quince tablas públicas en migraciones",
+      "passed": true,
+      "detail": "consent_records, conversations, crisis_events, delete_confirmations, development_plans, evidence_highlights, future_letters, messages, narratives, onboarding_sessions, profiles, psychological_profiles, rate_limits, research_dataset, usability_responses"
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "RLS declarado: consent_records",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "RLS declarado: conversations",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "RLS declarado: crisis_events",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "RLS declarado: delete_confirmations",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "RLS declarado: development_plans",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "RLS declarado: evidence_highlights",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "RLS declarado: future_letters",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "RLS declarado: messages",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "RLS declarado: narratives",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "RLS declarado: onboarding_sessions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "RLS declarado: profiles",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "RLS declarado: psychological_profiles",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "RLS declarado: rate_limits",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "RLS declarado: research_dataset",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "RLS declarado: usability_responses",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Retención conserva autoinforme y ML por updated_at",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "2-codigo-modelo",
+      "check": "Límites remotos declarados",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Noventa páginas sin portada numerada",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Todos los destinos del índice localizados",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Márgenes de 3 cm, sección 1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "A4, sección 1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Márgenes de 3 cm, sección 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "A4, sección 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Márgenes de 3 cm, sección 3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "A4, sección 3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Márgenes de 3 cm, sección 4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "A4, sección 4",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Márgenes de 3 cm, sección 5",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "A4, sección 5",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Márgenes de 3 cm, sección 6",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "A4, sección 6",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Márgenes de 3 cm, sección 7",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "A4, sección 7",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Márgenes de 3 cm, sección 8",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "A4, sección 8",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Márgenes de 3 cm, sección 9",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "A4, sección 9",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Márgenes de 3 cm, sección 10",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "A4, sección 10",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Márgenes de 3 cm, sección 11",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "A4, sección 11",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Márgenes de 3 cm, sección 12",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "A4, sección 12",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Márgenes de 3 cm, sección 13",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "A4, sección 13",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Márgenes de 3 cm, sección 14",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "A4, sección 14",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Márgenes de 3 cm, sección 15",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "A4, sección 15",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Márgenes de 3 cm, sección 16",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "A4, sección 16",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Márgenes de 3 cm, sección 17",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "A4, sección 17",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Tipografía: Normal",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Tipografía: Heading 1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Tipografía: Heading 2",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Tipografía: Heading 3",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Interlineado y sangría del cuerpo",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Encabezados arriba a la derecha según rúbrica CAE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Tablas con encabezado repetible",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Enlace de demo exacto",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Enlace de rama exacto",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Enlaces sin punto de oración agregado",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Sin marcadores de borrador o rutas privadas",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "passed": 153,
+  "failed": [],
+  "docx_sha256": "13bf90e8dbfb651d46f8725f96a8c3439e3c832d0132545d9bc68ce51674a593",
+  "pdf_sha256": "09518ad720137ee87371a090c4b20750934f459160ae4ee41186b12c691a9d27",
+  "limits": [
+    "No certifica aprobación del CAE ni autoría o comprensión del estudiante.",
+    "No valida psicológicamente el ML ni sustituye una evaluación con participantes.",
+    "Correo remoto, restauración de respaldos y corte global pendientes.",
+    "La cronología reconstruida requiere confirmación del autor."
+  ]
+}

@@ -1,0 +1,541 @@
+{
+  "source_sha256": "bfae1c1db31b4e1fcacd1478dc0da4a48d2971492f36553f217666ca30bf1643",
+  "docx_sha256": "13bf90e8dbfb651d46f8725f96a8c3439e3c832d0132545d9bc68ce51674a593",
+  "source_blocks": 654,
+  "replacement_count": 304,
+  "outline": [
+    [
+      "Resumen",
+      1
+    ],
+    [
+      "Abstract",
+      1
+    ],
+    [
+      "Título",
+      1
+    ],
+    [
+      "Introducción",
+      1
+    ],
+    [
+      "Antecedentes",
+      2
+    ],
+    [
+      "Descripción del área problemática",
+      2
+    ],
+    [
+      "Justificación",
+      1
+    ],
+    [
+      "Objetivo general del proyecto",
+      1
+    ],
+    [
+      "Objetivos específicos del proyecto",
+      1
+    ],
+    [
+      "Marco teórico referencial",
+      1
+    ],
+    [
+      "Dominio del problema",
+      2
+    ],
+    [
+      "Encuadre general",
+      3
+    ],
+    [
+      "Big Five y sus instrumentos de referencia",
+      3
+    ],
+    [
+      "Funciones cognitivas de Jung",
+      3
+    ],
+    [
+      "Arquetipos aplicados de Pearson",
+      3
+    ],
+    [
+      "Positive Computing como marco de diseño",
+      3
+    ],
+    [
+      "Integración de los cuatro marcos",
+      3
+    ],
+    [
+      "Limitaciones del marco teórico",
+      3
+    ],
+    [
+      "Tecnologías de la información aplicadas",
+      2
+    ],
+    [
+      "Competencia",
+      2
+    ],
+    [
+      "Panorama del autoconocimiento digital en 2026",
+      3
+    ],
+    [
+      "Productos comerciales relevantes",
+      3
+    ],
+    [
+      "16Personalities",
+      3
+    ],
+    [
+      "Crystal Knows",
+      3
+    ],
+    [
+      "The Pattern",
+      3
+    ],
+    [
+      "Truity",
+      3
+    ],
+    [
+      "Tabla comparativa",
+      3
+    ],
+    [
+      "Literatura académica relevante",
+      3
+    ],
+    [
+      "Modelos dimensionales frente a tipológicos",
+      3
+    ],
+    [
+      "Seguridad en chatbots de salud mental",
+      3
+    ],
+    [
+      "Positive Computing",
+      3
+    ],
+    [
+      "Inferencia de personalidad por texto con representaciones preentrenadas",
+      3
+    ],
+    [
+      "Transparencia de la devolución",
+      3
+    ],
+    [
+      "Relación de los antecedentes con la propuesta",
+      3
+    ],
+    [
+      "Diseño metodológico",
+      1
+    ],
+    [
+      "Herramientas metodológicas",
+      2
+    ],
+    [
+      "Enfoque",
+      3
+    ],
+    [
+      "Marco de gestión",
+      3
+    ],
+    [
+      "Herramientas de desarrollo",
+      2
+    ],
+    [
+      "Recolección de datos",
+      2
+    ],
+    [
+      "Autoinforme separado de la predicción",
+      3
+    ],
+    [
+      "Planificación",
+      2
+    ],
+    [
+      "Relevamiento",
+      1
+    ],
+    [
+      "Relevamiento estructural",
+      2
+    ],
+    [
+      "Relevamiento funcional",
+      2
+    ],
+    [
+      "Relevamiento de la documentación",
+      2
+    ],
+    [
+      "Procesos de negocio",
+      1
+    ],
+    [
+      "Diagnóstico y propuesta",
+      1
+    ],
+    [
+      "Nombre del proceso: Realización de un test tipológico en línea",
+      2
+    ],
+    [
+      "Nombre del proceso: Consulta a un asistente conversacional de propósito general",
+      2
+    ],
+    [
+      "Nombre del proceso: Búsqueda de acompañamiento profesional",
+      2
+    ],
+    [
+      "Propuesta",
+      2
+    ],
+    [
+      "Objetivo, límites y alcances del prototipo",
+      1
+    ],
+    [
+      "Objetivo del prototipo",
+      2
+    ],
+    [
+      "Límites",
+      2
+    ],
+    [
+      "Alcances",
+      2
+    ],
+    [
+      "Descripción del sistema",
+      1
+    ],
+    [
+      "Product Backlog",
+      2
+    ],
+    [
+      "Historias de Usuario",
+      2
+    ],
+    [
+      "Épica 1 — Acceso y consentimiento",
+      3
+    ],
+    [
+      "Épica 2 — Captura de textos",
+      3
+    ],
+    [
+      "Épica 3 — Inferencia cuantitativa",
+      3
+    ],
+    [
+      "Épica 4 — Devolución interpretativa",
+      3
+    ],
+    [
+      "Épica 5 — Conversación acompañada",
+      3
+    ],
+    [
+      "Épica 6 — Control sobre los datos",
+      3
+    ],
+    [
+      "Sprint Backlog",
+      2
+    ],
+    [
+      "Detalle del primer sprint",
+      3
+    ],
+    [
+      "Estructura de datos",
+      2
+    ],
+    [
+      "Diccionario de datos",
+      3
+    ],
+    [
+      "Prototipos de interfaces de pantallas",
+      2
+    ],
+    [
+      "Diagrama de arquitectura",
+      2
+    ],
+    [
+      "Seguridad",
+      1
+    ],
+    [
+      "Políticas de acceso a la aplicación",
+      2
+    ],
+    [
+      "Políticas de respaldo de la información",
+      2
+    ],
+    [
+      "Análisis de costos",
+      1
+    ],
+    [
+      "Costo de desarrollo",
+      2
+    ],
+    [
+      "Costos operativos",
+      2
+    ],
+    [
+      "Resumen de costos",
+      2
+    ],
+    [
+      "Análisis de riesgos",
+      1
+    ],
+    [
+      "Estimación de probabilidad",
+      2
+    ],
+    [
+      "Estimación de impacto",
+      2
+    ],
+    [
+      "Exposición al riesgo",
+      2
+    ],
+    [
+      "Plan de contingencia",
+      2
+    ],
+    [
+      "Conclusiones",
+      1
+    ],
+    [
+      "Síntesis",
+      2
+    ],
+    [
+      "Comparación con una referencia sencilla",
+      3
+    ],
+    [
+      "Principales aportes",
+      2
+    ],
+    [
+      "Limitaciones declaradas",
+      2
+    ],
+    [
+      "Discusión",
+      2
+    ],
+    [
+      "Reflexión metodológica",
+      3
+    ],
+    [
+      "Amenazas a la validez",
+      3
+    ],
+    [
+      "Diálogo con el estado del arte",
+      3
+    ],
+    [
+      "Trabajo futuro",
+      2
+    ],
+    [
+      "Continuaciones inmediatas",
+      3
+    ],
+    [
+      "Continuaciones de mediano plazo",
+      3
+    ],
+    [
+      "Continuaciones de largo plazo",
+      3
+    ],
+    [
+      "Cierre personal",
+      2
+    ],
+    [
+      "Demo",
+      1
+    ],
+    [
+      "Referencias",
+      1
+    ],
+    [
+      "Anexos",
+      1
+    ],
+    [
+      "Anexo A — Decisiones de arquitectura seleccionadas",
+      2
+    ],
+    [
+      "ADR-002 — Funciones cognitivas de Jung citadas directamente, sin MBTI",
+      3
+    ],
+    [
+      "ADR-007 — Arquetipos tomados del sistema aplicado de Pearson",
+      3
+    ],
+    [
+      "ADR-008 — Observabilidad del sistema de seguridad conversacional con huellas con clave",
+      3
+    ],
+    [
+      "ADR-026 — Módulo analítico propio con representaciones congeladas y regresores regularizados",
+      3
+    ],
+    [
+      "ADR-027 — Reporte por dimensión con umbrales R² > 0,20 y r > 0,30",
+      3
+    ],
+    [
+      "Anexo B — Métricas completas del módulo analítico",
+      2
+    ],
+    [
+      "Bloque de corpus principal (n = 248)",
+      3
+    ],
+    [
+      "Bloque combinado (n = 250)",
+      3
+    ],
+    [
+      "Composición del conjunto de datos",
+      3
+    ],
+    [
+      "Anexo C — Conjunto de evaluación del clasificador de seguridad",
+      2
+    ],
+    [
+      "Anexo D — Instrumento de usabilidad",
+      2
+    ],
+    [
+      "Anexo E — Esquema de validación y resultados",
+      2
+    ],
+    [
+      "Pregunta 1 — ¿Se separa el cálculo experimental de la lectura interpretativa?",
+      3
+    ],
+    [
+      "Pregunta 2 — ¿Las dimensiones inferidas alcanzan los umbrales comprometidos?",
+      3
+    ],
+    [
+      "Pregunta 3 — ¿El sistema implementa los mecanismos técnicos exigidos por la normativa?",
+      3
+    ],
+    [
+      "Pregunta 4 — ¿Es el sistema percibido como usable?",
+      3
+    ],
+    [
+      "Anexo F — Análisis de amenazas por componente y riesgos residuales",
+      2
+    ]
+  ],
+  "captions": {
+    "Tabla": [
+      "Tabla 1. Comparación de alternativas de autoconocimiento relevadas.",
+      "Tabla 2. Diagnóstico del proceso de realización de un test tipológico en línea.",
+      "Tabla 3. Diagnóstico del proceso de consulta a un asistente conversacional de propósito general.",
+      "Tabla 4. Diagnóstico del proceso de búsqueda de acompañamiento profesional.",
+      "Tabla 5. Roles del marco de trabajo y su ocupación en un proyecto individual.",
+      "Tabla 6. Épicas del Product Backlog con su prioridad.",
+      "Tabla 7. Historias priorizadas y estimación relativa del backlog.",
+      "Tabla 8. Organización reconstruida de incrementos y comportamientos esperados.",
+      "Tabla 9. Tareas del primer sprint y comprobación disponible.",
+      "Tabla 10. Condiciones de la definición de terminado y su verificación.",
+      "Tabla 11. Grupos del modelo de datos y la historia de usuario que los origina.",
+      "Tabla 12. Diccionario de la tabla profiles.",
+      "Tabla 13. Diccionario de la tabla psychological_profiles.",
+      "Tabla 14. Diccionario de la tabla narratives.",
+      "Tabla 15. Diccionario de la tabla development_plans.",
+      "Tabla 16. Diccionario de la tabla conversations.",
+      "Tabla 17. Diccionario de la tabla messages.",
+      "Tabla 18. Diccionario de la tabla onboarding_sessions.",
+      "Tabla 19. Diccionario de la tabla consent_records.",
+      "Tabla 20. Diccionario de la tabla future_letters.",
+      "Tabla 21. Diccionario de la tabla rate_limits.",
+      "Tabla 22. Diccionario de la tabla delete_confirmations.",
+      "Tabla 23. Diccionario de la tabla evidence_highlights.",
+      "Tabla 24. Diccionario de la tabla research_dataset.",
+      "Tabla 25. Diccionario de la tabla crisis_events.",
+      "Tabla 26. Diccionario de la tabla usability_responses.",
+      "Tabla 27. Costos del prototipo por categoría, plan e importe.",
+      "Tabla 28. Matriz de riesgos del proyecto.",
+      "Tabla 29. RMSE retrospectivo sobre etiquetas binarias de 248 ensayos ingleses.",
+      "Tabla 30. Métricas completas por dimensión sobre el bloque de corpus principal.",
+      "Tabla 31. Métricas completas por dimensión sobre el bloque combinado.",
+      "Tabla 32. Composición del conjunto de datos por partición.",
+      "Tabla 33. Composición del conjunto de evaluación del clasificador de seguridad.",
+      "Tabla 34. Mecanismos de protección de datos personales implementados.",
+      "Tabla 35. Análisis de amenazas por componente y mitigación adoptada."
+    ],
+    "Figura": [
+      "Figura 1. Cronograma reconstruido a partir de fechas del repositorio y entregas en Canvas. Las dependencias expresan el orden lógico del trabajo.",
+      "Figura 2. Procesos de consulta modelados a partir del relevamiento documental. No representan observación de participantes.",
+      "Figura 3. Modelo relacional de identidad, análisis y contenido.",
+      "Figura 4. Modelo relacional de interacción, consentimiento y control. Las huellas de investigación y seguridad no son claves foráneas.",
+      "Figura 5. Escritura guiada: pregunta, progreso y campo de respuesta de una cuenta ficticia de prueba.",
+      "Figura 6. Inicio del espacio personal después del análisis: acceso a la lectura y distinción de sus fuentes.",
+      "Figura 7. Actividades generadas durante la prueba con servicios reales y datos sintéticos; no representan resultados de un estudio con participantes.",
+      "Figura 8. Aplicación web, almacenamiento, servicio ML y proveedor narrativo. El cálculo experimental no se sustituye por generación de texto."
+    ]
+  },
+  "summary_words": [
+    207,
+    190
+  ],
+  "open_items": [
+    "Confirmar con el autor la reconstrucción de fechas y dependencias",
+    "Revisión personal y preparación para defender el trabajo",
+    "Configurar dominio y SMTP; probar correo externo y sus operaciones asociadas",
+    "Revisar condiciones de proveedores, corte global de consumo y respaldo con restauración antes de ampliar el uso",
+    "No se realizaron estudios con participantes; no atribuirles resultados"
+  ],
+  "page_number_offset": -1
+}

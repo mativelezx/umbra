@@ -8,6 +8,8 @@ Demo publicada: https://umbra-sigma.vercel.app. Código de reentrega: rama `code
 
 No hace falta un ZIP para consultar este repositorio. Las instrucciones siguientes se ejecutan desde un checkout de esta versión. No se incluyen contraseñas, claves de proveedores, datos de cuentas, dependencias instaladas ni cachés.
 
+[Revisión de entrega, requisitos y capturas](docs/ENTREGA-2026-09-08.md). Los archivos PDF y DOCX se adjuntan a la publicación de reentrega en GitHub; el acceso de la cuenta ficticia se comparte por separado y no se versiona.
+
 ## Qué hace cada componente
 
 - **Cuestionario BFI-2-S:** 30 afirmaciones en español. Calcula cinco promedios de 1 a 5 con la clave publicada y las respuestas inversas. Es un autoinforme opcional, no un porcentaje ni una comparación con otras personas.
