@@ -1,9 +1,15 @@
 import { test, expect, type Page } from '@playwright/test';
+import { createClient } from '@supabase/supabase-js';
 
 const email = process.env.E2E_REUSE_SYNTHETIC_EMAIL;
 async function login(page: Page, destination: string) {
   expect(email).toMatch(/^umbra-e2e-\d+@test\.local$/);
-  expect(['127.0.0.1', 'localhost']).toContain(new URL(process.env.PLAYWRIGHT_BASE_URL!).hostname);
+  if (process.env.E2E_ALLOW_REMOTE_FLOW === 'true') {
+    expect(new URL(process.env.PLAYWRIGHT_BASE_URL!).origin).toBe('https://umbra-sigma.vercel.app');
+    expect(new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!).hostname).toBe('googyntbflaqqriwhjxi.supabase.co');
+  } else {
+    expect(['127.0.0.1', 'localhost']).toContain(new URL(process.env.PLAYWRIGHT_BASE_URL!).hostname);
+  }
   await page.goto(`/login?redirectedFrom=${destination}`);
   await page.getByLabel('Email').fill(email!);
   await page.getByLabel('Contraseña').fill('UmbraE2E-Test-1234!');
@@ -55,6 +61,13 @@ test.describe('Existing synthetic profile integration', () => {
 
   test('one paid chat response persists and can be reopened', async ({ page }) => {
     test.skip(process.env.E2E_ALLOW_PAID_AI !== 'true', 'Requires additional paid-chat opt-in');
+    if (process.env.E2E_ALLOW_REMOTE_FLOW === 'true') {
+      expect(process.env.E2E_APPROVED_BUDGET_USD).toBe('1');
+      const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, { auth: { persistSession: false } });
+      const ledger = await admin.from('rate_limits').select('cost_usd_cents');
+      expect(ledger.error).toBeNull();
+      expect(ledger.data!.reduce((sum, row) => sum + row.cost_usd_cents, 0)).toBeLessThan(60);
+    }
     test.setTimeout(150_000);
     await page.setViewportSize({ width: 1440, height: 1000 });
     await login(page, '/chat');

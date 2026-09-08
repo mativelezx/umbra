@@ -4,7 +4,7 @@ Prototipo de autoconocimiento para el Trabajo Final de Graduación de Ingenierí
 
 ## Acceso y versión
 
-La dirección de publicación es https://umbra-sigma.vercel.app. La reentrega se prepara en la rama `codex/reentrega-final-2026-09-07`. Un enlace o un despliegue exitoso no sustituyen la prueba del recorrido completo: consultar el estado de verificación más abajo.
+Demo publicada: https://umbra-sigma.vercel.app. Código de reentrega: rama `codex/reentrega-final-2026-09-07`. Se probó el recorrido remoto con cuenta ficticia: ingreso, consentimiento, escritura con Claude, análisis ML, cuestionario, lectura y actividades guardadas. La cuenta se confirmó por administración; el correo externo sigue pendiente. Usar sólo datos ficticios para esta demostración académica.
 
 No hace falta un ZIP para consultar este repositorio. Las instrucciones siguientes se ejecutan desde un checkout de esta versión. No se incluyen contraseñas, claves de proveedores, datos de cuentas, dependencias instaladas ni cachés.
 
@@ -92,12 +92,14 @@ Comprobaciones de esta revisión:
 
 | Comprobación | Resultado |
 |---|---|
-| Vitest, lógica y componentes | 396 pruebas aprobadas, 65 archivos |
+| Vitest, lógica y componentes | 398 pruebas aprobadas, 66 archivos |
 | Tipos, lint y compilación web | Aprobados con la configuración de destino |
 | Auditoría de dependencias web de producción | Sin vulnerabilidades conocidas reportadas por pnpm audit |
 | Python con pesos reales | 37 pruebas aprobadas, ninguna omitida |
 | Retención | Prueba aislada aprobada: conserva resultados y elimina sólo el contenido técnico vencido |
-| Supabase nuevo | 15 tablas con RLS y tres tareas programadas activas; aislamiento y recorrido remoto se comprueban aparte |
+| Supabase nuevo | 15 tablas con RLS y tres tareas activas; seis grupos de pruebas remotas de aislamiento, permisos y consentimiento aprobados |
+| Navegador, servicios remotos | Recorrido completo aprobado; 32 controles públicos de escritorio/móvil aprobados; actividad guardada y descarga PDF comprobadas |
+| GitHub Actions | CI de la reentrega aprobada: tipos, lint, pruebas, build y navegación con configuración sin servicios pagos |
 
 ```bash
 pnpm typecheck
@@ -115,6 +117,8 @@ La suite web limita la concurrencia para funcionar en una computadora de estudia
 
 Las plantillas de bienvenida, autenticación, recuperación, cambio de email y eliminación están en `lib/email/` y `supabase/templates/`. La guía es [docs/EMAILS.md](docs/EMAILS.md). Diseñar una plantilla no configura SMTP: el remitente de prueba de Resend sólo puede enviar al titular. Para destinatarios externos hace falta un dominio verificado.
 
-El límite de consumo por usuario sí se aplica. `GLOBAL_DAILY_BUDGET_USD` es un parámetro declarado cuyo corte automático no está implementado; no asumir que limita toda la factura. No abrir el prototipo a uso masivo sin cerrar ese control.
+El límite de consumo por usuario sí se aplica. Para esta demo se configuraron 120.000 tokens y 200 centavos por día: el tope anterior de 60.000 tokens impedía continuar en el chat después del recorrido completo. Los importes de la aplicación son estimaciones redondeadas, no una factura. `GLOBAL_DAILY_BUDGET_USD` es un parámetro declarado cuyo corte automático no está implementado; no asumir que limita toda la cuenta. No abrir el prototipo a uso masivo sin cerrar ese control.
+
+Las seis rutas con generación usan Node y un máximo de 120 segundos. La primera prueba remota encontró que Edge cortaba el análisis antes de su respuesta inicial a los 25 segundos; después del cambio pasó el recorrido. La interfaz también conserva las respuestas y ofrece reintentar ante un error no JSON del alojamiento. No se modificaron ni ocultaron los resultados ML para aprobar la prueba.
 
 La reentrega requiere lectura y revisión del autor. La aprobación académica corresponde al CAE; ni los tests ni este README la garantizan. Debe reconocerse la asistencia utilizada, sin inventar investigación, fechas, resultados ni autoría.
