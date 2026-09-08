@@ -157,11 +157,23 @@ ejecutar el baseline. El archivo histórico del baseline puede faltar.
 
 ## Despliegue
 
-`fly.toml`, `render.yaml` y `Dockerfile` son configuraciones presentes.
-No se publicaron ni se verificaron despliegues en esta auditoría.
-Docker precarga la misma revisión fijada por el extractor. La inferencia
-local verificada no acredita un despliegue remoto ni el flujo completo
-Next.js/Supabase/Anthropic.
+El servicio de demostración está publicado en https://umbra-ml.vercel.app,
+con Python 3.12 y FastAPI. `pyproject.toml` instala las dependencias de ejecución
+y `build.py` descarga durante la compilación la revisión fijada de DistilBERT.
+La inferencia usa esos pesos empaquetados y los regresores conservados, sin
+entrenamiento ni descarga del modelo durante la solicitud.
+
+Se verificaron `/health` con pesos cargados, `/version`, rechazo de `/infer`
+sin clave y una inferencia autenticada idéntica a la local en sus cinco valores.
+El recorrido web con la nueva base de Supabase también pasó: preguntas,
+análisis, autoinforme, lectura y actividades. Se usaron textos y una cuenta
+ficticios; esa integración no acredita validez psicológica.
+
+`ML_API_KEY` se configura sólo en ambos servidores y se envía mediante
+`X-ML-API-Key`. La modalidad de funciones de mayor tamaño de Vercel está
+sujeta a sus límites y disponibilidad. La cuenta empleada ya tenía Pro;
+no se promete ejecución gratuita universal. `fly.toml`, `render.yaml` y
+`Dockerfile` se conservan como alternativas no desplegadas en esta revisión.
 
 ## Lecturas del proyecto
 

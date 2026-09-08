@@ -41,7 +41,7 @@ export function ReportContent({ data }: { data: ReportExportData }) {
       <div className="pdf-cover-meta"><strong>{data.userName ?? 'Tu cuaderno personal'}</strong><span>{formatDateEs(new Date())}</span></div>
       <div className="pdf-contents"><span><Eye size={18} />Tu lectura</span><ArrowRight size={16} /><span><Question size={18} />Las palabras, explicadas</span><ArrowRight size={16} /><span><PencilLine size={18} />Un paso posible</span></div>
       {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && <p className="pdf-note">Ejemplo local con datos ficticios. No representa un análisis real.</p>}
-    <div className="pdf-footer"><p>Generado por Umbra · TFG Ingeniería en Software, Universidad Siglo 21.</p><p>Umbra no es terapia ni diagnóstico. No uses esta lectura para tomar decisiones clínicas.</p><p>Si estás en crisis: 135 (Argentina) · 911.</p></div>
+    <div className="pdf-footer"><p>Generado por Umbra · TFG Ingeniería en Software, Universidad Siglo 21.</p><p>Umbra no es terapia ni diagnóstico. No uses esta lectura para tomar decisiones clínicas.</p><p>Si estás en crisis: 135 (CABA y GBA) · 911 · 0800-999-0091 (Argentina, 24 horas).</p></div>
     </div>
 
     {selfReport && <div className="pdf-section pdf-self-report">

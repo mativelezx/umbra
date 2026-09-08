@@ -22,7 +22,7 @@ export default function NotFound() {
         </Link>
       </div>
       <p className="mt-16 max-w-xl text-pretty font-body text-xs text-text-4">
-        Umbra no es terapia. Si estás en crisis: 135 (Argentina), 911 o 0800-999-0091.
+        Umbra no es terapia. Si estás en crisis: 135 (CABA y GBA), 911 o 0800-999-0091 (Argentina, 24 horas).
       </p>
     </main>
   );

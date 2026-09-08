@@ -98,7 +98,7 @@ Comprobaciones de esta revisión:
 | Python con pesos reales | 37 pruebas aprobadas, ninguna omitida |
 | Retención | Prueba aislada aprobada: conserva resultados y elimina sólo el contenido técnico vencido |
 | Supabase nuevo | 15 tablas con RLS y tres tareas activas; seis grupos de pruebas remotas de aislamiento, permisos y consentimiento aprobados |
-| Navegador, servicios remotos | Recorrido completo aprobado; 32 controles públicos de escritorio/móvil aprobados; actividad guardada y descarga PDF comprobadas |
+| Navegador, servicios remotos | Recorrido completo aprobado; 32 controles públicos de escritorio/móvil aprobados; actividad guardada, descarga PDF y chat real con historial persistido comprobados |
 | GitHub Actions | CI de la reentrega aprobada: tipos, lint, pruebas, build y navegación con configuración sin servicios pagos |
 
 ```bash

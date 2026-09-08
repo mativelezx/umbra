@@ -1,0 +1,55 @@
+import { test, expect, type Page, type TestInfo } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+
+// Read-only captures of the published version. No new accounts, email sends,
+// paid generation, profile edits or deletion requests are permitted here.
+const enabled = process.env.E2E_CAPTURE_RELEASE === 'true';
+const email = process.env.E2E_REUSE_SYNTHETIC_EMAIL;
+test.beforeEach(async ({ page }, info) => {
+  test.skip(!enabled, 'Explicit release-evidence opt-in required');
+  expect(process.env.PLAYWRIGHT_BASE_URL).toBe('https://umbra-sigma.vercel.app');
+  await page.setViewportSize({ width: info.project.name === 'mobile' ? 390 : 1440, height: 960 });
+  await page.route('**/api/**', route => route.request().method() === 'GET' ? route.continue() : route.abort());
+});
+
+async function capture(page: Page, info: TestInfo, label: string) {
+  await page.evaluate(() => document.fonts.ready);
+  await expect(page.locator('main').first()).toBeVisible();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
+  const accessibility = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
+  const blocking = accessibility.violations.filter(item => ['serious', 'critical'].includes(item.impact ?? ''));
+  await page.screenshot({ path: info.outputPath(`${label}.png`), fullPage: true, animations: 'disabled' });
+  await info.attach(`${label}-checks`, { body: JSON.stringify({ path: new URL(page.url()).pathname, viewport: page.viewportSize(), overflow, blocking, moderateOrMinor: accessibility.violations.filter(item => !blocking.includes(item)).map(item => ({ id: item.id, impact: item.impact })) }, null, 2), contentType: 'application/json' });
+  expect.soft(overflow, `${label}: horizontal overflow`).toBe(false);
+  expect.soft(blocking, `${label}: serious/critical accessibility`).toEqual([]);
+}
+
+test('public screens, forms and error states', async ({ page }, info) => {
+  test.setTimeout(240_000);
+  for (const [path, label] of [['/', 'landing'], ['/login', 'login'], ['/register', 'register'], ['/forgot-password', 'forgot-password'], ['/privacy', 'privacy'], ['/terms', 'terms'], ['/auth/auth-code-error', 'auth-link-error'], ['/pagina-inexistente-qa', 'not-found']]) {
+    await page.goto(path);
+    await capture(page, info, label!);
+  }
+});
+
+test('saved synthetic account screens and PDF', async ({ page }, info) => {
+  test.skip(!email, 'Completed synthetic account required');
+  expect(email).toMatch(/^umbra-e2e-\d+@test\.local$/);
+  test.setTimeout(300_000);
+  await page.goto('/login');
+  await page.getByLabel('Email').fill(email!);
+  await page.getByLabel('Contraseña').fill('UmbraE2E-Test-1234!');
+  await page.getByRole('button', { name: 'Entrar', exact: true }).click();
+  await page.waitForURL(url => url.pathname === '/dashboard');
+  for (const path of ['/dashboard', '/assessment', '/plan', '/chat', '/export', '/settings', '/settings/profile', '/settings/export', '/settings/research-opt-out', '/settings/delete', '/settings/delete/confirm']) {
+    await page.goto(path);
+    await capture(page, info, path.slice(1).replaceAll('/', '-'));
+    if (path === '/export') {
+      const downloading = page.waitForEvent('download');
+      await page.getByRole('button', { name: 'Descargar PDF' }).click();
+      const download = await downloading;
+      expect(await download.failure()).toBeNull();
+      await download.saveAs(info.outputPath('informe-sintetico.pdf'));
+    }
+  }
+});
