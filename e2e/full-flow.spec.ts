@@ -267,10 +267,10 @@ test.describe('Umbra full-flow happy path (dynamic onboarding)', () => {
     await page.screenshot({ path: testInfo.outputPath('reading-real.png') });
     await page.getByRole('tab', { name: 'Otras miradas' }).click();
     await page.getByText('Ver el módulo experimental de ML', { exact: true }).click();
-    const dimensions = page.getByRole('list', { name: 'Dimensiones Big Five con su estado de confianza' });
-    await expect(dimensions.getByRole('listitem')).toHaveCount(5);
-    await expect(dimensions.getByText('Apertura a lo nuevo', { exact: true })).toBeVisible();
-    await expect(dimensions.getByText('evidencia insuficiente — sin cifra', { exact: true })).toHaveCount(5);
+    const dimensions = page.getByRole('region', { name: 'Sobre el análisis de texto' });
+    await expect(dimensions).toContainText('Apertura a lo nuevo');
+    await expect(dimensions).toContainText('Es un límite del modelo');
+    await expect(dimensions.locator('[data-testid^="bf-value-"]')).toHaveCount(0);
     await expect(dimensions.getByRole('progressbar')).toHaveCount(0);
     await page.screenshot({ path: testInfo.outputPath('model-real.png') });
 

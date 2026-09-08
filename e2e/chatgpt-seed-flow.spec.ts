@@ -209,7 +209,8 @@ test.describe('New dashboard + chat via ChatGPT seed flow', () => {
 
     await page.getByRole('tab', { name: 'Otras miradas' }).click();
     await page.getByText('Ver el módulo experimental de ML', { exact: true }).click();
-    await expect(page.getByText('evidencia insuficiente — sin cifra', { exact: true })).toHaveCount(5);
+    await expect(page.getByRole('region', { name: 'Sobre el análisis de texto' })).toContainText('Es un límite del modelo');
+    await expect(page.locator('[data-testid^="bf-value-"]')).toHaveCount(0);
 
     // Chat NEW layout (with context pill + quick prompts)
     await page.goto('/chat');

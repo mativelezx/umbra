@@ -64,14 +64,7 @@ function DashboardView({ data }: { data: DashboardData }) {
         firstName={data.fullName?.split(' ')[0]}
         questionnaire={<SelfReportSummary report={data.selfReport ?? null} />}
         reading={<NarrativeSection profileId={data.profileId} initialContent={data.narrativeContent} />}
-        measurement={<div className={styles.measurement}>
-          <div className={styles.measurementIntro}>
-            <h2 className="focus-title">Qué puede estimar el modelo</h2>
-            <p className="reading-copy mt-5">Este modelo intenta estimar Big Five a partir de tus textos. Es una línea experimental del proyecto: no tiene validación individual suficiente en español y sus cinco cifras permanecen omitidas.</p>
-            <p className="mt-4 text-sm leading-relaxed text-text-2">Esto no afecta los resultados de tu cuestionario, que se calculan con tus respuestas. Traducir textos de prueba permitió estudiar el modelo, pero no validarlo para una persona. No combinamos sus estimaciones con el autoinforme.</p>
-          </div>
-          <BigFiveDimensions bigFive={data.bigFive} status={data.perDimensionStatus} />
-        </div>}
+        measurement={<BigFiveDimensions bigFive={data.bigFive} status={data.perDimensionStatus} hasSelfReport={Boolean(data.selfReport)} />}
         interpretation={<div className="symbolic-view">
           <div className="mb-7"><h2 className="focus-title">Una mirada simbólica</h2><p className="mt-4 max-w-2xl text-text-2">Jung y los arquetipos aportan un lenguaje para explorar el texto. Son interpretaciones de IA, no mediciones ni identidades que tengas que aceptar.</p></div>
           <ArchetypeCard archetype={data.archetype} secondary={data.secondary} />

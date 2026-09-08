@@ -1,12 +1,12 @@
 'use client';
 
 import { useId } from 'react';
+import Link from 'next/link';
 import { Compass, Handshake, ListChecks, UsersThree, Waves } from '@phosphor-icons/react';
 import type { BigFive } from '@/types';
 import { BIG_FIVE_LABELS } from '@/lib/dimensions/labels';
 import {
   BIG_FIVE_KEYS,
-  STATUS_LABEL,
   type PerDimensionStatus,
 } from '@/lib/profile/dimension-display';
 import styles from './DashboardExperience.module.css';
@@ -14,6 +14,7 @@ import styles from './DashboardExperience.module.css';
 interface BigFiveDimensionsProps {
   bigFive: BigFive;
   status: PerDimensionStatus;
+  hasSelfReport?: boolean;
 }
 
 const DIMENSION_GUIDE = {
@@ -27,16 +28,28 @@ const DIMENSION_GUIDE = {
 /**
  * Componente cuantitativo del tablero (HU-06 / ADR-027):
  * muestra la cifra y la barra ÚNICAMENTE para las dimensiones cuyo
- * estado de confianza lo respalda (`ok`). Las restantes se declaran
- * con su estado, sin valor numérico — el sistema no muestra lo que
- * no puede sostener.
+ * estado de confianza lo respalda (`ok`). Agrupa las restantes por motivo,
+ * sin cifras ni cinco tarjetas vacías que parezcan errores del usuario.
  */
-export function BigFiveDimensions({ bigFive, status }: BigFiveDimensionsProps) {
+export function BigFiveDimensions({ bigFive, status, hasSelfReport = false }: BigFiveDimensionsProps) {
   const id = useId();
+  const reportable = BIG_FIVE_KEYS.filter(key => status[key] === 'ok');
+  const uncertain = BIG_FIVE_KEYS.filter(key => status[key] === 'low_confidence');
+  const unavailable = BIG_FIVE_KEYS.filter(key => status[key] === 'not_applicable');
   return (
-    <ul className={styles.dimensions} aria-label="Dimensiones Big Five con su estado de confianza">
-      {BIG_FIVE_KEYS.map((key) => {
-        const measured = status[key] === 'ok';
+    <section className={styles.measurement} aria-label="Sobre el análisis de texto">
+      <div className={styles.measurementIntro}>
+        <h2 className="focus-title">{reportable.length ? 'El análisis de texto, por separado.' : '¿Por qué el análisis de texto no muestra puntajes?'}</h2>
+        <p className="reading-copy mt-5">El aprendizaje automático, o ML, es un modelo que aprende de ejemplos e intenta estimar rasgos de personalidad a partir de lo que escribís. No calcula tu cuestionario.</p>
+        {uncertain.length > 0 && <p className="reading-copy mt-4">Las pruebas todavía no muestran precisión suficiente para darte {reportable.length ? 'todas esas cifras' : 'esos números'}. Es un límite del modelo: no significa que hayas respondido mal ni que tengas un resultado bajo.</p>}
+        {reportable.length > 0 && <p className="reading-copy mt-4">Sólo se muestran las dimensiones que cumplen los criterios de evaluación del modelo. Son estimaciones experimentales de 0 a 100, no porcentajes de tu personalidad ni comparaciones con otras personas.</p>}
+      </div>
+      {(uncertain.length > 0 || unavailable.length > 0) && <div className={styles.evidenceDetail}>
+        {uncertain.length > 0 && <p><strong>Sin precisión suficiente:</strong> {uncertain.map(key => BIG_FIVE_LABELS[key].label).join(', ')}.</p>}
+        {unavailable.length > 0 && <p><strong>No pudieron evaluarse:</strong> {unavailable.map(key => BIG_FIVE_LABELS[key].label).join(', ')}. No hay un valor reportado para estas dimensiones.</p>}
+      </div>}
+      {reportable.length > 0 && <ul className={styles.dimensions} aria-label="Estimaciones Big Five que cumplen los criterios del modelo">
+      {reportable.map((key) => {
         const label = BIG_FIVE_LABELS[key].label;
         const value = bigFive[key];
         const { icon: Icon, description } = DIMENSION_GUIDE[key];
@@ -47,7 +60,6 @@ export function BigFiveDimensions({ bigFive, status }: BigFiveDimensionsProps) {
               <span className={styles.dimensionLabel} id={`${id}-${key}-label`}>{label}</span>
               <p className={styles.dimensionDescription} id={`${id}-${key}-description`}>{description}</p>
             </div>
-              {measured ? (
                 <span
                   data-testid={`bf-value-${key}`}
                   className={styles.dimensionValue}
@@ -55,15 +67,6 @@ export function BigFiveDimensions({ bigFive, status }: BigFiveDimensionsProps) {
                   {Math.round(value)}
                   <span> / 100</span>
                 </span>
-              ) : (
-                <span
-                  data-testid={`bf-status-${key}`}
-                  className={styles.dimensionStatus}
-                >
-                  {STATUS_LABEL[status[key]]}
-                </span>
-              )}
-            {measured && (
               <div
                 className={styles.dimensionBar}
                 role="progressbar"
@@ -76,10 +79,19 @@ export function BigFiveDimensions({ bigFive, status }: BigFiveDimensionsProps) {
                   style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
                 />
               </div>
-            )}
           </li>
         );
       })}
-    </ul>
+    </ul>}
+      <div className={styles.evidenceNext}>
+        <ListChecks size={26} aria-hidden="true" /><div>
+          <h3>¿Qué podés hacer con Umbra?</h3>
+          {hasSelfReport
+            ? <p>Tu cuestionario ya tiene un resultado calculado con tus respuestas. Podés usarlo para reflexionar, contrastar la lectura de IA y elegir una actividad. No depende de estas estimaciones.</p>
+            : <><p>Podés completar el cuestionario para ver cómo te describís en cinco aspectos, con una explicación de cada uno. También podés explorar la lectura y las actividades sin completarlo.</p><Link href="/assessment">Completar mi cuestionario</Link></>}
+          <p className={styles.dimensionDescription}>No mezclamos los puntajes del cuestionario con el ML ni usamos tus respuestas para entrenarlo. Las actividades son propuestas para explorar, no soluciones de eficacia comprobada para tu perfil.</p>
+        </div>
+      </div>
+    </section>
   );
 }

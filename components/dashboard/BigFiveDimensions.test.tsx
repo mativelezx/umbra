@@ -13,15 +13,13 @@ const BF: BigFive = {
 };
 
 describe('BigFiveDimensions — el tablero no muestra lo que no puede sostener (HU-06 / ADR-027)', () => {
-  it('explains what each unsupported dimension describes without presenting a score', () => {
+  it('groups unsupported estimates in one explanation without five empty result cards', () => {
     render(<BigFiveDimensions bigFive={BF} status={RIDGE_V1_STATUS} />);
-    expect(screen.getByRole('listitem', { name: 'Apertura a lo nuevo' })).toHaveAccessibleDescription(/ideas|experiencias/i);
-    expect(screen.getByRole('listitem', { name: 'Responsabilidad' })).toHaveAccessibleDescription(/organizar|compromisos/i);
-    expect(screen.getByRole('listitem', { name: 'Cuánto salís al mundo' })).toHaveAccessibleDescription(/interacción|social/i);
-    expect(screen.getByRole('listitem', { name: 'Calidez con los demás' })).toHaveAccessibleDescription(/cooperar|vínculos/i);
-    expect(screen.getByRole('listitem', { name: 'Sensibilidad emocional' })).toHaveAccessibleDescription(/emociones|tensión/i);
+    expect(screen.getAllByRole('region', { name: /análisis de texto/i })).toHaveLength(1);
+    expect(screen.queryByRole('list')).not.toBeInTheDocument();
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     expect(screen.queryByText(/\/ 100/)).not.toBeInTheDocument();
+    expect(screen.queryByText('evidencia insuficiente — sin cifra')).not.toBeInTheDocument();
   });
   it('no muestra cifras ni barras cuando el modelo no tiene evidencia española suficiente', () => {
     render(<BigFiveDimensions bigFive={BF} status={RIDGE_V1_STATUS} />);
@@ -35,7 +33,6 @@ describe('BigFiveDimensions — el tablero no muestra lo que no puede sostener (
       'neuroticism',
     ] as const) {
       expect(screen.queryByTestId(`bf-value-${dim}`)).toBeNull();
-      expect(screen.getByTestId(`bf-status-${dim}`)).toBeInTheDocument();
     }
 
     // ningún valor numérico de las dimensiones no sostenidas aparece como texto
@@ -53,7 +50,7 @@ describe('BigFiveDimensions — el tablero no muestra lo que no puede sostener (
       'Calidez con los demás',
       'Sensibilidad emocional',
     ]) {
-      expect(screen.getAllByText(label).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(label, { exact: false }).length).toBeGreaterThan(0);
     }
   });
 
@@ -65,5 +62,25 @@ describe('BigFiveDimensions — el tablero no muestra lo que no puede sostener (
       />,
     );
     expect(screen.getByTestId('bf-value-conscientiousness')).toHaveTextContent('54');
+    expect(screen.getAllByRole('progressbar')).toHaveLength(1);
+    expect(screen.getAllByRole('listitem')).toHaveLength(1);
+    expect(screen.getByRole('listitem', { name: 'Responsabilidad' })).toHaveAccessibleDescription(/organizar|compromisos/i);
+    expect(screen.queryByTestId('bf-value-openness')).not.toBeInTheDocument();
+  });
+
+  it('offers the questionnaire when missing, without claiming it was completed', () => {
+    const { rerender } = render(<BigFiveDimensions bigFive={BF} status={RIDGE_V1_STATUS} hasSelfReport={false} />);
+    expect(screen.getByRole('link', { name: 'Completar mi cuestionario' })).toHaveAttribute('href', '/assessment');
+    expect(screen.queryByText(/tu cuestionario ya tiene/i)).not.toBeInTheDocument();
+    rerender(<BigFiveDimensions bigFive={BF} status={RIDGE_V1_STATUS} hasSelfReport />);
+    expect(screen.queryByRole('link', { name: 'Completar mi cuestionario' })).not.toBeInTheDocument();
+    expect(screen.getByText(/tu cuestionario ya tiene/i)).toBeInTheDocument();
+  });
+
+  it('does not call an unevaluable dimension a low-confidence result', () => {
+    render(<BigFiveDimensions bigFive={BF} status={{ openness: 'not_applicable', conscientiousness: 'not_applicable', extraversion: 'not_applicable', agreeableness: 'not_applicable', neuroticism: 'not_applicable' }} />);
+    expect(screen.getByText(/no pudieron evaluarse/i)).toBeInTheDocument();
+    expect(screen.queryByText(/precisión suficiente/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
   });
 });

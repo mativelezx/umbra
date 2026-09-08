@@ -7,7 +7,7 @@ import { Compass, ListChecks, ChatCircle, HandHeart, Waves, Eye, PencilLine, Arr
 import { SectionedNarrative } from '@/components/dashboard/SectionedNarrative';
 import { ExplainedText } from '@/components/ui/ExplainedText';
 import { GLOSSARY, JUNG_CONTEXT } from '@/lib/knowledge/glossary';
-import { extractPerDimensionStatus, STATUS_LABEL } from '@/lib/profile/dimension-display';
+import { extractPerDimensionStatus } from '@/lib/profile/dimension-display';
 import { formatDateEs } from '@/lib/utils';
 import { BFI2S_ATTRIBUTION, BFI2S_DOMAINS, BFI2S_SOURCE, extractSelfReport } from '@/lib/assessment/bfi2s';
 import { ARCHETYPE_INFO, type BigFive, type JungFunctions, type ReportExportData } from '@/types';
@@ -29,6 +29,9 @@ export function ReportContent({ data }: { data: ReportExportData }) {
   const info = ARCHETYPE_INFO[data.profile.archetype];
   const statuses = extractPerDimensionStatus(data.profile.analysisRaw);
   const selfReport = extractSelfReport(data.profile.analysisRaw);
+  const reportable = DIMENSIONS.filter(dimension => statuses[dimension.key] === 'ok');
+  const uncertain = DIMENSIONS.filter(dimension => statuses[dimension.key] === 'low_confidence');
+  const unavailable = DIMENSIONS.filter(dimension => statuses[dimension.key] === 'not_applicable');
   const secondaryName = Object.entries(ARCHETYPE_INFO).find(([key]) => key === data.profile.archetypeSecondary)?.[1].name ?? data.profile.archetypeSecondary;
   const firstName = data.userName?.trim().split(/\s+/)[0];
   const renderAction = (action: NonNullable<ReportExportData['plan']>['areas'][number]['actions'][number]) => <div key={action.id} className="pdf-action pdf-keep"><div className="pdf-action-opening"><ActivityIllustration title={action.title} completed={0} total={0} /><div><h4>{action.title}</h4><p><ExplainedText text={action.description} document /></p></div></div><ul>{action.microGoals.map((goal, i) => <li key={i}><span className="pdf-checkbox" aria-hidden="true" /><span><ExplainedText text={goal.text} document /></span></li>)}</ul></div>;
@@ -47,6 +50,7 @@ export function ReportContent({ data }: { data: ReportExportData }) {
     {selfReport && <div className="pdf-section pdf-self-report">
       <div className="pdf-section-heading pdf-ink-heading"><PencilLine size={46} weight="thin" /><h2>Lo que vos<br />reconocés en vos.</h2><p>Tu autoinforme BFI-2-S en español. Estas cifras se calculan con tus respuestas; no las predice la IA.</p></div>
       <p>Completado el {formatDateEs(new Date(selfReport.completedAt))}. Cada cifra es el promedio de seis respuestas, ajustando los ítems inversos según la clave publicada. Escala de 1 a 5: una cifra mayor expresa mayor presencia declarada de esa tendencia, no un resultado mejor o peor.</p>
+      <p>Por ejemplo, 4 sobre 5 en responsabilidad significa que te describiste con mayor tendencia a organizarte y sostener tareas. No significa «80 % responsable». Es un ejemplo para leer la escala, no una afirmación sobre vos.</p>
       <div className="pdf-dimensions">{BFI2S_DOMAINS.map(domain => <div className="pdf-dimension pdf-keep" key={domain.key}><PencilLine size={28} aria-hidden="true" /><div><h4>{domain.label}</h4><p>{domain.description}</p><p className="pdf-reflection-question">{domain.question}</p></div><span>{selfReport.scores[domain.key].toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / 5</span></div>)}</div>
       <p className="pdf-note">No son percentiles, diagnósticos ni una comparación con otras personas. Este autoinforme no valida el ML ni Jung. Las preguntas de reflexión son invitaciones generales, no intervenciones de eficacia comprobada para tu perfil.</p>
       <p className="pdf-note">{BFI2S_ATTRIBUTION} Fuente: <a href={BFI2S_SOURCE}>formulario y clave originales del Colby Personality Lab</a>.</p>
@@ -88,10 +92,12 @@ export function ReportContent({ data }: { data: ReportExportData }) {
     </div>}
 
     <div className="pdf-section pdf-new-page pdf-ml-appendix">
-      <div className="pdf-section-heading"><Compass size={40} weight="thin" /><h2>Sobre el modelo experimental.</h2><p>El proyecto también estudia si un modelo de aprendizaje automático puede estimar Big Five desde textos. Esta parte no calcula los resultados de tu cuestionario.</p></div>
-      <p>La evidencia disponible no permite presentar sus cinco cifras como estimaciones individuales válidas en español. La prueba con textos traducidos estudió su comportamiento; no validó su uso con personas hispanohablantes.</p>
-      <div className="pdf-dimensions">{DIMENSIONS.map(dimension => <div key={dimension.key} className="pdf-dimension pdf-keep"><dimension.icon size={26} weight="light" aria-hidden="true" /><div><h4>{dimension.name}</h4></div><span>{statuses[dimension.key] === 'ok' ? data.profile.bigFive[dimension.key] : STATUS_LABEL[statuses[dimension.key]]}</span></div>)}</div>
-      <div className="pdf-callout"><strong>Es un límite del modelo, no de tus respuestas.</strong><p>«Sin cifra» no significa que una dimensión sea baja o que hayas respondido mal. Tu cuestionario se calcula por separado. No promediamos esas respuestas con el ML ni las usamos para entrenarlo.</p></div>
+      <div className="pdf-section-heading"><Compass size={40} weight="thin" /><h2>{reportable.length ? 'El análisis de texto, por separado.' : '¿Por qué el análisis de texto no muestra puntajes?'}</h2><p>El aprendizaje automático, o ML, es un modelo que aprende de ejemplos e intenta estimar rasgos de personalidad a partir de lo que escribís. No calcula tu cuestionario.</p></div>
+      {uncertain.length > 0 && <><p>Las pruebas todavía no muestran precisión suficiente para darte {reportable.length ? 'todas esas cifras' : 'esos números'}. Es un límite del modelo: no significa que hayas respondido mal ni que tengas un resultado bajo.</p><p className="pdf-note">Sin precisión suficiente: {uncertain.map(dimension => dimension.name).join(', ')}.</p></>}
+      {unavailable.length > 0 && <p className="pdf-note">No pudieron evaluarse: {unavailable.map(dimension => dimension.name).join(', ')}. No hay un valor reportado para estas dimensiones.</p>}
+      {reportable.length > 0 && <><p>Estas dimensiones cumplen los criterios de evaluación del modelo. Son estimaciones experimentales de 0 a 100, no porcentajes de tu personalidad ni comparaciones con otras personas.</p><div className="pdf-dimensions">{reportable.map(dimension => <div key={dimension.key} className="pdf-dimension pdf-keep"><dimension.icon size={26} weight="light" aria-hidden="true" /><div><h4>{dimension.name}</h4><p>{dimension.meaning}</p></div><span>{data.profile.bigFive[dimension.key]} / 100</span></div>)}</div></>}
+      <div className="pdf-callout pdf-keep"><strong>¿Qué podés hacer con Umbra?</strong><p>{selfReport ? 'Tu cuestionario ya tiene un resultado calculado con tus respuestas. Podés usarlo para reflexionar, contrastar la lectura de IA y elegir una actividad. No depende de estas estimaciones.' : 'Podés completar el cuestionario en Umbra para ver cómo te describís en cinco aspectos. También podés explorar la lectura y las actividades sin completarlo.'}</p></div>
+      <p className="pdf-note">No mezclamos los puntajes del cuestionario con el ML ni usamos tus respuestas para entrenarlo. Las actividades son propuestas para explorar, no soluciones de eficacia comprobada para tu perfil.</p>
     </div>
 
     <div className="pdf-section pdf-new-page pdf-personal-notes">

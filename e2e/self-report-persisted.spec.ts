@@ -23,7 +23,8 @@ test('saved synthetic questionnaire remains distinct through dashboard activitie
   expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
   await page.getByRole('tab', { name: 'Otras miradas' }).click();
   await page.getByText('Ver el módulo experimental de ML', { exact: true }).click();
-  await expect(page.getByText('evidencia insuficiente — sin cifra', { exact: true })).toHaveCount(5);
+  await expect(page.getByRole('region', { name: 'Sobre el análisis de texto' })).toContainText('Tu cuestionario ya tiene un resultado');
+  await expect(page.locator('[data-testid^="bf-value-"]')).toHaveCount(0);
   await page.goto('/plan');
   await expect(page.getByRole('main').getByRole('region')).toHaveCount(3);
   await page.getByRole('button', { name: /^Abrir / }).first().click();

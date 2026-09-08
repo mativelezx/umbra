@@ -31,7 +31,7 @@ for (const width of [390, 768, 1292, 1440]) {
     await page.keyboard.press('ArrowRight');
     await expect(page.getByRole('tab', { name: 'Otras miradas', exact: true })).toBeFocused();
     await page.getByText('Ver el módulo experimental de ML', { exact: true }).click();
-    await expect(page.locator('[data-testid^="bf-status-"]')).toHaveCount(5);
+    await expect(page.getByRole('region', { name: 'Sobre el análisis de texto' })).toContainText('Es un límite del modelo');
     await expect(page.locator('[data-testid^="bf-value-"]')).toHaveCount(0);
     await capture('model');
     await page.getByRole('tab', { name: 'Tu lectura', exact: true }).click();

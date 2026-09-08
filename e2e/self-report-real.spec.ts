@@ -52,7 +52,8 @@ test('real self-report persists independently and reaches reading activities and
   await page.screenshot({ path: '.impeccable/review/self-report/real-dashboard.png', fullPage: true });
   await page.getByRole('tab', { name: 'Otras miradas' }).click();
   await page.getByText('Ver el módulo experimental de ML', { exact: true }).click();
-  await expect(page.getByText('evidencia insuficiente — sin cifra', { exact: true })).toHaveCount(5);
+  await expect(page.getByRole('region', { name: 'Sobre el análisis de texto' })).toContainText('Tu cuestionario ya tiene un resultado');
+  await expect(page.locator('[data-testid^="bf-value-"]')).toHaveCount(0);
   await page.goto('/plan');
   const generating = page.waitForResponse(response => new URL(response.url()).pathname === '/api/plan', { timeout: 120_000 });
   await page.getByRole('button', { name: 'Generar mi plan' }).click();

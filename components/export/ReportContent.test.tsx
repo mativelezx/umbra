@@ -8,7 +8,9 @@ describe('print report preserves and explains the result', () => {
   it('prints questionnaire scores separately and does not add a second break after the cover', () => {
     const { container } = render(<ReportContent data={{ profile: { ...DEMO_PROFILE, analysisRaw: { ...DEMO_PROFILE.analysisRaw, selfReport: createSelfReport(Array(30).fill(3), '2026-09-08T01:30:00Z') } }, userName: 'Prueba', narrative: null, plan: null }} />);
     expect(screen.getAllByText('3,00 / 5')).toHaveLength(5);
-    expect(screen.getAllByText('evidencia insuficiente — sin cifra')).toHaveLength(5);
+    expect(container.querySelectorAll('.pdf-ml-appendix .pdf-dimension')).toHaveLength(0);
+    expect(screen.queryByText('evidencia insuficiente — sin cifra')).not.toBeInTheDocument();
+    expect(container.querySelector('.pdf-ml-appendix')).toHaveTextContent(/tu cuestionario ya tiene/i);
     expect(container.querySelector('.pdf-self-report')).not.toHaveClass('pdf-new-page');
     expect(container).toHaveTextContent('no las predice la IA');
     expect(container).toHaveTextContent('No son percentiles');
@@ -22,7 +24,8 @@ describe('print report preserves and explains the result', () => {
     expect(container).toHaveTextContent('Ti (Pensamiento introvertido) alto (78)');
     expect(container).toHaveTextContent('Descripción conservada.');
     expect(container).toHaveTextContent('Primer paso conservado.');
-    expect(screen.getAllByText('evidencia insuficiente — sin cifra')).toHaveLength(5);
+    expect(container.querySelectorAll('.pdf-ml-appendix .pdf-dimension')).toHaveLength(0);
+    expect(screen.queryByText('evidencia insuficiente — sin cifra')).not.toBeInTheDocument();
     expect(container.querySelectorAll('.pdf-bar')).toHaveLength(0);
     expect(container.querySelectorAll('.pdf-function')).toHaveLength(8);
     expect(screen.queryByRole('button')).toBeNull();
@@ -48,5 +51,13 @@ describe('print report preserves and explains the result', () => {
     const sections = Array.from(container.querySelectorAll('.pdf-section'));
     expect(sections.indexOf(container.querySelector('.pdf-self-report')!)).toBeLessThan(sections.indexOf(container.querySelector('.pdf-reading')!));
     expect(sections.indexOf(container.querySelector('.pdf-ml-appendix')!)).toBeGreaterThan(sections.findIndex(section => section.querySelector('.pdf-action')));
+  });
+
+  it('prints only reportable ML numbers when a future model has mixed dimension statuses', () => {
+    const { container } = render(<ReportContent data={{ profile: { ...DEMO_PROFILE, analysisRaw: { ml: { modelVersion: 'future-verified-model', perDimensionStatus: { openness: 'ok', conscientiousness: 'low_confidence', extraversion: 'low_confidence', agreeableness: 'not_applicable', neuroticism: 'low_confidence' } } } }, userName: 'Prueba', narrative: null, plan: null }} />);
+    expect(container.querySelectorAll('.pdf-ml-appendix .pdf-dimension')).toHaveLength(1);
+    expect(container.querySelector('.pdf-ml-appendix .pdf-dimension')).toHaveTextContent('Apertura');
+    expect(container.querySelector('.pdf-ml-appendix')).toHaveTextContent(/no pudieron evaluarse: Amabilidad/i);
+    expect(container.querySelector('.pdf-ml-appendix')).not.toHaveTextContent(/tu cuestionario ya tiene/i);
   });
 });
