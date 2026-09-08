@@ -8,13 +8,13 @@ Demo publicada: https://umbra-sigma.vercel.app. Código de reentrega: rama `code
 
 No hace falta un ZIP para consultar este repositorio. Las instrucciones siguientes se ejecutan desde un checkout de esta versión. No se incluyen contraseñas, claves de proveedores, datos de cuentas, dependencias instaladas ni cachés.
 
-[Revisión de entrega, requisitos y capturas](docs/ENTREGA-2026-09-08.md). La [publicación de entrega CAE](https://github.com/mativelezx/umbra/releases/tag/entrega-cae-2026-09-08) reúne el código con la última corrección de acceso, PDF, DOCX y capturas identificadas. El documento conserva sin cambios las 94 páginas de la revisión académica v2: anexo del relevamiento, organigrama funcional modelado e índices actualizados. Las publicaciones anteriores son antecedentes. El acceso de la cuenta ficticia se comparte por separado y no se versiona. La carpeta `thesis/` conserva un esqueleto histórico, no la versión de entrega.
+[Revisión vigente, requisitos y capturas](docs/ENTREGA-BFI-2026-09-08.md). La [publicación de entrega BFI](https://github.com/mativelezx/umbra/releases/tag/entrega-cae-bfi-2026-09-08) reúne el código, PDF/DOCX de 92 páginas y 52 capturas de escritorio/móvil. El cuestionario es la referencia principal del resultado; la lectura de IA, Jung y el ML experimental conservan su origen y sus límites. La tesis agrega el experimento retrospectivo de traducción, mantiene el relevamiento y actualiza los tres índices. Las publicaciones anteriores, incluida la de 94 páginas, son antecedentes. El acceso de la cuenta ficticia se comparte por separado y no se versiona. La carpeta `thesis/` conserva un esqueleto histórico, no la versión de entrega.
 
-Actualización operativa posterior a la etiqueta documental v2: la demo utiliza el parche de bienvenida tras confirmación `2b20073`, con 409 pruebas web y CI aprobadas. El PDF/DOCX no cambia y mantiene sus 156 controles cruzados aprobados. El correo externo sigue requiriendo un dominio propio y SMTP; ver la revisión enlazada para distinguir la corrección de código de la configuración pendiente.
+La aplicación publicada corresponde a `faa991a35e131dd6e01e116837e1064b6f0ead04`: 411 pruebas web, 22 casos locales de navegador y cuatro recorridos publicados aprobados. El documento pasó 167 controles cruzados y sus 181 destinos de índice coinciden. La fecha del autoinforme usa el mismo huso argentino en pantalla y PDF. Los commits posteriores de documentación no cambian el runtime. El correo externo sigue requiriendo un dominio propio y SMTP.
 
 ## Qué hace cada componente
 
-- **Cuestionario BFI-2-S:** 30 afirmaciones en español. Calcula cinco promedios de 1 a 5 con la clave publicada y las respuestas inversas. Es un autoinforme opcional, no un porcentaje ni una comparación con otras personas.
+- **Cuestionario BFI-2-S:** 30 afirmaciones de la versión española publicada. Calcula cinco promedios de 1 a 5 con su clave y las respuestas inversas. Es la primera referencia visible y sigue siendo opcional; no es un porcentaje ni una comparación con otras personas. Se ofrece después de la escritura y el análisis inicial, no como entrada independiente.
 - **ML propio:** DistilBERT preentrenado y congelado convierte el texto en números; cinco regresores Ridge producen estimaciones experimentales. No se entrenó DistilBERT desde cero.
 - **Claude:** usa el contexto declarado para redactar la lectura, conversar y proponer actividades. Jung y los arquetipos se presentan como recursos interpretativos; no son resultados del Ridge.
 - **Supabase:** registra la cuenta, el consentimiento y los datos; aplica permisos por usuario.
@@ -96,7 +96,7 @@ Comprobaciones de esta revisión:
 
 | Comprobación | Resultado |
 |---|---|
-| Vitest, lógica y componentes | 409 pruebas aprobadas, 67 archivos; repetidas en el cierre del 8/9 |
+| Vitest, lógica y componentes | 411 pruebas aprobadas, 67 archivos; repetidas sobre `faa991a` con TZ=UTC |
 | Tipos, lint y compilación web | Aprobados con la configuración de destino |
 | Auditoría de dependencias web de producción | Sin vulnerabilidades conocidas reportadas por pnpm audit |
 | Python con pesos reales | 37 pruebas aprobadas, ninguna omitida |
@@ -105,7 +105,7 @@ Comprobaciones de esta revisión:
 | Navegador, servicios remotos | Recorrido completo aprobado; 32 controles públicos de escritorio/móvil aprobados; actividad guardada, descarga PDF y chat real con historial persistido comprobados |
 | GitHub Actions | CI de la reentrega aprobada: tipos, lint, pruebas, build y navegación con configuración sin servicios pagos |
 
-El último barrido de lectura comenzó el 8/9 a las 13:27 UTC sobre el parche publicado `2b20073`: cuatro recorridos y 50 pantallas/estados, sin omisiones ni reintentos. La galería conserva además cinco imágenes del recorrido con servicios reales del 7/9, identificadas como anteriores. Los 398 tests citados en registros previos corresponden al corte anterior al parche de bienvenida.
+El último barrido publicado comenzó el 8/9 a las 16:51 UTC sobre `faa991a`: cuatro recorridos y 52 pantallas/estados, sin omisiones ni reintentos. La [galería vigente](docs/evidence/bfi-primary-2026-09-08/galeria.html) conserva cada comprobación y un PDF real descargado con datos ficticios. También pasaron 22 casos locales y diez pruebas del procedimiento de traducción. Las 37 pruebas ML y los seis grupos de base remota de la tabla son evidencia previa del 7–8/9; no se repitieron en el último parche de presentación y fecha, que no cambió esos módulos. No se suman los conteos como si fueran pruebas independientes. El recorrido con Claude guardado no fue regenerado en este barrido, ni se probó correo externo.
 
 ```bash
 pnpm typecheck

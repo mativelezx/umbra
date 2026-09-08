@@ -1,0 +1,754 @@
+{
+  "date": "2026-09-08T16:51:49.238Z",
+  "codeCommit": "faa991a35e131dd6e01e116837e1064b6f0ead04",
+  "baseURL": "https://umbra-sigma.vercel.app",
+  "stats": {
+    "startTime": "2026-09-08T16:51:49.238Z",
+    "duration": 53268.789,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "screens": 52,
+  "checks": [
+    {
+      "project": "chromium",
+      "screen": "landing",
+      "result": "passed",
+      "path": "/",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "login",
+      "result": "passed",
+      "path": "/login",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "register",
+      "result": "passed",
+      "path": "/register",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "forgot-password",
+      "result": "passed",
+      "path": "/forgot-password",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "reset-without-session",
+      "result": "passed",
+      "path": "/reset-password",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "privacy",
+      "result": "passed",
+      "path": "/privacy",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "terms",
+      "result": "passed",
+      "path": "/terms",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "auth-link-error",
+      "result": "passed",
+      "path": "/auth/auth-code-error",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "not-found",
+      "result": "passed",
+      "path": "/pagina-inexistente-qa",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "dashboard",
+      "result": "passed",
+      "path": "/dashboard",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "dashboard-lectura",
+      "result": "passed",
+      "path": "/dashboard",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "dashboard-jung",
+      "result": "passed",
+      "path": "/dashboard",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "dashboard-jung-detalle",
+      "result": "passed",
+      "path": "/dashboard",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "dashboard-modelo",
+      "result": "passed",
+      "path": "/dashboard",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "assessment",
+      "result": "passed",
+      "path": "/assessment",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "plan",
+      "result": "passed",
+      "path": "/plan",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "chat",
+      "result": "passed",
+      "path": "/chat",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "export",
+      "result": "passed",
+      "path": "/export",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "settings",
+      "result": "passed",
+      "path": "/settings",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "settings-profile",
+      "result": "passed",
+      "path": "/settings/profile",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "settings-export",
+      "result": "passed",
+      "path": "/settings/export",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "settings-research-opt-out",
+      "result": "passed",
+      "path": "/settings/research-opt-out",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "settings-delete",
+      "result": "passed",
+      "path": "/settings/delete",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "settings-delete-confirm",
+      "result": "passed",
+      "path": "/settings/delete/confirm",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "consent",
+      "result": "passed",
+      "path": "/consent",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "chromium",
+      "screen": "onboarding",
+      "result": "passed",
+      "path": "/onboarding",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "landing",
+      "result": "passed",
+      "path": "/",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "login",
+      "result": "passed",
+      "path": "/login",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "register",
+      "result": "passed",
+      "path": "/register",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "forgot-password",
+      "result": "passed",
+      "path": "/forgot-password",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "reset-without-session",
+      "result": "passed",
+      "path": "/reset-password",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "privacy",
+      "result": "passed",
+      "path": "/privacy",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "terms",
+      "result": "passed",
+      "path": "/terms",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "auth-link-error",
+      "result": "passed",
+      "path": "/auth/auth-code-error",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "not-found",
+      "result": "passed",
+      "path": "/pagina-inexistente-qa",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "dashboard",
+      "result": "passed",
+      "path": "/dashboard",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "dashboard-lectura",
+      "result": "passed",
+      "path": "/dashboard",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "dashboard-jung",
+      "result": "passed",
+      "path": "/dashboard",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "dashboard-jung-detalle",
+      "result": "passed",
+      "path": "/dashboard",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "dashboard-modelo",
+      "result": "passed",
+      "path": "/dashboard",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "assessment",
+      "result": "passed",
+      "path": "/assessment",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "plan",
+      "result": "passed",
+      "path": "/plan",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "chat",
+      "result": "passed",
+      "path": "/chat",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "export",
+      "result": "passed",
+      "path": "/export",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "settings",
+      "result": "passed",
+      "path": "/settings",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "settings-profile",
+      "result": "passed",
+      "path": "/settings/profile",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "settings-export",
+      "result": "passed",
+      "path": "/settings/export",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "settings-research-opt-out",
+      "result": "passed",
+      "path": "/settings/research-opt-out",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "settings-delete",
+      "result": "passed",
+      "path": "/settings/delete",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "settings-delete-confirm",
+      "result": "passed",
+      "path": "/settings/delete/confirm",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "consent",
+      "result": "passed",
+      "path": "/consent",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    },
+    {
+      "project": "mobile",
+      "screen": "onboarding",
+      "result": "passed",
+      "path": "/onboarding",
+      "viewport": {
+        "width": 390,
+        "height": 960
+      },
+      "overflow": false,
+      "blocking": [],
+      "moderateOrMinor": []
+    }
+  ],
+  "hashes": {
+    "chromium-auth-link-error.png": "acb20cb589c78b76ec076bb17c276da881ae7bc189e4f3e29c93604532e35f4c",
+    "chromium-forgot-password.png": "fb8341ce9dfe4c0cef1aaeea4f2c7440fe086f7f762d9aaa1e3d729da5d4e733",
+    "chromium-landing.png": "fabdb5810b65e8f503f5cdedcc50060acb3993fbd6514329e06127368f61c9f0",
+    "chromium-login.png": "3ac0112742407828472588549fa81769cf972cf65fc6f1009570cc86695dd4f4",
+    "chromium-not-found.png": "cf480b8e8817edb3e8bc35d325f219d549bbe0eb379e000f07d6e7b928a49db8",
+    "chromium-privacy.png": "e72b2c49ee15ade596d934ffcf0afa70435063acdc442bb452ff6164aba928be",
+    "chromium-register.png": "751b372d5ebd57a361588c3602ac6f1aa43ffc503846fa33793562438781ad28",
+    "chromium-reset-without-session.png": "ab51beed1205bc6b2cc80b3df5e922af9c863692ca0739f7f9b1c2b7b3e2411e",
+    "chromium-terms.png": "b2b7cd3994b70ac20d7e6cb9bb35db5af59db7247eaebba7b1056f4bd851ee34",
+    "mobile-auth-link-error.png": "60c3c9de56ff96b48081ce01ac472caf0e29fe08f5f4c5ae58109aa6d078cd93",
+    "mobile-forgot-password.png": "5dd06a6762a64d7c8e89fe647660c724e2138ff431a4355d86a97513eca77929",
+    "mobile-landing.png": "95a469aaf1b50791ad7dabe79d3011bef69a4b785343f2dcb65cc925fe46aeb1",
+    "mobile-login.png": "4eb9f6076c7ce698300eef1f793682ba54172867d4da33a02c940d8e5c352813",
+    "mobile-not-found.png": "932342d47016da6e45d9e208b717a2b4043b8a66f0f1d5a8e27acd53844e7f9e",
+    "mobile-privacy.png": "4caaa21ea8d9b4cad984052807bdc0e97a878e6ea1afe544348209c87a72a241",
+    "mobile-register.png": "298462c12bfda4c1af5c269bb5fe29b455e61dfde8450c832039391696f0a31d",
+    "mobile-reset-without-session.png": "765fcfd23d445e7e93cd50f64e96c19f98945e4d372d7bbeb23fa15fd6f0b7c6",
+    "mobile-terms.png": "2cc5484d27a65beaaf441accef56105f4f1bc02f858082e6f177dd8b5a257245",
+    "chromium-assessment.png": "cd1dd43d7eebe850c1cffaab4f83d590f26fceb36bc75a240a44435c93f85a8e",
+    "chromium-chat.png": "580655b8d75c7af32b7d575a70b7aa13f51235cad16a37461259b783c7346e63",
+    "chromium-consent.png": "8a8d61cd5ec6100cadbc5238a360f2ea9cc25685837ae39d610e9caa90ca9729",
+    "chromium-dashboard-jung-detalle.png": "ce4bf897926abd729b00c425b1cecfce08c574005831ffdde907b2fd32c5e0c1",
+    "chromium-dashboard-jung.png": "7504ad431fe9851cbeafd8ea7fe72cee6ef76598649bc846e97cef69f86b8453",
+    "chromium-dashboard-lectura.png": "508c6048b1cc4ba0be08ecfd8f7f5df1b878d8056772557f2d30d72746079ac1",
+    "chromium-dashboard-modelo.png": "1c5a9fbb6f0daaf366a6ca9980795c0f3b550d2588d1dae1c2bcffff0a357d86",
+    "chromium-dashboard.png": "ceac1ce81de9a606424e3f6c95da320eb5e14d214b8bf68a95611384ac3d4423",
+    "chromium-export.png": "f16a681230dc3b2e8b667b0c89a393d779be15248e7612a77df86013666a0a21",
+    "chromium-onboarding.png": "0d72166b2078d33fe78aff5a2c4e7146e05b942492eef729dd1e1a006fc9413c",
+    "chromium-plan.png": "c77c247758803b0ad4922c03692c64461c0b922d369167a9c1d6b3f4e69ab506",
+    "chromium-settings-delete-confirm.png": "ab91eba54f99cd1c2e238eef4039798878655df61dd3a9f4b51834f2d79c735a",
+    "chromium-settings-delete.png": "ea111599ce827f65134d2bac4ac514027947e853f6b9b7e3f314e21b3842c55a",
+    "chromium-settings-export.png": "acb5713e5192226bffe0df527a03f9ce52de5180678c3ac81bc912b9578efb19",
+    "chromium-settings-profile.png": "679a955b57445e1eb23b608df02fd68e44c3e986efd41fbdf7aa59c85a6bacef",
+    "chromium-settings-research-opt-out.png": "e92bb206a85cc4a39f541d51e98ceb6fd4c1afaf56f2f9744155bb13f3c5fe00",
+    "chromium-settings.png": "26d60397ba3fef209142d9e1f4303a5c5b97ae7fd6c2e05c87eebdb46edb29f3",
+    "mobile-assessment.png": "ceb1421ef39dbce44d57acbdbe73b0553fe042839492761e5686fb12b2d9436a",
+    "mobile-chat.png": "007e11ae6ce1f7a6f99b1397cf5058612661335e4fe38826c1073f7c3efb9b52",
+    "mobile-consent.png": "058da739a20db77f6df59d6c9508423c4b90bdf2df8198f5d432df16cd14de7e",
+    "mobile-dashboard-jung-detalle.png": "e080aefc159807874c7bbbaa774b95f9810657239001be6300a752c9cc6ab702",
+    "mobile-dashboard-jung.png": "141aa2d2df2abfb5635151201f95cff84b01653f8bfddff4afe30e43afb4ce87",
+    "mobile-dashboard-lectura.png": "3566077f635adbaadf162f81e0218ced4aeb7606528175c0d933af2cc58a0c9e",
+    "mobile-dashboard-modelo.png": "e564f28597f3e70dc81f43fe0bd52fc8de90841970087a0f67bc950ab98daae1",
+    "mobile-dashboard.png": "e9e73338c3ec22419d05e856ff36489fff9fd1934d2253a56f53ec84bf45b3d8",
+    "mobile-export.png": "9c1cda0c263ae244614ad2adf0cf881083d352b6c2d1499f68384047b028ea4c",
+    "mobile-onboarding.png": "02c730bb858b3b2d71c882c2bb2e326b0dd7b862c9de9001442ff565a6fce9ee",
+    "mobile-plan.png": "5ffb4d9e20ac4ca1899621d3d20f7404291dae240c8d3a1b3a19c0db0b2cd917",
+    "mobile-settings-delete-confirm.png": "46c588337b777f64027415d363fb93ffa28a2738f922e7b0704e5324f01be385",
+    "mobile-settings-delete.png": "51e61d2a77a80195d526bd704b9bd4cecf8a7dbc57ad52cd3731b7df795e8020",
+    "mobile-settings-export.png": "76783454516166bb2990de938d99e38580c19b1facf23839db92896085324368",
+    "mobile-settings-profile.png": "9b70738b889e7610966d024af1fb9e28782732a2d432c6e8512979d650cd2e4b",
+    "mobile-settings-research-opt-out.png": "619f3346c758ceb12af05f198159abbafac392f9ff6f1b9796ce65d49b226ffd",
+    "mobile-settings.png": "b5719a5fe4a5387e4fa707511425da2adaac9dc6da9bf7f97b1a1a8fa5ad10bc"
+  },
+  "limits": [
+    "Cuenta ficticia confirmada por administración; no participantes de un estudio.",
+    "Sólo navegación y lectura de resultados guardados. No prueba nuevas altas ni entrega de correo.",
+    "Sin nuevas llamadas a Claude, pagos, eliminación ni modificaciones de datos.",
+    "Chromium y emulación móvil; no prueba en teléfonos físicos.",
+    "La previsualización A4 del informe usa desplazamiento horizontal en móvil; el PDF descargado conserva su composición.",
+    "Cero hallazgos graves/críticos de axe y cero desbordes horizontales de página en estas pantallas no garantizan accesibilidad total ni aprobación académica."
+  ]
+}

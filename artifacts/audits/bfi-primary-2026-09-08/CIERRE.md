@@ -1,6 +1,6 @@
 # Cuestionario como referencia principal
 
-8 de septiembre de 2026. Decisión aprobada por Matías en esta conversación. Estado: implementación y verificación local terminadas; publicación y documento en cierre. No es aprobación académica ni habilitación de producción abierta.
+8 de septiembre de 2026. Decisión aprobada por Matías en esta conversación. Estado: implementación, documento y verificación local/publicada terminados dentro del alcance registrado. No es aprobación académica ni habilitación de producción abierta. Runtime `faa991a35e131dd6e01e116837e1064b6f0ead04`, Vercel `dpl_82vQbHCz2yfjAdDnS3riQ5nDm5wJ`; [guía vigente](../../../docs/ENTREGA-BFI-2026-09-08.md).
 
 ## Alcance aprobado
 
@@ -31,11 +31,11 @@ Se reutilizan Bricolage Grotesque, marca actual, marco grafito, papel, iconos Ph
 - 10/10 pruebas del procedimiento de traducción aprobadas mediante pytest. El ensayo ML de 248 pares permanece intacto: no se reentrenó ni se cambiaron pesos/umbrales.
 - Impeccable: inspección visual de los resultados, iconos, origen y escala; detector ejecutado una sola vez. Sus avisos son diferencias de tokens ya existentes en el cuestionario (tamaños, trazos y radios locales), no fallos funcionales. Se preservó esa familia visual; no se declara conformidad total de tokens ni aprobación estética del usuario.
 
-Los registros finales se adjuntan con la publicación. Los intentos fallidos de entorno o expectativas no se contabilizan como aprobados.
+Los [registros finales](../../../docs/evidence/bfi-primary-2026-09-08/README.md) incluyen 52 capturas en cuatro recorridos publicados, 22 casos locales, el cruce de 167 controles documentales y los 181 destinos del índice. La revisión visual encontró una fecha distinta entre autoinforme y PDF; se agregó la comprobación de zona horaria, se observó su fallo y se corrigió con un formateador compartido. La repetición aprobó 411 pruebas incluso en TZ=UTC, además de la igualdad de fechas en ambos navegadores publicados. Un intento local sin E2E_DEMO_MODE omitió 22 casos: se descartó como evidencia de aprobación y se repitió con el opt-in, con 22 aprobados y cero omitidos. Los intentos fallidos de entorno o expectativas no se contabilizan como aprobados.
 
 Datos ficticios identificados; nunca datos de otras personas. Unitarias/componentes, tipos, lint, build; cuestionario en cinco bloques, regreso, omisión, lectura a demanda, navegación por teclado, actividades y descarga real PDF; escritorio y móvil, axe y capturas. La API se prueba con sus casos existentes de consentimiento, respuestas inválidas, conflicto de guardado, aislamiento y recuperación. Las pruebas de modelo se mantienen separadas de las de producto.
 
-En producción, repetir sólo lecturas y navegación de la cuenta ficticia existente; no generar IA paga sin nuevo tope autorizado, ni registrar usuarios, enviar correos o borrar datos fuera del alcance aprobado. Publicar mediante el remoto `github`, nunca `origin` (copia local). Reversión: despliegue anterior y commit base; no hay migración nueva que revertir.
+En producción se repitieron sólo lecturas y navegación de la cuenta ficticia existente; no hubo nueva IA paga, altas, envíos ni eliminación. Se publicó mediante el remoto `github`, nunca `origin` (copia local). Reversión: despliegue anterior y commit base; no hay migración nueva que revertir.
 
 ## Riesgo residual
 

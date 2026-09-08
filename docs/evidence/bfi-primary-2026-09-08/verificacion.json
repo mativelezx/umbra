@@ -1,0 +1,400 @@
+{
+  "runtimeCommit": "faa991a35e131dd6e01e116837e1064b6f0ead04",
+  "deployment": {
+    "id": "dpl_82vQbHCz2yfjAdDnS3riQ5nDm5wJ",
+    "state": "READY",
+    "alias": "https://umbra-sigma.vercel.app",
+    "inspectedUrl": "https://umbra-ckik1vvh6-mativelez1997-6837s-projects.vercel.app",
+    "declaredShaMetadata": "faa991a"
+  },
+  "ci": {
+    "url": "https://github.com/mativelezx/umbra/actions/runs/34253066847",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "unit": {
+    "tests": 411,
+    "passed": 411,
+    "failed": 0,
+    "testFiles": 67,
+    "timezone": "UTC"
+  },
+  "local": {
+    "stats": {
+      "startTime": "2026-09-08T16:52:22.167Z",
+      "duration": 64280.956,
+      "expected": 22,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "mode": "E2E_DEMO_MODE=true; local fixtures; no paid AI",
+    "cases": [
+      {
+        "file": "brand-interlude.spec.ts",
+        "title": "brand interlude covers the viewport and the report has no olive frame",
+        "project": "chromium",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 3282
+          }
+        ]
+      },
+      {
+        "file": "brand-interlude.spec.ts",
+        "title": "brand interlude covers the viewport and the report has no olive frame",
+        "project": "mobile",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 3817
+          }
+        ]
+      },
+      {
+        "file": "demo-delivery.spec.ts",
+        "title": "synthetic demo: eight questions, conservative results, activities, and actual PDF download",
+        "project": "chromium",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 8790
+          }
+        ]
+      },
+      {
+        "file": "demo-delivery.spec.ts",
+        "title": "synthetic demo: eight questions, conservative results, activities, and actual PDF download",
+        "project": "mobile",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 11782
+          }
+        ]
+      },
+      {
+        "file": "personal-experience.spec.ts",
+        "title": "personal illustration and reading at 390px",
+        "project": "chromium",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 4980
+          }
+        ]
+      },
+      {
+        "file": "personal-experience.spec.ts",
+        "title": "personal illustration and reading at 1440px",
+        "project": "chromium",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 4795
+          }
+        ]
+      },
+      {
+        "file": "personal-experience.spec.ts",
+        "title": "personal illustration and reading at 390px",
+        "project": "mobile",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 6157
+          }
+        ]
+      },
+      {
+        "file": "personal-experience.spec.ts",
+        "title": "personal illustration and reading at 1440px",
+        "project": "mobile",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 6114
+          }
+        ]
+      },
+      {
+        "file": "reading-experience.spec.ts",
+        "title": "reading chapters and glossary work with mouse, keyboard and touch",
+        "project": "chromium",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 3366
+          }
+        ]
+      },
+      {
+        "file": "reading-experience.spec.ts",
+        "title": "long synthetic PDF keeps all prose at a stable A4 width",
+        "project": "chromium",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 1713
+          }
+        ]
+      },
+      {
+        "file": "reading-experience.spec.ts",
+        "title": "reading chapters and glossary work with mouse, keyboard and touch",
+        "project": "mobile",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 5204
+          }
+        ]
+      },
+      {
+        "file": "reading-experience.spec.ts",
+        "title": "long synthetic PDF keeps all prose at a stable A4 width",
+        "project": "mobile",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 2474
+          }
+        ]
+      },
+      {
+        "file": "self-report.spec.ts",
+        "title": "optional questionnaire works on desktop and mobile without ML or provider calls",
+        "project": "chromium",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 6244
+          }
+        ]
+      },
+      {
+        "file": "self-report.spec.ts",
+        "title": "optional questionnaire works on desktop and mobile without ML or provider calls",
+        "project": "mobile",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 4081
+          }
+        ]
+      },
+      {
+        "file": "stoic-workspace.spec.ts",
+        "title": "guided workspace stays usable at 390px",
+        "project": "chromium",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 9748
+          }
+        ]
+      },
+      {
+        "file": "stoic-workspace.spec.ts",
+        "title": "guided workspace stays usable at 768px",
+        "project": "chromium",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 7315
+          }
+        ]
+      },
+      {
+        "file": "stoic-workspace.spec.ts",
+        "title": "guided workspace stays usable at 1292px",
+        "project": "chromium",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 4793
+          }
+        ]
+      },
+      {
+        "file": "stoic-workspace.spec.ts",
+        "title": "guided workspace stays usable at 1440px",
+        "project": "chromium",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 5576
+          }
+        ]
+      },
+      {
+        "file": "stoic-workspace.spec.ts",
+        "title": "guided workspace stays usable at 390px",
+        "project": "mobile",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 4947
+          }
+        ]
+      },
+      {
+        "file": "stoic-workspace.spec.ts",
+        "title": "guided workspace stays usable at 768px",
+        "project": "mobile",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 5477
+          }
+        ]
+      },
+      {
+        "file": "stoic-workspace.spec.ts",
+        "title": "guided workspace stays usable at 1292px",
+        "project": "mobile",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 7551
+          }
+        ]
+      },
+      {
+        "file": "stoic-workspace.spec.ts",
+        "title": "guided workspace stays usable at 1440px",
+        "project": "mobile",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 6111
+          }
+        ]
+      }
+    ]
+  },
+  "published": {
+    "stats": {
+      "startTime": "2026-09-08T16:51:49.238Z",
+      "duration": 53268.789,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "mode": "Saved synthetic account, read-only; no new AI or external email",
+    "cases": [
+      {
+        "file": "release-evidence.spec.ts",
+        "title": "public screens, forms and error states",
+        "project": "chromium",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 8518
+          }
+        ]
+      },
+      {
+        "file": "release-evidence.spec.ts",
+        "title": "saved synthetic account screens and PDF",
+        "project": "chromium",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 39356
+          }
+        ]
+      },
+      {
+        "file": "release-evidence.spec.ts",
+        "title": "public screens, forms and error states",
+        "project": "mobile",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 8772
+          }
+        ]
+      },
+      {
+        "file": "release-evidence.spec.ts",
+        "title": "saved synthetic account screens and PDF",
+        "project": "mobile",
+        "status": "expected",
+        "attempts": [
+          {
+            "status": "passed",
+            "retry": 0,
+            "durationMs": 34121
+          }
+        ]
+      }
+    ]
+  },
+  "hashes": {
+    "unit-final.json": "bb5a347b5cecf2c5beaf378df57a3431c40bb58f4460abd4d103790a80cf1151",
+    "e2e-local-final-verified.json": "10122efe9bad5fa6acaabd55e701b02190907770a02fd29e31e40c37e9deb62b",
+    "e2e-live-final.json": "bc179f53c5d1c2d3d50198615cbcdd542dadbfe8b1661806955749b633c6eae9",
+    "deployment-final.json": "a7718e861c54e0efb007c1339336000d2d04a1636125cc521453a67d97ba77d9",
+    "cruce-final-verificado.json": "373a2f093b393b4562f36876a7b11bf4f689c3ccd71ca37a127c39dd28a0a146",
+    "pdf-final.log": "2b458c66fb20528a15034f7632639cac4baad74854ed13c24168e49a68442988"
+  },
+  "exclusions": [
+    "Raw test outputs are summarized rather than publishing private execution context.",
+    "37 real-weight ML tests and six remote database groups are earlier evidence; not rerun for the final presentation/date patch.",
+    "The local run with 22 skipped tests is excluded, not reported as a pass.",
+    "No external registration/recovery/deletion email acceptance, human validation or guaranteed CAE approval."
+  ]
+}

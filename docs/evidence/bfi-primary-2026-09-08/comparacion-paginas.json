@@ -1,0 +1,213 @@
+{
+  "header_top_pixels_excluded": 150,
+  "identical_body": [
+    {
+      "current": 1,
+      "previous": 1
+    },
+    {
+      "current": 28,
+      "previous": 27
+    },
+    {
+      "current": 29,
+      "previous": 28
+    },
+    {
+      "current": 30,
+      "previous": 29
+    },
+    {
+      "current": 31,
+      "previous": 30
+    },
+    {
+      "current": 32,
+      "previous": 31
+    },
+    {
+      "current": 33,
+      "previous": 32
+    },
+    {
+      "current": 45,
+      "previous": 45
+    },
+    {
+      "current": 46,
+      "previous": 46
+    },
+    {
+      "current": 47,
+      "previous": 47
+    },
+    {
+      "current": 48,
+      "previous": 48
+    },
+    {
+      "current": 49,
+      "previous": 49
+    },
+    {
+      "current": 50,
+      "previous": 50
+    },
+    {
+      "current": 52,
+      "previous": 52
+    },
+    {
+      "current": 53,
+      "previous": 53
+    },
+    {
+      "current": 54,
+      "previous": 54
+    },
+    {
+      "current": 55,
+      "previous": 55
+    },
+    {
+      "current": 56,
+      "previous": 56
+    },
+    {
+      "current": 57,
+      "previous": 57
+    },
+    {
+      "current": 59,
+      "previous": 59
+    },
+    {
+      "current": 62,
+      "previous": 63
+    },
+    {
+      "current": 63,
+      "previous": 64
+    },
+    {
+      "current": 65,
+      "previous": 66
+    },
+    {
+      "current": 66,
+      "previous": 67
+    },
+    {
+      "current": 67,
+      "previous": 68
+    },
+    {
+      "current": 74,
+      "previous": 74
+    },
+    {
+      "current": 75,
+      "previous": 75
+    },
+    {
+      "current": 76,
+      "previous": 76
+    },
+    {
+      "current": 77,
+      "previous": 77
+    },
+    {
+      "current": 78,
+      "previous": 78
+    },
+    {
+      "current": 79,
+      "previous": 79
+    },
+    {
+      "current": 81,
+      "previous": 81
+    },
+    {
+      "current": 83,
+      "previous": 83
+    },
+    {
+      "current": 84,
+      "previous": 84
+    },
+    {
+      "current": 85,
+      "previous": 85
+    },
+    {
+      "current": 86,
+      "previous": 86
+    },
+    {
+      "current": 87,
+      "previous": 87
+    },
+    {
+      "current": 88,
+      "previous": 88
+    }
+  ],
+  "requires_visual_inspection": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    51,
+    58,
+    60,
+    61,
+    64,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    80,
+    82,
+    89,
+    90,
+    91,
+    92
+  ]
+}
