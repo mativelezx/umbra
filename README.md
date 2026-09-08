@@ -10,6 +10,8 @@ No hace falta un ZIP para consultar este repositorio. Las instrucciones siguient
 
 [Revisión de entrega, requisitos y capturas](docs/ENTREGA-2026-09-08.md). Los archivos PDF y DOCX vigentes se adjuntan a [la publicación de cierre académico v2](https://github.com/mativelezx/umbra/releases/tag/reentrega-2026-09-08-v2); el acceso de la cuenta ficticia se comparte por separado y no se versiona. La v2 incorpora el anexo del relevamiento, el organigrama funcional modelado e índices actualizados. La carpeta `thesis/` conserva un esqueleto histórico, no la versión de entrega.
 
+Actualización operativa posterior a la etiqueta documental v2: la demo utiliza el parche de bienvenida tras confirmación `2b20073`, con 409 pruebas web y CI aprobadas. El PDF/DOCX no cambia y mantiene sus 156 controles cruzados aprobados. El correo externo sigue requiriendo un dominio propio y SMTP; ver la revisión enlazada para distinguir la corrección de código de la configuración pendiente.
+
 ## Qué hace cada componente
 
 - **Cuestionario BFI-2-S:** 30 afirmaciones en español. Calcula cinco promedios de 1 a 5 con la clave publicada y las respuestas inversas. Es un autoinforme opcional, no un porcentaje ni una comparación con otras personas.
