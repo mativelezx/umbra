@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { requestOrigin } from '@/lib/auth/request-origin';
+import { sendWelcomeForNewAccount } from '@/lib/email/welcome';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -25,8 +26,18 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      // Confirmation must finish even if the optional welcome provider is down.
+      // Recovery and reused-code callbacks do not schedule a welcome.
+      if (redirectTo === '/consent' && data.user) {
+        const user = data.user;
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || origin;
+        after(async () => {
+          try { await sendWelcomeForNewAccount(user, siteUrl); }
+          catch { /* Email failure must never undo a verified account session. */ }
+        });
+      }
       return NextResponse.redirect(new URL(redirectTo, origin));
     }
     // The exchange is one-shot: the first click consumes the code and sets

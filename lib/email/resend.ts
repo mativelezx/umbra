@@ -24,6 +24,7 @@ async function deliver(to: string, content: UmbraEmailContent, idempotencyKey?: 
   try {
     response = await fetch('https://api.resend.com/emails', {
       method:'POST',
+      signal: AbortSignal.timeout(8000),
       headers:{ Authorization:`Bearer ${apiKey}`, 'Content-Type':'application/json', ...(idempotencyKey ? {'Idempotency-Key':idempotencyKey} : {}) },
       body:JSON.stringify({from,to,...content,html,attachments}),
     });

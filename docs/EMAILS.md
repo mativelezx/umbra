@@ -6,7 +6,7 @@ Los mensajes de cuenta usan la marca de Umbra: logotipo en minúsculas, isotipo,
 
 | Mensaje | Servicio | Cuándo se usa |
 |---|---|---|
-| Bienvenida | Resend, `/api/account/welcome` | Después de un registro con sesión inmediata. El envío no bloquea la creación de cuenta. |
+| Bienvenida | Resend, `/api/account/welcome` o callback confirmado | Después de un registro con sesión inmediata o de confirmar una cuenta reciente por correo. El callback envía después de responder; el envío no bloquea la creación de cuenta. |
 | Confirmar cuenta | Supabase Auth | Si el entorno exige confirmar el email al registrarse. En la demo local esta exigencia está desactivada. |
 | Invitación | Supabase Auth | Cuando se utiliza una invitación de Auth. No se agregó un panel de invitaciones. |
 | Recuperación | Supabase Auth | Desde «Olvidé mi contraseña», con regreso a `/reset-password`. |
@@ -40,9 +40,13 @@ Los PNG de `public/brand` se derivan del lettering y símbolo existentes. Resend
 - Las plantillas del repositorio no se instalan automáticamente en un Supabase remoto: configurar allí Auth → Email Templates, Site URL, redirecciones y SMTP verificado antes de afirmar que está publicado.
 - Limitación comprobada de CLI 2.84.2: lee las dos configuraciones `auth.email.notification`, pero su arranque local no las transmite a GoTrue. Los diseños «Contraseña actualizada» y «Email actualizado» están preparados; **esos dos avisos no se envían automáticamente en este entorno local**. No se disfrazó esa ausencia como un envío correcto. El correo de recuperación sí tiene plantilla activa. Para verificar avisos en un entorno que los habilite, ejecutar el E2E con `E2E_AUTH_NOTIFICATIONS=true`.
 - La bienvenida admite sólo cuentas de hasta una hora y usa una clave de idempotencia estable. La recuperación evita informar si el email está registrado.
+- Ambos recorridos de bienvenida comparten la misma comprobación de antigüedad y clave de deduplicación. Recuperación, intercambio inválido y reapertura de un código ya usado no disparan otra bienvenida. Una confirmación posterior a la ventana de una hora puede completar el acceso, pero no reenvía este mensaje opcional.
+- Las llamadas a Resend tienen una espera máxima de ocho segundos. Una falla o demora del correo opcional no revoca una sesión confirmada ni se presenta como un envío exitoso.
 
 ## Verificación
 
 `lib/email/*.test.ts` comprueba contenido, escape, enlaces, destinatario autenticado, deduplicación y fallos. `components/auth/PasswordRecoveryForm.test.tsx` cubre los estados del formulario. `e2e/email-preview.spec.ts` verifica los diez correos a 720 y 390 px con controles de accesibilidad. `e2e/email-recovery-real.spec.ts`, con opt-in y URLs locales, crea una cuenta ficticia y prueba recuperación real con Mailpit, actualización y autenticación.
+
+La corrección del 8/9 añade diez controles del callback en `lib/auth/callback.test.ts` y uno de timeout del proveedor. Se reprodujo primero el faltante de bienvenida del callback: dos comprobaciones fallaron y pasaron tras corregirlo. La suite completa posterior pasó 409 pruebas en 67 archivos, además de tipos y lint. Son pruebas controladas; el envío a destinatarios externos sigue requiriendo SMTP y dominio propio verificado.
 
 Las capturas del navegador no certifican todos los clientes de correo ni sus modos oscuros. Tampoco prueban un despliegue remoto. Conservar los logs del entorno realmente ejecutado y distinguirlos de los tests simulados.

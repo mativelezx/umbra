@@ -29,8 +29,15 @@ describe('Umbra email identity and contracts',()=>{
     const fetchMock=vi.fn().mockResolvedValue(new Response('{}',{status:200}));vi.stubGlobal('fetch',fetchMock);
     await sendWelcomeEmail({to:'qa@example.com',siteUrl:'https://umbra.example',idempotencyKey:'qa-only'});
     const init=fetchMock.mock.calls[0][1] as RequestInit;
+    expect(init.signal).toBeInstanceOf(AbortSignal);
     const body=JSON.parse(String(init.body)) as {html:string;attachments:unknown[]};
     expect(new Headers(init.headers).get('Idempotency-Key')).toBe('qa-only');
     expect(body.html).toContain('src="cid:email-lockup"');expect(body.attachments).toHaveLength(2);
+  });
+  it('reports a timed-out provider instead of claiming email delivery',async()=>{
+    vi.stubEnv('RESEND_API_KEY','synthetic-not-a-real-key');vi.stubEnv('EMAIL_FROM','umbra <onboarding@resend.dev>');
+    vi.stubGlobal('fetch',vi.fn().mockRejectedValue(new DOMException('synthetic timeout','TimeoutError')));
+    await expect(sendWelcomeEmail({to:'qa@example.com',siteUrl:'https://umbra.example',idempotencyKey:'qa-only'}))
+      .rejects.toThrow('Email provider could not be reached.');
   });
 });
