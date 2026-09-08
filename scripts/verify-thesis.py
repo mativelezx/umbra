@@ -130,7 +130,19 @@ check('2-codigo-modelo', 'Retención conserva autoinforme y ML por updated_at', 
 check('2-codigo-modelo', 'Límites remotos declarados', all(
     item in flat for item in ['dominio propio verificado', 'no el transcurso real de treinta días', 'corte global de consumo']))
 
-check('3-archivo-final', 'Noventa páginas sin portada numerada', len(pdf.pages) == 90)
+check('3-archivo-final', 'Portada sin número y numeración consecutiva del resto',
+      not re.match(r'^\d+\s*$', (pdf.pages[0].extract_text() or '').splitlines()[0])
+      and all((page.extract_text() or '').strip().splitlines()[0].strip() == str(index)
+              for index, page in enumerate(pdf.pages[1:], 1)), str(len(pdf.pages)))
+check('1-consignas', 'Anexo documental vinculado con el cuerpo y tres procesos', all(
+    item in flat for item in ['Anexo G', 'F-01', 'F-02', 'F-03', 'D-01', 'D-02', 'D-03', 'Campos previstos']))
+check('1-consignas', 'Organización modelada y fuentes sin trabajo de campo inventado', all(
+    item in flat for item in ['organigrama funcional mínimo', 'estructura unipersonal', 'no representa una empresa existente']))
+index_entries = [p.text.rsplit('\t', 1) for p in doc.paragraphs
+                 if p.style.name == 'Normal' and '\t' in p.text]
+check('3-archivo-final', 'Cada entrada del índice coincide con la página extraída',
+      len(index_entries) == len(pages) and all(
+          title in pages and page == str(pages[title]) for title, page in index_entries))
 check('3-archivo-final', 'Todos los destinos del índice localizados',
       set(outline).union(*manifest['captions'].values()) == set(pages))
 for n, section in enumerate(doc.sections):

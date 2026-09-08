@@ -638,7 +638,25 @@
     },
     {
       "control": "3-archivo-final",
-      "check": "Noventa páginas sin portada numerada",
+      "check": "Portada sin número y numeración consecutiva del resto",
+      "passed": true,
+      "detail": "94"
+    },
+    {
+      "control": "1-consignas",
+      "check": "Anexo documental vinculado con el cuerpo y tres procesos",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "1-consignas",
+      "check": "Organización modelada y fuentes sin trabajo de campo inventado",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "control": "3-archivo-final",
+      "check": "Cada entrada del índice coincide con la página extraída",
       "passed": true,
       "detail": ""
     },
@@ -919,10 +937,10 @@
       "detail": ""
     }
   ],
-  "passed": 153,
+  "passed": 156,
   "failed": [],
-  "docx_sha256": "13bf90e8dbfb651d46f8725f96a8c3439e3c832d0132545d9bc68ce51674a593",
-  "pdf_sha256": "09518ad720137ee87371a090c4b20750934f459160ae4ee41186b12c691a9d27",
+  "docx_sha256": "64b0936bef0728b805e6d3c527e7299907b5ab24a0e1ad73085751667cb664fa",
+  "pdf_sha256": "f2a8c1283eefd82c1fed29e4710e3472bf34ef2edf08ab965366c4ed4fe86f6e",
   "limits": [
     "No certifica aprobación del CAE ni autoría o comprensión del estudiante.",
     "No valida psicológicamente el ML ni sustituye una evaluación con participantes.",

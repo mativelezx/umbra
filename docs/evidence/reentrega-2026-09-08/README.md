@@ -8,6 +8,10 @@ Abrí `galeria.html` para recorrer las imágenes. `resultados.json` conserva el 
 
 Los controles nuevos son de lectura: no crean cuentas, no envían correos y bloquean las mutaciones a `/api/`. Se agregan cinco capturas identificadas del recorrido real anterior para mostrar onboarding y resultados. No se volvió a consumir IA para obtenerlas.
 
+Las 50 capturas `chromium-*` y `mobile-*` y `resultados.json` se actualizaron con el barrido del 8 de septiembre de 2026, iniciado a las 12:43 UTC, bajo Node 24.19.0. Los cuatro recorridos pasaron sin omisiones ni reintentos; no se detectó desbordamiento horizontal ni infracciones serias/críticas de axe. Las cinco imágenes `recorrido-*` siguen siendo evidencia del 7 de septiembre. Los contactos conservados son miniaturas de la revisión anterior; para esta repetición, abrir las capturas individuales o la galería. La primera pasada del día falló por falta de espacio al escribir una captura; se liberó caché regenerable y se repitieron los cuatro recorridos completos.
+
+El cruce documental de esta publicación corresponde al PDF de 94 páginas y al DOCX de la etiqueta `reentrega-2026-09-08-v2`: 156 controles aprobados y 175 destinos de índices localizados. El manifiesto y el resultado contienen sus huellas SHA-256. No se debe combinar este resultado con el documento de 90 páginas de la primera publicación.
+
 | Pantalla | Dispositivo | Procedencia |
 |---|---|---|
 | [auth-link-error](capturas/chromium-auth-link-error.png) | chromium | Vercel, captura de lectura sin nueva generación |

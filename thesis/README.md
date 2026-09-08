@@ -1,4 +1,18 @@
-# Umbra — Tesis (TFG)
+# Umbra — Esqueleto histórico de la tesis
+
+> **Archivo histórico, no usar para la reentrega.** Los capítulos Markdown y la
+> compilación Pandoc de esta carpeta pertenecen a una planificación anterior.
+> No generan el PDF/DOCX final ni certifican que se hayan realizado los estudios
+> descritos como propuestas. Las instrucciones de formato y cifras que siguen
+> no son vigentes para la reentrega del CAE de septiembre de 2026.
+>
+> La versión de entrega es el PDF y DOCX adjuntos en la
+> [publicación de cierre académico](https://github.com/mativelezx/umbra/releases/tag/reentrega-2026-09-08-v2).
+> Para código, pruebas, evidencia y límites reales, consultar el
+> [README principal](../README.md) y la [revisión de entrega](../docs/ENTREGA-2026-09-08.md).
+> Se conserva este esqueleto como antecedente, no como documentación autoritativa.
+
+## Planificación anterior (conservada)
 
 > Estructura del documento de 50-80 páginas que se entrega a la
 > Universidad Siglo 21. Cada capítulo vive en su propio archivo

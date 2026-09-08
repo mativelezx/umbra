@@ -8,7 +8,7 @@ Demo publicada: https://umbra-sigma.vercel.app. Código de reentrega: rama `code
 
 No hace falta un ZIP para consultar este repositorio. Las instrucciones siguientes se ejecutan desde un checkout de esta versión. No se incluyen contraseñas, claves de proveedores, datos de cuentas, dependencias instaladas ni cachés.
 
-[Revisión de entrega, requisitos y capturas](docs/ENTREGA-2026-09-08.md). Los archivos PDF y DOCX se adjuntan a la publicación de reentrega en GitHub; el acceso de la cuenta ficticia se comparte por separado y no se versiona.
+[Revisión de entrega, requisitos y capturas](docs/ENTREGA-2026-09-08.md). Los archivos PDF y DOCX vigentes se adjuntan a [la publicación de cierre académico v2](https://github.com/mativelezx/umbra/releases/tag/reentrega-2026-09-08-v2); el acceso de la cuenta ficticia se comparte por separado y no se versiona. La v2 incorpora el anexo del relevamiento, el organigrama funcional modelado e índices actualizados. La carpeta `thesis/` conserva un esqueleto histórico, no la versión de entrega.
 
 ## Qué hace cada componente
 

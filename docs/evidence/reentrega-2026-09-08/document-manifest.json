@@ -1,8 +1,6 @@
 {
-  "source_sha256": "bfae1c1db31b4e1fcacd1478dc0da4a48d2971492f36553f217666ca30bf1643",
-  "docx_sha256": "13bf90e8dbfb651d46f8725f96a8c3439e3c832d0132545d9bc68ce51674a593",
-  "source_blocks": 654,
-  "replacement_count": 304,
+  "source_sha256": "13bf90e8dbfb651d46f8725f96a8c3439e3c832d0132545d9bc68ce51674a593",
+  "docx_sha256": "64b0936bef0728b805e6d3c527e7299907b5ab24a0e1ad73085751667cb664fa",
   "outline": [
     [
       "Resumen",
@@ -475,6 +473,46 @@
     [
       "Anexo F — Análisis de amenazas por componente y riesgos residuales",
       2
+    ],
+    [
+      "Anexo G — Relevamiento documental y organización modelada",
+      2
+    ],
+    [
+      "Organigrama funcional del servicio modelado",
+      3
+    ],
+    [
+      "Fichas de las fuentes relevadas",
+      3
+    ],
+    [
+      "F-01 — Cuestionario y devolución de un test en línea",
+      3
+    ],
+    [
+      "F-02 — Consulta y respuesta de un asistente conversacional",
+      3
+    ],
+    [
+      "F-03 — Información de acceso a acompañamiento profesional",
+      3
+    ],
+    [
+      "Documentos modelados y campos previstos",
+      3
+    ],
+    [
+      "D-01 — Reporte de test",
+      3
+    ],
+    [
+      "D-02 — Registro de consulta conversacional",
+      3
+    ],
+    [
+      "D-03 — Ficha de búsqueda de acompañamiento",
+      3
     ]
   ],
   "captions": {
@@ -513,7 +551,10 @@
       "Tabla 32. Composición del conjunto de datos por partición.",
       "Tabla 33. Composición del conjunto de evaluación del clasificador de seguridad.",
       "Tabla 34. Mecanismos de protección de datos personales implementados.",
-      "Tabla 35. Análisis de amenazas por componente y mitigación adoptada."
+      "Tabla 35. Análisis de amenazas por componente y mitigación adoptada.",
+      "Tabla 36. Campos previstos del documento D-01.",
+      "Tabla 37. Campos previstos del documento D-02.",
+      "Tabla 38. Campos previstos del documento D-03."
     ],
     "Figura": [
       "Figura 1. Cronograma reconstruido a partir de fechas del repositorio y entregas en Canvas. Las dependencias expresan el orden lógico del trabajo.",
@@ -523,19 +564,20 @@
       "Figura 5. Escritura guiada: pregunta, progreso y campo de respuesta de una cuenta ficticia de prueba.",
       "Figura 6. Inicio del espacio personal después del análisis: acceso a la lectura y distinción de sus fuentes.",
       "Figura 7. Actividades generadas durante la prueba con servicios reales y datos sintéticos; no representan resultados de un estudio con participantes.",
-      "Figura 8. Aplicación web, almacenamiento, servicio ML y proveedor narrativo. El cálculo experimental no se sustituye por generación de texto."
+      "Figura 8. Aplicación web, almacenamiento, servicio ML y proveedor narrativo. El cálculo experimental no se sustituye por generación de texto.",
+      "Figura 9. Organigrama funcional mínimo del servicio modelado."
     ]
   },
   "summary_words": [
     207,
     190
   ],
+  "page_number_offset": -1,
+  "scope": "Edición acotada: relevamiento, cierre, anexo G e índices. Métricas y arquitectura conservadas.",
   "open_items": [
-    "Confirmar con el autor la reconstrucción de fechas y dependencias",
-    "Revisión personal y preparación para defender el trabajo",
-    "Configurar dominio y SMTP; probar correo externo y sus operaciones asociadas",
-    "Revisar condiciones de proveedores, corte global de consumo y respaldo con restauración antes de ampliar el uso",
-    "No se realizaron estudios con participantes; no atribuirles resultados"
-  ],
-  "page_number_offset": -1
+    "Confirmación personal de la reconstrucción cronológica",
+    "Comprensión y defensa del autor",
+    "Dominio de correo y SMTP externos",
+    "Evaluación con participantes y validez individual del ML"
+  ]
 }

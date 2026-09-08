@@ -1,404 +1,21 @@
 {
-  "web": "https://umbra-sigma.vercel.app",
-  "code_sha": "9a01631dbb18c0b9dea9c2ca61f937f57a9880bf",
-  "deployment_id": "dpl_CW6jtaKN9U4tp1eYH7dceC1ijMcv",
-  "run_stats": {
-    "startTime": "2026-09-08T03:49:37.276Z",
-    "duration": 71849.41500000001,
+  "date": "2026-09-08T12:43:31.083Z",
+  "baseURL": "https://umbra-sigma.vercel.app",
+  "runtime": "Node 24.19.0",
+  "stats": {
+    "startTime": "2026-09-08T12:43:31.083Z",
+    "duration": 50270.419,
     "expected": 4,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0
   },
-  "screenshots": [
+  "screens": 50,
+  "checks": [
     {
-      "name": "auth-link-error",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-auth-link-error.png",
-      "sha256": "acb20cb589c78b76ec076bb17c276da881ae7bc189e4f3e29c93604532e35f4c"
-    },
-    {
-      "name": "forgot-password",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-forgot-password.png",
-      "sha256": "fb8341ce9dfe4c0cef1aaeea4f2c7440fe086f7f762d9aaa1e3d729da5d4e733"
-    },
-    {
-      "name": "landing",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-landing.png",
-      "sha256": "71dbdfeee56ee007e98975599bdb3ae88f6a3d6a8d6a9874b7a0396085a985d0"
-    },
-    {
-      "name": "login",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-login.png",
-      "sha256": "3ac0112742407828472588549fa81769cf972cf65fc6f1009570cc86695dd4f4"
-    },
-    {
-      "name": "not-found",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-not-found.png",
-      "sha256": "cf480b8e8817edb3e8bc35d325f219d549bbe0eb379e000f07d6e7b928a49db8"
-    },
-    {
-      "name": "privacy",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-privacy.png",
-      "sha256": "e72b2c49ee15ade596d934ffcf0afa70435063acdc442bb452ff6164aba928be"
-    },
-    {
-      "name": "register",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-register.png",
-      "sha256": "751b372d5ebd57a361588c3602ac6f1aa43ffc503846fa33793562438781ad28"
-    },
-    {
-      "name": "reset-without-session",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-reset-without-session.png",
-      "sha256": "ab51beed1205bc6b2cc80b3df5e922af9c863692ca0739f7f9b1c2b7b3e2411e"
-    },
-    {
-      "name": "terms",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-terms.png",
-      "sha256": "b2b7cd3994b70ac20d7e6cb9bb35db5af59db7247eaebba7b1056f4bd851ee34"
-    },
-    {
-      "name": "auth-link-error",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-auth-link-error.png",
-      "sha256": "60c3c9de56ff96b48081ce01ac472caf0e29fe08f5f4c5ae58109aa6d078cd93"
-    },
-    {
-      "name": "forgot-password",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-forgot-password.png",
-      "sha256": "5dd06a6762a64d7c8e89fe647660c724e2138ff431a4355d86a97513eca77929"
-    },
-    {
-      "name": "landing",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-landing.png",
-      "sha256": "ab019da529f13db822f756d34a20f7b6bf005aabb35ad73fab21ef849c2e7b02"
-    },
-    {
-      "name": "login",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-login.png",
-      "sha256": "4eb9f6076c7ce698300eef1f793682ba54172867d4da33a02c940d8e5c352813"
-    },
-    {
-      "name": "not-found",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-not-found.png",
-      "sha256": "932342d47016da6e45d9e208b717a2b4043b8a66f0f1d5a8e27acd53844e7f9e"
-    },
-    {
-      "name": "privacy",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-privacy.png",
-      "sha256": "4caaa21ea8d9b4cad984052807bdc0e97a878e6ea1afe544348209c87a72a241"
-    },
-    {
-      "name": "register",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-register.png",
-      "sha256": "298462c12bfda4c1af5c269bb5fe29b455e61dfde8450c832039391696f0a31d"
-    },
-    {
-      "name": "reset-without-session",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-reset-without-session.png",
-      "sha256": "765fcfd23d445e7e93cd50f64e96c19f98945e4d372d7bbeb23fa15fd6f0b7c6"
-    },
-    {
-      "name": "terms",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-terms.png",
-      "sha256": "2cc5484d27a65beaaf441accef56105f4f1bc02f858082e6f177dd8b5a257245"
-    },
-    {
-      "name": "assessment",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-assessment.png",
-      "sha256": "a7d29b285b698394837d8daaafcf05d46c65e3324a5d809d9a5a8eb043184ee4"
-    },
-    {
-      "name": "chat",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-chat.png",
-      "sha256": "42c422aef5821d35df8f70ca2babd553f4d93566a31d63c1b624b8ec5b5c49ea"
-    },
-    {
-      "name": "consent",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-consent.png",
-      "sha256": "8a8d61cd5ec6100cadbc5238a360f2ea9cc25685837ae39d610e9caa90ca9729"
-    },
-    {
-      "name": "dashboard-jung-detalle",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-dashboard-jung-detalle.png",
-      "sha256": "f5c509b9b0851e175c8af56e7fdc9a17449f04668a55d0531f6600d7d43fed19"
-    },
-    {
-      "name": "dashboard-jung",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-dashboard-jung.png",
-      "sha256": "2aa91261b5fa6a4adcfeb152a129dc8d426e1ab9f17ed174dab4d41280d499e0"
-    },
-    {
-      "name": "dashboard-modelo",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-dashboard-modelo.png",
-      "sha256": "bb24dd5c4639f356d804c788fadd1aded5e39856240fb9328918ddfc798bd0f1"
-    },
-    {
-      "name": "dashboard",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-dashboard.png",
-      "sha256": "8fb3876d07ff3a829b22a3776b70560542f5dafb49bee183a07a40d54d15b288"
-    },
-    {
-      "name": "export",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-export.png",
-      "sha256": "2c45d4b7a7b1f243effa78854709f2729d8dfc0f304efb4c253200d852237ec3"
-    },
-    {
-      "name": "onboarding",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-onboarding.png",
-      "sha256": "0d72166b2078d33fe78aff5a2c4e7146e05b942492eef729dd1e1a006fc9413c"
-    },
-    {
-      "name": "plan",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-plan.png",
-      "sha256": "c77c247758803b0ad4922c03692c64461c0b922d369167a9c1d6b3f4e69ab506"
-    },
-    {
-      "name": "settings-delete-confirm",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-settings-delete-confirm.png",
-      "sha256": "ab91eba54f99cd1c2e238eef4039798878655df61dd3a9f4b51834f2d79c735a"
-    },
-    {
-      "name": "settings-delete",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-settings-delete.png",
-      "sha256": "ea111599ce827f65134d2bac4ac514027947e853f6b9b7e3f314e21b3842c55a"
-    },
-    {
-      "name": "settings-export",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-settings-export.png",
-      "sha256": "acb5713e5192226bffe0df527a03f9ce52de5180678c3ac81bc912b9578efb19"
-    },
-    {
-      "name": "settings-profile",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-settings-profile.png",
-      "sha256": "679a955b57445e1eb23b608df02fd68e44c3e986efd41fbdf7aa59c85a6bacef"
-    },
-    {
-      "name": "settings-research-opt-out",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-settings-research-opt-out.png",
-      "sha256": "e92bb206a85cc4a39f541d51e98ceb6fd4c1afaf56f2f9744155bb13f3c5fe00"
-    },
-    {
-      "name": "settings",
-      "device": "chromium",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/chromium-settings.png",
-      "sha256": "26d60397ba3fef209142d9e1f4303a5c5b97ae7fd6c2e05c87eebdb46edb29f3"
-    },
-    {
-      "name": "assessment",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-assessment.png",
-      "sha256": "95689d82662c69d510a4eb26ffdda8fc3ec59d5faccef49ccec1d7d15ba90eec"
-    },
-    {
-      "name": "chat",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-chat.png",
-      "sha256": "007e11ae6ce1f7a6f99b1397cf5058612661335e4fe38826c1073f7c3efb9b52"
-    },
-    {
-      "name": "consent",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-consent.png",
-      "sha256": "058da739a20db77f6df59d6c9508423c4b90bdf2df8198f5d432df16cd14de7e"
-    },
-    {
-      "name": "dashboard-jung-detalle",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-dashboard-jung-detalle.png",
-      "sha256": "f3a889f495f2ebd0e8b91cbe44cb499221312f2bc9b6a76546936701defb6da7"
-    },
-    {
-      "name": "dashboard-jung",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-dashboard-jung.png",
-      "sha256": "6c6a4169fbdf955e81ac25068cff893485634cd387c8fa1995e8402fcb6ff8ed"
-    },
-    {
-      "name": "dashboard-modelo",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-dashboard-modelo.png",
-      "sha256": "c26a780dd592d0a9decf14e550dba5b0438e1825d7d7d91d4ad4c4d40b81d4a5"
-    },
-    {
-      "name": "dashboard",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-dashboard.png",
-      "sha256": "9c6ddba5fd41441cb273543e55370c76c674639de9ba2c1cb6fff7c0fd909f1f"
-    },
-    {
-      "name": "export",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-export.png",
-      "sha256": "21372492f2f77fd21d639289e3ec171487576d76ea0f289d861dae3cfbdca05b"
-    },
-    {
-      "name": "onboarding",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-onboarding.png",
-      "sha256": "02c730bb858b3b2d71c882c2bb2e326b0dd7b862c9de9001442ff565a6fce9ee"
-    },
-    {
-      "name": "plan",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-plan.png",
-      "sha256": "5ffb4d9e20ac4ca1899621d3d20f7404291dae240c8d3a1b3a19c0db0b2cd917"
-    },
-    {
-      "name": "settings-delete-confirm",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-settings-delete-confirm.png",
-      "sha256": "46c588337b777f64027415d363fb93ffa28a2738f922e7b0704e5324f01be385"
-    },
-    {
-      "name": "settings-delete",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-settings-delete.png",
-      "sha256": "51e61d2a77a80195d526bd704b9bd4cecf8a7dbc57ad52cd3731b7df795e8020"
-    },
-    {
-      "name": "settings-export",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-settings-export.png",
-      "sha256": "76783454516166bb2990de938d99e38580c19b1facf23839db92896085324368"
-    },
-    {
-      "name": "settings-profile",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-settings-profile.png",
-      "sha256": "9b70738b889e7610966d024af1fb9e28782732a2d432c6e8512979d650cd2e4b"
-    },
-    {
-      "name": "settings-research-opt-out",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-settings-research-opt-out.png",
-      "sha256": "619f3346c758ceb12af05f198159abbafac392f9ff6f1b9796ce65d49b226ffd"
-    },
-    {
-      "name": "settings",
-      "device": "mobile",
-      "source": "Vercel, captura de lectura sin nueva generación",
-      "file": "capturas/mobile-settings.png",
-      "sha256": "b5719a5fe4a5387e4fa707511425da2adaac9dc6da9bf7f97b1a1a8fa5ad10bc"
-    },
-    {
-      "name": "model-real",
-      "device": "chromium",
-      "source": "Recorrido con servicios reales del 7/9, cuenta ficticia confirmada por administración",
-      "file": "capturas/recorrido-model-real.png",
-      "sha256": "1dcd3893c00eb002d8c6883fb514ef77f3bd356a55804970fc8ac0535183779b"
-    },
-    {
-      "name": "onboarding-real",
-      "device": "chromium",
-      "source": "Recorrido con servicios reales del 7/9, cuenta ficticia confirmada por administración",
-      "file": "capturas/recorrido-onboarding-real.png",
-      "sha256": "edfabd02223c75304cc2a0465e22f980f60aa8f9f853747c1e3456fda30b301f"
-    },
-    {
-      "name": "plan-real",
-      "device": "chromium",
-      "source": "Recorrido con servicios reales del 7/9, cuenta ficticia confirmada por administración",
-      "file": "capturas/recorrido-plan-real.png",
-      "sha256": "663f87b3874d5dc008993901276633014e05f07966b3824baec405046924149d"
-    },
-    {
-      "name": "reading-real",
-      "device": "chromium",
-      "source": "Recorrido con servicios reales del 7/9, cuenta ficticia confirmada por administración",
-      "file": "capturas/recorrido-reading-real.png",
-      "sha256": "18ea0d0fb4dc645b3f0b8f5515f90e85642e6b707dcf224bbe6d41e616bb1150"
-    },
-    {
-      "name": "self-report-real",
-      "device": "chromium",
-      "source": "Recorrido con servicios reales del 7/9, cuenta ficticia confirmada por administración",
-      "file": "capturas/recorrido-self-report-real.png",
-      "sha256": "53b983dc30ef07b2fe7cfbc1b813a94b5a2e43cce481d134a046657691bff44d"
-    }
-  ],
-  "screen_checks": [
-    {
+      "project": "chromium",
+      "screen": "landing",
+      "result": "passed",
       "path": "/",
       "viewport": {
         "width": 1440,
@@ -406,11 +23,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "landing"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "login",
+      "result": "passed",
       "path": "/login",
       "viewport": {
         "width": 1440,
@@ -418,11 +36,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "login"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "register",
+      "result": "passed",
       "path": "/register",
       "viewport": {
         "width": 1440,
@@ -430,11 +49,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "register"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "forgot-password",
+      "result": "passed",
       "path": "/forgot-password",
       "viewport": {
         "width": 1440,
@@ -442,11 +62,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "forgot-password"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "reset-without-session",
+      "result": "passed",
       "path": "/reset-password",
       "viewport": {
         "width": 1440,
@@ -454,11 +75,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "reset-without-session"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "privacy",
+      "result": "passed",
       "path": "/privacy",
       "viewport": {
         "width": 1440,
@@ -466,11 +88,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "privacy"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "terms",
+      "result": "passed",
       "path": "/terms",
       "viewport": {
         "width": 1440,
@@ -478,11 +101,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "terms"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "auth-link-error",
+      "result": "passed",
       "path": "/auth/auth-code-error",
       "viewport": {
         "width": 1440,
@@ -490,11 +114,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "auth-link-error"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "not-found",
+      "result": "passed",
       "path": "/pagina-inexistente-qa",
       "viewport": {
         "width": 1440,
@@ -502,11 +127,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "not-found"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "dashboard",
+      "result": "passed",
       "path": "/dashboard",
       "viewport": {
         "width": 1440,
@@ -514,11 +140,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "dashboard"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "dashboard-modelo",
+      "result": "passed",
       "path": "/dashboard",
       "viewport": {
         "width": 1440,
@@ -526,11 +153,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "dashboard-modelo"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "dashboard-jung",
+      "result": "passed",
       "path": "/dashboard",
       "viewport": {
         "width": 1440,
@@ -538,11 +166,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "dashboard-jung"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "dashboard-jung-detalle",
+      "result": "passed",
       "path": "/dashboard",
       "viewport": {
         "width": 1440,
@@ -550,11 +179,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "dashboard-jung-detalle"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "assessment",
+      "result": "passed",
       "path": "/assessment",
       "viewport": {
         "width": 1440,
@@ -562,11 +192,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "assessment"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "plan",
+      "result": "passed",
       "path": "/plan",
       "viewport": {
         "width": 1440,
@@ -574,11 +205,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "plan"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "chat",
+      "result": "passed",
       "path": "/chat",
       "viewport": {
         "width": 1440,
@@ -586,11 +218,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "chat"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "export",
+      "result": "passed",
       "path": "/export",
       "viewport": {
         "width": 1440,
@@ -598,11 +231,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "export"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "settings",
+      "result": "passed",
       "path": "/settings",
       "viewport": {
         "width": 1440,
@@ -610,11 +244,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "settings"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "settings-profile",
+      "result": "passed",
       "path": "/settings/profile",
       "viewport": {
         "width": 1440,
@@ -622,11 +257,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "settings-profile"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "settings-export",
+      "result": "passed",
       "path": "/settings/export",
       "viewport": {
         "width": 1440,
@@ -634,11 +270,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "settings-export"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "settings-research-opt-out",
+      "result": "passed",
       "path": "/settings/research-opt-out",
       "viewport": {
         "width": 1440,
@@ -646,11 +283,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "settings-research-opt-out"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "settings-delete",
+      "result": "passed",
       "path": "/settings/delete",
       "viewport": {
         "width": 1440,
@@ -658,11 +296,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "settings-delete"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "settings-delete-confirm",
+      "result": "passed",
       "path": "/settings/delete/confirm",
       "viewport": {
         "width": 1440,
@@ -670,11 +309,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "settings-delete-confirm"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "consent",
+      "result": "passed",
       "path": "/consent",
       "viewport": {
         "width": 1440,
@@ -682,11 +322,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "consent"
+      "moderateOrMinor": []
     },
     {
+      "project": "chromium",
+      "screen": "onboarding",
+      "result": "passed",
       "path": "/onboarding",
       "viewport": {
         "width": 1440,
@@ -694,11 +335,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "chromium",
-      "name": "onboarding"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "landing",
+      "result": "passed",
       "path": "/",
       "viewport": {
         "width": 390,
@@ -706,11 +348,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "landing"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "login",
+      "result": "passed",
       "path": "/login",
       "viewport": {
         "width": 390,
@@ -718,11 +361,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "login"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "register",
+      "result": "passed",
       "path": "/register",
       "viewport": {
         "width": 390,
@@ -730,11 +374,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "register"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "forgot-password",
+      "result": "passed",
       "path": "/forgot-password",
       "viewport": {
         "width": 390,
@@ -742,11 +387,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "forgot-password"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "reset-without-session",
+      "result": "passed",
       "path": "/reset-password",
       "viewport": {
         "width": 390,
@@ -754,11 +400,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "reset-without-session"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "privacy",
+      "result": "passed",
       "path": "/privacy",
       "viewport": {
         "width": 390,
@@ -766,11 +413,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "privacy"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "terms",
+      "result": "passed",
       "path": "/terms",
       "viewport": {
         "width": 390,
@@ -778,11 +426,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "terms"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "auth-link-error",
+      "result": "passed",
       "path": "/auth/auth-code-error",
       "viewport": {
         "width": 390,
@@ -790,11 +439,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "auth-link-error"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "not-found",
+      "result": "passed",
       "path": "/pagina-inexistente-qa",
       "viewport": {
         "width": 390,
@@ -802,11 +452,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "not-found"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "dashboard",
+      "result": "passed",
       "path": "/dashboard",
       "viewport": {
         "width": 390,
@@ -814,11 +465,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "dashboard"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "dashboard-modelo",
+      "result": "passed",
       "path": "/dashboard",
       "viewport": {
         "width": 390,
@@ -826,11 +478,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "dashboard-modelo"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "dashboard-jung",
+      "result": "passed",
       "path": "/dashboard",
       "viewport": {
         "width": 390,
@@ -838,11 +491,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "dashboard-jung"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "dashboard-jung-detalle",
+      "result": "passed",
       "path": "/dashboard",
       "viewport": {
         "width": 390,
@@ -850,11 +504,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "dashboard-jung-detalle"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "assessment",
+      "result": "passed",
       "path": "/assessment",
       "viewport": {
         "width": 390,
@@ -862,11 +517,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "assessment"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "plan",
+      "result": "passed",
       "path": "/plan",
       "viewport": {
         "width": 390,
@@ -874,11 +530,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "plan"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "chat",
+      "result": "passed",
       "path": "/chat",
       "viewport": {
         "width": 390,
@@ -886,11 +543,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "chat"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "export",
+      "result": "passed",
       "path": "/export",
       "viewport": {
         "width": 390,
@@ -898,11 +556,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "export"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "settings",
+      "result": "passed",
       "path": "/settings",
       "viewport": {
         "width": 390,
@@ -910,11 +569,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "settings"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "settings-profile",
+      "result": "passed",
       "path": "/settings/profile",
       "viewport": {
         "width": 390,
@@ -922,11 +582,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "settings-profile"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "settings-export",
+      "result": "passed",
       "path": "/settings/export",
       "viewport": {
         "width": 390,
@@ -934,11 +595,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "settings-export"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "settings-research-opt-out",
+      "result": "passed",
       "path": "/settings/research-opt-out",
       "viewport": {
         "width": 390,
@@ -946,11 +608,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "settings-research-opt-out"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "settings-delete",
+      "result": "passed",
       "path": "/settings/delete",
       "viewport": {
         "width": 390,
@@ -958,11 +621,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "settings-delete"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "settings-delete-confirm",
+      "result": "passed",
       "path": "/settings/delete/confirm",
       "viewport": {
         "width": 390,
@@ -970,11 +634,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "settings-delete-confirm"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "consent",
+      "result": "passed",
       "path": "/consent",
       "viewport": {
         "width": 390,
@@ -982,11 +647,12 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "consent"
+      "moderateOrMinor": []
     },
     {
+      "project": "mobile",
+      "screen": "onboarding",
+      "result": "passed",
       "path": "/onboarding",
       "viewport": {
         "width": 390,
@@ -994,18 +660,13 @@
       },
       "overflow": false,
       "blocking": [],
-      "moderateOrMinor": [],
-      "device": "mobile",
-      "name": "onboarding"
+      "moderateOrMinor": []
     }
   ],
-  "scope": "Capturas sintéticas. No prueban correo, eficacia psicológica ni todos los estados posibles. Las imágenes no certifican movimiento; la captura congela animaciones.",
-  "not_covered_by_this_sweep": [
-    "Registro y recuperación por correo externo",
-    "Eliminación efectiva de una cuenta",
-    "Onboarding nuevo o análisis pago",
-    "Recuperación con token válido",
-    "Escenarios de crisis con personas",
-    "Restauración de respaldos"
+  "limits": [
+    "Lectura de datos ficticios guardados; cuenta confirmada por administración.",
+    "Sin llamadas nuevas a Claude, altas, correos ni eliminación de cuentas.",
+    "La primera ejecución se interrumpió por ENOSPC; esta repetición terminó sin omisiones ni reintentos.",
+    "Los tests no certifican utilidad psicológica ni aceptación académica."
   ]
 }
