@@ -6,12 +6,13 @@ import { createSelfReport } from '@/lib/assessment/bfi2s';
 
 describe('print report preserves and explains the result', () => {
   it('prints questionnaire scores separately and does not add a second break after the cover', () => {
-    const { container } = render(<ReportContent data={{ profile: { ...DEMO_PROFILE, analysisRaw: { ...DEMO_PROFILE.analysisRaw, selfReport: createSelfReport(Array(30).fill(3), '2026-09-07T12:00:00Z') } }, userName: 'Prueba', narrative: null, plan: null }} />);
+    const { container } = render(<ReportContent data={{ profile: { ...DEMO_PROFILE, analysisRaw: { ...DEMO_PROFILE.analysisRaw, selfReport: createSelfReport(Array(30).fill(3), '2026-09-08T01:30:00Z') } }, userName: 'Prueba', narrative: null, plan: null }} />);
     expect(screen.getAllByText('3,00 / 5')).toHaveLength(5);
     expect(screen.getAllByText('evidencia insuficiente — sin cifra')).toHaveLength(5);
     expect(container.querySelector('.pdf-self-report')).not.toHaveClass('pdf-new-page');
     expect(container).toHaveTextContent('no las predice la IA');
     expect(container).toHaveTextContent('No son percentiles');
+    expect(container).toHaveTextContent('Completado el 7 de septiembre de 2026.');
     expect(screen.getByRole('img', { name: /^umbra$/ })).toBeInTheDocument();
   });
   it('retains full saved content, explains terms, and prints no unvalidated bars', () => {

@@ -55,11 +55,15 @@ test('saved synthetic account screens and PDF', async ({ page }, info) => {
   await page.getByLabel('Contraseña').fill(process.env.E2E_SYNTHETIC_PASSWORD!);
   await page.getByRole('button', { name: 'Entrar', exact: true }).click();
   await page.waitForURL(url => url.pathname === '/dashboard');
+  let questionnaireDate = '';
   for (const path of ['/dashboard', '/assessment', '/plan', '/chat', '/export', '/settings', '/settings/profile', '/settings/export', '/settings/research-opt-out', '/settings/delete', '/settings/delete/confirm', '/consent', '/onboarding']) {
     await page.goto(path);
     if (path === '/chat') await expect(page.getByRole('textbox', { name: 'Tu mensaje' })).toBeVisible();
     await capture(page, info, path.slice(1).replaceAll('/', '-'));
     if (path === '/dashboard') {
+      const stamp = await page.getByText(/^Autoinforme ·/).innerText();
+      questionnaireDate = stamp.split('·')[1]!.trim();
+      expect(questionnaireDate).toMatch(/^\d{1,2} de \w+ de \d{4}$/);
       for (const [label, file] of [['Tu lectura', 'dashboard-lectura'], ['Otras miradas', 'dashboard-jung']]) {
         await page.getByRole('tab', { name: label, exact: true }).click();
         await capture(page, info, file!);
@@ -71,6 +75,8 @@ test('saved synthetic account screens and PDF', async ({ page }, info) => {
       await capture(page, info, 'dashboard-modelo');
     }
     if (path === '/export') {
+      expect(questionnaireDate).not.toBe('');
+      await expect(page.locator('.pdf-self-report')).toContainText(`Completado el ${questionnaireDate}.`);
       const downloading = page.waitForEvent('download');
       await page.getByRole('button', { name: 'Descargar PDF' }).click();
       const download = await downloading;

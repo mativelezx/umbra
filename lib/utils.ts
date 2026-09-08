@@ -24,7 +24,7 @@ export function cn(
 }
 
 /**
- * Format a date for Spanish display (latinoamericano).
+ * Use the prototype's Argentina timezone consistently in the app and PDF.
  */
 export function formatDateEs(date: Date | string): string {
   const d = typeof date === 'string' ? new Date(date) : date;
@@ -32,6 +32,7 @@ export function formatDateEs(date: Date | string): string {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
+    timeZone: 'America/Argentina/Buenos_Aires',
   });
 }
 

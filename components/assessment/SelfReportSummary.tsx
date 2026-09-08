@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ArrowRight, Compass, ListChecks, ChatCircle, HandHeart, Waves } from '@phosphor-icons/react/dist/ssr';
 import { BFI2S_ATTRIBUTION, BFI2S_DOMAINS, BFI2S_SOURCE } from '@/lib/assessment/bfi2s';
 import type { BigFiveSelfReport } from '@/types';
+import { formatDateEs } from '@/lib/utils';
 import styles from './SelfReport.module.css';
 const DOMAIN_ICONS = { openness: Compass, conscientiousness: ListChecks, extraversion: ChatCircle, agreeableness: HandHeart, neuroticism: Waves };
 
@@ -10,7 +11,7 @@ export function SelfReportSummary({ report }: { report: BigFiveSelfReport | null
     <h2 id="self-report-heading">Lo que vos reconocés en vos.</h2>
     <p>Big Five describe cinco tendencias de personalidad. Tus resultados salen de lo que respondés al cuestionario, no de lo que la IA supone sobre vos.</p>
     {!report ? <><p>Completá 30 afirmaciones para ver tus cinco resultados y una explicación de cada uno. No hay respuestas correctas ni una personalidad ideal.</p><Link className={styles.primaryLink} href="/assessment">Completar mi cuestionario <ArrowRight size={18} aria-hidden="true" /></Link><p className={styles.note}>Opcional · BFI-2-S en español. Si preferís no responderlo, podés abrir «Tu lectura» o elegir una actividad.</p></> : <>
-      <p className={styles.note}>Autoinforme · {new Date(report.completedAt).toLocaleDateString('es-AR', { timeZone: 'UTC' })} · escala de 1 a 5</p>
+      <p className={styles.note}>Autoinforme · {formatDateEs(report.completedAt)} · escala de 1 a 5</p>
       <div className={styles.dimensions}>{BFI2S_DOMAINS.map(domain => { const Icon = DOMAIN_ICONS[domain.key]; return <div key={domain.key} className={styles.dimension}>
         <div><h3><Icon size={24} weight="light" aria-hidden="true" />{domain.label}</h3><p>{domain.description}</p></div>
         <strong aria-label={`${domain.label}: ${report.scores[domain.key].toFixed(2)} sobre 5`}>{report.scores[domain.key].toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}<small> / 5</small></strong>

@@ -49,5 +49,7 @@ describe('formatDateEs', () => {
     // e.g. "13 de abril de 2026"
     expect(formatted).toMatch(/abril/i);
     expect(formatted).toContain('2026');
+    // One calendar date for screen and PDF, including around UTC midnight.
+    expect(formatDateEs('2026-09-08T01:30:00Z')).toBe('7 de septiembre de 2026');
   });
 });

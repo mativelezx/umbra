@@ -27,6 +27,7 @@ it('saves exactly 30 responses, without client scores or ML fields', async () =>
   await screen.findByText('Tus respuestas quedaron guardadas.');
   expect(JSON.parse(request.mock.calls[0][1].body)).toEqual({ profileId:'fixture', instrument:'bfi-2-s-es-30-v1', answers:Array(30).fill(3), accepted:true });
   expect(screen.getAllByLabelText(/sobre 5/)).toHaveLength(5);
+  expect(screen.getByText(/Autoinforme · 6 de septiembre de 2026/)).toBeVisible();
 });
 it('retains answers after a network error so saving can be retried', async () => {
   request.mockRejectedValue(new Error('offline'));
