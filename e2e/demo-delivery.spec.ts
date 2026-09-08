@@ -6,7 +6,7 @@ test('synthetic demo: eight questions, conservative results, activities, and act
   test.setTimeout(120_000);
   await page.setViewportSize({ width: 1152, height: 960 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  const output = `.impeccable/review/personal-pdf-2026-09-07/${testInfo.project.name}`;
+  const output = `.impeccable/review/bfi-primary-2026-09-08/${testInfo.project.name}`;
   const errors: string[] = [];
   const writes: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
@@ -41,11 +41,16 @@ test('synthetic demo: eight questions, conservative results, activities, and act
     } else await card.locator('button[aria-pressed]').first().click();
     await card.getByRole('button', { name: 'Continuar', exact: true }).click();
   }
+  await expect(page.getByRole('heading', { name: 'Tu voz también tiene una medida.' })).toBeVisible();
+  await page.getByRole('button', { name: 'Ahora no', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Escribile a tu vos de 6 meses' })).toBeVisible();
   await page.getByRole('button', { name: 'Saltear', exact: true }).click();
   await expect(page).toHaveURL(/\/dashboard$/, { timeout: 30_000 });
+  await capture('dashboard-questionnaire');
+  await page.getByRole('tab', { name: 'Tu lectura' }).click();
   await capture('dashboard-reading');
-  await page.getByRole('tab', { name: 'Datos del modelo' }).click();
+  await page.getByRole('tab', { name: 'Otras miradas' }).click();
+  await page.getByText('Ver el módulo experimental de ML', { exact: true }).click();
   const statuses = page.locator('[data-testid^="bf-status-"]');
   await expect(statuses).toHaveCount(5);
   for (const status of await statuses.all()) await expect(status).toHaveText('evidencia insuficiente — sin cifra');
@@ -55,7 +60,7 @@ test('synthetic demo: eight questions, conservative results, activities, and act
   await expect(page.getByRole('button', { name: 'Abrir Caminata sin destino' })).toBeVisible();
   await capture('plan');
   await page.goto('/export');
-  const bigFive = page.locator('.pdf-section').filter({ has: page.getByRole('heading', { name: 'Big Five · estimación experimental de ML' }) });
+  const bigFive = page.locator('.pdf-ml-appendix');
   await expect(bigFive.getByText('evidencia insuficiente — sin cifra', { exact: true })).toHaveCount(5);
   await expect(bigFive.locator('.pdf-bar > *')).toHaveCount(0);
   await capture('export');

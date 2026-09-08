@@ -86,7 +86,7 @@ export function LandingEducation({ isDemo }: { isDemo: boolean }) {
           <h2 id="big-five-title">Big Five, en palabras simples.</h2>
           <div>
             <p>Big Five significa «los cinco grandes». Es una forma de estudiar cinco aspectos de la personalidad, como la curiosidad o la manera de organizarte.</p>
-            <p>En Umbra podés responder un cuestionario opcional de 30 afirmaciones. Sus resultados resumen cómo te describís vos: no te encasillan en un tipo de persona.</p>
+            <p>El cuestionario de 30 afirmaciones es la referencia principal de tu resultado en Umbra. Resume cómo te describís vos: no te encasilla en un tipo de persona. Responderlo es opcional.</p>
           </div>
         </div>
         <div className={styles.dimensionList}>
@@ -209,7 +209,7 @@ export function LandingEducation({ isDemo }: { isDemo: boolean }) {
         <div className={styles.questions}>
           <details>
             <summary>¿Qué recibo al terminar?<CaretDown size={21} aria-hidden="true" /></summary>
-            <div><p>Una lectura de tus respuestas, actividades que podés probar y un chat para seguir conversando. Si completás el cuestionario opcional, también ves sus cinco promedios. Podés guardar la lectura en PDF.</p><p>La lectura y las actividades las genera IA. Los ejemplos de esta portada son ficticios, no resultados sobre vos.</p></div>
+            <div><p>Si completás el cuestionario, primero ves sus cinco resultados y qué significa cada uno. En otra pestaña tenés una lectura de IA sobre lo que contaste. También podés elegir actividades, seguir conversando en el chat y descargar un informe PDF.</p><p>El cuestionario es opcional. La lectura y las actividades las genera IA; los cálculos del cuestionario no. Los ejemplos de esta portada son ficticios, no resultados sobre vos.</p></div>
           </details>
           <details>
             <summary>¿Dónde interviene la inteligencia artificial?<CaretDown size={21} aria-hidden="true" /></summary>

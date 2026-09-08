@@ -40,6 +40,7 @@ test('real self-report persists independently and reaches reading activities and
   const narrative = page.waitForResponse(response => new URL(response.url()).pathname === '/api/narrative', { timeout: 120_000 });
   await page.getByRole('button', { name: 'Continuar', exact: true }).click();
   await page.waitForURL('**/dashboard');
+  await page.getByRole('tab', { name: 'Tu lectura', exact: true }).click();
   const reading = await narrative;
   expect(reading.ok()).toBe(true);
   const events = await reading.text();
@@ -49,7 +50,8 @@ test('real self-report persists independently and reaches reading activities and
   await expect(page.getByLabel(/: 3.00 sobre 5/)).toHaveCount(5);
   expect((await new AxeBuilder({ page }).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
   await page.screenshot({ path: '.impeccable/review/self-report/real-dashboard.png', fullPage: true });
-  await page.getByRole('tab', { name: 'Datos del modelo' }).click();
+  await page.getByRole('tab', { name: 'Otras miradas' }).click();
+  await page.getByText('Ver el módulo experimental de ML', { exact: true }).click();
   await expect(page.getByText('evidencia insuficiente — sin cifra', { exact: true })).toHaveCount(5);
   await page.goto('/plan');
   const generating = page.waitForResponse(response => new URL(response.url()).pathname === '/api/plan', { timeout: 120_000 });

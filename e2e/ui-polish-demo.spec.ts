@@ -32,10 +32,11 @@ test.describe('UI polish — local synthetic demo', () => {
       }
 
       await page.goto('/dashboard');
-      const modelTab = page.getByRole('tab', { name: 'Datos del modelo' });
+      const modelTab = page.getByRole('tab', { name: 'Otras miradas' });
       await page.getByRole('tab', { name: 'Tu lectura' }).press('ArrowRight');
       await expect(modelTab).toBeFocused();
       await expect(modelTab).toHaveAttribute('aria-selected', 'true');
+      await page.getByText('Ver el módulo experimental de ML', { exact: true }).click();
       await page.screenshot({ path: `${output}-model.png`, fullPage: true });
       await page.getByRole('tab', { name: 'Tu lectura' }).click();
       await page.getByRole('button', { name: 'Siguiente sección' }).click();

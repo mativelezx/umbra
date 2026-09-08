@@ -25,7 +25,7 @@ export default function LandingPage() {
         <section className={styles.hero} aria-labelledby="landing-title">
           <div className={styles.heroCopy}>
             <h1 id="landing-title">Tu cabeza,{' '}<br /><span className={styles.titleEnding}>en palabras.<svg viewBox="0 0 520 34" fill="none" aria-hidden="true" focusable="false"><path pathLength="100" d="M5 22C132 3 358 1 510 11M21 30C170 15 361 15 478 21" /></svg></span></h1>
-            <p className={styles.heroDescription}>Respondé preguntas sobre tus decisiones y hábitos. Recibí una lectura de tus respuestas y actividades para probar en tu día.</p>
+            <p className={styles.heroDescription}>Poné en palabras lo que te pasa. Conocé cómo te describís con un cuestionario de personalidad y elegí actividades para llevarlo a tu día.</p>
             <div className={styles.heroActions}>
               <Link href="/register" className={styles.primaryAction}>Empezar a conocerme <ArrowRight size={21} aria-hidden="true" /></Link>
               <Link href="#como" className={styles.howLink}>Ver cómo funciona <ArrowDown size={17} aria-hidden="true" /></Link>
@@ -55,7 +55,7 @@ export default function LandingPage() {
         <ol className={styles.steps}>
           {[
             ['Contá lo que te pasa', 'Creá tu cuenta y revisá el uso de tus datos. Respondé preguntas sobre tus decisiones, relaciones e intereses. También podés traer un texto de ChatGPT y completarlo con tus palabras.'],
-            ['Leé y compará con tu experiencia', 'Recibís una lectura de IA basada en tus respuestas. Podés sumar un cuestionario opcional de 30 afirmaciones para ver cómo te describís en cinco aspectos.'],
+            ['Mirá cómo te describís', 'En «Mi resultado» podés completar 30 afirmaciones y ver tus cinco resultados del cuestionario. Son cálculos de tus respuestas, no predicciones de IA. Es opcional; la lectura de tus textos queda en otra pestaña.'],
             ['Probá un paso concreto', 'Elegí una actividad de escritura, atención o conversación. Marcá tus avances, seguí pensando en el chat o descargá tu lectura en PDF.'],
           ].map(([title, body], index) => (
             <li key={title}>

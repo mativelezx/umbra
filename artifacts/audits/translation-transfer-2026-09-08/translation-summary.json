@@ -1,0 +1,10 @@
+{
+  "completed_at": "2026-09-08T15:26:48.102227+00:00",
+  "n_essays": 248,
+  "n_chunks": 709,
+  "generation_cap_hits": 6,
+  "seconds": 1244.4103594170883,
+  "human_translation_review": "not_performed",
+  "translations_sha256": "7f71f5488d014cec064e32cf399e42ee17263c242270df51bd51ba2e6b062ee4",
+  "source_hashes_unchanged": true
+}

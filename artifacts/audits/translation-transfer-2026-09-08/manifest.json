@@ -1,0 +1,37 @@
+{
+  "started_at": "2026-09-08T15:05:58.914891+00:00",
+  "protocol_sha256": "5c535bb1a662351af2ea9ab3d3deeccd4bba7804caa4831179c0ab86a0810abb",
+  "script_sha256": "2583b33a9a7fd3a83a5063990d222e9599a96399b9ff83f1150f18f0bfb679d8",
+  "guards_sha256": "a42c77ee146389ce5a4ea27139834b2033c7617a6bcebb28ac7aaba91dfd4032",
+  "model_revision": "5bc4493d463cf000c1f0b50f8d56886a392ed4ab",
+  "source_hashes": {
+    "models/ridge_v1.joblib": "93eeecaaef2f334216783f0057184cbd2864edd43a484d3459e881b03d536612",
+    "eval_metrics.json": "43cc5ec4562ea28ffcca657f0cf200df9bc606da6472416ffba11b718c1ddeef",
+    "models/baseline_tfidf.joblib": "6bf3b695642a56ad8b0fa04dd0edc1c833f87b13be0297ec224110af7adae117",
+    "data/splits/train.csv": "d4c79bf63fb11353799653256348b2284d72e20bc3828c742a4018f41a44debf",
+    "data/splits/val.csv": "c806c72fbe459a12e1c108ebaf175d2b1832ae198b6e9e5608df4caae01290b6",
+    "data/splits/test.csv": "981eee985f804bf17ea348edca83d13fd2a8ec68eda93c13e353c2c6da06ccc4"
+  },
+  "translation_model_hashes": {
+    "target.spm": "e236ee6d866b635c0142114f8647f39831f9d92534aa2aad75c942f6a78ad0e3",
+    "tokenizer_config.json": "9859e3f8f73e2f50ab3e5cc2de432645347432956df4772d33209a346dd97f3b",
+    "config.json": "666ad3c2943674b6a789e311d221e44ec23e27f1bd9727930754bf773ec8e464",
+    "generation_config.json": "837839ed0534a27084f9b980fc33f47729052dd89cb26cca7ac830765ed30e49",
+    "README.md": "7831f4fa1eda04c91a5aa7b57006db58355c78337a552c5ff0252d0c049710d8",
+    "source.spm": "4dd547c24816a335e7b0b2e63376a8f1b3cbfc671eda5ab808dd44fdadaa8791",
+    "pytorch_model.bin": "befce0f620e8e63f83bbb7f0818eb51d541cba28057a7cc14b00466d85c4994c",
+    "vocab.json": "257f346d7a6b2ecceafcca8ba05648ce2fd68dfaf105fb0e913dca7198f3f6d5"
+  },
+  "translation_config": {
+    "device": "cpu",
+    "threads": 4,
+    "num_beams": 4,
+    "do_sample": false,
+    "source_chunk_tokens": 320,
+    "max_new_tokens": 512,
+    "batch_size": 8
+  },
+  "n_source_essays": 248,
+  "labels_sent_to_translator": false,
+  "external_text_transmission": false
+}

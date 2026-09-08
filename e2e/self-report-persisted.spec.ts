@@ -21,7 +21,8 @@ test('saved synthetic questionnaire remains distinct through dashboard activitie
   expect(saved.psychological_profiles[0].analysis_raw.ml.inputSource).toBe('user_open_answers');
   expect(saved.profile.research_opt_in).toBe(false);
   expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
-  await page.getByRole('tab', { name: 'Datos del modelo' }).click();
+  await page.getByRole('tab', { name: 'Otras miradas' }).click();
+  await page.getByText('Ver el módulo experimental de ML', { exact: true }).click();
   await expect(page.getByText('evidencia insuficiente — sin cifra', { exact: true })).toHaveCount(5);
   await page.goto('/plan');
   await expect(page.getByRole('main').getByRole('region')).toHaveCount(3);

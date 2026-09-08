@@ -258,13 +258,15 @@ test.describe('Umbra full-flow happy path (dynamic onboarding)', () => {
     ).toBeVisible({ timeout: 15_000 });
 
     // 6. Narrative streams in from /api/narrative.
+    await page.getByRole('tab', { name: 'Tu lectura', exact: true }).click();
     const readingResponse = await narrativeResponse;
     expect(readingResponse.ok()).toBe(true);
     const readingEvents = await readingResponse.text();
     expect(readingEvents).toContain('"type":"done"');
     expect(readingEvents).not.toContain('"type":"error"');
     await page.screenshot({ path: testInfo.outputPath('reading-real.png') });
-    await page.getByRole('tab', { name: 'Datos del modelo' }).click();
+    await page.getByRole('tab', { name: 'Otras miradas' }).click();
+    await page.getByText('Ver el módulo experimental de ML', { exact: true }).click();
     const dimensions = page.getByRole('list', { name: 'Dimensiones Big Five con su estado de confianza' });
     await expect(dimensions.getByRole('listitem')).toHaveCount(5);
     await expect(dimensions.getByText('Apertura a lo nuevo', { exact: true })).toBeVisible();

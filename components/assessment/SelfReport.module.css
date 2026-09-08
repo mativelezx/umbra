@@ -32,12 +32,17 @@
 .summary { padding-block: 1rem 2rem; }
 .dimensions { margin-block: 2rem; }
 .dimension { display: grid; grid-template-columns: 1fr auto; gap: .5rem 2rem; padding-block: 1.4rem; border-top: 1px solid #cfcfc6; }
-.dimension h3 { font-size: 1.25rem; font-weight: 600; }
+.dimension h3 { display: flex; gap: .65rem; align-items: center; font-size: 1.25rem; font-weight: 600; }
+.dimension h3 svg { flex-shrink: 0; }
 .dimension p { font-size: .875rem; margin-block: .5rem; }
 .dimension > strong { font-size: 1.8rem; font-weight: 500; font-variant-numeric: tabular-nums; }
 .dimension small { color: #53534f; font-size: .875rem; }
 .scale { grid-column: 1/-1; height: 4px; background: #deded5; border-radius: 4px; }
 .scale span { display: block; height: 100%; background: #242424; border-radius: 4px; }
+.scaleLabels { grid-column: 1/-1; display: flex; justify-content: space-between; gap: 1rem; color: var(--muted-ink); font-size: .75rem; line-height: 1.5; }
+.scaleLabels span:last-child { text-align: right; }
+.repeatLink { display: inline-flex; align-items: center; gap: .75rem; min-height: 44px; text-decoration: underline; text-underline-offset: 4px; }
+@media (prefers-reduced-motion: no-preference) { .scale span { transform-origin: left; animation: showScore 550ms var(--ease-flow); } @keyframes showScore { from { transform: scaleX(0); } to { transform: scaleX(1); } } }
 .primaryLink { display: inline-flex; align-items: center; justify-content: space-between; gap: 2rem; min-height: 48px; background: #242424; color: white; border-radius: 14px; padding: .8rem 1.2rem; }
 .primaryLink:hover { background: #40403c; }
 .explore { padding: 1rem 1.5rem; border-radius: 14px; background: #efefe9; }

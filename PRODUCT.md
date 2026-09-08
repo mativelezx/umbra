@@ -2,7 +2,7 @@
 
 <!-- impeccable:product-schema 1 -->
 
-Confirmación de propósito: Matías Vélez, conversación del 6 de septiembre de 2026.
+Confirmación de propósito: Matías Vélez, conversación del 6 de septiembre de 2026. Actualización aprobada el 8 de septiembre: autoinforme BFI-2-S como referencia principal; ML secundario experimental.
 Este registro orienta el rediseño; no certifica funcionalidad ni aprobación académica.
 
 ## Platform
@@ -15,11 +15,11 @@ Personas adultas hispanohablantes que buscan reflexionar sobre sí mismas, sin s
 
 ## Product Purpose
 
-Ayudar a una persona a pasar de sus propias respuestas a una lectura experimental y a una actividad de reflexión elegida por ella. El recorrido principal confirmado es: consentimiento → preguntas → resultado experimental comprensible → actividad de reflexión. El chat es complementario.
+Ayudar a una persona a reflexionar sobre lo que cuenta y cómo se describe, y a elegir una actividad para su día. El recorrido conserva consentimiento → escritura → análisis inicial → cuestionario opcional → resultado y actividad. En Mi resultado se muestran primero los promedios del cuestionario; la lectura se abre a demanda y el chat es complementario. Si se omite el cuestionario, se invita a completarlo y no se inventan sus resultados.
 
 ## Positioning
 
-Prototipo académico de autoconocimiento que combina una estimación experimental relacionada con Big Five, una interpretación narrativa inspirada en funciones cognitivas de Jung y actividades de reflexión vinculadas con Positive Computing. Esas capas deben distinguirse: no tienen el mismo origen ni el mismo respaldo empírico.
+Prototipo académico de autoconocimiento que distingue autoinforme BFI-2-S, interpretación de IA, recursos simbólicos de Jung y actividades orientadas por Positive Computing. El ML propio se conserva en una sección experimental secundaria. Las capas no tienen el mismo origen ni respaldo: el cuestionario no valida el predictor, Jung, la administración web ni la eficacia de las actividades.
 
 No se afirma exclusividad comercial, superioridad psicométrica ni validación en población hispanohablante.
 
@@ -32,7 +32,7 @@ El recorrido deberá comprobarse con una cuenta de prueba y contenido sintético
 ## Capabilities and Constraints
 
 - Código existente para acceso, consentimiento, preguntas, análisis, narrativa, actividades, chat, exportación y gestión de cuenta/datos. La disponibilidad integral permanece pendiente de verificación de runtime.
-- La estimación numérica procede del módulo ML; el modelo de lenguaje genera interpretación y texto. No convertir una valoración generada por IA en una probabilidad científica o una certeza individual validada.
+- Los cinco promedios principales de 1 a 5 se calculan en servidor con treinta respuestas y la clave publicada del BFI-2-S español. No son percentiles ni predicciones de IA. El ML conserva su evaluación independiente y omite las cinco cifras individuales insuficientes. El modelo de lenguaje genera interpretación y texto a partir del contexto explícito, sin usar resultados ML ocultos como pistas.
 - Umbra no es terapia, diagnóstico, consejo médico ni MBTI.
 - Mantener consentimiento, controles de privacidad, aislamiento de datos por usuario y tratamiento seguro de contenido sensible. Un cambio visual no autoriza cambiar esos contratos.
 - No agregar funcionalidades, dependencias ni infraestructura sin una necesidad concreta del recorrido.
@@ -60,7 +60,7 @@ El recorrido deberá comprobarse con una cuenta de prueba y contenido sintético
 ## Product Principles
 
 1. Explicar antes de impresionar: que la persona y el autor comprendan el resultado.
-2. Distinguir estimación, interpretación y propuesta de actividad.
+2. Distinguir autoinforme, estimación experimental, interpretación y propuesta de actividad.
 3. Dar control sin presión: reflexión voluntaria, límites explícitos y acciones comprensibles.
 4. Mantener una implementación que un estudiante pueda estudiar, demostrar y defender.
 5. Verificar el recorrido real antes de llamarlo listo para grabar.

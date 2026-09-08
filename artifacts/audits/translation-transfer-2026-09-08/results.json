@@ -1,0 +1,238 @@
+{
+  "completed_at": "2026-09-08T15:27:45.073553+00:00",
+  "kind": "retrospective_paired_machine_translation_sensitivity_not_spanish_validation",
+  "n_pairs": 248,
+  "new_participants": 0,
+  "trained_or_calibrated": false,
+  "production_status_changed": false,
+  "source_hashes_unchanged": true,
+  "extractor_revision": "45c032ab32cc946ad88a166f7cb282f58c753c2e",
+  "predictor_contract": "round_2_clip_0_100",
+  "truncated_input_counts": {
+    "english_original": 214,
+    "spanish_machine_translated": 158
+  },
+  "translation_summary": {
+    "completed_at": "2026-09-08T15:26:48.102227+00:00",
+    "n_essays": 248,
+    "n_chunks": 709,
+    "generation_cap_hits": 6,
+    "seconds": 1244.4103594170883,
+    "human_translation_review": "not_performed",
+    "translations_sha256": "7f71f5488d014cec064e32cf399e42ee17263c242270df51bd51ba2e6b062ee4",
+    "source_hashes_unchanged": true
+  },
+  "metrics": {
+    "openness": {
+      "english_original": {
+        "n": 248,
+        "auc": 0.6485779666557698,
+        "balanced_accuracy": 0.5952271984308597,
+        "f1": 0.6212121212121212,
+        "rmse_binary": 0.4826136408614763
+      },
+      "spanish_machine_translated": {
+        "n": 248,
+        "auc": 0.6267734553775743,
+        "balanced_accuracy": 0.6038247793396534,
+        "f1": 0.5429864253393665,
+        "rmse_binary": 0.48958666330961753
+      },
+      "constant_training_mean": {
+        "n": 248,
+        "auc": 0.5,
+        "balanced_accuracy": 0.5,
+        "f1": 0.6981627296587927,
+        "rmse_binary": 0.4991608037847582
+      }
+    },
+    "conscientiousness": {
+      "english_original": {
+        "n": 248,
+        "auc": 0.5583612809890182,
+        "balanced_accuracy": 0.5357729992766489,
+        "f1": 0.5608856088560885,
+        "rmse_binary": 0.4989910814159741
+      },
+      "spanish_machine_translated": {
+        "n": 248,
+        "auc": 0.5374169790228185,
+        "balanced_accuracy": 0.5164069178667718,
+        "f1": 0.3595505617977528,
+        "rmse_binary": 0.49770928381381363
+      },
+      "constant_training_mean": {
+        "n": 248,
+        "auc": 0.5,
+        "balanced_accuracy": 0.5,
+        "f1": 0.6183844011142061,
+        "rmse_binary": 0.5009014079320052
+      }
+    },
+    "extraversion": {
+      "english_original": {
+        "n": 248,
+        "auc": 0.5909445745511321,
+        "balanced_accuracy": 0.5865860005204268,
+        "f1": 0.6254545454545455,
+        "rmse_binary": 0.4944808306270386
+      },
+      "spanish_machine_translated": {
+        "n": 248,
+        "auc": 0.5635571168358054,
+        "balanced_accuracy": 0.5290137913088733,
+        "f1": 0.63125,
+        "rmse_binary": 0.5025436219637681
+      },
+      "constant_training_mean": {
+        "n": 248,
+        "auc": 0.5,
+        "balanced_accuracy": 0.5,
+        "f1": 0.6594594594594595,
+        "rmse_binary": 0.5006200722885478
+      }
+    },
+    "agreeableness": {
+      "english_original": {
+        "n": 248,
+        "auc": 0.4973985431841832,
+        "balanced_accuracy": 0.49193548387096775,
+        "f1": 0.6272189349112426,
+        "rmse_binary": 0.5016290710825273
+      },
+      "spanish_machine_translated": {
+        "n": 248,
+        "auc": 0.5082271071800208,
+        "balanced_accuracy": 0.49193548387096775,
+        "f1": 0.5935483870967742,
+        "rmse_binary": 0.5017759104983927
+      },
+      "constant_training_mean": {
+        "n": 248,
+        "auc": 0.5,
+        "balanced_accuracy": 0.5,
+        "f1": 0.6666666666666666,
+        "rmse_binary": 0.5009386948408141
+      }
+    },
+    "neuroticism": {
+      "english_original": {
+        "n": 248,
+        "auc": 0.5556966972835645,
+        "balanced_accuracy": 0.5321477428180574,
+        "f1": 0.5433070866141733,
+        "rmse_binary": 0.4998654485876738
+      },
+      "spanish_machine_translated": {
+        "n": 248,
+        "auc": 0.540095107810566,
+        "balanced_accuracy": 0.5137776040648818,
+        "f1": 0.44036697247706424,
+        "rmse_binary": 0.5023758388235837
+      },
+      "constant_training_mean": {
+        "n": 248,
+        "auc": 0.5,
+        "balanced_accuracy": 0.5,
+        "f1": 0.0,
+        "rmse_binary": 0.5001200314907929
+      }
+    }
+  },
+  "paired_comparison": {
+    "openness": {
+      "mean_absolute_score_change_0_100": 6.7594757080078125,
+      "classification_agreement_at_50": 0.7701612903225806,
+      "auc_original_95_ci": [
+        0.5801981346356346,
+        0.7146206475798521
+      ],
+      "auc_translated_95_ci": [
+        0.5580823773541179,
+        0.6974929293383414
+      ],
+      "auc_difference_95_ci": [
+        -0.06518234883344809,
+        0.018508225573095127
+      ]
+    },
+    "conscientiousness": {
+      "mean_absolute_score_change_0_100": 3.206451892852783,
+      "classification_agreement_at_50": 0.6169354838709677,
+      "auc_original_95_ci": [
+        0.48615266724735123,
+        0.6296602283206665
+      ],
+      "auc_translated_95_ci": [
+        0.46317916538599163,
+        0.6075688732723296
+      ],
+      "auc_difference_95_ci": [
+        -0.06403077381814709,
+        0.020332655512945053
+      ]
+    },
+    "extraversion": {
+      "mean_absolute_score_change_0_100": 5.284516334533691,
+      "classification_agreement_at_50": 0.7540322580645161,
+      "auc_original_95_ci": [
+        0.5211527174985204,
+        0.6621519569861033
+      ],
+      "auc_translated_95_ci": [
+        0.4926760966386623,
+        0.6336003646383443
+      ],
+      "auc_difference_95_ci": [
+        -0.09144012706107307,
+        0.033641914070794206
+      ]
+    },
+    "agreeableness": {
+      "mean_absolute_score_change_0_100": 2.8550808429718018,
+      "classification_agreement_at_50": 0.7983870967741935,
+      "auc_original_95_ci": [
+        0.42268923535334135,
+        0.571204319920347
+      ],
+      "auc_translated_95_ci": [
+        0.4372476023150062,
+        0.5798861713321749
+      ],
+      "auc_difference_95_ci": [
+        -0.0630657504714506,
+        0.08150442176768995
+      ]
+    },
+    "neuroticism": {
+      "mean_absolute_score_change_0_100": 5.2460479736328125,
+      "classification_agreement_at_50": 0.7258064516129032,
+      "auc_original_95_ci": [
+        0.4812104909418257,
+        0.62497722392139
+      ],
+      "auc_translated_95_ci": [
+        0.467308305818768,
+        0.6128014664840068
+      ],
+      "auc_difference_95_ci": [
+        -0.08148624678123591,
+        0.04777406796520259
+      ]
+    }
+  },
+  "bootstrap": {
+    "unit": "original_essay_row_not_independently_verified_person",
+    "samples": 2000,
+    "seed": 20260908,
+    "intervals": "percentile_95_unadjusted_for_five_dimensions"
+  },
+  "limits": [
+    "English binary labels are not continuous personality scores.",
+    "Translations are not originally Spanish texts or new people.",
+    "Observed test set; no new blind validation.",
+    "Translation may alter wording, cues and meaning; human review is pending.",
+    "No dataset texts or translations are published or sent to external providers.",
+    "No change to runtime confidence or academic claims is justified automatically."
+  ]
+}

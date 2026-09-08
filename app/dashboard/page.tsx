@@ -58,16 +58,17 @@ function DashboardView({ data }: { data: DashboardData }) {
     <LayoutShell>
       <header className={styles.pageHeading}>
         <h1>Mi resultado</h1>
-        <p><Info size={18} aria-hidden="true" /><span>Perfil experimental para reflexionar. No es una evaluación clínica ni una medida de tu valor personal.</span></p>
+        <p><Info size={18} aria-hidden="true" /><span>Tus respuestas al cuestionario y la interpretación de IA se muestran por separado. No es una evaluación clínica ni una medida de tu valor personal.</span></p>
       </header>
       <ProfileWorkspace
         firstName={data.fullName?.split(' ')[0]}
-        reading={<><SelfReportSummary report={data.selfReport ?? null} /><NarrativeSection profileId={data.profileId} initialContent={data.narrativeContent} /></>}
+        questionnaire={<SelfReportSummary report={data.selfReport ?? null} />}
+        reading={<NarrativeSection profileId={data.profileId} initialContent={data.narrativeContent} />}
         measurement={<div className={styles.measurement}>
           <div className={styles.measurementIntro}>
             <h2 className="focus-title">Qué puede estimar el modelo</h2>
-            <p className="reading-copy mt-5">El módulo propio de ML ofrece estimaciones experimentales de Big Five. La versión actual no tiene evidencia suficiente para mostrar cifras individuales en español: las cinco dimensiones aparecen con ese estado.</p>
-            <p className="mt-4 text-sm leading-relaxed text-text-2">Estos resultados no son percentiles ni permiten compararte con otras personas. Superar ese criterio no demuestra precisión individual en español.</p>
+            <p className="reading-copy mt-5">Este modelo intenta estimar Big Five a partir de tus textos. Es una línea experimental del proyecto: no tiene validación individual suficiente en español y sus cinco cifras permanecen omitidas.</p>
+            <p className="mt-4 text-sm leading-relaxed text-text-2">Esto no afecta los resultados de tu cuestionario, que se calculan con tus respuestas. Traducir textos de prueba permitió estudiar el modelo, pero no validarlo para una persona. No combinamos sus estimaciones con el autoinforme.</p>
           </div>
           <BigFiveDimensions bigFive={data.bigFive} status={data.perDimensionStatus} />
         </div>}

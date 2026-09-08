@@ -60,12 +60,15 @@ test('saved synthetic account screens and PDF', async ({ page }, info) => {
     if (path === '/chat') await expect(page.getByRole('textbox', { name: 'Tu mensaje' })).toBeVisible();
     await capture(page, info, path.slice(1).replaceAll('/', '-'));
     if (path === '/dashboard') {
-      for (const [label, file] of [['Datos del modelo', 'dashboard-modelo'], ['Lectura simbólica', 'dashboard-jung']]) {
+      for (const [label, file] of [['Tu lectura', 'dashboard-lectura'], ['Otras miradas', 'dashboard-jung']]) {
         await page.getByRole('tab', { name: label, exact: true }).click();
         await capture(page, info, file!);
       }
       await page.getByText('Explorar funciones cognitivas y otros arquetipos', { exact: true }).click();
       await capture(page, info, 'dashboard-jung-detalle');
+      await page.getByText('Explorar funciones cognitivas y otros arquetipos', { exact: true }).click();
+      await page.getByText('Ver el módulo experimental de ML', { exact: true }).click();
+      await capture(page, info, 'dashboard-modelo');
     }
     if (path === '/export') {
       const downloading = page.waitForEvent('download');

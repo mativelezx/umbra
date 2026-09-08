@@ -12,7 +12,7 @@ test('reading chapters and glossary work with mouse, keyboard and touch', async 
   page.on('request', request => { if (request.method() === 'POST' && request.url().includes('/api/')) writes.push(request.url()); });
   await page.goto('/dashboard');
   await expect(page.locator('.reflection-scene')).toHaveAttribute('data-scene-motion', /running|paused/);
-  await page.getByRole('button', { name: 'Leer mi resultado' }).click();
+  await page.getByRole('tab', { name: 'Tu lectura', exact: true }).click();
   await page.locator('.chapter-index summary').click();
   const chapters = page.getByRole('navigation', { name: 'Capítulos de tu lectura' });
   await expect(chapters.getByRole('button')).toHaveCount(5);
@@ -21,7 +21,7 @@ test('reading chapters and glossary work with mouse, keyboard and touch', async 
   await expect(page.getByRole('heading', { name: 'Lo que te mueve', exact: true })).toBeVisible();
   await expect(page.locator('.reading-journey .reading-copy')).toContainText('Si ninguna de estas imágenes');
   await expect(page.locator('.reading-copy').getByRole('button', { name: 'Qué significa Si' })).toHaveCount(0);
-  await page.getByRole('tab', { name: 'Lectura simbólica', exact: true }).click();
+  await page.getByRole('tab', { name: 'Otras miradas', exact: true }).click();
   await page.getByText('Explorar funciones cognitivas y otros arquetipos', { exact: true }).click();
   const term = page.getByRole('button', { name: 'Qué significa Se', exact: true }).first();
   await term.scrollIntoViewIfNeeded();

@@ -57,7 +57,7 @@ export function SelfReportForm({ profileId, onContinue, existing = false }: Prop
     {page === -1 ? <>
       <Fingerprint size={56} weight="light" aria-hidden="true" />
       <h1>Tu voz también<br />tiene una medida.</h1>
-      <p>Hasta acá contaste tu experiencia con palabras. Ahora podés sumar una referencia distinta: 30 afirmaciones sobre cómo te describís habitualmente.</p>
+      <p>Respondé 30 afirmaciones sobre cómo te describís habitualmente. Al terminar vas a ver cinco resultados calculados con tus respuestas, con una explicación de cada uno. Esta es la referencia principal de tu resultado en Umbra.</p>
       <p>No hay respuestas correctas. Elegí cuánto estás de acuerdo con cada afirmación. Respetamos las preguntas de la versión española del BFI-2-S; por eso algunas palabras tienen un tono diferente al resto de Umbra.</p>
       <div className={styles.consent}>
         <h2>Vos decidís si sumarlo.</h2>

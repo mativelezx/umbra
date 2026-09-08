@@ -36,10 +36,10 @@ export function ReportContent({ data }: { data: ReportExportData }) {
     <div className="pdf-cover pdf-section">
       <div className="pdf-brand" role="img" aria-label="umbra"><BrandMark /><BrandWordmark /></div>
       <h1>{firstName ? `${firstName},` : 'Tu historia,'}<br />esta lectura<br />es para explorar.</h1>
-      <p className="pdf-cover-deck">Un cuaderno para reconocer lo que te resuena,<br />cuestionar lo que no y elegir por dónde seguir.</p>
+      <p className="pdf-cover-deck">Tus respuestas, una lectura para contrastar<br />y actividades que podés elegir.</p>
       <div className="pdf-cover-visual"><ReflectionDiagram /></div>
       <div className="pdf-cover-meta"><strong>{data.userName ?? 'Tu cuaderno personal'}</strong><span>{formatDateEs(new Date())}</span></div>
-      <div className="pdf-contents"><span><Eye size={18} />Tu lectura</span><ArrowRight size={16} /><span><Question size={18} />Las palabras, explicadas</span><ArrowRight size={16} /><span><PencilLine size={18} />Un paso posible</span></div>
+      <div className="pdf-contents"><span><ListChecks size={18} />Tu cuestionario</span><ArrowRight size={16} /><span><Eye size={18} />Tu lectura</span><ArrowRight size={16} /><span><PencilLine size={18} />Un paso posible</span></div>
       {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && <p className="pdf-note">Ejemplo local con datos ficticios. No representa un análisis real.</p>}
     <div className="pdf-footer"><p>Generado por Umbra · TFG Ingeniería en Software, Universidad Siglo 21.</p><p>Umbra no es terapia ni diagnóstico. No uses esta lectura para tomar decisiones clínicas.</p><p>Si estás en crisis: 135 (CABA y GBA) · 911 · 0800-999-0091 (Argentina, 24 horas).</p></div>
     </div>
@@ -52,20 +52,18 @@ export function ReportContent({ data }: { data: ReportExportData }) {
       <p className="pdf-note">{BFI2S_ATTRIBUTION} Fuente: <a href={BFI2S_SOURCE}>formulario y clave originales del Colby Personality Lab</a>.</p>
     </div>}
 
+    {!selfReport && <div className="pdf-section pdf-self-report">
+      <div className="pdf-section-heading"><ListChecks size={40} aria-hidden="true" /><h2>Tu cuestionario está pendiente.</h2><p>Todavía no respondiste las 30 afirmaciones del BFI-2-S. Por eso este informe no incluye sus cinco resultados. No reemplazamos tus respuestas por una estimación de IA.</p></div>
+      <p>Podés completarlo desde tu cuenta y descargar de nuevo el informe. Es opcional: la lectura y las actividades siguen disponibles.</p>
+      <p><a href="https://umbra-sigma.vercel.app/assessment">Completar mi cuestionario en Umbra</a></p>
+    </div>}
+
     {data.narrative && <div className="pdf-section pdf-reading">
       <div className="pdf-section-heading"><h2>No necesitás encajar<br />en esta lectura.</h2><p>Este texto se generó con IA a partir de lo que compartiste. Puede equivocarse. Vos decidís qué tiene sentido en tu experiencia y qué no.</p></div>
       <div className="pdf-reading-guide pdf-keep"><div><Eye size={26} /><strong>Reconocé</strong><p>Subrayá una idea que te resulte cercana.</p></div><div><Question size={26} /><strong>Contrastá</strong><p>Buscá un ejemplo real. También vale disentir.</p></div><div><PencilLine size={26} /><strong>Elegí</strong><p>Quedate con una pregunta para seguir pensando.</p></div></div>
       <div className="pdf-archetype pdf-keep"><ReadingArt chapter={3} /><div><h3>{info.name}</h3><p>{info.description}</p>{secondaryName && <p>Figura secundaria: {secondaryName}</p>}<p className="pdf-note">Una imagen para acompañar la lectura: el arquetipo es una figura simbólica elegida por IA. No es tu identidad, un diagnóstico ni una capacidad medida.</p></div></div>
       <SectionedNarrative content={data.narrative} presentation="document" />
     </div>}
-
-    <div className="pdf-section pdf-new-page">
-      <div className="pdf-section-heading pdf-ink-heading"><Compass size={46} weight="thin" /><h2>Cinco miradas.<br />Ninguna te define.</h2><p>Estas dimensiones ayudan a poner en palabras tendencias. No son casilleros en los que tengas que entrar.</p></div>
-      <h3>Big Five · estimación experimental de ML</h3>
-      <p>Big Five describe cinco dimensiones de personalidad, no tipos de personas. La versión actual de Umbra no tiene evidencia suficiente para mostrar cifras individuales en español.</p>
-      <div className="pdf-dimensions">{DIMENSIONS.map(dimension => <div key={dimension.key} className="pdf-dimension pdf-keep"><dimension.icon size={30} weight="light" aria-hidden="true" /><div><h4>{dimension.name}</h4><p>{dimension.meaning}</p><p className="pdf-reflection-question">{dimension.question}</p></div><span>{statuses[dimension.key] === 'ok' ? data.profile.bigFive[dimension.key] : STATUS_LABEL[statuses[dimension.key]]}</span></div>)}</div>
-      <div className="pdf-callout"><strong>Qué significa «sin cifra»</strong><p>El sistema no cuenta con validación individual suficiente en este contexto. No significa que una dimensión sea baja, que te falte algo o que hayas respondido mal. No se muestran percentiles ni comparaciones con otras personas.</p></div>
-    </div>
 
     {FUNCTION_GROUPS.map((group, index) => <div className="pdf-section pdf-new-page" key={group.title}>
       <div className="pdf-section-heading pdf-symbol-heading"><div><h2>{group.title}</h2><p>{group.description}</p></div><ReadingArt chapter={index === 0 ? 1 : 3} /></div>
@@ -88,6 +86,13 @@ export function ReportContent({ data }: { data: ReportExportData }) {
         {area.actions.slice(1).map(renderAction)}
       </section>)}
     </div>}
+
+    <div className="pdf-section pdf-new-page pdf-ml-appendix">
+      <div className="pdf-section-heading"><Compass size={40} weight="thin" /><h2>Sobre el modelo experimental.</h2><p>El proyecto también estudia si un modelo de aprendizaje automático puede estimar Big Five desde textos. Esta parte no calcula los resultados de tu cuestionario.</p></div>
+      <p>La evidencia disponible no permite presentar sus cinco cifras como estimaciones individuales válidas en español. La prueba con textos traducidos estudió su comportamiento; no validó su uso con personas hispanohablantes.</p>
+      <div className="pdf-dimensions">{DIMENSIONS.map(dimension => <div key={dimension.key} className="pdf-dimension pdf-keep"><dimension.icon size={26} weight="light" aria-hidden="true" /><div><h4>{dimension.name}</h4></div><span>{statuses[dimension.key] === 'ok' ? data.profile.bigFive[dimension.key] : STATUS_LABEL[statuses[dimension.key]]}</span></div>)}</div>
+      <div className="pdf-callout"><strong>Es un límite del modelo, no de tus respuestas.</strong><p>«Sin cifra» no significa que una dimensión sea baja o que hayas respondido mal. Tu cuestionario se calcula por separado. No promediamos esas respuestas con el ML ni las usamos para entrenarlo.</p></div>
+    </div>
 
     <div className="pdf-section pdf-new-page pdf-personal-notes">
       <div className="pdf-section-heading pdf-symbol-heading"><div><h2>Lo importante<br />lo escribís vos.</h2><p>Podés volver a estas preguntas otro día. Tu respuesta no tiene que ser perfecta ni coincidir con el informe.</p></div><ReadingArt chapter={4} /></div>

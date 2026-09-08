@@ -39,5 +39,13 @@ describe('print report preserves and explains the result', () => {
     expect(container.querySelectorAll('.pdf-function')).toHaveLength(8);
     expect(container).toHaveTextContent('Lo importante');
     expect(container).not.toHaveTextContent('undefined');
+    expect(screen.getByRole('heading', { name: 'Tu cuestionario está pendiente.' })).toBeVisible();
+    expect(screen.getByRole('link', { name: 'Completar mi cuestionario en Umbra' })).toHaveAttribute('href', 'https://umbra-sigma.vercel.app/assessment');
+  });
+  it('places the user questionnaire before the reading and the ML appendix after the activities', () => {
+    const { container } = render(<ReportContent data={{ profile: { ...DEMO_PROFILE, analysisRaw: { ...DEMO_PROFILE.analysisRaw, selfReport: createSelfReport(Array(30).fill(3), '2026-09-07T12:00:00Z') } }, userName: 'Prueba', narrative: DEMO_NARRATIVE, plan: { areas: [{ id: 'a', name: 'Una propuesta', rationale: 'Una invitación general.', actions: [{ id: 'b', title: 'Escribir una idea', description: 'Anotá lo que elegís.', microGoals: [] }] }] } }} />);
+    const sections = Array.from(container.querySelectorAll('.pdf-section'));
+    expect(sections.indexOf(container.querySelector('.pdf-self-report')!)).toBeLessThan(sections.indexOf(container.querySelector('.pdf-reading')!));
+    expect(sections.indexOf(container.querySelector('.pdf-ml-appendix')!)).toBeGreaterThan(sections.findIndex(section => section.querySelector('.pdf-action')));
   });
 });

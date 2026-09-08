@@ -199,6 +199,7 @@ test.describe('New dashboard + chat via ChatGPT seed flow', () => {
       page.getByRole('heading', { name: /Mi resultado/i }),
     ).toBeVisible({ timeout: 15_000 });
     // Wait for narrative to land
+    await page.getByRole('tab', { name: 'Tu lectura', exact: true }).click();
     const narrative = await narrativeResponse;
     expect(narrative.ok()).toBe(true);
     const events = await narrative.text();
@@ -206,7 +207,8 @@ test.describe('New dashboard + chat via ChatGPT seed flow', () => {
     expect(events).not.toContain('"type":"error"');
     await shot(page, '06-dashboard-new');
 
-    await page.getByRole('tab', { name: 'Datos del modelo' }).click();
+    await page.getByRole('tab', { name: 'Otras miradas' }).click();
+    await page.getByText('Ver el módulo experimental de ML', { exact: true }).click();
     await expect(page.getByText('evidencia insuficiente — sin cifra', { exact: true })).toHaveCount(5);
 
     // Chat NEW layout (with context pill + quick prompts)

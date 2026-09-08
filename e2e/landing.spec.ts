@@ -7,7 +7,7 @@ test.describe('Landing page', () => {
     await page.evaluate(() => document.fonts.ready);
     await expect(page.getByRole('heading', { name: 'Tu cabeza, en palabras.', exact: true })).toBeVisible();
     await expect(page).toHaveTitle('Umbra — Tu cabeza, en palabras.');
-    await expect(page.getByText('Respondé preguntas sobre tus decisiones y hábitos. Recibí una lectura de tus respuestas y actividades para probar en tu día.', { exact: true })).toBeVisible();
+    await expect(page.getByText('Poné en palabras lo que te pasa. Conocé cómo te describís con un cuestionario de personalidad y elegí actividades para llevarlo a tu día.', { exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: /Empezar/i }).first()).toBeVisible();
     await expect(page.getByRole('link', { name: 'Ver cómo funciona', exact: true })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);

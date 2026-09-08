@@ -26,7 +26,7 @@ for (const width of [390, 1440]) {
     expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await page.getByRole('button', { name: 'Reproducir ilustración' }).click();
-    await page.getByRole('button', { name: 'Leer mi resultado' }).click();
+    await page.getByRole('tab', { name: 'Tu lectura', exact: true }).click();
     await page.locator('.reading-takeaway').scrollIntoViewIfNeeded();
     await expect(scene).toHaveAttribute('data-scene-motion', 'paused');
     await page.getByRole('button', { name: 'Siguiente sección' }).click();
@@ -36,7 +36,7 @@ for (const width of [390, 1440]) {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.evaluate(() => window.scrollTo(0, 0));
     await expect(scene).toHaveAttribute('data-scene-motion', 'reduced');
-    expect(await scene.evaluate(node => node.getAnimations({ subtree: true }).length)).toBe(0);
+    await expect.poll(() => scene.evaluate(node => node.getAnimations({ subtree: true }).length)).toBe(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
     await page.goto('/plan');
     await page.getByRole('button', { name: 'Abrir Caminata sin destino' }).click();

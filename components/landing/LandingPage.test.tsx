@@ -18,7 +18,6 @@ describe('landing activity entry', () => {
     vi.stubEnv('NEXT_PUBLIC_DEMO_MODE', 'false');
     const page = landingDocument();
     expect(getByRole(page.body, 'heading', { level: 1 })).toHaveTextContent('Tu cabeza, en palabras.');
-    expect(page.body).toHaveTextContent('Respondé preguntas sobre tus decisiones y hábitos. Recibí una lectura de tus respuestas y actividades para probar en tu día.');
     expect(page.body).toHaveTextContent('30 afirmaciones');
     expect(page.body).toHaveTextContent('cinco promedios de 1 a 5');
     expect(page.body).toHaveTextContent('Completar el cuestionario no valida ese modelo');

@@ -118,6 +118,28 @@ route = read('app/api/self-report/route.ts')
 check('2-codigo-modelo', 'Autoinforme separado del entrenamiento',
       'createSelfReport(input.answers' in route and '...previous, selfReport' in route
       and '.eq(\'user_id\', user.id)' in route and 'researchUse: false' in bfi)
+translation = json.loads(read('artifacts/audits/translation-transfer-2026-09-08/results.json'))
+check('2-codigo-modelo', 'Traducción: pares retrospectivos sin participantes ni ajuste',
+      translation['n_pairs'] == 248 and translation['new_participants'] == 0
+      and not translation['trained_or_calibrated'] and '248 pares, no 496 participantes' in flat)
+check('2-codigo-modelo', 'Jerarquía y carga diferida documentadas',
+      all(label in flat for label in ['Tu cuestionario', 'Tu lectura', 'Otras miradas', 'Anexo H'])
+      and 'visited[index]' in read('components/dashboard/ProfileWorkspace.tsx'))
+check('2-codigo-modelo', 'Informe conserva ML como apéndice',
+      'pdf-ml-appendix' in read('components/export/ReportContent.tsx') and 'apéndice ML' in flat)
+for row_number, dim in enumerate(dims, 1):
+    value = translation['metrics'][dim]
+    low, high = translation['paired_comparison'][dim]['auc_translated_95_ci']
+    expected_auc = [es_number(value['english_original']['auc']),
+                    es_number(value['spanish_machine_translated']['auc']),
+                    es_number(low) + '–' + es_number(high),
+                    es_number(value['spanish_machine_translated']['balanced_accuracy'])]
+    check('2-codigo-modelo', 'Tabla 39 traducción ' + dim,
+          [doc.tables[38].cell(row_number, col).text for col in range(1, 5)] == expected_auc)
+    expected_rmse = [es_number(value[model]['rmse_binary'], 4) for model in
+                     ['english_original', 'spanish_machine_translated', 'constant_training_mean']]
+    check('2-codigo-modelo', 'Tabla 40 RMSE ' + dim,
+          [doc.tables[39].cell(row_number, col).text for col in range(1, 4)] == expected_rmse)
 sql = '\n'.join(file.read_text() for file in (args.repo / 'supabase/migrations').glob('*.sql'))
 tables = set(re.findall(r'CREATE TABLE (?:IF NOT EXISTS )?public\.(\w+)', sql, re.I))
 check('2-codigo-modelo', 'Quince tablas públicas en migraciones', len(tables) == 15, ', '.join(sorted(tables)))
