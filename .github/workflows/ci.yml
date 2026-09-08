@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, beta, codex/reentrega-final-2026-09-07]
   pull_request:
-    branches: [main]
+    branches: [main, beta]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -44,10 +44,10 @@ jobs:
         with:
           version: ${{ env.PNPM_VERSION }}
 
-      - name: Setup pnpm
+      - name: Setup Node 24
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -86,15 +86,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node 20
+      - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: ${{ env.PNPM_VERSION }}
 
-      - name: Setup Node 20
+      - name: Setup Node 24
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -131,8 +131,7 @@ jobs:
           PLAYWRIGHT_BASE_URL: http://localhost:3000
 
       - name: Dependency audit (high severity gate)
-        run: pnpm audit --audit-level=high || echo "::warning::pnpm audit found vulnerabilities — review required"
-        continue-on-error: true
+        run: pnpm audit --prod --audit-level=high
 
       - name: Stop Next.js
         if: always()
