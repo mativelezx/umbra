@@ -125,7 +125,8 @@ test.describe('Umbra full-flow happy path (dynamic onboarding)', () => {
     const stamp = Date.now();
     if (REUSE_SYNTHETIC_EMAIL) expect(REUSE_SYNTHETIC_EMAIL).toMatch(/^umbra-e2e-\d+@test\.local$/);
     const email = REUSE_SYNTHETIC_EMAIL ?? `umbra-e2e-${stamp}@test.local`;
-    const password = 'UmbraE2E-Test-1234!';
+    if (REMOTE_FLOW) expect(process.env.E2E_SYNTHETIC_PASSWORD, 'Remote synthetic accounts require a private password').toBeTruthy();
+    const password = process.env.E2E_SYNTHETIC_PASSWORD ?? 'UmbraE2E-Test-1234!';
     const fullName = 'Umbra E2E';
     await testInfo.attach('synthetic-account', { body: JSON.stringify({ email }), contentType: 'application/json' });
 

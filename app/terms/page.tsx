@@ -13,7 +13,7 @@ export default function TermsPage() {
         Términos de uso
       </h1>
       <p className="mt-3 font-body text-xs tabular-nums text-text-3">
-        Última actualización: 27 de abril de 2026
+        Última actualización: 8 de septiembre de 2026
       </p>
       <p className="mt-6 max-w-2xl text-pretty font-body text-base leading-relaxed text-text-2">
         Estos términos explican cómo se usa Umbra y qué asumimos cuando entrás. Cortos, en castellano de verdad.
@@ -23,7 +23,7 @@ export default function TermsPage() {
         <section>
           <h2 className="font-heading font-semibold text-2xl text-text-1">Qué es Umbra</h2>
           <p className="mt-2 text-pretty">
-            Una plataforma de autoconocimiento que usa un módulo propio de inteligencia artificial para inferir tus puntajes Big Five sobre el texto que escribís, y un proveedor externo de IA generativa para escribir un retrato narrativo y un plan personal. Marcos teóricos: Goldberg (1999) IPIP-NEO, Jung (1921), Pearson (1991), Calvo y Peters (2014).
+            Un prototipo académico de autoconocimiento con escritura, un cuestionario opcional BFI-2-S y actividades de reflexión. El cuestionario calcula promedios a partir de tus respuestas. Por separado, un módulo propio de aprendizaje automático estima Big Five desde texto, pero todavía no tiene evidencia suficiente para mostrar cifras individuales en español. Un proveedor externo de IA redacta la lectura y las propuestas; Jung y los arquetipos se usan como recursos simbólicos, no como mediciones.
           </p>
         </section>
 

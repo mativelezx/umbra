@@ -15,6 +15,12 @@ test.beforeEach(async ({ page }, info) => {
 async function capture(page: Page, info: TestInfo, label: string) {
   await page.evaluate(() => document.fonts.ready);
   await expect(page.locator('main').first()).toBeVisible();
+  if (label === 'plan') await expect(page.getByRole('button', { name: /^Abrir / }).first()).toBeVisible();
+  if (label === 'export') await expect(page.getByRole('button', { name: 'Descargar PDF' })).toBeEnabled();
+  if (label === 'settings-profile') await expect(page.getByLabel('Nombre completo')).toHaveValue('Umbra E2E');
+  if (label === 'settings-research-opt-out') await expect(page.getByRole('button', { name: 'Entrar en investigación', exact: true })).toBeEnabled();
+  if (label === 'chat') await expect(page.getByText('Cargando...', { exact: true })).toHaveCount(0);
+  await page.evaluate(() => window.scrollTo(0, 0));
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
   const accessibility = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
   const blocking = accessibility.violations.filter(item => ['serious', 'critical'].includes(item.impact ?? ''));
@@ -38,7 +44,8 @@ test('saved synthetic account screens and PDF', async ({ page }, info) => {
   test.setTimeout(300_000);
   await page.goto('/login');
   await page.getByLabel('Email').fill(email!);
-  await page.getByLabel('Contraseña').fill('UmbraE2E-Test-1234!');
+  expect(process.env.E2E_SYNTHETIC_PASSWORD, 'Use a private QA password, never publish it with screenshots').toBeTruthy();
+  await page.getByLabel('Contraseña').fill(process.env.E2E_SYNTHETIC_PASSWORD!);
   await page.getByRole('button', { name: 'Entrar', exact: true }).click();
   await page.waitForURL(url => url.pathname === '/dashboard');
   for (const path of ['/dashboard', '/assessment', '/plan', '/chat', '/export', '/settings', '/settings/profile', '/settings/export', '/settings/research-opt-out', '/settings/delete', '/settings/delete/confirm']) {

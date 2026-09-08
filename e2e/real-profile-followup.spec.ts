@@ -12,7 +12,8 @@ async function login(page: Page, destination: string) {
   }
   await page.goto(`/login?redirectedFrom=${destination}`);
   await page.getByLabel('Email').fill(email!);
-  await page.getByLabel('Contraseña').fill('UmbraE2E-Test-1234!');
+  if (process.env.E2E_ALLOW_REMOTE_FLOW === 'true') expect(process.env.E2E_SYNTHETIC_PASSWORD).toBeTruthy();
+  await page.getByLabel('Contraseña').fill(process.env.E2E_SYNTHETIC_PASSWORD ?? 'UmbraE2E-Test-1234!');
   await page.getByRole('button', { name: /^Entrar$/ }).click();
   // Match the path, not a redirectedFrom query that already ends in it.
   await page.waitForURL(url => url.pathname === destination, { timeout: 45_000 });
