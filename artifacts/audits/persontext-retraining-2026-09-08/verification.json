@@ -1,0 +1,54 @@
+{
+  "verified_at": "2026-09-08T18:49:47.507829+00:00",
+  "passed": true,
+  "metric_cells_recomputed": 110,
+  "metric_max_absolute_discrepancy": 0.0,
+  "paired_ci_cells_recomputed": 15,
+  "paired_ci_max_absolute_discrepancy": 0.0,
+  "vocabulary_checks": {
+    "openness": {
+      "size": 3370,
+      "holdout_only_tokens_in_vocabulary": 0
+    },
+    "conscientiousness": {
+      "size": 3370,
+      "holdout_only_tokens_in_vocabulary": 0
+    },
+    "extraversion": {
+      "size": 3370,
+      "holdout_only_tokens_in_vocabulary": 0
+    },
+    "agreeableness": {
+      "size": 3370,
+      "holdout_only_tokens_in_vocabulary": 0
+    },
+    "neuroticism": {
+      "size": 3370,
+      "holdout_only_tokens_in_vocabulary": 0
+    }
+  },
+  "new_vs_old_coefficient_l2_distance": {
+    "openness": 123.30729675292969,
+    "conscientiousness": 22.121679306030273,
+    "extraversion": 106.64739227294922,
+    "agreeableness": 19.174457550048828,
+    "neuroticism": 107.84325408935547
+  },
+  "mlflow_runs": {
+    "mlflow_training_run_id": {
+      "id": "e3598852025244c48ca4ed950421d4e0",
+      "status": "FINISHED",
+      "metric_count": 90
+    },
+    "mlflow_test_run_id": {
+      "id": "8aa12c33f076450fad4800e024a35acf",
+      "status": "FINISHED",
+      "metric_count": 110
+    }
+  },
+  "frozen_before_test": true,
+  "inputs_and_originals_unchanged": true,
+  "candidate_and_simple_serialized_predictions_reproduced": true,
+  "test_set_refitted": false,
+  "production_changed": false
+}

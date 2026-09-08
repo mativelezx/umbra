@@ -1,6 +1,8 @@
 # Umbra · entrega con cuestionario como referencia principal
 
-8 de septiembre de 2026. Esta guía reemplaza para la entrega a `ENTREGA-2026-09-08.md`, que se conserva como antecedente. No certifica aprobación académica ni operación abierta a usuarios externos.
+**Antecedente histórico.** Para la entrega actual, consultar el [cierre integral del 8 de septiembre](../plans/cierre-integral-2026-09-08.md) y la [publicación integral](https://github.com/mativelezx/umbra/releases/tag/entrega-cae-integral-2026-09-08). Las versiones, páginas, pruebas y capturas que siguen describen la publicación BFI anterior; no certifican el nuevo documento ni el runtime didáctico `1e57acd`.
+
+8 de septiembre de 2026. Esta guía reemplazó para aquella entrega a `ENTREGA-2026-09-08.md`, que también se conserva como antecedente. No certifica aprobación académica ni operación abierta a usuarios externos.
 
 ## Archivos y versión que tenés que usar
 

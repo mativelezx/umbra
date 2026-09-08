@@ -1,0 +1,606 @@
+{
+  "completed_at": "2026-09-08T18:41:43.644980+00:00",
+  "kind": "fixed_protocol_local_academic_retraining",
+  "admission": {
+    "development": {
+      "records_downloaded": 213,
+      "participants_downloaded": 81,
+      "participants_used": 80,
+      "records_used": 210,
+      "participants_excluded_underage": 1,
+      "records_excluded": 3,
+      "exact_normalized_overlap": 0,
+      "participant_identity_independence_across_studies": "not_verified",
+      "same_participant_duplicate_records_removed": 0
+    },
+    "test": {
+      "records_downloaded": 90,
+      "participants_downloaded": 30,
+      "participants_used": 30,
+      "records_used": 89,
+      "participants_excluded_underage": 0,
+      "records_excluded": 1,
+      "exact_normalized_overlap": 0,
+      "participant_identity_independence_across_studies": "not_verified",
+      "same_participant_duplicate_records_removed": 1
+    },
+    "expanded_records": 306,
+    "expanded_participants": 111,
+    "shared_uids": 81,
+    "cross_split_uid_overlap": 0,
+    "cross_split_normalized_text_overlap": 0
+  },
+  "metrics": {
+    "new_distilbert": {
+      "openness": {
+        "n": 30,
+        "mae_points": 15.867333333333336,
+        "rmse_points": 18.457070551236818,
+        "r2": -0.7420290227272726,
+        "pearson": 0.37306205131534864,
+        "spearman": 0.3880324432568106,
+        "auc": 0.7950310559006211,
+        "positive_labels": 23,
+        "mae_ci95": [
+          12.683941666666666,
+          19.20231666666667
+        ],
+        "r2_ci95": [
+          -2.7601819090068425,
+          -0.10714906553103229
+        ],
+        "numerical_gate_reached": false
+      },
+      "conscientiousness": {
+        "n": 30,
+        "mae_points": 12.217999999999998,
+        "rmse_points": 15.04877204292762,
+        "r2": -0.031472601214574514,
+        "pearson": -0.2890205867630069,
+        "spearman": -0.20312554162067623,
+        "auc": 0.40723981900452483,
+        "positive_labels": 17,
+        "mae_ci95": [
+          9.257791666666666,
+          15.556766666666666
+        ],
+        "r2_ci95": [
+          -0.2504239991908532,
+          -0.0015833712617226493
+        ],
+        "numerical_gate_reached": false
+      },
+      "extraversion": {
+        "n": 30,
+        "mae_points": 20.775666666666666,
+        "rmse_points": 23.651867509071383,
+        "r2": -0.044326390790292436,
+        "pearson": -0.2585191787903947,
+        "spearman": -0.2441436321437907,
+        "auc": 0.46222222222222226,
+        "positive_labels": 15,
+        "mae_ci95": [
+          16.74371666666667,
+          24.9729
+        ],
+        "r2_ci95": [
+          -0.35385467198993936,
+          -0.004351789700136795
+        ],
+        "numerical_gate_reached": false
+      },
+      "agreeableness": {
+        "n": 30,
+        "mae_points": 15.599666666666662,
+        "rmse_points": 18.406707382545815,
+        "r2": -0.002716833278526787,
+        "pearson": 0.0478473817417005,
+        "spearman": 0.2250769240391742,
+        "auc": 0.6363636363636364,
+        "positive_labels": 19,
+        "mae_ci95": [
+          12.31515,
+          19.116074999999995
+        ],
+        "r2_ci95": [
+          -0.20941648968742926,
+          0.03278723250540776
+        ],
+        "numerical_gate_reached": false
+      },
+      "neuroticism": {
+        "n": 30,
+        "mae_points": 21.878999999999998,
+        "rmse_points": 24.987218132477253,
+        "r2": -0.4478870471527956,
+        "pearson": -0.15704493056061886,
+        "spearman": -0.09573845332496128,
+        "auc": 0.34841628959276016,
+        "positive_labels": 17,
+        "mae_ci95": [
+          17.636375,
+          26.3718
+        ],
+        "r2_ci95": [
+          -1.3313945472295314,
+          -0.09015671786763355
+        ],
+        "numerical_gate_reached": false
+      }
+    },
+    "new_tfidf": {
+      "openness": {
+        "n": 30,
+        "mae_points": 14.716666666666667,
+        "rmse_points": 16.955441800987273,
+        "r2": -0.4701040113636359,
+        "pearson": 0.07785084369630688,
+        "spearman": 0.1271873255060529,
+        "auc": 0.5062111801242235,
+        "positive_labels": 23,
+        "mae_ci95": [
+          11.759783333333335,
+          17.662008333333333
+        ],
+        "r2_ci95": [
+          -1.808171809664721,
+          -0.0800149336672789
+        ],
+        "numerical_gate_reached": false
+      },
+      "conscientiousness": {
+        "n": 30,
+        "mae_points": 12.133666666666667,
+        "rmse_points": 14.820729289298374,
+        "r2": -0.00044845647773272823,
+        "pearson": 0.10689106132848533,
+        "spearman": 0.0545907482521688,
+        "auc": 0.47058823529411764,
+        "positive_labels": 17,
+        "mae_ci95": [
+          9.201,
+          15.331683333333334
+        ],
+        "r2_ci95": [
+          -0.2128980397727271,
+          6.945279163025599e-05
+        ],
+        "numerical_gate_reached": false
+      },
+      "extraversion": {
+        "n": 30,
+        "mae_points": 20.692666666666664,
+        "rmse_points": 23.480793569780957,
+        "r2": -0.029273802115743708,
+        "pearson": -0.06285142632515467,
+        "spearman": -0.05969858081644983,
+        "auc": 0.4622222222222222,
+        "positive_labels": 15,
+        "mae_ci95": [
+          16.772583333333337,
+          24.858024999999998
+        ],
+        "r2_ci95": [
+          -0.3339063552913751,
+          0.004257260638414527
+        ],
+        "numerical_gate_reached": false
+      },
+      "agreeableness": {
+        "n": 30,
+        "mae_points": 15.581999999999999,
+        "rmse_points": 18.51933530124664,
+        "r2": -0.015025327195001825,
+        "pearson": -0.17090202988892722,
+        "spearman": -0.18340082209724118,
+        "auc": 0.3755980861244019,
+        "positive_labels": 19,
+        "mae_ci95": [
+          12.259216666666665,
+          19.199874999999995
+        ],
+        "r2_ci95": [
+          -0.23166518821180973,
+          0.0017790571796603603
+        ],
+        "numerical_gate_reached": false
+      },
+      "neuroticism": {
+        "n": 30,
+        "mae_points": 19.500333333333334,
+        "rmse_points": 21.86172492432074,
+        "r2": -0.10832650090182927,
+        "pearson": -0.02838820397331849,
+        "spearman": -0.02695328550109966,
+        "auc": 0.4773755656108597,
+        "positive_labels": 17,
+        "mae_ci95": [
+          16.165991666666667,
+          23.001341666666665
+        ],
+        "r2_ci95": [
+          -0.5890335099703083,
+          -0.001377541192035398
+        ],
+        "numerical_gate_reached": false
+      }
+    },
+    "historical_distilbert": {
+      "openness": {
+        "n": 30,
+        "mae_points": 22.31766666666667,
+        "rmse_points": 26.165691595420643,
+        "r2": -2.5010174715909086,
+        "pearson": -0.19593675253890386,
+        "spearman": -0.2648584226941363,
+        "auc": 0.391304347826087,
+        "positive_labels": 23,
+        "mae_ci95": [
+          17.654816666666672,
+          27.520624999999995
+        ],
+        "r2_ci95": [
+          -5.989308673068104,
+          -1.2651004298980166
+        ],
+        "numerical_gate_reached": false
+      },
+      "conscientiousness": {
+        "n": 30,
+        "mae_points": 23.016333333333332,
+        "rmse_points": 26.993787989091118,
+        "r2": -2.3188164524291492,
+        "pearson": 0.15819523547220157,
+        "spearman": 0.16881622210721622,
+        "auc": 0.6221719457013575,
+        "positive_labels": 17,
+        "mae_ci95": [
+          18.0735,
+          28.25476666666667
+        ],
+        "r2_ci95": [
+          -4.741154084055123,
+          -1.2362158210045984
+        ],
+        "numerical_gate_reached": false
+      },
+      "extraversion": {
+        "n": 30,
+        "mae_points": 24.896666666666665,
+        "rmse_points": 29.668785504859034,
+        "r2": -0.6432548226509025,
+        "pearson": 0.2652756364965679,
+        "spearman": 0.2322735743253961,
+        "auc": 0.5733333333333333,
+        "positive_labels": 15,
+        "mae_ci95": [
+          19.0484,
+          30.33614166666667
+        ],
+        "r2_ci95": [
+          -1.7179184593988497,
+          -0.04347485837699773
+        ],
+        "numerical_gate_reached": false
+      },
+      "agreeableness": {
+        "n": 30,
+        "mae_points": 27.406999999999996,
+        "rmse_points": 32.938399019988815,
+        "r2": -2.210931657349556,
+        "pearson": -0.014547680615879483,
+        "spearman": 0.03131643845906611,
+        "auc": 0.5645933014354066,
+        "positive_labels": 19,
+        "mae_ci95": [
+          21.069424999999992,
+          34.09402499999999
+        ],
+        "r2_ci95": [
+          -4.962481443378713,
+          -0.902279465588902
+        ],
+        "numerical_gate_reached": false
+      },
+      "neuroticism": {
+        "n": 30,
+        "mae_points": 28.283999999999995,
+        "rmse_points": 32.79586813406022,
+        "r2": -1.49423362535429,
+        "pearson": -0.0666758864721396,
+        "spearman": -0.027141647085511162,
+        "auc": 0.43665158371040724,
+        "positive_labels": 17,
+        "mae_ci95": [
+          22.532266666666676,
+          34.111333333333334
+        ],
+        "r2_ci95": [
+          -3.157272285303564,
+          -0.6841025200351482
+        ],
+        "numerical_gate_reached": false
+      }
+    },
+    "training_mean": {
+      "openness": {
+        "n": 30,
+        "mae_points": 13.402666666666665,
+        "rmse_points": 15.734920823866045,
+        "r2": -0.266073636363636,
+        "pearson": null,
+        "spearman": null,
+        "auc": 0.5,
+        "positive_labels": 23,
+        "mae_ci95": [
+          10.402666666666665,
+          16.362666666666662
+        ],
+        "r2_ci95": [
+          -1.2913354780487791,
+          -0.02221138539042844
+        ],
+        "numerical_gate_reached": false
+      },
+      "conscientiousness": {
+        "n": 30,
+        "mae_points": 12.133333333333333,
+        "rmse_points": 14.82115605027714,
+        "r2": -0.0005060728744938903,
+        "pearson": null,
+        "spearman": null,
+        "auc": 0.5,
+        "positive_labels": 17,
+        "mae_ci95": [
+          9.2,
+          15.333333333333334
+        ],
+        "r2_ci95": [
+          -0.21306818181818188,
+          0.0
+        ],
+        "numerical_gate_reached": false
+      },
+      "extraversion": {
+        "n": 30,
+        "mae_points": 20.733333333333334,
+        "rmse_points": 23.48758537327042,
+        "r2": -0.029869321717485908,
+        "pearson": null,
+        "spearman": null,
+        "auc": 0.5,
+        "positive_labels": 15,
+        "mae_ci95": [
+          16.8,
+          24.866666666666667
+        ],
+        "r2_ci95": [
+          -0.34150399298412554,
+          -0.00019290909564507818
+        ],
+        "numerical_gate_reached": false
+      },
+      "agreeableness": {
+        "n": 30,
+        "mae_points": 15.549333333333333,
+        "rmse_points": 18.446708830213225,
+        "r2": -0.007079776389345316,
+        "pearson": null,
+        "spearman": null,
+        "auc": 0.5,
+        "positive_labels": 19,
+        "mae_ci95": [
+          12.2742,
+          19.118333333333325
+        ],
+        "r2_ci95": [
+          -0.21764248067448247,
+          -4.8430493273521336e-05
+        ],
+        "numerical_gate_reached": false
+      },
+      "neuroticism": {
+        "n": 30,
+        "mae_points": 19.5,
+        "rmse_points": 21.861305237031633,
+        "r2": -0.1082839474362276,
+        "pearson": null,
+        "spearman": null,
+        "auc": 0.5,
+        "positive_labels": 17,
+        "mae_ci95": [
+          16.166666666666668,
+          23.0
+        ],
+        "r2_ci95": [
+          -0.5890248138937217,
+          -0.0013873473917869138
+        ],
+        "numerical_gate_reached": false
+      }
+    }
+  },
+  "paired_mae_new_minus_reference": {
+    "historical_distilbert": {
+      "openness": {
+        "delta_new_minus_reference_points": -6.450333333333333,
+        "ci95": [
+          -11.256241666666666,
+          -1.6456166666666674
+        ],
+        "bootstrap_participants": 30,
+        "bootstrap_repetitions": 2000
+      },
+      "conscientiousness": {
+        "delta_new_minus_reference_points": -10.798333333333336,
+        "ci95": [
+          -15.90975,
+          -5.262875000000005
+        ],
+        "bootstrap_participants": 30,
+        "bootstrap_repetitions": 2000
+      },
+      "extraversion": {
+        "delta_new_minus_reference_points": -4.121000000000001,
+        "ci95": [
+          -11.074525,
+          3.651291666666654
+        ],
+        "bootstrap_participants": 30,
+        "bootstrap_repetitions": 2000
+      },
+      "agreeableness": {
+        "delta_new_minus_reference_points": -11.807333333333332,
+        "ci95": [
+          -19.27953333333333,
+          -4.281958333333335
+        ],
+        "bootstrap_participants": 30,
+        "bootstrap_repetitions": 2000
+      },
+      "neuroticism": {
+        "delta_new_minus_reference_points": -6.405,
+        "ci95": [
+          -11.887125000000001,
+          -1.252283333333337
+        ],
+        "bootstrap_participants": 30,
+        "bootstrap_repetitions": 2000
+      }
+    },
+    "training_mean": {
+      "openness": {
+        "delta_new_minus_reference_points": 2.4646666666666692,
+        "ci95": [
+          0.05415000000000267,
+          4.72874166666667
+        ],
+        "bootstrap_participants": 30,
+        "bootstrap_repetitions": 2000
+      },
+      "conscientiousness": {
+        "delta_new_minus_reference_points": 0.08466666666666593,
+        "ci95": [
+          -0.1870083333333347,
+          0.36235833333333145
+        ],
+        "bootstrap_participants": 30,
+        "bootstrap_repetitions": 2000
+      },
+      "extraversion": {
+        "delta_new_minus_reference_points": 0.0423333333333332,
+        "ci95": [
+          -0.19467499999999965,
+          0.2900333333333328
+        ],
+        "bootstrap_participants": 30,
+        "bootstrap_repetitions": 2000
+      },
+      "agreeableness": {
+        "delta_new_minus_reference_points": 0.05033333333333256,
+        "ci95": [
+          -0.3860333333333319,
+          0.49733333333333246
+        ],
+        "bootstrap_participants": 30,
+        "bootstrap_repetitions": 2000
+      },
+      "neuroticism": {
+        "delta_new_minus_reference_points": 2.379,
+        "ci95": [
+          0.11020833333333342,
+          4.72215833333333
+        ],
+        "bootstrap_participants": 30,
+        "bootstrap_repetitions": 2000
+      }
+    },
+    "new_tfidf": {
+      "openness": {
+        "delta_new_minus_reference_points": 1.1506666666666674,
+        "ci95": [
+          -1.1440333333333323,
+          3.612541666666666
+        ],
+        "bootstrap_participants": 30,
+        "bootstrap_repetitions": 2000
+      },
+      "conscientiousness": {
+        "delta_new_minus_reference_points": 0.08433333333333243,
+        "ci95": [
+          -0.18701666666666622,
+          0.36235833333333145
+        ],
+        "bootstrap_participants": 30,
+        "bootstrap_repetitions": 2000
+      },
+      "extraversion": {
+        "delta_new_minus_reference_points": 0.08299999999999982,
+        "ci95": [
+          -0.2386916666666661,
+          0.39501666666666685
+        ],
+        "bootstrap_participants": 30,
+        "bootstrap_repetitions": 2000
+      },
+      "agreeableness": {
+        "delta_new_minus_reference_points": 0.017666666666666705,
+        "ci95": [
+          -0.4410249999999992,
+          0.5077000000000004
+        ],
+        "bootstrap_participants": 30,
+        "bootstrap_repetitions": 2000
+      },
+      "neuroticism": {
+        "delta_new_minus_reference_points": 2.378666666666667,
+        "ci95": [
+          0.11052500000000003,
+          4.72215833333333
+        ],
+        "bootstrap_participants": 30,
+        "bootstrap_repetitions": 2000
+      }
+    }
+  },
+  "test_truncated_participants": 0,
+  "token_lengths": {
+    "min": 25,
+    "median": 148.0,
+    "max": 395
+  },
+  "training_manifest_sha256": "1ba5b1622344c4155af35dd2f8d008408bdebaa7dd0006e3c5e1361a92705b55",
+  "mlflow_training_run_id": "e3598852025244c48ca4ed950421d4e0",
+  "mlflow_test_run_id": "8aa12c33f076450fad4800e024a35acf",
+  "runtime_parity_max_absolute_delta": 0.0,
+  "runtime_status_not_promoted": {
+    "openness": "low_confidence",
+    "conscientiousness": "low_confidence",
+    "extraversion": "low_confidence",
+    "agreeableness": "low_confidence",
+    "neuroticism": "low_confidence"
+  },
+  "original_artifacts_unchanged": true,
+  "production_changed": false,
+  "external_api_calls": 0,
+  "test_parameter_selection": false,
+  "numerical_gate": {
+    "n_min": 30,
+    "r2_strictly_above": 0.2,
+    "pearson_strictly_above": 0.3
+  },
+  "bootstrap": {
+    "unit": "participant",
+    "repetitions": 2000,
+    "seed": 20260908,
+    "ci": "percentile_95_exploratory_no_multiplicity_adjustment"
+  },
+  "limitations": [
+    "30 new adults from the same corpus, not an independent institution.",
+    "Transcribed Spanish speech is not written Umbra onboarding.",
+    "IPIP published values rescaled to 0-100 are not BFI-2-S scores or percentiles.",
+    "Neuroticism orientation provisional due to CSV/article discrepancy.",
+    "No clinical, intervention-effectiveness or individual-precision validation.",
+    "Local academic use only; no general redistribution license identified."
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "frozen_at": "2026-09-08T18:41:07.538790+00:00",
+  "inputs": {
+    "original/models/ridge_v1.joblib": "93eeecaaef2f334216783f0057184cbd2864edd43a484d3459e881b03d536612",
+    "original/models/baseline_tfidf.joblib": "6bf3b695642a56ad8b0fa04dd0edc1c833f87b13be0297ec224110af7adae117",
+    "original/eval_metrics.json": "43cc5ec4562ea28ffcca657f0cf200df9bc606da6472416ffba11b718c1ddeef",
+    "original/src/predict.py": "559bc73bd35adfbb9588c68d7197b1b6d8aba4c73f4e10de9d1701d80ce86a8e",
+    "original/src/extract_embeddings.py": "0b1b400b3ffa79d95a96d0a4462c977fc6e112631b1f4041411b81aaa5bbd26b",
+    "original/src/train_ridge.py": "6337a8849c1456277c14a097cd1d2c01a5a48b4290e691f37fc037b532425413",
+    "original/data/splits/train.csv": "d4c79bf63fb11353799653256348b2284d72e20bc3828c742a4018f41a44debf",
+    "original/data/splits/val.csv": "c806c72fbe459a12e1c108ebaf175d2b1832ae198b6e9e5608df4caae01290b6",
+    "original/data/splits/test.csv": "981eee985f804bf17ea348edca83d13fd2a8ec68eda93c13e353c2c6da06ccc4",
+    "persontext-v1.csv": "d51831462e26828083b44c6eb125f9307296fef9728e5173d646b0e932748eed",
+    "persontext-v1.csv.dvc": "aa192b2c47bb0a05e31d33b770738a4fed3f147fef9f3bee842e8c011696eea7",
+    "persontext-v2.csv": "f9f28b56f25a9dec7fb8c634bb58fdc55f57e2bb512d0cbfe04e3ffa4ac6132d",
+    "persontext-v2.csv.dvc": "3d1d8e47efab372e2c7ad54bb41194b76f6cd5bac318e4f27ec4b3ea573a38c2",
+    "PROTOCOLO.md": "00b3b321b7b8d425ea95357b7d20f7f2eace71735e956930b8b306d5eb150813",
+    "ADENDA-CALIDAD.md": "e47597134c1a4a77a80b873fd8e4df511ff6f2245a7f627aab86cf85824064bd",
+    "test_retrain.py": "94fd65909d03c37767c619fddeb4d9b1f2baf503a556035ba12175da7c3e72cd",
+    "retrain.py": "a05a834ff309a2fb9e979694498601d95976fc9f71c14c80665d15e575bf240b",
+    "run_retraining.py": "ad67980a9a6adf83bed31ac9b7baf02c15e26f367827d7d98e84f1acdc7c29d1",
+    "admission_helper": "9fec7630a450f6151b7fde4a1350724c80ace09c2f2cf14c30deaacd0b1a387c"
+  },
+  "admission": {
+    "development": {
+      "records_downloaded": 213,
+      "participants_downloaded": 81,
+      "participants_used": 80,
+      "records_used": 210,
+      "participants_excluded_underage": 1,
+      "records_excluded": 3,
+      "exact_normalized_overlap": 0,
+      "participant_identity_independence_across_studies": "not_verified",
+      "same_participant_duplicate_records_removed": 0
+    },
+    "test": {
+      "records_downloaded": 90,
+      "participants_downloaded": 30,
+      "participants_used": 30,
+      "records_used": 89,
+      "participants_excluded_underage": 0,
+      "records_excluded": 1,
+      "exact_normalized_overlap": 0,
+      "participant_identity_independence_across_studies": "not_verified",
+      "same_participant_duplicate_records_removed": 1
+    },
+    "expanded_records": 306,
+    "expanded_participants": 111,
+    "shared_uids": 81,
+    "cross_split_uid_overlap": 0,
+    "cross_split_normalized_text_overlap": 0
+  },
+  "frozen_outputs": {
+    "ridge_persontext_v1.joblib": "92f296a6ad73cd12dd417b03f98b2079083bc5fbbdf4b10406980d76dd9fd9dc",
+    "tfidf_persontext_v1.joblib": "ef545f026e74ff0ae01b58ace239d4f7e8eae552e0c8c333b5ef19c6e4f41cba",
+    "development-results.json": "e2988a536e598426b0cfba7418e72ddc090dfdae91c93a3c9ec73b96dba4b583"
+  },
+  "training_mean": [
+    66.125,
+    69.0,
+    57.0,
+    75.875,
+    57.5
+  ],
+  "selected_alphas": {
+    "distilbert": {
+      "final": {
+        "openness": 10.0,
+        "conscientiousness": 1000.0,
+        "extraversion": 1000.0,
+        "agreeableness": 1000.0,
+        "neuroticism": 10.0
+      },
+      "outer_folds": [
+        {
+          "openness": 1.0,
+          "conscientiousness": 1000.0,
+          "extraversion": 1000.0,
+          "agreeableness": 1000.0,
+          "neuroticism": 10.0
+        },
+        {
+          "openness": 10.0,
+          "conscientiousness": 1000.0,
+          "extraversion": 1000.0,
+          "agreeableness": 1000.0,
+          "neuroticism": 10.0
+        },
+        {
+          "openness": 10.0,
+          "conscientiousness": 1000.0,
+          "extraversion": 1.0,
+          "agreeableness": 1000.0,
+          "neuroticism": 1000.0
+        },
+        {
+          "openness": 1000.0,
+          "conscientiousness": 1000.0,
+          "extraversion": 100.0,
+          "agreeableness": 1000.0,
+          "neuroticism": 1000.0
+        },
+        {
+          "openness": 10.0,
+          "conscientiousness": 1000.0,
+          "extraversion": 100.0,
+          "agreeableness": 1000.0,
+          "neuroticism": 100.0
+        }
+      ]
+    },
+    "tfidf": {
+      "final": {
+        "openness": 0.1,
+        "conscientiousness": 1000.0,
+        "extraversion": 10.0,
+        "agreeableness": 10.0,
+        "neuroticism": 1000.0
+      },
+      "outer_folds": [
+        {
+          "openness": 0.1,
+          "conscientiousness": 1000.0,
+          "extraversion": 10.0,
+          "agreeableness": 1000.0,
+          "neuroticism": 1000.0
+        },
+        {
+          "openness": 0.1,
+          "conscientiousness": 1000.0,
+          "extraversion": 1000.0,
+          "agreeableness": 1000.0,
+          "neuroticism": 1000.0
+        },
+        {
+          "openness": 0.1,
+          "conscientiousness": 1000.0,
+          "extraversion": 1.0,
+          "agreeableness": 1.0,
+          "neuroticism": 1000.0
+        },
+        {
+          "openness": 0.1,
+          "conscientiousness": 1000.0,
+          "extraversion": 1000.0,
+          "agreeableness": 1000.0,
+          "neuroticism": 1000.0
+        },
+        {
+          "openness": 0.1,
+          "conscientiousness": 1000.0,
+          "extraversion": 0.1,
+          "agreeableness": 10.0,
+          "neuroticism": 1000.0
+        }
+      ]
+    }
+  },
+  "development_truncated_participants": 16,
+  "mlflow_training_run_id": "e3598852025244c48ca4ed950421d4e0",
+  "test_predictions_computed": false,
+  "package_versions": {
+    "numpy": "2.1.1",
+    "scikit-learn": "1.5.2",
+    "torch": "2.4.1",
+    "transformers": "4.44.2",
+    "mlflow": "2.16.2",
+    "dvc": "3.55.2"
+  },
+  "original_artifacts_unchanged": true,
+  "serialized_prediction_parity": true
+}
