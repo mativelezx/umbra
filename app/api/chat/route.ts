@@ -9,7 +9,9 @@ import { computeHash, CURRENT_PEPPER_VERSION } from '@/lib/security/peppers';
 import { crisisResources } from '@/lib/chat/crisis-resources';
 import type { PsychologicalProfile } from '@/types';
 
-export const runtime = 'edge';
+// Nontrivial provider calls can exceed Edge's 25-second first-response limit.
+export const runtime = 'nodejs';
+export const maxDuration = 120;
 
 const ChatInputSchema = z.object({
   conversationId: z.string().uuid().optional(),

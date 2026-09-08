@@ -161,7 +161,7 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
             previousAnswer,
           }),
         });
-        const data = await res.json();
+        const data = await res.json().catch(() => ({ ok: false, error: 'server_unavailable' }));
         if (!isCurrentFlow()) return null;
         if (!res.ok || !data.ok) {
           const code = data.error ?? 'generic';
@@ -298,7 +298,7 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
           sessionId: api.sessionId ?? undefined,
         }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({ ok: false, error: 'server_unavailable' }));
       if (!isCurrentFlow()) return;
       if (!res.ok || !data.ok) {
         setError({ kind: 'generic', message: data.error ?? 'analyze_failed', retry: 'analysis' });
@@ -437,7 +437,7 @@ function ErrorBanner({
       ? 'Ya usamos lo del día. Probá mañana para continuar.'
       : error.kind === 'consent'
         ? 'Necesitamos que aceptes los términos antes de empezar.'
-        : `Algo falló: ${error.message}. Probá de nuevo.`;
+        : 'No pudimos completar este paso. Tus respuestas siguen acá: comprobá la conexión y reintentá.';
 
   return (
     <Card className="border-accent-rose/30 bg-accent-rose/10">

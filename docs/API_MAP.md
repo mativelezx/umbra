@@ -7,14 +7,14 @@ Este mapa describe la implementación de la reentrega. Los contratos detallados 
 | Ruta | Método | Runtime | Propósito |
 |---|---|---|---|
 | /api/consent | POST | Node | Verifica sesión, versión y hash; guarda aceptación y preferencia de investigación en una operación atómica del servidor. |
-| /api/onboarding/next | POST | Edge | Crea o continúa la escritura guiada de la cuenta. Consulta el proveedor y guarda los turnos. |
+| /api/onboarding/next | POST | Node | Crea o continúa la escritura guiada de la cuenta. Consulta el proveedor y guarda los turnos. |
 | /api/onboarding/undo | POST | Edge | Retrocede el último paso permitido en la sesión propia. |
-| /api/onboarding/seed | POST | Edge | Recibe un retrato importado como contexto; no equivale a texto libre válido para entrenar o validar el ML. |
-| /api/analyze | POST | Edge | Envía texto elegible al ML, solicita interpretación y guarda el perfil experimental. |
+| /api/onboarding/seed | POST | Node | Recibe un retrato importado como contexto; no equivale a texto libre válido para entrenar o validar el ML. |
+| /api/analyze | POST | Node | Envía texto elegible al ML, solicita interpretación y guarda el perfil experimental. |
 | /api/self-report | POST | Edge | Calcula y guarda el BFI-2-S opcional a partir de exactamente 30 respuestas. |
-| /api/narrative | POST | Edge | Genera la lectura del perfil propio mediante un flujo de eventos. |
-| /api/plan | POST | Edge | Genera actividades orientativas vinculadas al perfil propio. |
-| /api/chat | POST | Edge | Revisa seguridad y conversa sobre el contexto propio mediante eventos. |
+| /api/narrative | POST | Node | Genera la lectura del perfil propio mediante un flujo de eventos. |
+| /api/plan | POST | Node | Genera actividades orientativas vinculadas al perfil propio. |
+| /api/chat | POST | Node | Revisa seguridad y conversa sobre el contexto propio mediante eventos. |
 | /api/chat/conversations | GET | Edge | Lista las conversaciones de la cuenta. |
 | /api/chat/conversations/[id] | GET | Edge | Recupera una conversación propia y sus mensajes. |
 | /api/carta | POST | Node | Guarda una carta de la cuenta con su fecha de apertura. |

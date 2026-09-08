@@ -13,7 +13,7 @@ export default function PrivacyPage() {
         Política de privacidad
       </h1>
       <p className="mt-3 font-body text-xs tabular-nums text-text-3">
-        Revisión local: 7 de septiembre de 2026 · pendiente de aprobación para publicación
+        Revisión: 7 de septiembre de 2026 · demostración académica con cuentas ficticias
       </p>
       <p className="mt-6 max-w-2xl text-pretty font-body text-base leading-relaxed text-text-2">
         Vamos al grano: lo que escribís en Umbra es tuyo. Esto explica qué hacemos con tus datos, dónde viven, quién los toca y cómo te los podés llevar.
@@ -47,14 +47,14 @@ export default function PrivacyPage() {
             Supabase guarda la cuenta y los datos con políticas de acceso por usuario. El responsable técnico puede acceder para mantenimiento y soporte. Anthropic recibe texto y contexto para onboarding, interpretación, narrativa, chat y actividades; el módulo propio de aprendizaje automático procesa texto para Big Five. Hosting y correo dependen de la configuración del entorno. Tus textos pueden contener datos identificatorios aunque no enviemos tu nombre en un campo separado.
           </p>
           <p className="mt-2 text-pretty">
-            Están pendientes de verificar la región efectiva, las condiciones de retención de los proveedores, los respaldos y su restauración. No se garantiza que los proveedores borren el contenido inmediatamente después de procesarlo. Esta revisión local debe aprobarse y completarse antes de habilitar un entorno para personas usuarias reales.
+            En esta demostración, Supabase almacena los datos en Oregón, Estados Unidos, y Vercel aloja la web y el servicio ML. Esto implica procesamiento fuera de Argentina. No se han verificado una restauración de respaldo ni todas las condiciones efectivas de retención de los proveedores. No se garantiza su borrado inmediato. Usá datos ficticios para la evaluación técnica; no compartas información sensible real.
           </p>
         </section>
 
         <section>
           <h2 className="font-heading font-semibold text-2xl text-text-1">Cuánto tiempo</h2>
           <p className="mt-2 text-pretty">
-            Los datos de cuenta se conservan hasta solicitar su eliminación. Las contribuciones de investigación permanecen si no pedís también su purga. El código incluye purgas previstas a 30 días de ciertos payloads técnicos; su ejecución real requiere verificación. El borrado puede fallar parcialmente entre servicios: la pantalla informa el error y permite reintentar con un enlace vigente.
+            Los datos de cuenta se conservan hasta solicitar su eliminación. Las contribuciones de investigación permanecen si no pedís también su purga. Hay tres tareas programadas activas en la base de demostración. La depuración de ciertos datos técnicos a 30 días conserva el autoinforme y el estado ML; no borra automáticamente tus textos de escritura o chat. Se probó la función de depuración, no el transcurso real de 30 días. El borrado puede fallar parcialmente entre servicios: la pantalla informa el error y permite reintentar con un enlace vigente.
           </p>
         </section>
 
@@ -68,7 +68,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="font-heading font-semibold text-2xl text-text-1">Umbra no es terapia</h2>
           <p className="mt-2 text-pretty">
-            Este servicio es una herramienta de autoconocimiento. No reemplaza la atención profesional de salud mental. Si estás en crisis, llamá al 135 (Centro de Asistencia al Suicida, Argentina), al 911 o al 0800-999-0091 (Salud Mental Responde).
+            Este servicio es una herramienta de autoconocimiento. No reemplaza la atención profesional de salud mental. Si estás en crisis, llamá al 135 (Centro de Asistencia al Suicida, CABA y GBA), al 911 o al 0800-999-0091 (urgencias de salud mental en Argentina, las 24 horas).
           </p>
         </section>
       </article>

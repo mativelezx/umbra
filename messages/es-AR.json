@@ -46,7 +46,7 @@
     "closing_title": "¿Querés probar?",
     "closing_desc": "Diez minutos escribiendo. Lo que reciba es para vos.",
     "footer_credits": "TFG Ingeniería en Software · Universidad Siglo 21",
-    "footer_not_therapy": "Umbra no es terapia. Si estás en crisis, llamá al 135 (Argentina), 911 o al 0800-999-0091 (Salud Mental Responde, Lun a Vie 8 a 20 h)."
+    "footer_not_therapy": "Umbra no es terapia. Si estás en crisis, llamá al 135 (CABA y GBA), 911 o al 0800-999-0091 (urgencias de salud mental en Argentina, las 24 horas)."
   },
   "auth": {
     "register_title": "Crear tu cuenta",
@@ -112,7 +112,7 @@
     "subtitle": "Sin apuros",
     "intro": "Respondé con naturalidad, como si le estuvieras contando algo a alguien que te escucha. A medida que avanzás, vas viendo tu perfil construirse al lado. Podés parar cuando quieras y volver en otro momento.",
     "disclaimer_title": "Umbra no es terapia",
-    "disclaimer_text": "Es una herramienta de autoconocimiento. Si en algún momento sentís que necesitás más, llamá al 135 (Argentina) o al 0800-999-0091 (Salud Mental Responde).",
+    "disclaimer_text": "Es una herramienta de autoconocimiento. Si en algún momento sentís que necesitás más, llamá al 135 (CABA y GBA) o al 0800-999-0091 (urgencias de salud mental en Argentina, las 24 horas).",
     "submit": "Seguir",
     "thinking": "Te estoy escuchando",
     "synthesis": "Uniendo todo lo que me contaste…",
@@ -187,7 +187,7 @@
   "crisis_card": {
     "title": "Lo que estás escribiendo me preocupa",
     "body": "Umbra no es terapia y no quiero que pases este momento solo con un sitio web. Hablá con alguien preparado para acompañarte ya.",
-    "resources_title": "Líneas de escucha (Argentina, 24 h):",
+    "resources_title": "Líneas de escucha en Argentina (consultá los horarios):",
     "back_home": "Volver al inicio"
   },
   "plan": {

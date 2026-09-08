@@ -7,7 +7,9 @@ import { buildDevelopmentPlanPrompt } from '@/lib/prompts/development-plan';
 import { withErrorHandler } from '@/lib/api/with-error-handler';
 import type { PsychologicalProfile } from '@/types';
 
-export const runtime = 'edge';
+// Nontrivial provider calls can exceed Edge's 25-second first-response limit.
+export const runtime = 'nodejs';
+export const maxDuration = 120;
 
 const PlanInputSchema = z.object({
   profileId: z.string().uuid(),

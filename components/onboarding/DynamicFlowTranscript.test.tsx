@@ -13,7 +13,7 @@ import { DEMO_ONBOARDING_SCRIPT } from '@/lib/demo/onboarding-script';
 
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); useOnboardingStore.getState().bindUser(null); });
 
-it('retries failed analysis with the same writing instead of asking another question', async () => {
+it.each(['json', 'hosting-text'] as const)('retries %s analysis failures with the same writing instead of asking another question', async responseType => {
   vi.stubEnv('NEXT_PUBLIC_DEMO_MODE', 'false');
   useOnboardingStore.getState().bindUser('qa-retry-owner');
   useOnboardingStore.getState().reset();
@@ -25,7 +25,9 @@ it('retries failed analysis with the same writing instead of asking another ques
     if (url === '/api/analyze') {
       attempts.push(body);
       return attempts.length === 1
-        ? Response.json({ok:false,error:'ml_unavailable'},{status:503})
+        ? responseType === 'json'
+          ? Response.json({ok:false,error:'ml_unavailable'},{status:503})
+          : new Response('An error occurred with your deployment', { status: 504 })
         : Response.json({ok:true,data:{profileId:'recovered-profile'}});
     }
     nextCalls++;
@@ -34,6 +36,8 @@ it('retries failed analysis with the same writing instead of asking another ques
   }));
   render(<DynamicFlow onComplete={onComplete}/>);
   fireEvent.click(await screen.findByRole('button',{name:'Responder q1'}));
+  expect(await screen.findByText(/Tus respuestas siguen acá/)).toBeVisible();
+  expect(screen.queryByText(/Unexpected token|deployment/)).not.toBeInTheDocument();
   fireEvent.click(await screen.findByRole('button',{name:'Reintentar'}));
   await waitFor(() => expect(onComplete).toHaveBeenCalledWith('recovered-profile'));
   expect(nextCalls).toBe(2); expect(attempts).toHaveLength(2); expect(attempts[1]).toEqual(attempts[0]);

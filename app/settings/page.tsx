@@ -106,7 +106,7 @@ export default function SettingsPage() {
         </div>
 
         <p className="max-w-2xl text-pretty font-body text-xs text-text-4">
-          Umbra no es terapia. Si estás en crisis, llamá al 135 (Argentina), al 911 o al 0800-999-0091 (Salud Mental Responde, Lun a Vie 8 a 20 h). Para otros derechos de la Ley 25.326, contactá al responsable del tratamiento desde la página de privacidad.
+          Umbra no es terapia. Si estás en crisis, llamá al 135 (CABA y GBA), al 911 o al 0800-999-0091 (urgencias de salud mental en Argentina, las 24 horas). Para otros derechos de la Ley 25.326, contactá al responsable del tratamiento desde la página de privacidad.
         </p>
       </div>
     </LayoutShell>

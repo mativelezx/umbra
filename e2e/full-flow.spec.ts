@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { createClient } from '@supabase/supabase-js';
 
 // End-to-end happy path for the dynamic onboarding refactor:
 // register → consent → /onboarding (conductor drives 6-8 turns) → synthesis
@@ -21,6 +22,7 @@ const RUN_REAL_FLOW = process.env.E2E_REAL_FLOW === 'true'
 // Resume only a known synthetic QA account after an interrupted run. This never
 // accepts an arbitrary real person's email and does not bypass authentication.
 const REUSE_SYNTHETIC_EMAIL = process.env.E2E_REUSE_SYNTHETIC_EMAIL;
+const REMOTE_FLOW = process.env.E2E_ALLOW_REMOTE_FLOW === 'true';
 
 const INTRO_TEXT = [
   'Siento que soy alguien que pasa mucho tiempo adentro de su cabeza.',
@@ -100,12 +102,21 @@ test.describe('Umbra full-flow happy path (dynamic onboarding)', () => {
     'Requires explicit real-flow, account-creation and paid-AI opt-ins; never treat demo fixtures as this integration test',
   );
 
-  test(`${REUSE_SYNTHETIC_EMAIL ? 'synthetic login' : 'register → consent'} → dynamic onboarding → dashboard → narrative → plan`, async ({
+  test(`${REMOTE_FLOW ? 'remote synthetic login → consent' : REUSE_SYNTHETIC_EMAIL ? 'synthetic login' : 'register → consent'} → dynamic onboarding → dashboard → narrative → plan`, async ({
     page,
   }, testInfo) => {
     test.setTimeout(480_000);
     const base = new URL(process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000');
-    expect(['localhost', '127.0.0.1', '[::1]']).toContain(base.hostname);
+    if (REMOTE_FLOW) {
+      expect(base.origin).toBe('https://umbra-sigma.vercel.app');
+      expect(new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!).hostname).toBe('googyntbflaqqriwhjxi.supabase.co');
+      expect(process.env.E2E_APPROVED_BUDGET_USD).toBe('1');
+      expect(Number(process.env.E2E_PRIOR_SPEND_CENTS)).toBeGreaterThanOrEqual(0);
+      expect(Number(process.env.E2E_PRIOR_SPEND_CENTS)).toBeLessThan(60);
+      expect(REUSE_SYNTHETIC_EMAIL).toBeUndefined();
+    } else {
+      expect(['localhost', '127.0.0.1', '[::1]']).toContain(base.hostname);
+    }
     expect(process.env.NEXT_PUBLIC_DEMO_MODE).not.toBe('true');
     // Fail before account creation if the running app bypasses real Auth.
     await page.goto('/dashboard');
@@ -118,7 +129,39 @@ test.describe('Umbra full-flow happy path (dynamic onboarding)', () => {
     const fullName = 'Umbra E2E';
     await testInfo.attach('synthetic-account', { body: JSON.stringify({ email }), contentType: 'application/json' });
 
-    if (REUSE_SYNTHETIC_EMAIL) {
+    if (REMOTE_FLOW) {
+      // SMTP is an independent acceptance gate. This does NOT certify email signup.
+      const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      });
+      const created = await admin.auth.admin.createUser({ email, password, email_confirm: true,
+        user_metadata: { full_name: fullName, qa_fixture: true } });
+      expect(created.error).toBeNull();
+      const id = created.data.user!.id;
+      let paidRequests = 0;
+      // Serial requests, no test retries, stop at 60 recorded cents, retaining
+      // 40 cents for one in-flight call, rounding and the safety classifier.
+      // This is a QA guard, not the application's pending global billing cap.
+      await page.route('**/api/**', async route => {
+        const path = new URL(route.request().url()).pathname;
+        if (route.request().method() === 'POST' && ['/api/onboarding/next', '/api/analyze', '/api/narrative', '/api/plan', '/api/chat'].includes(path)) {
+          const ledger = await admin.from('rate_limits').select('cost_usd_cents').eq('user_id', id);
+          if (ledger.error || ++paidRequests > 16 || Number(process.env.E2E_PRIOR_SPEND_CENTS) + (ledger.data ?? []).reduce((sum, row) => sum + row.cost_usd_cents, 0) >= 60) {
+            await route.abort('blockedbyclient');
+            throw new Error('QA budget guard stopped further paid requests');
+          }
+        }
+        await route.continue();
+      });
+      await page.goto('/login');
+      await page.getByLabel('Email').fill(email);
+      await page.getByLabel('Contraseña').fill(password);
+      await page.getByRole('button', { name: /^Entrar$/i }).click();
+      await page.waitForURL('**/consent', { timeout: 60_000 });
+      await page.locator('input[type="checkbox"]').first().check();
+      await page.getByRole('button', { name: /De acuerdo, seguimos/i }).click();
+      testInfo.annotations.push({ type: 'scope', description: 'Remote services; synthetic account confirmed by admin, consent in UI. Signup emails not tested.' });
+    } else if (REUSE_SYNTHETIC_EMAIL) {
       await page.goto('/login');
       await page.getByLabel('Email').fill(email);
       await page.getByLabel('Contraseña').fill(password);

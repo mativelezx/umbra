@@ -1,6 +1,9 @@
 /**
  * Canonical crisis resources shown when the safety pipeline triggers.
- * Argentina-focused. Numbers verified against public directories as of 2026.
+ * Argentina-focused. Official sources checked on 2026-09-07:
+ * https://www.argentina.gob.ar/node/492429
+ * https://www.asistenciaalsuicida.org.ar/horarios-de-atencion
+ * https://sosunamigoanonimo.com.ar/?page_id=787
  */
 
 export interface CrisisResource {
@@ -18,14 +21,14 @@ export function crisisResources(): CrisisResource[] {
       type: 'phone',
       value: '135',
       region: 'Argentina (gratuito desde línea fija en CABA y GBA)',
-      hours: '24 horas',
+      hours: '8:00 a 0:00',
     },
     {
       label: 'CAS desde celular u otras provincias',
       type: 'phone',
       value: '011-5275-1135',
       region: 'Argentina',
-      hours: '24 horas',
+      hours: '8:00 a 0:00',
     },
     {
       label: 'Emergencias',
@@ -35,18 +38,18 @@ export function crisisResources(): CrisisResource[] {
       hours: '24 horas',
     },
     {
-      label: 'Salud Mental Responde (Ministerio de Salud)',
+      label: 'Orientación y apoyo en la urgencia de salud mental',
       type: 'phone',
       value: '0800-999-0091',
       region: 'Argentina',
-      hours: 'Lun a Vie 8-20h',
+      hours: '24 horas, todos los días',
     },
     {
       label: 'SOS Un Amigo Anónimo',
       type: 'phone',
-      value: '011-4783-1300',
+      value: '011-5263-0583',
       region: 'CABA',
-      hours: '24 horas',
+      hours: 'Lun a Vie 10-19h; sábados 10-16h',
     },
     {
       label: 'Organización Panamericana de la Salud',

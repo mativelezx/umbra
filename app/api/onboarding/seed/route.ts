@@ -20,7 +20,9 @@ import { buildChatgptSeedParserPrompt } from '@/lib/prompts/chatgpt-seed-parser'
 import { createSeededSession } from '@/lib/onboarding/session-store';
 import type { WorkingProfile } from '@/types';
 
-export const runtime = 'edge';
+// Nontrivial provider calls can exceed Edge's 25-second first-response limit.
+export const runtime = 'nodejs';
+export const maxDuration = 120;
 
 const SeedRequestSchema = z.object({
   rawText: z.string().min(200).max(14000),

@@ -34,7 +34,9 @@ import { transcriptCharLength } from '@/lib/onboarding/serialize';
 import { turnPolicy } from '@/lib/onboarding/turn-policy';
 import type { OnboardingNextResponse, OnboardingTurn } from '@/types';
 
-export const runtime = 'edge';
+// Nontrivial provider calls can exceed Edge's 25-second first-response limit.
+export const runtime = 'nodejs';
+export const maxDuration = 120;
 
 // Extracts the first JSON object from a Claude response, stripping
 // markdown code fences and scanning brace-matched positions. Returns

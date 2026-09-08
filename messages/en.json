@@ -46,7 +46,7 @@
     "closing_title": "Want to try?",
     "closing_desc": "Ten minutes writing. What you receive is for you.",
     "footer_credits": "Software Engineering TFG — Universidad Siglo 21",
-    "footer_not_therapy": "Umbra is not therapy. If you are in crisis: 135 (Argentina), 911, or 0800-999-0091 (Salud Mental Responde, Mon to Fri 8 to 20)."
+    "footer_not_therapy": "Umbra is not therapy. If you are in crisis: 135 (CABA y GBA), 911, or 0800-999-0091 (national mental health emergency support, 24 hours)."
   },
   "auth": {
     "register_title": "Create your account",
@@ -112,7 +112,7 @@
     "subtitle": "No rush",
     "intro": "Reply naturally, like telling someone who's listening. As you go, your profile builds itself on the side. You can stop whenever and come back another time.",
     "disclaimer_title": "Umbra is not therapy",
-    "disclaimer_text": "It's a self-knowledge tool. If at some point you feel you need more, call 135 (Argentina) or 0800-999-0091 (Salud Mental Responde).",
+    "disclaimer_text": "It's a self-knowledge tool. If at some point you feel you need more, call 135 (CABA y GBA) or 0800-999-0091 (national mental health emergency support, 24 hours).",
     "submit": "Continue",
     "thinking": "I'm listening",
     "synthesis": "Bringing together what you told me…",
@@ -187,7 +187,7 @@
   "crisis_card": {
     "title": "What you're writing worries me",
     "body": "Umbra is not therapy and I don't want you to go through this moment alone with a website. Speak to someone trained to be with you now.",
-    "resources_title": "Listening lines (Argentina, 24h):",
+    "resources_title": "Support lines in Argentina (check each schedule):",
     "back_home": "Back to home"
   },
   "plan": {

@@ -30,7 +30,7 @@ export default function TermsPage() {
         <section>
           <h2 className="font-heading font-semibold text-2xl text-text-1">Lo que no es</h2>
           <p className="mt-2 text-pretty">
-            Umbra no es terapia. No reemplaza atención profesional de salud mental. Si estás en crisis emocional, llamá al 135 (Argentina), al 911 o al 0800-999-0091 (Salud Mental Responde, Lun a Vie 8 a 20 h).
+            Umbra no es terapia. No reemplaza atención profesional de salud mental. Si estás en crisis emocional, llamá al 135 (CABA y GBA), al 911 o al 0800-999-0091 (urgencias de salud mental en Argentina, las 24 horas).
           </p>
         </section>
 

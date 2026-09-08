@@ -12,7 +12,9 @@ import { costUsdCents } from '@/lib/claude/pricing';
 import { buildNarrativePrompt } from '@/lib/prompts/generate-narrative';
 import type { PsychologicalProfile } from '@/types';
 
-export const runtime = 'edge';
+// Nontrivial provider calls can exceed Edge's 25-second first-response limit.
+export const runtime = 'nodejs';
+export const maxDuration = 120;
 
 const NarrativeInputSchema = z.object({
   profileId: z.string().uuid(),

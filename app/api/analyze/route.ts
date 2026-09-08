@@ -17,7 +17,9 @@ import { inferBigFive, MlApiUnavailableError, MlApiError } from '@/lib/ml-client
 import { normalizeBigFiveForStorage } from '@/lib/profile/normalize-big-five';
 import type { AnalyzeResponse } from '@/types';
 
-export const runtime = 'edge';
+// Nontrivial provider calls can exceed Edge's 25-second first-response limit.
+export const runtime = 'nodejs';
+export const maxDuration = 120;
 
 const AnalyzeInputSchema = z.object({
   texts: z.array(z.string().min(1).max(15000)).min(1).max(16),
