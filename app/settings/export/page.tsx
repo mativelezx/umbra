@@ -66,7 +66,7 @@ export default function SettingsExportPage() {
           </Link>
           <Link
             href="/settings/delete"
-            className="rounded-md border border-accent-rose/20 px-3 py-1.5 font-heading text-xs text-accent-rose/80 hover:bg-accent-rose/5"
+            className="rounded-md border border-accent-rose/20 px-3 py-1.5 font-heading text-xs text-accent-rose hover:bg-accent-rose/5"
           >
             Eliminar cuenta
           </Link>

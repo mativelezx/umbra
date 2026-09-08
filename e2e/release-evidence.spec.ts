@@ -43,7 +43,16 @@ test('saved synthetic account screens and PDF', async ({ page }, info) => {
   await page.waitForURL(url => url.pathname === '/dashboard');
   for (const path of ['/dashboard', '/assessment', '/plan', '/chat', '/export', '/settings', '/settings/profile', '/settings/export', '/settings/research-opt-out', '/settings/delete', '/settings/delete/confirm']) {
     await page.goto(path);
+    if (path === '/chat') await expect(page.getByRole('textbox', { name: 'Tu mensaje' })).toBeVisible();
     await capture(page, info, path.slice(1).replaceAll('/', '-'));
+    if (path === '/dashboard') {
+      for (const [label, file] of [['Datos del modelo', 'dashboard-modelo'], ['Lectura simbólica', 'dashboard-jung']]) {
+        await page.getByRole('tab', { name: label, exact: true }).click();
+        await capture(page, info, file!);
+      }
+      await page.getByText('Explorar funciones cognitivas y otros arquetipos', { exact: true }).click();
+      await capture(page, info, 'dashboard-jung-detalle');
+    }
     if (path === '/export') {
       const downloading = page.waitForEvent('download');
       await page.getByRole('button', { name: 'Descargar PDF' }).click();
