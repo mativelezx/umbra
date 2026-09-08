@@ -2,15 +2,15 @@
 
 Capturas reales de navegador, con datos ficticios. No son diseños simulados ni participantes de investigación.
 
-Web: https://umbra-sigma.vercel.app · Código publicado: `9a01631dbb18c0b9dea9c2ca61f937f57a9880bf` · Despliegue: `dpl_CW6jtaKN9U4tp1eYH7dceC1ijMcv`.
+Web: https://umbra-sigma.vercel.app · Código publicado: `2b20073766ebe692f516a0cdb3a206fd553a2d80` · Despliegue: `dpl_ABxnP98ToXsQnAeDQmMq9qGmULYd`.
 
 Abrí `galeria.html` para recorrer las imágenes. `resultados.json` conserva el resultado por pantalla, accesibilidad y desbordamientos. `informe-sintetico-de-la-app.pdf` es la descarga probada, no el documento de tesis.
 
 Los controles nuevos son de lectura: no crean cuentas, no envían correos y bloquean las mutaciones a `/api/`. Se agregan cinco capturas identificadas del recorrido real anterior para mostrar onboarding y resultados. No se volvió a consumir IA para obtenerlas.
 
-Las 50 capturas `chromium-*` y `mobile-*` y `resultados.json` se actualizaron con el barrido del 8 de septiembre de 2026, iniciado a las 12:43 UTC, bajo Node 24.19.0. Los cuatro recorridos pasaron sin omisiones ni reintentos; no se detectó desbordamiento horizontal ni infracciones serias/críticas de axe. Las cinco imágenes `recorrido-*` siguen siendo evidencia del 7 de septiembre. Los contactos conservados son miniaturas de la revisión anterior; para esta repetición, abrir las capturas individuales o la galería. La primera pasada del día falló por falta de espacio al escribir una captura; se liberó caché regenerable y se repitieron los cuatro recorridos completos.
+Las 50 capturas `chromium-*` y `mobile-*` y `resultados.json` corresponden al barrido posterior al parche del 8 de septiembre de 2026, iniciado a las 13:27 UTC, bajo Node 24.19.0. Los cuatro recorridos pasaron sin omisiones ni reintentos; no se detectó desbordamiento horizontal ni infracciones serias/críticas de axe. Las cinco imágenes `recorrido-*` siguen siendo evidencia del 7 de septiembre. Los contactos y el informe sintético conservados pertenecen a la revisión anterior; para esta repetición, abrir las capturas individuales o la galería. El barrido anterior de las 12:43 UTC y el fallo previo por espacio están conservados en el historial de Git, sin atribuirlos a esta repetición.
 
-El cruce documental de esta publicación corresponde al PDF de 94 páginas y al DOCX de la etiqueta `reentrega-2026-09-08-v2`: 156 controles aprobados y 175 destinos de índices localizados. El manifiesto y el resultado contienen sus huellas SHA-256. No se debe combinar este resultado con el documento de 90 páginas de la primera publicación.
+El cruce documental de esta publicación corresponde al PDF de 94 páginas y al DOCX que se publicaron en la etiqueta `reentrega-2026-09-08-v2` y se conservan idénticos en `entrega-cae-2026-09-08`: 156 controles aprobados contra el código posterior al parche y 175 destinos de índices localizados. El manifiesto y el resultado contienen sus huellas SHA-256. No se debe combinar este resultado con el documento de 90 páginas de la primera publicación.
 
 | Pantalla | Dispositivo | Procedencia |
 |---|---|---|

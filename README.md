@@ -8,7 +8,7 @@ Demo publicada: https://umbra-sigma.vercel.app. Código de reentrega: rama `code
 
 No hace falta un ZIP para consultar este repositorio. Las instrucciones siguientes se ejecutan desde un checkout de esta versión. No se incluyen contraseñas, claves de proveedores, datos de cuentas, dependencias instaladas ni cachés.
 
-[Revisión de entrega, requisitos y capturas](docs/ENTREGA-2026-09-08.md). Los archivos PDF y DOCX vigentes se adjuntan a [la publicación de cierre académico v2](https://github.com/mativelezx/umbra/releases/tag/reentrega-2026-09-08-v2); el acceso de la cuenta ficticia se comparte por separado y no se versiona. La v2 incorpora el anexo del relevamiento, el organigrama funcional modelado e índices actualizados. La carpeta `thesis/` conserva un esqueleto histórico, no la versión de entrega.
+[Revisión de entrega, requisitos y capturas](docs/ENTREGA-2026-09-08.md). La [publicación de entrega CAE](https://github.com/mativelezx/umbra/releases/tag/entrega-cae-2026-09-08) reúne el código con la última corrección de acceso, PDF, DOCX y capturas identificadas. El documento conserva sin cambios las 94 páginas de la revisión académica v2: anexo del relevamiento, organigrama funcional modelado e índices actualizados. Las publicaciones anteriores son antecedentes. El acceso de la cuenta ficticia se comparte por separado y no se versiona. La carpeta `thesis/` conserva un esqueleto histórico, no la versión de entrega.
 
 Actualización operativa posterior a la etiqueta documental v2: la demo utiliza el parche de bienvenida tras confirmación `2b20073`, con 409 pruebas web y CI aprobadas. El PDF/DOCX no cambia y mantiene sus 156 controles cruzados aprobados. El correo externo sigue requiriendo un dominio propio y SMTP; ver la revisión enlazada para distinguir la corrección de código de la configuración pendiente.
 
@@ -96,7 +96,7 @@ Comprobaciones de esta revisión:
 
 | Comprobación | Resultado |
 |---|---|
-| Vitest, lógica y componentes | 398 pruebas aprobadas, 66 archivos |
+| Vitest, lógica y componentes | 409 pruebas aprobadas, 67 archivos; repetidas en el cierre del 8/9 |
 | Tipos, lint y compilación web | Aprobados con la configuración de destino |
 | Auditoría de dependencias web de producción | Sin vulnerabilidades conocidas reportadas por pnpm audit |
 | Python con pesos reales | 37 pruebas aprobadas, ninguna omitida |
@@ -104,6 +104,8 @@ Comprobaciones de esta revisión:
 | Supabase nuevo | 15 tablas con RLS y tres tareas activas; seis grupos de pruebas remotas de aislamiento, permisos y consentimiento aprobados |
 | Navegador, servicios remotos | Recorrido completo aprobado; 32 controles públicos de escritorio/móvil aprobados; actividad guardada, descarga PDF y chat real con historial persistido comprobados |
 | GitHub Actions | CI de la reentrega aprobada: tipos, lint, pruebas, build y navegación con configuración sin servicios pagos |
+
+El último barrido de lectura comenzó el 8/9 a las 13:27 UTC sobre el parche publicado `2b20073`: cuatro recorridos y 50 pantallas/estados, sin omisiones ni reintentos. La galería conserva además cinco imágenes del recorrido con servicios reales del 7/9, identificadas como anteriores. Los 398 tests citados en registros previos corresponden al corte anterior al parche de bienvenida.
 
 ```bash
 pnpm typecheck

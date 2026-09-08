@@ -1,10 +1,10 @@
 {
-  "date": "2026-09-08T12:43:31.083Z",
+  "date": "2026-09-08T13:27:55.598Z",
   "baseURL": "https://umbra-sigma.vercel.app",
   "runtime": "Node 24.19.0",
   "stats": {
-    "startTime": "2026-09-08T12:43:31.083Z",
-    "duration": 50270.419,
+    "startTime": "2026-09-08T13:27:55.598Z",
+    "duration": 55418.627,
     "expected": 4,
     "skipped": 0,
     "unexpected": 0,
@@ -663,10 +663,12 @@
       "moderateOrMinor": []
     }
   ],
+  "deployment": "dpl_ABxnP98ToXsQnAeDQmMq9qGmULYd",
+  "runtimeCommit": "2b20073766ebe692f516a0cdb3a206fd553a2d80",
   "limits": [
     "Lectura de datos ficticios guardados; cuenta confirmada por administración.",
     "Sin llamadas nuevas a Claude, altas, correos ni eliminación de cuentas.",
-    "La primera ejecución se interrumpió por ENOSPC; esta repetición terminó sin omisiones ni reintentos.",
+    "Barrido posterior al parche de bienvenida; cuatro recorridos aprobados, sin omisiones ni reintentos.",
     "Los tests no certifican utilidad psicológica ni aceptación académica."
   ]
 }
