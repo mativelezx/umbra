@@ -34,7 +34,7 @@ export function ReportContent({ data }: { data: ReportExportData }) {
   const renderAction = (action: NonNullable<ReportExportData['plan']>['areas'][number]['actions'][number]) => <div key={action.id} className="pdf-action pdf-keep"><div className="pdf-action-opening"><ActivityIllustration title={action.title} completed={0} total={0} /><div><h4>{action.title}</h4><p><ExplainedText text={action.description} document /></p></div></div><ul>{action.microGoals.map((goal, i) => <li key={i}><span className="pdf-checkbox" aria-hidden="true" /><span><ExplainedText text={goal.text} document /></span></li>)}</ul></div>;
   return <>
     <div className="pdf-cover pdf-section">
-      <div className="pdf-brand" aria-label="umbra"><BrandMark /><BrandWordmark /></div>
+      <div className="pdf-brand" role="img" aria-label="umbra"><BrandMark /><BrandWordmark /></div>
       <h1>{firstName ? `${firstName},` : 'Tu historia,'}<br />esta lectura<br />es para explorar.</h1>
       <p className="pdf-cover-deck">Un cuaderno para reconocer lo que te resuena,<br />cuestionar lo que no y elegir por dónde seguir.</p>
       <div className="pdf-cover-visual"><ReflectionDiagram /></div>

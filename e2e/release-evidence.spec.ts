@@ -32,7 +32,7 @@ async function capture(page: Page, info: TestInfo, label: string) {
 
 test('public screens, forms and error states', async ({ page }, info) => {
   test.setTimeout(240_000);
-  for (const [path, label] of [['/', 'landing'], ['/login', 'login'], ['/register', 'register'], ['/forgot-password', 'forgot-password'], ['/privacy', 'privacy'], ['/terms', 'terms'], ['/auth/auth-code-error', 'auth-link-error'], ['/pagina-inexistente-qa', 'not-found']]) {
+  for (const [path, label] of [['/', 'landing'], ['/login', 'login'], ['/register', 'register'], ['/forgot-password', 'forgot-password'], ['/reset-password', 'reset-without-session'], ['/privacy', 'privacy'], ['/terms', 'terms'], ['/auth/auth-code-error', 'auth-link-error'], ['/pagina-inexistente-qa', 'not-found']]) {
     await page.goto(path);
     await capture(page, info, label!);
   }
@@ -48,7 +48,7 @@ test('saved synthetic account screens and PDF', async ({ page }, info) => {
   await page.getByLabel('Contraseña').fill(process.env.E2E_SYNTHETIC_PASSWORD!);
   await page.getByRole('button', { name: 'Entrar', exact: true }).click();
   await page.waitForURL(url => url.pathname === '/dashboard');
-  for (const path of ['/dashboard', '/assessment', '/plan', '/chat', '/export', '/settings', '/settings/profile', '/settings/export', '/settings/research-opt-out', '/settings/delete', '/settings/delete/confirm']) {
+  for (const path of ['/dashboard', '/assessment', '/plan', '/chat', '/export', '/settings', '/settings/profile', '/settings/export', '/settings/research-opt-out', '/settings/delete', '/settings/delete/confirm', '/consent', '/onboarding']) {
     await page.goto(path);
     if (path === '/chat') await expect(page.getByRole('textbox', { name: 'Tu mensaje' })).toBeVisible();
     await capture(page, info, path.slice(1).replaceAll('/', '-'));
