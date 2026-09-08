@@ -1,6 +1,6 @@
 # Resultado explicado paso a paso
 
-Estado: implementado y verificado localmente. Publicación pendiente de registrar.
+Estado: implementado, verificado localmente y publicado el 8 de septiembre de 2026.
 
 ## Alcance y decisión
 
@@ -29,6 +29,8 @@ Capturas y descarga de prueba: `.impeccable/review/didactic-2026-09-08/chromium/
 El usuario solicitó mantener la entrega en GitHub y Vercel y aprobó esta dirección didáctica. La actualización se limita a presentación; no requiere migraciones, nuevos proveedores, cambios de secretos, entrenamiento ni recuperación de datos. Propietario: Matías. Si falla el acceso o el render tras publicar, se revierte el despliegue y se conserva la base de datos.
 
 Despliegue anterior comprobado como Ready: `dpl_82vQbHCz2yfjAdDnS3riQ5nDm5wJ`, `https://umbra-ckik1vvh6-mativelez1997-6837s-projects.vercel.app`. Es el punto de reversión, no una certificación de todos los servicios. La comprobación posterior debe incluir inicio de sesión protegido y disponibilidad de la nueva presentación. No se amplía la evaluación a backups, concurrencia, eficacia de actividades, validez individual del ML o aprobación académica.
+
+Publicación confirmada: código `1e57acd261deee87602514417459abe8813f5e2b` en GitHub, rama `codex/reentrega-final-2026-09-07`. Vercel compiló el código con sus variables productivas existentes y quedó Ready en `dpl_3wsPB2fP34ZTz6L6XHMKRwMXPGZZ`. Se comprobó el despliegue antes de promoverlo. Después de la promoción, la consulta de `https://umbra-sigma.vercel.app` resolvió ese nuevo ID: `/login` respondió 200 y `/dashboard` sin sesión redirigió al login con 307. No se ingresó a cuentas reales ni se repitieron llamadas pagas. `pnpm audit --prod --audit-level=high` no informó vulnerabilidades conocidas. Los documentos de esta nota se guardan después de la publicación y no cambian el código desplegado.
 
 ## Qué no cambia
 
