@@ -36,7 +36,7 @@ test.describe('Phase 7 — SEO + error boundaries + metadata', () => {
     );
     await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
       'content',
-      /Jung/,
+      /Respondé preguntas sobre tus decisiones y hábitos\..*no es terapia\./,
     );
     await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
       'content',

@@ -3,7 +3,7 @@
 Etapa 2 del módulo ML propio (ADR-026). Toma los splits generados por
 prepare_data.py, extrae embeddings con DistilBERT congelado, entrena 5
 regresores Ridge independientes (uno por dimensión Big Five) con
-GridSearchCV sobre alpha, y persiste el bundle entrenado en
+RidgeCV sobre alpha, y persiste el bundle entrenado en
 models/ridge_v1.joblib.
 
 Tracking de experimentos con MLflow. Cada corrida registra: dimensión,
@@ -28,7 +28,8 @@ from sklearn.linear_model import RidgeCV
 from sklearn.metrics import mean_squared_error, r2_score
 from scipy.stats import pearsonr
 
-from .extract_embeddings import EmbeddingExtractor, EMBEDDING_DIM, MODEL_NAME
+from .extract_embeddings import EmbeddingExtractor, EMBEDDING_DIM, MODEL_NAME, MODEL_REVISION
+from .embedding_cache import cached_embeddings
 
 logging.basicConfig(level=logging.INFO, format="[train_ridge] %(message)s")
 log = logging.getLogger(__name__)
@@ -45,15 +46,8 @@ SEED = 42
 def cache_or_compute_embeddings(
     df: pd.DataFrame, name: str, extractor: EmbeddingExtractor
 ) -> np.ndarray:
-    EMBEDDINGS_CACHE.mkdir(parents=True, exist_ok=True)
-    cache_path = EMBEDDINGS_CACHE / f"{name}.npy"
-    if cache_path.exists():
-        log.info("Loading cached embeddings from %s", cache_path)
-        return np.load(cache_path)
-    log.info("Computing embeddings for %s (n=%d)...", name, len(df))
-    emb = extractor.encode(df["text"].astype(str).tolist())
-    np.save(cache_path, emb)
-    return emb
+    return cached_embeddings(df["text"].astype(str).tolist(),
+                             EMBEDDINGS_CACHE / f"{name}.npy", extractor)
 
 
 def fit_per_dim(X_train, y_train_per_dim, X_val, y_val_per_dim, mlflow_module=None):
@@ -168,6 +162,7 @@ def main():
     bundle = {
         "models": models,
         "model_name": MODEL_NAME,
+        "model_revision": MODEL_REVISION,
         "embedding_dim": EMBEDDING_DIM,
         "dims": BIG_FIVE_DIMS,
         "version": "ridge_v1",

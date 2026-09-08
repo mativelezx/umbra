@@ -32,10 +32,9 @@ export default function SettingsResearchPage() {
     load();
   }, []);
 
-  async function toggle() {
+  async function savePreference(newValue: boolean) {
     setSaving(true);
     setMessage(null);
-    const newValue = !optIn;
 
     try {
       const res = await fetch('/api/account/research-opt-out', {
@@ -60,7 +59,12 @@ export default function SettingsResearchPage() {
               }`,
         );
       } else {
-        setMessage('No pudimos guardar el cambio. Probá de nuevo.');
+        if (json.error === 'research_purge_failed' && json.research_opt_in === false) {
+          setOptIn(false);
+          setMessage('Saliste de investigación, pero no pudimos borrar las contribuciones anteriores. Podés reintentar su eliminación.');
+        } else {
+          setMessage('No pudimos guardar el cambio. Probá de nuevo.');
+        }
       }
     } catch {
       setMessage('No pudimos guardar el cambio. Probá de nuevo.');
@@ -138,7 +142,7 @@ export default function SettingsResearchPage() {
               </div>
             </div>
             <Button
-              onClick={toggle}
+              onClick={() => savePreference(!optIn)}
               disabled={loading || saving}
               loading={saving}
               variant={optIn ? 'ghost' : 'primary'}
@@ -147,8 +151,14 @@ export default function SettingsResearchPage() {
             </Button>
           </div>
 
+          {!loading && !optIn && (
+            <Button className="mt-4" variant="ghost" disabled={saving} onClick={() => savePreference(false)}>
+              Eliminar contribuciones anteriores
+            </Button>
+          )}
+
           {message && (
-            <p className="mt-4 font-body text-sm text-accent-emerald">{message}</p>
+            <p role="status" className="mt-4 font-body text-sm text-text-2">{message}</p>
           )}
         </Card>
       </div>

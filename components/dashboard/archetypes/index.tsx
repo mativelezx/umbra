@@ -1,4 +1,5 @@
 import type { Archetype } from '@/types';
+import { SvgArtwork } from '@/components/motion/SvgArtwork';
 
 interface ArchetypeSvgProps {
   size?: number;
@@ -171,5 +172,5 @@ export function ArchetypeSvg({
   className?: string;
 }) {
   const Component = MAP[archetype];
-  return <Component size={size} className={className} />;
+  return <SvgArtwork className={`archetype-art archetype-${archetype}`}><Component size={size} className={className} /></SvgArtwork>;
 }

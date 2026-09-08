@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/Input';
 import { GlassCard } from '@/components/ui/Card';
 import { t } from '@/lib/i18n/dict';
 import { Brand } from '@/components/layout/Brand';
+import { AccessPrelude } from '@/components/layout/AccessPrelude';
 
 // Reject protocol-relative `//evil.com` and anything that's not a plain
 // same-origin path. Middleware only writes safe values here, but the param
@@ -79,6 +80,7 @@ function LoginContent() {
           required
           autoComplete="current-password"
         />
+        <Link href="/forgot-password" className="inline-flex min-h-11 items-center self-end text-sm text-text-3 underline underline-offset-4">Olvidé mi contraseña</Link>
 
         {error && (
           <div
@@ -110,7 +112,7 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <div className="focus-backdrop"><main className="auth-entry relative mx-auto flex min-h-screen max-w-lg items-center justify-center px-5 py-12">
+    <div className="focus-backdrop access-layout"><AccessPrelude /><main className="auth-entry relative mx-auto flex min-h-screen max-w-lg items-center justify-center px-5 py-12">
       <Suspense fallback={<div className="font-body text-text-3">Cargando...</div>}>
         <LoginContent />
       </Suspense>

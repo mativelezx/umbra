@@ -45,7 +45,7 @@ export function ChatInput({ onSend, disabled, placeholder = 'Escribí tu reflexi
         e.preventDefault();
         handleSend();
       }}
-      className="sticky bottom-24 lg:bottom-6 flex items-end gap-2 rounded-2xl border border-violet-400/25 bg-white p-3"
+      className="chat-composer flex items-end gap-2 rounded-lg border border-text-3 bg-white p-3 focus-within:outline focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-text-1"
     >
       <label htmlFor="chat-input" className="sr-only">
         Tu mensaje
@@ -65,7 +65,7 @@ export function ChatInput({ onSend, disabled, placeholder = 'Escribí tu reflexi
         maxLength={2000}
         aria-label="Tu mensaje"
         aria-describedby="chat-input-hint"
-        className="flex-1 resize-none bg-transparent font-body text-text-1 placeholder:text-text-3 focus:outline-none text-sm md:text-base max-h-40"
+        className="min-w-0 flex-1 resize-none bg-transparent font-body text-text-1 placeholder:text-text-3 focus:outline-none text-base max-h-40"
       />
       <span id="chat-input-hint" className="sr-only">
         Presioná Enter para enviar, Shift+Enter para salto de línea. Máximo 2000 caracteres.
@@ -74,7 +74,7 @@ export function ChatInput({ onSend, disabled, placeholder = 'Escribí tu reflexi
         type="submit"
         disabled={disabled || !value.trim()}
         className={cn(
-          'flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all',
+          'flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors',
           disabled || !value.trim()
             ? 'bg-umbra-shadow text-text-4 cursor-not-allowed'
             : 'bg-violet-400 text-umbra-void hover:bg-violet-300 ',

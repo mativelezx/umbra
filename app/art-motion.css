@@ -1,0 +1,114 @@
+/* Shared, finite illustration gestures. Ambient loops belong only to the
+   controllable hero. No chart values or account states are animated here. */
+:root { --art-duration: 2400ms; --art-ease: cubic-bezier(.16, 1, .3, 1); }
+.svg-artwork { animation-play-state: paused; }
+.svg-artwork :is(.art-pen, .art-writing, .art-held-page, .art-back-page, .art-confirm, .art-sun, .art-arm, .art-leg-first, .art-leg-second) {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-duration: var(--art-duration);
+  animation-timing-function: var(--art-ease);
+  animation-iteration-count: 1;
+  animation-fill-mode: both;
+  animation-play-state: paused;
+}
+.svg-artwork[data-art-motion='running'], .svg-artwork[data-art-motion='running'] * { animation-play-state: running; }
+.svg-artwork[data-art-motion='reduced'], .svg-artwork[data-art-motion='reduced'] * { animation: none !important; transition-property: none !important; }
+.art-pen { animation-name: art-write-gesture; transform-origin: 10% 90% !important; }
+.art-writing { stroke-dasharray: 260; animation-name: art-ink; }
+.art-held-page { animation-name: art-read; transform-origin: 45% 80% !important; }
+.art-back-page { animation-name: art-unfold; transform-origin: 0% 80% !important; }
+.art-confirm { animation-name: art-ink; stroke-dasharray: 26; }
+.art-sun { animation-name: art-turn; }
+.art-arm { animation-name: art-arm-swing; }
+.art-leg-first { animation-name: art-step; transform-origin: 100% 0% !important; }
+.art-leg-second { animation-name: art-step-back; transform-origin: 0% 0% !important; }
+@keyframes art-write-gesture { 0%, 100% { transform: none; } 25%, 65% { transform: translate(-6px, 5px) rotate(-5deg); } 45%, 85% { transform: translate(3px, -2px) rotate(3deg); } }
+@keyframes art-ink { from { stroke-dashoffset: 70; } to { stroke-dashoffset: 0; } }
+@keyframes art-read { 0%, 100% { transform: none; } 40% { transform: translateY(-4px) rotate(-7deg); } }
+@keyframes art-unfold { from { transform: rotate(-10deg) translateX(-8px); } to { transform: none; } }
+@keyframes art-turn { from { transform: rotate(-65deg); } to { transform: none; } }
+@keyframes art-arm-swing { 0%, 100% { transform: none; } 35% { transform: rotate(-6deg); } 70% { transform: rotate(5deg); } }
+@keyframes art-step { 0%, 100% { transform: none; } 35% { transform: rotate(-12deg); } 70% { transform: rotate(7deg); } }
+@keyframes art-step-back { 0%, 100% { transform: none; } 35% { transform: rotate(10deg); } 70% { transform: rotate(-7deg); } }
+
+/* One finite reveal for each legacy symbolic vector, not a spinning score. */
+.archetype-art { display: inline-flex; }
+.archetype-art > svg > :is(path, circle, rect, line) { transform-origin: 128px 128px; animation: symbol-settle 1200ms var(--art-ease) both paused; }
+.archetype-explorer > svg > path { animation-name: compass-settle; }
+.archetype-creator > svg > rect { animation-name: compass-settle; }
+.archetype-sage > svg > circle { animation-name: symbol-focus; }
+@keyframes symbol-settle { from { opacity: .45; translate: 0 5px; } to { opacity: 1; translate: 0 0; } }
+@keyframes compass-settle { from { rotate: -22deg; } to { rotate: 0deg; } }
+@keyframes symbol-focus { from { scale: .9; } to { scale: 1; } }
+
+/* Phosphor controls: feedback on hover, keyboard focus and press. Individual
+   translate leaves existing chevron rotations and loading spinners intact. */
+:where(a, button, [role='tab'], label) > svg:not(.brand-mark):not(.brand-wordmark) {
+  transition: translate 180ms var(--art-ease), scale 180ms var(--art-ease), opacity 180ms ease-out;
+}
+:where(a, button, [role='tab'], label):is(:hover, :focus-visible) > svg:not(.brand-mark):not(.brand-wordmark) { translate: 2px -1px; }
+:where(a, button, [role='tab']):active > svg:not(.brand-mark):not(.brand-wordmark) { scale: .9; }
+:where(button:disabled, [aria-disabled='true']) > svg { translate: none; scale: none; }
+.brand-mark { overflow: visible; flex-shrink: 0; }
+.brand-wordmark { display: block; flex-shrink: 0; }
+.brand-mark > path { transform-origin: 24px 24px; transition: transform 420ms var(--art-ease); }
+.brand-link:is(:hover, :focus-visible) .brand-aperture-left { transform: rotate(-9deg) translateX(-1px); }
+.brand-link:is(:hover, :focus-visible) .brand-aperture-right { transform: rotate(-9deg) translateX(1px); }
+@keyframes brand-write { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+
+/* html2canvas uses screen styles, so it also needs the static artwork rule. */
+.pdf-root :is(svg, svg *), .pdf-root .svg-artwork { animation: none !important; transition: none !important; translate: none !important; rotate: none !important; scale: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .svg-artwork, .svg-artwork *, .brand-mark * { animation: none !important; transition: none !important; transition-property: none !important; }
+  :where(a, button, [role='tab'], label):is(:hover, :focus-visible, :active) > svg { translate: none !important; scale: none !important; transition: none !important; }
+  .brand-mark > path, .mode-choice:hover .svg-artwork { transform: none !important; }
+}
+@media print {
+  .svg-artwork, svg, svg * { animation: none !important; transition: none !important; transition-property: none !important; translate: none !important; rotate: none !important; scale: none !important; }
+  .mode-choice:hover .svg-artwork { transform: none !important; }
+}
+
+/* Tinta y papel: the only ambient interior scene has an explicit pause control. */
+.reflection-scene { min-width: 0; color: #d1d9c5; }
+.reflection-diagram { width: 100%; height: auto; display: block; overflow: visible; }
+.reflection-scene-caption { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 11px; color: #c8cfc1; }
+.reflection-scene-caption button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 6px 8px; font-size: 11px; border-radius: 8px; }
+.reflection-scene-caption button:hover { background: #343d30; }
+.reflection-scene-caption button:focus-visible { outline: 2px solid #f4f3ec; outline-offset: 2px; }
+.reflection-scene-caption button:disabled { cursor: default; }
+@media (prefers-reduced-motion: no-preference) {
+  .reflection-scene .reflection-sheet, .reflection-scene .reflection-aperture, .reflection-scene .reflection-spark { transform-box: fill-box; transform-origin: center; animation: paper-front 8s cubic-bezier(.37,0,.25,1) infinite; animation-play-state: paused; }
+  .reflection-scene .reflection-sheet-back { animation-name: paper-back; }
+  .reflection-scene .reflection-sheet-action { animation-name: paper-action; }
+  .reflection-scene .reflection-aperture { animation-name: lens-open; }
+  .reflection-scene .reflection-spark { animation-name: lens-light; }
+  .reflection-scene[data-scene-motion='running'] * { animation-play-state: running; }
+  .reflection-scene[data-scene-motion='reduced'] * { animation: none; }
+  @keyframes paper-back { 0%,100% { transform: rotate(0) translate(0); } 45%,65% { transform: rotate(-7deg) translate(-9px,3px); } }
+  @keyframes paper-front { 0%,100% { transform: translateY(0); } 45%,65% { transform: translateY(-7px); } }
+  @keyframes paper-action { 0%,100% { transform: rotate(0) translate(0); } 45%,65% { transform: rotate(7deg) translate(9px,5px); } }
+  @keyframes lens-open { 0%,100% { transform: scaleX(1); } 45%,65% { transform: scaleX(.82); } }
+  @keyframes lens-light { 0%,100% { opacity: .5; } 45%,65% { opacity: 1; } }
+  .chapter-artwork svg > * { animation: ink-detail 1400ms var(--art-ease) both paused; transform-origin: center; transform-box: fill-box; }
+  .chapter-artwork .reading-art-reveal { animation: book-open 1600ms var(--art-ease) both paused; }
+  .chapter-artwork-1 .reading-art-reveal { animation-name: direction-settle; }
+  .chapter-artwork-2 .reading-art-reveal { animation-name: bridge-tension; }
+  .chapter-artwork-3 .reading-art-reveal { animation-name: facet-turn; }
+  .chapter-artwork-4 .reading-art-reveal { animation-name: door-open; }
+  .chapter-artwork[data-art-motion='running'] svg > * { animation-play-state: running; }
+  @keyframes ink-detail { from { opacity: .4; } to { opacity: 1; } }
+  @keyframes book-open { from { transform: scaleX(.4); } to { transform: scaleX(1); } }
+  @keyframes direction-settle { from { transform: rotate(-40deg); } to { transform: rotate(0); } }
+  @keyframes bridge-tension { 0% { transform: scaleY(.65); } 50% { transform: scaleY(1.08); } 100% { transform: scaleY(1); } }
+  @keyframes facet-turn { from { transform: rotate(-12deg) scale(.85); } to { transform: none; } }
+  @keyframes door-open { from { transform: scaleX(.1); transform-origin: left; } to { transform: scaleX(1); transform-origin: left; } }
+  .activity-illustration > :not(.activity-progress-line) { transform-box: fill-box; transform-origin: center; transition: transform 650ms var(--art-ease), opacity 500ms; }
+  button:is(:hover,:focus-visible) .activity-illustration-walk > path:nth-child(2) { transform: translate(5px,-5px); }
+  button:is(:hover,:focus-visible) .activity-illustration-meal > path:last-of-type { transform: rotate(12deg); }
+  button:is(:hover,:focus-visible) .activity-illustration-write > path:nth-last-of-type(3) { transform: translate(-6px,3px) rotate(-8deg); }
+  button:is(:hover,:focus-visible) .activity-illustration-talk > path:nth-child(2) { transform: translate(6px,-3px); }
+  button:is(:hover,:focus-visible) .activity-illustration-open > path:first-child { transform: scaleX(1.05); }
+}
+@media (prefers-reduced-motion: reduce), print {
+  .reflection-scene *, .chapter-artwork *, .activity-illustration * { animation: none !important; transition: none !important; transform: none !important; }
+}

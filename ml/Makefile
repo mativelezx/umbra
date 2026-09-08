@@ -2,7 +2,7 @@
 # Targets reproducibles. Equivalentes funcionalmente al pipeline DVC
 # pero más simples para uso interactivo.
 
-PYTHON := python3
+PYTHON ?= python3
 SRC := src
 DATA := data
 
@@ -38,10 +38,10 @@ evaluate:
 	$(PYTHON) -m $(SRC).evaluate
 
 serve:
-	uvicorn $(SRC).api_server:app --host 0.0.0.0 --port 8000 --reload
+	$(PYTHON) -m uvicorn $(SRC).api_server:app --host 127.0.0.1 --port 8000 --reload
 
 test:
-	pytest -v
+	$(PYTHON) -m pytest -v
 
 all: prepare baseline train evaluate
 

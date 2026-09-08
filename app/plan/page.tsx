@@ -1,13 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { ArrowClockwise } from '@phosphor-icons/react';
+import { useEffect, useRef, useState } from 'react';
+import { ArrowClockwise, Footprints } from '@phosphor-icons/react';
 import { LayoutShell } from '@/components/layout/LayoutShell';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/LoadingDimension';
 import { createClient } from '@/lib/supabase/client';
-import { ReflectionArt } from '@/components/ui/ReflectionArt';
 import { ActivityWorkspace } from '@/components/plan/ActivityWorkspace';
 import type { DevelopmentArea as Area } from '@/types';
 
@@ -17,6 +16,8 @@ export default function PlanPage() {
   const [areas, setAreas] = useState<Area[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [profileId, setProfileId] = useState<string | null>(null);
   const isDemo = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
@@ -48,7 +49,7 @@ export default function PlanPage() {
 
       const { data: profile } = await supabase
         .from('psychological_profiles')
-        .select('id')
+        .select('id, updated_at')
         .eq('user_id', user.id)
         .eq('version', 1)
         .maybeSingle();
@@ -64,6 +65,8 @@ export default function PlanPage() {
         .from('development_plans')
         .select('id, areas')
         .eq('user_id', user.id)
+        .eq('profile_id', profile.id)
+        .gte('created_at', profile.updated_at)
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -78,7 +81,7 @@ export default function PlanPage() {
   }, []);
 
   async function generatePlan(regenerate: boolean) {
-    if (!profileId || profileId.startsWith('demo-')) return;
+    if (!profileId || profileId.startsWith('demo-') || savingRef.current || generating) return;
     setGenerating(true);
     setError(null);
     try {
@@ -101,7 +104,9 @@ export default function PlanPage() {
   }
 
   async function toggleMicroGoal(areaId: string, actionId: string, goalId: string) {
-    if (!areas || !planId) return;
+    if (!areas || !planId || savingRef.current || generating) return;
+    const previousAreas = areas;
+    setError(null);
     const newAreas = areas.map((area) =>
       area.id !== areaId
         ? area
@@ -124,23 +129,33 @@ export default function PlanPage() {
     // Demo mode: state-only, no persistence
     if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') return;
 
-    const supabase = createClient();
-    await supabase.from('development_plans').update({ areas: newAreas }).eq('id', planId);
+    savingRef.current = true;
+    setSaving(true);
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('session_expired');
+      const { data: saved, error: saveError } = await supabase.from('development_plans')
+        .update({ areas: newAreas }).eq('id', planId).eq('user_id', user.id)
+        .select('id').single();
+      if (saveError || !saved) throw new Error('save_failed');
+    } catch {
+      setAreas(previousAreas);
+      setError('No pudimos guardar el cambio. Volvimos al estado anterior; podés intentarlo de nuevo.');
+    } finally {
+      savingRef.current = false;
+      setSaving(false);
+    }
   }
 
   return (
     <LayoutShell>
       <div className="plan-experience flex flex-col gap-8">
-        <header className="experience-heading">
-          <div>
-          <h1>
-            Actividades
-          </h1>
-          <p className="experience-lead">Lo que leíste,<br />en un pequeño paso.</p>
+        <header className="activity-library-heading">
+          <h1>Actividades</h1>
+          <p className="experience-lead">Una idea se vuelve un paso.</p>
           <p className="experience-caption">Propuestas de reflexión generadas por IA. Elegí una que te sirva; no hace falta hacerlas todas.</p>
-          <p className="mt-4 text-sm text-text-3">{isDemo ? 'En este ejemplo, las casillas cambian solo en esta pantalla. No se guarda tu progreso.' : 'Podés marcar los pasos que hiciste. No hay rachas ni metas obligatorias.'}</p>
-          </div>
-          <div className="reflection-composition activity-heading-art" aria-hidden="true"><ReflectionArt variant="steps" reveal /></div>
+          <p className="activity-library-note"><Footprints size={20} aria-hidden="true" />{isDemo ? 'En este ejemplo, las casillas cambian solo en esta pantalla. No se guarda tu progreso.' : 'Marcá los pasos que hiciste. Tu progreso queda guardado, sin rachas ni metas obligatorias.'}</p>
         </header>
 
         {loading && (
@@ -170,20 +185,21 @@ export default function PlanPage() {
         )}
 
         {error && (
-          <div className="rounded-md border border-accent-rose/30 bg-accent-rose/10 px-4 py-3 font-body text-sm text-accent-rose">
+          <div role="alert" className="rounded-md border border-accent-rose/30 bg-accent-rose/10 px-4 py-3 font-body text-sm text-accent-rose">
             {error}
           </div>
         )}
 
         {areas && (
           <>
-            <ActivityWorkspace areas={areas} onToggle={toggleMicroGoal} />
+            <ActivityWorkspace areas={areas} onToggle={toggleMicroGoal} saving={saving || generating} />
 
             {!isDemo && <div className="flex justify-end">
               <Button
                 variant="ghost"
                 onClick={() => generatePlan(true)}
                 loading={generating}
+                disabled={saving}
               >
                 <ArrowClockwise size={14} />
                 Regenerar plan

@@ -1,5 +1,7 @@
 'use client';
 
+import { useId } from 'react';
+import { Compass, Handshake, ListChecks, UsersThree, Waves } from '@phosphor-icons/react';
 import type { BigFive } from '@/types';
 import { BIG_FIVE_LABELS } from '@/lib/dimensions/labels';
 import {
@@ -7,11 +9,20 @@ import {
   STATUS_LABEL,
   type PerDimensionStatus,
 } from '@/lib/profile/dimension-display';
+import styles from './DashboardExperience.module.css';
 
 interface BigFiveDimensionsProps {
   bigFive: BigFive;
   status: PerDimensionStatus;
 }
+
+const DIMENSION_GUIDE = {
+  openness: { icon: Compass, description: 'La disposición a explorar ideas, experiencias y formas nuevas de ver las cosas.' },
+  conscientiousness: { icon: ListChecks, description: 'La forma de organizar tareas, sostener compromisos y dar continuidad a lo que empezás.' },
+  extraversion: { icon: UsersThree, description: 'La tendencia a buscar interacción social, actividad y estímulos del entorno.' },
+  agreeableness: { icon: Handshake, description: 'La disposición a cooperar, considerar a otras personas y cuidar los vínculos.' },
+  neuroticism: { icon: Waves, description: 'La tendencia a experimentar emociones intensas ante la tensión y la incertidumbre.' },
+} as const;
 
 /**
  * Componente cuantitativo del tablero (HU-06 / ADR-027):
@@ -21,36 +32,40 @@ interface BigFiveDimensionsProps {
  * no puede sostener.
  */
 export function BigFiveDimensions({ bigFive, status }: BigFiveDimensionsProps) {
+  const id = useId();
   return (
-    <ul className="flex flex-col gap-4" aria-label="Dimensiones Big Five con su estado de confianza">
+    <ul className={styles.dimensions} aria-label="Dimensiones Big Five con su estado de confianza">
       {BIG_FIVE_KEYS.map((key) => {
         const measured = status[key] === 'ok';
         const label = BIG_FIVE_LABELS[key].label;
         const value = bigFive[key];
+        const { icon: Icon, description } = DIMENSION_GUIDE[key];
         return (
-          <li key={key} className="flex flex-col gap-1.5">
-            <div className="flex items-baseline justify-between gap-3">
-              <span className="font-body text-sm text-text-1">{label}</span>
+          <li key={key} className={styles.dimension} aria-labelledby={`${id}-${key}-label`} aria-describedby={`${id}-${key}-description`}>
+            <Icon size={28} aria-hidden="true" />
+            <div>
+              <span className={styles.dimensionLabel} id={`${id}-${key}-label`}>{label}</span>
+              <p className={styles.dimensionDescription} id={`${id}-${key}-description`}>{description}</p>
+            </div>
               {measured ? (
                 <span
                   data-testid={`bf-value-${key}`}
-                  className="font-body text-sm tabular-nums text-violet-200"
+                  className={styles.dimensionValue}
                 >
                   {Math.round(value)}
-                  <span className="text-text-4"> / 100</span>
+                  <span> / 100</span>
                 </span>
               ) : (
                 <span
                   data-testid={`bf-status-${key}`}
-                  className="rounded-full border border-violet-400/15 bg-umbra-shadow/40 px-2 py-0.5 font-body text-sm normal-case tracking-normal text-text-3"
+                  className={styles.dimensionStatus}
                 >
                   {STATUS_LABEL[status[key]]}
                 </span>
               )}
-            </div>
-            {measured ? (
+            {measured && (
               <div
-                className="relative h-1.5 w-full overflow-hidden rounded-full bg-umbra-shadow/70"
+                className={styles.dimensionBar}
                 role="progressbar"
                 aria-label={`${label}: ${Math.round(value)} sobre 100`}
                 aria-valuenow={Math.round(value)}
@@ -58,15 +73,9 @@ export function BigFiveDimensions({ bigFive, status }: BigFiveDimensionsProps) {
                 aria-valuemax={100}
               >
                 <div
-                  className="bf-bar-grow absolute inset-y-0 left-0 rounded-full bg-violet-400"
                   style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
                 />
               </div>
-            ) : (
-              <div
-                aria-hidden="true"
-                className="h-1.5 w-full rounded-full border border-dashed border-violet-400/15 bg-transparent"
-              />
             )}
           </li>
         );

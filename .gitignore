@@ -12,6 +12,7 @@
 
 # next.js
 /.next/
+/.next-*/
 /out/
 
 # production
@@ -31,6 +32,12 @@ yarn-error.log*
 .env
 .env.local
 .env*.local
+.env.*
+!.env.example
+!.env.*.example
+
+# Local QA recordings may contain account data; publish curated evidence only.
+/artifacts/
 
 # vercel
 .vercel

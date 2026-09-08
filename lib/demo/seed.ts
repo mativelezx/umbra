@@ -4,6 +4,7 @@ import type {
   JungFunctions,
   PsychologicalProfile,
 } from '@/types';
+import { RIDGE_V1_STATUS } from '@/lib/profile/dimension-display';
 
 /**
  * Demo seed data — used when NEXT_PUBLIC_DEMO_MODE=true.
@@ -57,6 +58,9 @@ export const DEMO_PROFILE: PsychologicalProfile = {
   archetypeSecondary: DEMO_ARCHETYPE_SECONDARY,
   inputMode: 'dynamic',
   inputTexts: ['demo input text para visualización'],
+  analysisRaw: {
+    ml: { modelVersion: 'ridge_v1', perDimensionStatus: { ...RIDGE_V1_STATUS } },
+  },
   createdAt: '2026-04-13T00:00:00Z',
   updatedAt: '2026-04-13T00:00:00Z',
 };

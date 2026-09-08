@@ -12,7 +12,9 @@ import { test, expect, type Page } from '@playwright/test';
 // Opt in with E2E_REAL_FLOW=true because this requires Supabase sign-up to
 // create a session immediately, a running ML API, and live Anthropic calls.
 
-const RUN_REAL_FLOW = process.env.E2E_REAL_FLOW === 'true';
+const RUN_REAL_FLOW = process.env.E2E_REAL_FLOW === 'true'
+  && process.env.E2E_ALLOW_ACCOUNT_CREATION === 'true'
+  && process.env.E2E_ALLOW_PAID_AI === 'true';
 
 const SHOTS = '.gstack/qa-reports/screenshots';
 
@@ -66,7 +68,7 @@ Lo que te pesa es la exigencia que te imponés a vos mismo. Cuando una idea tuya
 }
 \`\`\``;
 
-async function answerRefinementTurn(page: Page): Promise<void> {
+async function answerRefinementTurn(page: Page): Promise<boolean> {
   const continueLoc = page.getByRole('button', { name: /^Continuar$/i });
   const synthLoc = page.getByText(/Estamos uniendo todo lo que contaste/i);
   await continueLoc
@@ -74,7 +76,7 @@ async function answerRefinementTurn(page: Page): Promise<void> {
     .first()
     .waitFor({ state: 'visible', timeout: 120_000 });
 
-  if (await synthLoc.isVisible().catch(() => false)) return;
+  if (await synthLoc.isVisible().catch(() => false)) return true;
 
   const textarea = page.locator('textarea').first();
   const slider = page.locator('input[type="range"]').first();
@@ -92,32 +94,40 @@ async function answerRefinementTurn(page: Page): Promise<void> {
   } else if ((await optionButtons.count()) >= 2) {
     await optionButtons.first().click();
   } else {
-    const ranking = page
-      .locator('button')
-      .filter({ hasNotText: /Continuar|reiniciar/i });
-    const count = Math.min(await ranking.count(), 4);
+    const ranking = page.locator('.onboarding-card-enter .grid button');
+    const count = await ranking.count();
+    expect(count).toBeGreaterThan(0);
     for (let i = 0; i < count; i++) {
       await ranking.first().click();
     }
   }
 
   await expect(continueLoc).toBeEnabled({ timeout: 10_000 });
+  const responseEvent = page.waitForResponse(response => new URL(response.url()).pathname === '/api/onboarding/next', { timeout: 120_000 });
   await continueLoc.click();
+  const response = await responseEvent;
+  expect(response.ok()).toBe(true);
+  return (await response.json()).data.done === true;
 }
 
 test.describe('New dashboard + chat via ChatGPT seed flow', () => {
+  test.describe.configure({ retries: 0 });
   test.skip(
     ({ browserName }) => browserName !== 'chromium' || !RUN_REAL_FLOW,
-    'Opt-in chromium-only test: set E2E_REAL_FLOW=true with live Supabase, ML API, and Anthropic',
+    'Requires real-flow, account-creation and paid-AI opt-ins on loopback',
   );
 
   test('seed flow lands on new dashboard + contextual chat', async ({
     page,
-  }) => {
+  }, testInfo) => {
     test.setTimeout(480_000);
+    expect(['localhost', '127.0.0.1']).toContain(new URL(process.env.PLAYWRIGHT_BASE_URL!).hostname);
+    await page.goto('/dashboard');
+    await expect(page).toHaveURL(/\/login/);
 
     const stamp = Date.now();
-    const email = `seed-${stamp}@test.local`;
+    const email = `umbra-seed-${stamp}@test.local`;
+    await testInfo.attach('synthetic-account', { body: JSON.stringify({email}), contentType: 'application/json' });
 
     // Register + consent
     await page.goto('/register');
@@ -127,17 +137,17 @@ test.describe('New dashboard + chat via ChatGPT seed flow', () => {
     await page.getByRole('button', { name: /Crear cuenta/i }).click();
     await page.waitForURL('**/consent', { timeout: 30_000 });
     await page.locator('input[type="checkbox"]').first().check();
-    await page.getByRole('button', { name: /^Continuar$/i }).click();
+    await page.getByRole('button', { name: 'De acuerdo, seguimos' }).click();
 
     // Onboarding: mode selector
     await page.waitForURL('**/onboarding', { timeout: 15_000 });
     await expect(
-      page.getByRole('heading', { name: /Por dónde te gusta entrar/i }),
+      page.getByRole('heading', { name: '¿Cómo querés empezar?' }),
     ).toBeVisible({ timeout: 15_000 });
     await shot(page, '01-mode-selector');
 
     // Pick "Traelo desde ChatGPT" (Opción B)
-    await page.getByRole('button', { name: /Opción B/i }).click();
+    await page.getByRole('button', { name: /Traer un texto de ChatGPT/i }).click();
 
     // Seed copy step
     await expect(
@@ -152,55 +162,57 @@ test.describe('New dashboard + chat via ChatGPT seed flow', () => {
     ).toBeVisible({ timeout: 15_000 });
     await page.locator('textarea').first().fill(CANNED_CHATGPT_RESPONSE);
     await shot(page, '03-seed-paste-filled');
+    const seedResponse = page.waitForResponse(response => new URL(response.url()).pathname === '/api/onboarding/seed', { timeout: 120_000 });
     await page.getByRole('button', { name: /Continuar con verificación/i }).click();
+    expect((await seedResponse).ok()).toBe(true);
 
     // Seeding reveal → DynamicFlow with seeded session
-    await expect(page.getByRole('heading', { name: /^Conversemos$/i }))
-      .toBeVisible({ timeout: 120_000 });
+    await expect(page.getByRole('button', { name: 'Continuar', exact: true })).toBeVisible({ timeout: 120_000 });
     await shot(page, '04-seed-refinement-start');
 
-    // Run up to 5 refinement turns (seeded sessions cap at 3)
-    for (let i = 0; i < 5; i++) {
-      await answerRefinementTurn(page);
-      if (
-        await page
-          .getByText(/Estamos uniendo todo lo que contaste/i)
-          .isVisible()
-          .catch(() => false)
-      ) {
-        break;
-      }
-    }
+    // The server must enforce three refinement turns, including own writing.
+    const analysisResponse = page.waitForResponse(response => new URL(response.url()).pathname === '/api/analyze', { timeout: 300_000 });
+    let finished = false;
+    for (let i = 0; i < 3; i++) { if (await answerRefinementTurn(page)) { finished = true; break; } }
+    expect(finished).toBe(true);
+    const analysis = await analysisResponse;
+    expect(analysis.ok()).toBe(true);
+    const written = analysis.request().postDataJSON().mlTexts;
+    expect(Array.isArray(written)).toBe(true);
+    expect(written.length).toBeGreaterThan(0);
+    expect(JSON.stringify(written)).not.toContain('Sos alguien que vive más tiempo');
     await shot(page, '05-seed-synthesis');
 
+    // Optional self-report skipped: the alternative path remains usable.
+    await expect(page.getByRole('heading', { name: 'Tu voz también tiene una medida.' })).toBeVisible();
+    await page.getByRole('button', { name: 'Ahora no' }).click();
     // Carta form → skip
     await expect(
       page.getByRole('heading', { name: /Escribile a tu vos de 6 meses/i }),
     ).toBeVisible({ timeout: 120_000 });
+    const narrativeResponse = page.waitForResponse(response => new URL(response.url()).pathname === '/api/narrative', { timeout: 120_000 });
     await page.getByRole('button', { name: /Saltear/i }).click();
 
     // Dashboard NEW layout
     await page.waitForURL('**/dashboard', { timeout: 30_000 });
     await expect(
-      page.getByRole('heading', { name: /Tu perfil interior/i }),
+      page.getByRole('heading', { name: /Mi resultado/i }),
     ).toBeVisible({ timeout: 15_000 });
     // Wait for narrative to land
-    await page.waitForTimeout(15_000);
+    const narrative = await narrativeResponse;
+    expect(narrative.ok()).toBe(true);
+    const events = await narrative.text();
+    expect(events).toContain('"type":"done"');
+    expect(events).not.toContain('"type":"error"');
     await shot(page, '06-dashboard-new');
 
-    // Archetype map — click a different archetype to open the compare drawer
-    await page.getByRole('button', { name: /El Héroe/i }).click();
-    await expect(
-      page.getByRole('dialog').getByRole('heading', { name: /El Héroe/i }),
-    ).toBeVisible({ timeout: 5_000 });
-    await shot(page, '06b-archetype-compare-drawer');
-    // Close the drawer before leaving
-    await page.getByRole('button', { name: /Cerrar comparación/i }).click();
+    await page.getByRole('tab', { name: 'Datos del modelo' }).click();
+    await expect(page.getByText('evidencia insuficiente — sin cifra', { exact: true })).toHaveCount(5);
 
     // Chat NEW layout (with context pill + quick prompts)
     await page.goto('/chat');
     await page.waitForLoadState('networkidle');
-    await expect(page.getByText(/Umbra ya sabe de vos/i)).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText(/Contexto de tu lectura/i)).toBeVisible({ timeout: 10_000 });
     await shot(page, '07-chat-new');
   });
 });

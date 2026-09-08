@@ -48,6 +48,16 @@ export async function POST(req: Request) {
     );
   }
 
+  // Keep the existing acceptance criterion: any recorded version for this user.
+  const { data: consent, error: consentError } = await supabase
+    .from('consent_records').select('id').eq('user_id', user.id).limit(1).maybeSingle();
+  if (consentError) {
+    return Response.json({ ok: false, error: 'consent_unavailable' }, { status: 503 });
+  }
+  if (!consent) {
+    return Response.json({ ok: false, error: 'consent_required' }, { status: 403 });
+  }
+
   const service = createEdgeServiceClient();
 
   // Fetch or create conversation
@@ -201,6 +211,7 @@ export async function POST(req: Request) {
         },
         archetype: profileRow.archetype,
         archetypeSecondary: profileRow.archetype_secondary ?? '',
+        analysisRaw: profileRow.analysis_raw ?? undefined,
         inputMode: profileRow.input_mode,
         inputTexts: profileRow.input_texts ?? [],
         createdAt: profileRow.created_at,
@@ -213,10 +224,12 @@ export async function POST(req: Request) {
     .from('messages')
     .select('role, content')
     .eq('conversation_id', conversationId)
-    .order('created_at', { ascending: true })
+    .order('created_at', { ascending: false })
     .limit(10);
 
   const historyText = (history ?? [])
+    .slice()
+    .reverse()
     .map((m) => `${m.role === 'user' ? 'Usuario' : 'Umbra'}: ${m.content}`)
     .join('\n\n');
 
@@ -233,8 +246,9 @@ export async function POST(req: Request) {
   // === STAGE 4: Stream Claude response ===
   const encoder = new TextEncoder();
   let fullText = '';
-  let inputTokens = 0;
-  let outputTokens = 0;
+  // Keep the reservation for any usage the provider never reports.
+  let inputTokens = estInput;
+  let outputTokens = estOutput;
   // Idempotency guard: persistAssistantMessage() is called from both the
   // happy path and the error path, and the happy path can itself throw
   // between the insert and the final enqueue. Without a flag we risk
@@ -287,9 +301,9 @@ export async function POST(req: Request) {
                 `data: ${JSON.stringify({ type: 'text', chunk: event.text })}\n\n`,
               ),
             );
-          } else if (event.type === 'done') {
-            inputTokens = event.inputTokens;
-            outputTokens = event.outputTokens;
+          } else if (event.type === 'usage' || event.type === 'done') {
+            inputTokens = event.inputTokens ?? inputTokens;
+            outputTokens = event.outputTokens ?? outputTokens;
           }
         }
 
@@ -301,16 +315,8 @@ export async function POST(req: Request) {
         );
       } catch (e) {
         console.error('[chat] stream error', e);
-        // Persist whatever partial output we captured so the user doesn't lose
-        // the assistant's half-finished turn on retry, and keep the conversation
-        // activity timer fresh. persistAssistantMessage() is a no-op if the
-        // happy path already ran.
-        try {
-          await persistAssistantMessage();
-          await bumpActivity();
-        } catch (persistErr) {
-          console.error('[chat] partial persist failed', persistErr);
-        }
+        // An incomplete answer must not reappear as a normal message when the
+        // conversation is reopened. The user's message is already preserved.
         controller.enqueue(
           encoder.encode(
             `data: ${JSON.stringify({

@@ -51,13 +51,19 @@ export const POST = withErrorHandler(async (req) => {
 
   let purged = 0;
   if (!body.research_opt_in && body.purge_existing) {
-    const userHash = await computeHash('research', user.id);
-    const service = createServiceClient();
-    const { count } = await service
-      .from('research_dataset')
-      .delete({ count: 'exact' })
-      .eq('user_hash', userHash);
-    purged = count ?? 0;
+    try {
+      const userHash = await computeHash('research', user.id);
+      const service = createServiceClient();
+      const { count, error: purgeError } = await service
+        .from('research_dataset')
+        .delete({ count: 'exact' })
+        .eq('user_hash', userHash);
+      if (purgeError || count === null) throw new Error('research_purge_failed');
+      purged = count;
+    } catch {
+      // Participation was disabled, but deletion must remain explicitly retryable.
+      return Response.json({ ok: false, error: 'research_purge_failed', research_opt_in: false }, { status: 500 });
+    }
   }
 
   return {

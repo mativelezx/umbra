@@ -10,6 +10,7 @@ import {
 } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
+import { useOnboardingStore } from '@/lib/store/onboarding-store';
 
 interface AuthContextValue {
   user: User | null;
@@ -27,17 +28,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let active = true;
+    let authEventReceived = false;
+
+    function applySession(nextSession: Session | null) {
+      useOnboardingStore.getState().bindUser(nextSession?.user.id ?? null);
+      setSession(nextSession);
+      setLoading(false);
+    }
 
     supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => {
-      if (!active) return;
-      setSession(data.session);
-      setLoading(false);
+      if (!active || authEventReceived) return;
+      applySession(data.session);
+    }).catch(() => {
+      if (active && !authEventReceived) applySession(null);
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event: string, newSession: Session | null) => {
-      setSession(newSession);
+      if (!active) return;
+      authEventReceived = true;
+      applySession(newSession);
     });
 
     return () => {
@@ -52,7 +63,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       loading,
       signOut: async () => {
-        await supabase.auth.signOut();
+        useOnboardingStore.getState().bindUser(null);
+        useOnboardingStore.persist.clearStorage();
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+        setSession(null);
       },
     }),
     [session, loading, supabase],

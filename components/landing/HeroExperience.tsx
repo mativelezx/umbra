@@ -3,8 +3,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { ArrowRight, Pause, Play } from '@phosphor-icons/react';
-import { ReflectionArt } from '@/components/ui/ReflectionArt';
-import { FluidField } from './FluidField';
+import { StoryScene } from './StoryScene';
 import styles from './Landing.module.css';
 
 const tabs = ['Preguntas', 'Lectura', 'Actividades'] as const;
@@ -56,7 +55,7 @@ export function HeroExperience() {
 
   return (
     <div ref={regionRef} role="region" aria-label="Vista de ejemplo de Umbra" className={styles.experience} data-motion={motion}>
-      <FluidField />
+      <StoryScene selected={selected} />
       <div className={styles.example}>
         <div className={styles.exampleHeader}>
           <span>Vista de ejemplo</span>
@@ -79,41 +78,38 @@ export function HeroExperience() {
           ))}
         </div>
 
-        {/* Excerpts from lib/demo/onboarding-script.ts and lib/demo/seed.ts.
-            Static demonstration content, never a submitted or generated result. */}
+        {/* A fictional situation connects the three steps. These are illustrative
+            examples, not a testimonial or a generated result about the visitor. */}
         <div role="tabpanel" id={`${id}-panel-0`} aria-labelledby={`${id}-tab-0`} tabIndex={0} hidden={selected !== 0} className={styles.examplePanel}>
           <div>
             <div className={styles.exampleLead}>
-              <p className={styles.sampleQuestion}>¿Qué te pasa cuando todo parece ir bien pero sentís que algo falta?</p>
-              <ReflectionArt variant="dialogue" className={styles.exampleArt} />
+              <p className={styles.sampleQuestion}>¿Qué decisión venís postergando? ¿Qué te cuesta de dar ese paso?</p>
             </div>
-            <p className={styles.sampleHelper}>No hay respuesta correcta. Escribí lo que te salga.</p>
+            <p className={styles.sampleHelper}>Puede ser algo del trabajo, una relación o un proyecto que te importa.</p>
           </div>
-          <p className={styles.sampleNote}>Una pregunta del recorrido. Tus respuestas empiezan después del consentimiento.</p>
+          <p className={styles.sampleNote}>Pregunta ilustrativa. Para responder, primero creás tu cuenta y revisás el uso de tus datos.</p>
         </div>
         <div role="tabpanel" id={`${id}-panel-1`} aria-labelledby={`${id}-tab-1`} tabIndex={0} hidden={selected !== 1} className={styles.examplePanel}>
           <div>
             <div className={styles.exampleLead}>
-              <p className={styles.readingTitle}>Una lectura para seguir pensando.</p>
-              <ReflectionArt variant="mirror" className={styles.exampleArt} />
+              <p className={styles.readingTitle}>Otra forma de mirar esa decisión.</p>
             </div>
             <p className={styles.readingSource}>Interpretación de ejemplo</p>
-            <blockquote className={styles.readingExcerpt}>¿Qué pasaría si, una vez por semana, dejaras que una cosa te sorprendiera sin intentar decodificarla en el mismo momento?</blockquote>
+            <blockquote className={styles.readingExcerpt}>Contás que buscás estar seguro antes de decidir. ¿Qué necesitás saber y qué podrías probar sin tener todas las respuestas?</blockquote>
           </div>
-          <p className={styles.sampleNote}>Fragmento de la muestra local. La interpretación de IA puede equivocarse.</p>
+          <p className={styles.sampleNote}>Ejemplo ficticio, no una conclusión sobre vos. Podés cuestionar la lectura de IA.</p>
         </div>
         <div role="tabpanel" id={`${id}-panel-2`} aria-labelledby={`${id}-tab-2`} tabIndex={0} hidden={selected !== 2} className={styles.examplePanel}>
           <div>
             <div className={styles.exampleLead}>
-              <p className={styles.readingTitle}>Caminata sin destino</p>
-              <ReflectionArt variant="steps" className={styles.exampleArt} />
+              <p className={styles.readingTitle}>Probá un paso pequeño</p>
             </div>
-            <p className={styles.activityDescription}>Caminá 20 minutos sin música, sin podcast, sin destino. Solo observando lo que hay alrededor: texturas, olores, luz. No lo analices.</p>
+            <p className={styles.activityDescription}>Anotá esa decisión. Separá lo que depende de vos de lo que no. Elegí una acción pequeña que puedas intentar esta semana.</p>
           </div>
-          <p className={styles.sampleNote}>Actividad de la muestra local. En la app podés elegir una propuesta y marcar sus pasos.</p>
+          <p className={styles.sampleNote}>Actividad ilustrativa. En tu cuenta recibís sugerencias según tus respuestas; vos elegís si hacerlas.</p>
         </div>
         <div className={styles.exampleFooter} aria-hidden="true">
-          <span>De una pregunta a una próxima acción.</span>
+          <span>Una situación. Una mirada. Un paso posible.</span>
           <ArrowRight size={19} />
         </div>
       </div>

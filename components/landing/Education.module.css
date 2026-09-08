@@ -1,0 +1,188 @@
+.container {
+  width: min(100% - 96px, 1280px);
+  margin-inline: auto;
+}
+
+.container h2 {
+  font-size: clamp(2rem, 3.4vw, 3.1rem);
+  font-weight: 500;
+  line-height: 1.13;
+  letter-spacing: -.025em;
+  text-wrap: balance;
+}
+
+.container h3 { font-weight: 500; line-height: 1.25; }
+.container p { text-wrap: pretty; }
+.container a { text-underline-offset: 4px; }
+.container a:hover { text-decoration-thickness: 2px; }
+.container :is(article, dl, figure, aside, div) { min-width: 0; }
+.container[id], .jungSection { scroll-margin-top: 28px; }
+
+.possibilities {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: clamp(48px, 7vw, 100px);
+  padding-block: 96px 42px;
+}
+
+.intro h2 { max-width: 14ch; }
+.intro > p { max-width: 34ch; margin-top: 24px; color: var(--landing-body); font-size: 17px; line-height: 1.7; }
+.possibilityList { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 42px; row-gap: 38px; }
+.possibilityList article { border-top: 1px solid var(--landing-line); padding-top: 22px; }
+.possibilityList svg { margin-bottom: 20px; }
+.possibilityList h3 { font-size: 22px; }
+.possibilityList p { margin-top: 12px; color: var(--landing-body); font-size: 15px; line-height: 1.7; }
+
+.bigFive { padding-block: 12px 96px; }
+.sectionHeading { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 68px; }
+.sectionHeading h2 { max-width: 19ch; }
+.sectionHeading p { max-width: 55ch; color: var(--landing-body); font-size: 16px; line-height: 1.7; }
+.sectionHeading p + p { margin-top: 14px; }
+.dimensionList { margin-top: 48px; }
+.dimension { display: grid; grid-template-columns: 44px 1.06fr 1.1fr 1.12fr; align-items: start; column-gap: 28px; padding-block: 29px; border-top: 1px solid var(--landing-line); }
+.dimensionIcon { margin-top: 2px; }
+.dimensionTitle h3 { font-size: 22px; }
+.dimensionTitle p { margin-top: 9px; color: var(--landing-body); font-size: 14px; line-height: 1.5; }
+.dimensionDescription, .dimensionExample { color: var(--landing-body); font-size: 15px; line-height: 1.7; }
+.dimensionExample { padding-left: 26px; border-left: 1px solid var(--landing-line); }
+.dimensionExample span { display: block; margin-bottom: 6px; color: var(--landing-ink); font-size: 13px; font-weight: 500; }
+.source { max-width: 90ch; margin-top: 18px; color: var(--landing-body); font-size: 13px; line-height: 1.8; }
+.source a { text-decoration: underline; }
+.modelNote { display: grid; grid-template-columns: .8fr 1.5fr; gap: 42px; margin-top: 38px; padding: 33px 36px; background: var(--landing-paper); }
+.modelNote h3 { font-size: 23px; }
+.modelNote p { color: var(--landing-body); font-size: 15px; line-height: 1.7; }
+.modelNote h3 + p, .modelNote p + p { margin-top: 12px; }
+
+.jungSection { background: var(--landing-ink); color: var(--landing-paper); }
+.jungLayout { display: grid; grid-template-columns: .78fr 1.22fr; gap: clamp(48px, 7vw, 110px); align-items: start; padding-block: 90px; }
+.portrait { width: 100%; max-width: 360px; margin-top: 6px; }
+.portrait img { display: block; width: 100%; height: auto; }
+.portrait figcaption { margin-top: 18px; color: var(--landing-muted); font-size: 12px; line-height: 1.8; }
+.portrait a { text-decoration: underline; }
+.jungCopy > p { max-width: 64ch; color: var(--landing-muted); font-size: 16px; line-height: 1.75; margin-top: 20px; }
+.jungCopy .biography { margin-top: 25px; font-size: 18px; color: var(--landing-paper); }
+.functionList { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 30px; margin-top: 32px; }
+.functionList dt { display: flex; align-items: center; gap: 11px; font-size: 18px; font-weight: 500; }
+.functionList dt svg { flex-shrink: 0; }
+.functionList dd { margin-top: 10px; color: var(--landing-muted); font-size: 14px; line-height: 1.7; }
+.jungLimit { margin-top: 34px; padding-top: 28px; border-top: 1px solid #41443f; }
+.jungLimit h3 { font-size: 22px; }
+.jungLimit p { margin-top: 13px; color: var(--landing-muted); font-size: 15px; line-height: 1.75; }
+.jungCopy .source { font-size: 13px; }
+
+.activities { padding-block: 94px 90px; }
+.sectionHeading .activityLead { margin-top: 16px; font-size: 22px; line-height: 1.4; color: var(--landing-ink); }
+.activityExamples { display: grid; grid-template-columns: 1fr 1fr; gap: 68px; margin-top: 44px; }
+.writingExample { padding: 36px 38px; background: var(--landing-paper); }
+.writingExample > svg { margin-bottom: 23px; }
+.writingExample h3 { font-size: 26px; }
+.writingExample > p { margin-top: 14px; color: var(--landing-body); font-size: 15px; line-height: 1.75; }
+.writingPrompt { margin-block: 29px; padding-block: 24px; border-block: 1px solid var(--landing-line); }
+.writingPrompt p { font-size: clamp(22px, 2.2vw, 28px); line-height: 1.5; letter-spacing: -.02em; }
+.writingPrompt span { display: block; margin-top: 15px; color: var(--landing-body); font-size: 13px; line-height: 1.65; }
+.moreActivities { display: flex; flex-direction: column; align-items: flex-start; }
+.moreActivities article { display: grid; grid-template-columns: 30px 1fr; gap: 19px; padding-block: 26px; border-top: 1px solid var(--landing-line); }
+.moreActivities h3 { font-size: 23px; }
+.moreActivities article p { margin-top: 12px; color: var(--landing-body); font-size: 15px; line-height: 1.75; }
+.exampleLimit { color: var(--landing-body); font-size: 13px; line-height: 1.75; }
+.action { display: inline-flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 56px; margin-top: 26px; padding: 14px 20px; border-radius: 8px; background: var(--landing-ink); color: var(--landing-paper); font-size: 15px; font-weight: 500; }
+.action svg { flex-shrink: 0; }
+.action:hover { background: #31352f; }
+.computingNote { display: grid; grid-template-columns: .8fr 1.5fr; gap: 42px; margin-top: 42px; padding-top: 30px; border-top: 1px solid var(--landing-line); }
+.computingNote h3 { max-width: 20ch; font-size: 23px; }
+.computingNote p { max-width: 70ch; color: var(--landing-body); font-size: 15px; line-height: 1.8; }
+.computingNote a { text-decoration: underline; }
+
+.faq { display: grid; grid-template-columns: .85fr 1.25fr; gap: clamp(48px, 7vw, 100px); padding-block: 12px 96px; }
+.faqIntro > p { margin-top: 23px; max-width: 32ch; color: var(--landing-body); font-size: 17px; line-height: 1.7; }
+.dataNote { margin-top: 42px; }
+.dataNote h3 { font-size: 20px; }
+.dataNote p { max-width: 34ch; margin-top: 12px; color: var(--landing-body); font-size: 15px; line-height: 1.75; }
+.dataNote a { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; margin-top: 14px; font-size: 14px; text-decoration: underline; }
+.dataNote svg { flex-shrink: 0; }
+.questions details { border-top: 1px solid var(--landing-line); }
+.questions details:last-child { border-bottom: 1px solid var(--landing-line); }
+.questions summary { display: flex; justify-content: space-between; align-items: center; gap: 24px; min-height: 76px; padding-block: 24px; cursor: pointer; list-style: none; font-size: 19px; font-weight: 500; line-height: 1.45; }
+.questions summary::-webkit-details-marker { display: none; }
+.questions summary svg { flex-shrink: 0; }
+.questions summary:hover { text-decoration: underline; text-underline-offset: 5px; }
+.questions details[open] summary svg { transform: rotate(180deg); }
+.questions details > div { padding: 0 28px 27px 0; }
+.questions details p { max-width: 65ch; color: var(--landing-body); font-size: 15px; line-height: 1.8; }
+.questions details p + p { margin-top: 15px; }
+.questions details a { text-decoration: underline; }
+.closing { padding-block: 16px 88px; border-top: 1px solid var(--landing-line); }
+.closing h2 { max-width: 23ch; margin-top: 42px; }
+.closing > p { margin-top: 20px; color: var(--landing-body); }
+
+@media (max-width: 1050px) {
+  .container { width: calc(100% - 64px); }
+  .possibilities, .faq { gap: 40px; }
+  .possibilityList { column-gap: 26px; }
+  .sectionHeading, .activityExamples { gap: 40px; }
+  .dimension { grid-template-columns: 36px 1fr 1.4fr; column-gap: 23px; }
+  .dimensionExample { grid-column: 3; margin-top: 14px; padding-left: 0; border-left: 0; }
+  .dimensionExample span { display: inline; margin-right: 8px; }
+  .jungLayout { gap: 40px; }
+  .writingExample { padding: 30px; }
+}
+
+@media (max-width: 760px) {
+  .container { width: calc(100% - 40px); }
+  .container h2 { font-size: 34px; }
+  .possibilities { grid-template-columns: 1fr; gap: 34px; padding-block: 60px 0; }
+  .intro h2 { max-width: 18ch; }
+  .intro > p { max-width: 50ch; font-size: 16px; margin-top: 20px; }
+  .possibilityList { gap: 28px 24px; }
+  .possibilityList h3 { font-size: 20px; }
+  .possibilityList p { font-size: 14px; }
+  .possibilityList svg { margin-bottom: 16px; }
+  .bigFive { padding-block: 0 60px; }
+  .sectionHeading { grid-template-columns: 1fr; gap: 24px; }
+  .sectionHeading p { font-size: 15px; }
+  .dimensionList { margin-top: 30px; }
+  .dimension { grid-template-columns: 35px 1fr; column-gap: 19px; padding-block: 24px; }
+  .dimensionTitle h3 { font-size: 21px; }
+  .dimensionTitle p { margin-top: 6px; }
+  .dimensionDescription, .dimensionExample { grid-column: 2; margin-top: 14px; font-size: 14px; }
+  .dimensionExample { padding-left: 15px; border-left: 1px solid var(--landing-line); }
+  .dimensionExample span { display: block; margin-bottom: 4px; }
+  .modelNote { grid-template-columns: 1fr; gap: 18px; padding: 26px; margin-top: 26px; }
+  .modelNote p { font-size: 14px; }
+  .source { font-size: 12px; }
+  .jungLayout { grid-template-columns: 1fr; gap: 35px; padding-block: 56px; }
+  .portrait { max-width: 360px; margin-inline: auto; }
+  .jungCopy .biography { font-size: 17px; }
+  .jungCopy > p { font-size: 15px; }
+  .functionList { gap: 25px 24px; }
+  .functionList dt { font-size: 17px; gap: 8px; }
+  .functionList dd { font-size: 14px; }
+  .jungLimit p { font-size: 14px; }
+  .activities { padding-block: 60px; }
+  .sectionHeading .activityLead { font-size: 21px; margin-top: 13px; }
+  .activityExamples { grid-template-columns: 1fr; gap: 30px; margin-top: 30px; }
+  .writingExample { padding: 27px; }
+  .writingExample h3 { font-size: 24px; }
+  .moreActivities h3 { font-size: 22px; }
+  .action { max-width: 100%; }
+  .computingNote { grid-template-columns: 1fr; gap: 17px; margin-top: 32px; }
+  .computingNote h3 { max-width: none; font-size: 22px; }
+  .computingNote p { font-size: 14px; }
+  .faq { grid-template-columns: 1fr; gap: 34px; padding-block: 0 60px; }
+  .faqIntro > p { max-width: 45ch; font-size: 16px; margin-top: 19px; }
+  .dataNote { margin-top: 28px; }
+  .dataNote p { max-width: 45ch; }
+  .questions summary { font-size: 18px; gap: 20px; }
+  .questions details > div { padding-right: 5px; }
+  .questions details p { font-size: 14px; }
+}
+
+@media (max-width: 380px) {
+  .possibilityList, .functionList { grid-template-columns: 1fr; }
+  .possibilityList article { display: grid; grid-template-columns: 30px 1fr; gap: 12px 16px; }
+  .possibilityList svg { margin: 0; }
+  .possibilityList h3 { align-self: center; }
+  .possibilityList p { grid-column: 2; margin-top: 0; }
+  .functionList dd { margin-left: 31px; }
+  .writingExample { padding: 23px; }
+}

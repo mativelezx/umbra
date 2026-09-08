@@ -87,6 +87,8 @@ def test_status_loads_from_eval_metrics(tmp_path):
     payload = {
         "blocks": {
             "latinoamericano_only": {
+                "n_samples": 60,
+                "metrics": {dim: {"n": 60} for dim in BIG_FIVE_DIMS},
                 "per_dimension_status": {
                     "openness": "ok",
                     "conscientiousness": "low_confidence",
@@ -105,12 +107,8 @@ def test_status_loads_from_eval_metrics(tmp_path):
     assert status["conscientiousness"] == "low_confidence"
 
 
-def test_status_prefiere_lectura_binaria_sobre_regresion(tmp_path):
-    """ADR-027: la lectura primaria es la binaria, no la de regresion.
-
-    Con etiquetas binarias el R² es bajo por construccion, asi que el status
-    de regresion subreporta. Si ambos estan presentes, gana el binario.
-    """
+def test_english_binary_evidence_does_not_validate_spanish(tmp_path):
+    """A binary result on English cannot establish Spanish score validity."""
     import json
     payload = {
         "blocks": {
@@ -132,16 +130,11 @@ def test_status_prefiere_lectura_binaria_sobre_regresion(tmp_path):
         json.dump(payload, f)
 
     status = _load_status_from_eval_metrics(path)
-    assert status["openness"] == "ok"
-    assert status["extraversion"] == "not_applicable"
+    assert set(status.values()) == {"low_confidence"}
 
 
-def test_status_descarta_bloque_sin_poder_estadistico(tmp_path):
-    """Un bloque con n por debajo de MIN_BLOCK_N no puede decidir el status.
-
-    Caso real: `latinoamericano_only` quedo con n=2 en el conjunto de prueba.
-    El status debe resolverse contra `combined` (n=250), no contra ese bloque.
-    """
+def test_insufficient_spanish_evidence_has_no_english_fallback(tmp_path):
+    """Two synthetic Spanish cases cannot establish per-person validity."""
     import json
     payload = {
         "blocks": {
@@ -168,7 +161,15 @@ def test_status_descarta_bloque_sin_poder_estadistico(tmp_path):
         json.dump(payload, f)
 
     status = _load_status_from_eval_metrics(path)
-    assert status["openness"] == "ok", "debe resolver contra combined, no contra n=2"
+    assert set(status.values()) == {"low_confidence"}
+
+
+@pytest.mark.parametrize("payload", [[], {"blocks": []}, {"blocks": {"latinoamericano_only": None}}])
+def test_malformed_status_remains_conservative(tmp_path, payload):
+    import json
+    path = tmp_path / "eval_metrics.json"
+    path.write_text(json.dumps(payload))
+    assert set(_load_status_from_eval_metrics(path).values()) == {"low_confidence"}
 
 
 def test_predictor_clips_to_0_100(tmp_path):
@@ -191,3 +192,15 @@ def test_predictor_clips_to_0_100(tmp_path):
     result2 = p2.predict("texto")
     for dim in BIG_FIVE_DIMS:
         assert result2["big_five"][dim] == 0.0  # clipped al mínimo
+
+
+def test_incomplete_bundle_does_not_fabricate_neutral_score(tmp_path):
+    bundle_path = _make_real_bundle(tmp_path)
+    bundle = joblib.load(bundle_path)
+    del bundle["models"]["openness"]
+    joblib.dump(bundle, bundle_path)
+    predictor = Predictor(bundle_path)
+    predictor._extractor = MagicMock()
+    predictor._extractor.encode.return_value = np.zeros((1, 768), dtype=np.float32)
+    with pytest.raises(ValueError, match="Missing regressor"):
+        predictor.predict("texto sintético")

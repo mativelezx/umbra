@@ -4,15 +4,23 @@ import { test, expect, type Page } from '@playwright/test';
 // register → consent → /onboarding (conductor drives 6-8 turns) → synthesis
 // → CartaForm skip → dashboard → narrative streams in → /plan generates.
 //
-// This spec hits real Supabase local + real Anthropic API. Run with:
-//   pnpm exec playwright test e2e/full-flow.spec.ts --project=chromium
+// Real integration only: creates a synthetic account and consumes paid AI.
+// Requires an explicitly approved test environment with immediate sign-up
+// sessions, running ML, and configured Anthropic. No Auth/response mocks.
+// Does not delete the test account automatically; cleanup needs separate approval.
 //
 // Chromium only: one pass of the full loop is enough to validate every
 // backend integration is wired up, and we don't want to double-charge Claude.
-// Opt in with E2E_REAL_FLOW=true because this requires Supabase sign-up to
-// create a session immediately, a running ML API, and live Anthropic calls.
+// Run only after approval with all three flags, plus a loopback PLAYWRIGHT_BASE_URL.
+// E2E_REAL_FLOW=true E2E_ALLOW_ACCOUNT_CREATION=true E2E_ALLOW_PAID_AI=true
+// pnpm exec playwright test e2e/full-flow.spec.ts --project=chromium --retries=0
 
-const RUN_REAL_FLOW = process.env.E2E_REAL_FLOW === 'true';
+const RUN_REAL_FLOW = process.env.E2E_REAL_FLOW === 'true'
+  && process.env.E2E_ALLOW_ACCOUNT_CREATION === 'true'
+  && process.env.E2E_ALLOW_PAID_AI === 'true';
+// Resume only a known synthetic QA account after an interrupted run. This never
+// accepts an arbitrary real person's email and does not bypass authentication.
+const REUSE_SYNTHETIC_EMAIL = process.env.E2E_REUSE_SYNTHETIC_EMAIL;
 
 const INTRO_TEXT = [
   'Siento que soy alguien que pasa mucho tiempo adentro de su cabeza.',
@@ -26,7 +34,7 @@ const INTRO_TEXT = [
 const FOLLOWUP_TEXT =
   'Cuando tengo que decidir algo importante necesito tiempo a solas para ordenar las ideas. Me gusta entender el por qué antes del qué, y prefiero una conversación profunda con una persona que diez charlas superficiales con un grupo.';
 
-async function answerCurrentTurn(page: Page, turnIdx: number): Promise<void> {
+async function answerCurrentTurn(page: Page, turnIdx: number): Promise<boolean> {
   // Wait for either a QuestionCard (continue button) or the SynthesisReveal.
   const continueLoc = page.getByRole('button', { name: /^Continuar$/i });
   const synthLoc = page.getByText(/Estamos uniendo todo lo que contaste/i);
@@ -36,7 +44,7 @@ async function answerCurrentTurn(page: Page, turnIdx: number): Promise<void> {
     .waitFor({ state: 'visible', timeout: 120_000 });
 
   if (await synthLoc.isVisible().catch(() => false)) {
-    return; // conductor marked done before this turn
+    return true; // conductor marked done before this turn
   }
 
   // Detect card type by structural markers.
@@ -59,10 +67,9 @@ async function answerCurrentTurn(page: Page, turnIdx: number): Promise<void> {
     await optionButtons.first().click();
   } else {
     // Ranking has plain buttons inside a grid; click them in order.
-    const rankingButtons = page
-      .locator('button')
-      .filter({ hasNotText: /Continuar|reiniciar/i });
-    const count = Math.min(await rankingButtons.count(), 4);
+    const rankingButtons = page.locator('.onboarding-card-enter .grid button');
+    const count = await rankingButtons.count();
+    expect(count, 'unrecognized question card; no ranking options found').toBeGreaterThan(0);
     for (let i = 0; i < count; i++) {
       // After each click, the clicked button disappears from "remaining".
       await rankingButtons.first().click();
@@ -71,25 +78,54 @@ async function answerCurrentTurn(page: Page, turnIdx: number): Promise<void> {
 
   const continueBtn = page.getByRole('button', { name: /^Continuar$/i });
   await expect(continueBtn).toBeEnabled({ timeout: 10_000 });
+  const nextResponse = page.waitForResponse(response => new URL(response.url()).pathname === '/api/onboarding/next', { timeout: 120_000 });
   await continueBtn.click();
+  const response = await nextResponse;
+  expect(response.ok(), 'real onboarding request failed').toBe(true);
+  const payload = await response.json();
+  expect(payload.ok).toBe(true);
+  // A later question may use the documented safe fallback when the provider
+  // returns an invalid shape. Record it; final analysis/narrative/plan must still
+  // succeed against the real providers. The first question must prove availability.
+  if (payload.data.turn.question.id.startsWith('fb-')) {
+    test.info().annotations.push({ type: 'fallback-question', description: payload.data.turn.question.id });
+  }
+  return payload.data.done === true;
 }
 
 test.describe('Umbra full-flow happy path (dynamic onboarding)', () => {
+  test.describe.configure({ retries: 0 });
   test.skip(
     ({ browserName }) => browserName !== 'chromium' || !RUN_REAL_FLOW,
-    'Opt-in chromium-only test: set E2E_REAL_FLOW=true with live Supabase, ML API, and Anthropic',
+    'Requires explicit real-flow, account-creation and paid-AI opt-ins; never treat demo fixtures as this integration test',
   );
 
-  test('register → consent → dynamic onboarding → dashboard → narrative → plan', async ({
+  test(`${REUSE_SYNTHETIC_EMAIL ? 'synthetic login' : 'register → consent'} → dynamic onboarding → dashboard → narrative → plan`, async ({
     page,
-  }) => {
-    test.setTimeout(360_000);
+  }, testInfo) => {
+    test.setTimeout(480_000);
+    const base = new URL(process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000');
+    expect(['localhost', '127.0.0.1', '[::1]']).toContain(base.hostname);
+    expect(process.env.NEXT_PUBLIC_DEMO_MODE).not.toBe('true');
+    // Fail before account creation if the running app bypasses real Auth.
+    await page.goto('/dashboard');
+    await expect(page).toHaveURL(/\/login(?:\?|$)/);
 
     const stamp = Date.now();
-    const email = `umbra-e2e-${stamp}@test.local`;
+    if (REUSE_SYNTHETIC_EMAIL) expect(REUSE_SYNTHETIC_EMAIL).toMatch(/^umbra-e2e-\d+@test\.local$/);
+    const email = REUSE_SYNTHETIC_EMAIL ?? `umbra-e2e-${stamp}@test.local`;
     const password = 'UmbraE2E-Test-1234!';
     const fullName = 'Umbra E2E';
+    await testInfo.attach('synthetic-account', { body: JSON.stringify({ email }), contentType: 'application/json' });
 
+    if (REUSE_SYNTHETIC_EMAIL) {
+      await page.goto('/login');
+      await page.getByLabel('Email').fill(email);
+      await page.getByLabel('Contraseña').fill(password);
+      await page.getByRole('button', { name: /^Entrar$/i }).click();
+      await page.waitForURL(url => !url.pathname.startsWith('/login'), { timeout: 60_000 });
+      await page.goto('/onboarding');
+    } else {
     // 1. Register
     await page.goto('/register');
     await expect(
@@ -103,60 +139,105 @@ test.describe('Umbra full-flow happy path (dynamic onboarding)', () => {
     // 2. Consent
     await page.waitForURL('**/consent', { timeout: 30_000 });
     await expect(
-      page.getByRole('heading', { name: /Antes de empezar/i }),
+      page.getByRole('heading', { name: /Tus datos, tus reglas/i }),
     ).toBeVisible({ timeout: 10_000 });
     const acceptCheckbox = page.locator('input[type="checkbox"]').first();
     await acceptCheckbox.check();
-    await page.getByRole('button', { name: /^Continuar$/i }).click();
+    await page.getByRole('button', { name: /De acuerdo, seguimos/i }).click();
+    }
 
     // 3. Dynamic onboarding — the conductor drives 6-8 turns.
-    await page.waitForURL('**/onboarding', { timeout: 15_000 });
+    await page.waitForURL('**/onboarding', { timeout: 60_000 });
     await expect(
-      page.getByRole('heading', { name: /Conversemos/i }),
+      page.getByRole('heading', { name: /¿Cómo querés empezar\?/i }),
     ).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText(/Ejemplo local\./)).toHaveCount(0);
+    const initialQuestion = page.waitForResponse(response => new URL(response.url()).pathname === '/api/onboarding/next', { timeout: 120_000 });
+    await page.getByRole('button', { name: /Responder preguntas/i }).click();
+    const initialResponse = await initialQuestion;
+    expect(initialResponse.ok(), 'real onboarding must run instead of a fixture').toBe(true);
+    const initialPayload = await initialResponse.json();
+    expect(initialPayload.data.turn.question.id, 'Conductor used a fallback; stop before making further paid requests').not.toMatch(/^fb-/);
+    await expect(page.getByRole('button', { name: /^Continuar$/i })).toBeVisible();
+    await page.screenshot({ path: testInfo.outputPath('onboarding-real.png') });
+    const analysisResponse = page.waitForResponse(response => new URL(response.url()).pathname === '/api/analyze', { timeout: 360_000 });
 
     const MAX_TURNS = 10; // conductor caps at 8; leave slack for retries
     let synthReached = false;
+    let answeredTurns = 0;
     for (let i = 0; i < MAX_TURNS; i++) {
-      await answerCurrentTurn(page, i);
-      // If synth reveal showed up, we're done.
-      if (
-        await page
-          .getByText(/Estamos uniendo todo lo que contaste/i)
-          .isVisible()
-          .catch(() => false)
-      ) {
+      // Use the actual response, since the synthesis indicator may be brief.
+      const finished = await answerCurrentTurn(page, i);
+      answeredTurns++;
+      if (finished) {
         synthReached = true;
         break;
       }
     }
     expect(synthReached, 'conductor never marked done within MAX_TURNS').toBe(true);
 
-    // 4. CartaForm appears after analyze succeeds.
+    const analyzed = await analysisResponse;
+    expect(analyzed.request().postDataJSON().texts).toHaveLength(answeredTurns);
+    const analysisPayload = await analyzed.json();
+    expect(analyzed.ok(), `analysis API failed: ${analysisPayload.error ?? analyzed.status()}`).toBe(true);
+    expect(analysisPayload.ok).toBe(true);
+    await testInfo.attach('generated-profile', { body: JSON.stringify({ profileId: analysisPayload.data.profileId }), contentType: 'application/json' });
+
+    // 4. Independent self-report is offered after ML, before the saved reading.
+    await expect(page.getByRole('heading', { name: 'Tu voz también tiene una medida.' })).toBeVisible({ timeout: 120_000 });
+    await page.getByRole('checkbox').check();
+    await page.getByRole('button', { name: 'Empezar las 30 preguntas' }).click();
+    for (let block=0; block<5; block++) {
+      for (let item=0; item<6; item++) await page.locator('fieldset').nth(item).getByRole('radio', { name: 'Neutral, sin opinión' }).check();
+      if (block < 4) await page.getByRole('button', { name: 'Siguientes 6' }).click();
+    }
+    const questionnaireResponse = page.waitForResponse(response => new URL(response.url()).pathname === '/api/self-report');
+    await page.getByRole('button', { name: 'Guardar y ver mi resultado' }).click();
+    const savedQuestionnaire = await questionnaireResponse;
+    expect(savedQuestionnaire.ok()).toBe(true);
+    expect((await savedQuestionnaire.json()).data.selfReport.scores.openness).toBe(3);
+    await expect(page.getByLabel(/: 3.00 sobre 5/)).toHaveCount(5);
+    await page.screenshot({ path: testInfo.outputPath('self-report-real.png') });
+    await page.getByRole('button', { name: 'Continuar', exact: true }).click();
+
+    // CartaForm follows the optional questionnaire.
     await expect(
       page.getByRole('heading', { name: /Escribile a tu vos de 6 meses/i }),
     ).toBeVisible({ timeout: 120_000 });
+    const narrativeResponse = page.waitForResponse(response => new URL(response.url()).pathname === '/api/narrative', { timeout: 120_000 });
     await page.getByRole('button', { name: /Saltear/i }).click();
 
     // 5. Dashboard renders with real profile data.
     await page.waitForURL('**/dashboard', { timeout: 30_000 });
     await expect(
-      page.getByRole('heading', { name: /Tu perfil interior/i }),
+      page.getByRole('heading', { name: /Mi resultado/i }),
     ).toBeVisible({ timeout: 15_000 });
-    await expect(page.getByText(/Big Five/i)).toBeVisible();
-    await expect(page.getByText(/Funciones cognitivas/i)).toBeVisible();
 
     // 6. Narrative streams in from /api/narrative.
-    await expect(page.locator('article').first()).toBeVisible({ timeout: 60_000 });
-    await expect(page.locator('article').first()).not.toBeEmpty({ timeout: 90_000 });
-    await page.waitForTimeout(8_000);
+    const readingResponse = await narrativeResponse;
+    expect(readingResponse.ok()).toBe(true);
+    const readingEvents = await readingResponse.text();
+    expect(readingEvents).toContain('"type":"done"');
+    expect(readingEvents).not.toContain('"type":"error"');
+    await page.screenshot({ path: testInfo.outputPath('reading-real.png') });
+    await page.getByRole('tab', { name: 'Datos del modelo' }).click();
+    const dimensions = page.getByRole('list', { name: 'Dimensiones Big Five con su estado de confianza' });
+    await expect(dimensions.getByRole('listitem')).toHaveCount(5);
+    await expect(dimensions.getByText('Apertura a lo nuevo', { exact: true })).toBeVisible();
+    await expect(dimensions.getByText('evidencia insuficiente — sin cifra', { exact: true })).toHaveCount(5);
+    await expect(dimensions.getByRole('progressbar')).toHaveCount(0);
+    await page.screenshot({ path: testInfo.outputPath('model-real.png') });
 
-    // 7. Plan page → generate plan (third real Claude call).
+    // 7. Plan page → generate activities (another paid AI operation).
     await page.goto('/plan');
     await expect(
-      page.getByRole('heading', { name: /Caminos para explorar/i }),
+      page.getByRole('heading', { name: /^Actividades$/i }),
     ).toBeVisible({ timeout: 15_000 });
+    const planResponse = page.waitForResponse(response => new URL(response.url()).pathname === '/api/plan', { timeout: 120_000 });
     await page.getByRole('button', { name: /Generar mi plan/i }).click();
-    await expect(page.locator('article')).toHaveCount(3, { timeout: 120_000 });
+    expect((await planResponse).ok()).toBe(true);
+    await expect(page.getByRole('main').getByRole('region')).toHaveCount(3, { timeout: 120_000 });
+    await expect(page.getByRole('button', { name: /^Abrir / }).first()).toBeVisible();
+    await page.screenshot({ path: testInfo.outputPath('plan-real.png') });
   });
 });

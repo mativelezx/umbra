@@ -1,0 +1,38 @@
+import { test, expect } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+
+test('saved synthetic questionnaire remains distinct through dashboard activities and PDF', async ({ page }) => {
+  const email = process.env.E2E_REUSE_SYNTHETIC_EMAIL;
+  test.skip(process.env.E2E_REAL_FLOW !== 'true' || !email, 'Requires an existing synthetic local account');
+  test.setTimeout(150_000);
+  expect(email).toMatch(/^umbra-e2e-\d+@test\.local$/);
+  expect(['localhost', '127.0.0.1']).toContain(new URL(process.env.PLAYWRIGHT_BASE_URL!).hostname);
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/login?redirectedFrom=/dashboard');
+  await page.getByLabel('Email').fill(email!);
+  await page.getByLabel('Contraseña').fill('UmbraE2E-Test-1234!');
+  await page.getByRole('button', { name: /^Entrar$/ }).click();
+  await page.waitForURL('**/dashboard');
+  await expect(page.getByLabel(/: 3.00 sobre 5/)).toHaveCount(5);
+  const response = await page.request.get('/api/account/export');
+  expect(response.ok()).toBe(true);
+  const saved = await response.json();
+  expect(saved.psychological_profiles[0].analysis_raw.selfReport.answers).toEqual(Array(30).fill(3));
+  expect(saved.psychological_profiles[0].analysis_raw.ml.inputSource).toBe('user_open_answers');
+  expect(saved.profile.research_opt_in).toBe(false);
+  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
+  await page.getByRole('tab', { name: 'Datos del modelo' }).click();
+  await expect(page.getByText('evidencia insuficiente — sin cifra', { exact: true })).toHaveCount(5);
+  await page.goto('/plan');
+  await expect(page.getByRole('main').getByRole('region')).toHaveCount(3);
+  await page.getByRole('button', { name: /^Abrir / }).first().click();
+  await expect(page.getByRole('checkbox').first()).toBeVisible();
+  await page.goto('/export');
+  await expect(page.locator('.pdf-root')).toContainText('Tu autoinforme BFI-2-S en español');
+  await expect(page.locator('.pdf-root').getByText('3,00 / 5', { exact: true })).toHaveCount(5);
+  const downloading = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Descargar PDF' }).click();
+  const download = await downloading;
+  await download.saveAs('.impeccable/review/self-report/real-report.pdf');
+  expect(await download.failure()).toBeNull();
+});

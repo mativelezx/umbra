@@ -9,6 +9,7 @@ import type {
 } from '@/types';
 
 interface OnboardingStore {
+  ownerId: string | null;
   sessionId: string | null;
   turns: OnboardingTurn[];
   workingProfile: WorkingProfile | null;
@@ -22,19 +23,25 @@ interface OnboardingStore {
   clearInsights: () => void;
   markDone: () => void;
   reset: () => void;
+  bindUser: (userId: string | null) => void;
 }
 
 export const useOnboardingStore = create<OnboardingStore>()(
   persist(
     (set) => ({
+      ownerId: null,
       sessionId: null,
       turns: [],
       workingProfile: null,
       insights: [],
       done: false,
 
+      bindUser: (ownerId) => set((state) => ownerId && state.ownerId === ownerId ? state : {
+        ownerId, sessionId: null, turns: [], workingProfile: null, insights: [], done: false,
+      }),
+
       startSession: (sessionId) =>
-        set({ sessionId, turns: [], insights: [], done: false }),
+        set({ sessionId, turns: [], workingProfile: null, insights: [], done: false }),
       setTurns: (turns) => set({ turns }),
       applyProfileUpdate: (wp) => set({ workingProfile: wp }),
       pushInsights: (pings) =>
@@ -53,6 +60,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
     {
       name: 'umbra-onboarding',
       partialize: (state) => ({
+        ownerId: state.ownerId,
         sessionId: state.sessionId,
         turns: state.turns,
         workingProfile: state.workingProfile,

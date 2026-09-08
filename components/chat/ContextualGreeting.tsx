@@ -40,10 +40,10 @@ export function ContextualGreeting({ profile }: ContextualGreetingProps) {
         {firstName ? `Hola, ${firstName}` : 'Hola'}
       </p>
       <h2 className="mt-3 text-balance font-heading font-semibold text-2xl not-italic text-text-1 md:text-3xl">
-        Un punto de partida: {archName.toLowerCase()}.
+        ¿Sobre qué querés pensar hoy?
       </h2>
       <p className="mt-3 max-w-xl text-pretty font-body text-sm leading-relaxed text-text-2 md:text-base">
-        En tu lectura aparece{' '}
+        Podés traer una decisión, un hábito o algo que no te cierre del resultado. En tu lectura aparece {archName.toLowerCase()}, una imagen asociada con{' '}
         <span className="text-violet-200">{topJung.label.toLowerCase()}</span>{' '}
         — {topJung.short} — como una interpretación de IA para explorar, no una descripción definitiva de vos.{' '}
         {topBf && topBfLabel ? (
@@ -53,7 +53,7 @@ export function ContextualGreeting({ profile }: ContextualGreetingProps) {
             . Un ejemplo para contrastar con tu experiencia: «{isHigh ? topBfLabel.highExample : topBfLabel.lowExample}»{' '}
           </>
         ) : null}
-        ¿Sobre qué querés pensar hoy?
+        No hace falta que estés de acuerdo: contá qué coincide con tu experiencia y qué no.
       </p>
     </div>
   );

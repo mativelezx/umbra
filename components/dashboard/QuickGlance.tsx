@@ -19,7 +19,7 @@ export function QuickGlance({ bigFive, jungFunctions, perDimensionStatus = RIDGE
     <section aria-label="Fuentes del resultado" className="grid gap-5 md:grid-cols-2 md:gap-8">
       <div>
         <h2 className="text-base font-bold">Lo que estima el modelo</h2>
-        <p className="mt-2 leading-relaxed text-text-2">{strongest ? BIG_FIVE_LABELS[strongest].label : 'Sin dimensión disponible'}{strongest ? `: ${Math.round(bigFive[strongest])} / 100.` : '.'}</p>
+        <p className="mt-2 leading-relaxed text-text-2">{strongest ? BIG_FIVE_LABELS[strongest].label : 'Evidencia insuficiente para mostrar cifras individuales'}{strongest ? `: ${Math.round(bigFive[strongest])} / 100.` : '.'}</p>
         <p className="mt-2 text-sm leading-relaxed text-text-3">Estimación experimental de Big Five mediante ML. No es un percentil ni permite compararte con otras personas. Las dimensiones sin respaldo se muestran sin cifra en el detalle.</p>
       </div>
       <div>

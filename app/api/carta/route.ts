@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { withErrorHandler } from '@/lib/api/with-error-handler';
-import { SessionExpiredError } from '@/lib/errors';
+import { ConsentRequiredError, NotFoundError, SessionExpiredError } from '@/lib/errors';
 
 export const runtime = 'nodejs';
 
@@ -20,6 +20,17 @@ export const POST = withErrorHandler(async (req) => {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new SessionExpiredError();
+
+  const { data: consent, error: consentError } = await supabase
+    .from('consent_records').select('id').eq('user_id', user.id).limit(1).maybeSingle();
+  if (consentError) return Response.json({ ok: false, error: 'consent_unavailable' }, { status: 503 });
+  if (!consent) throw new ConsentRequiredError();
+  // A foreign key only checks existence, not ownership. Check both here before
+  // attaching the person's letter to a profile snapshot.
+  const { data: profile, error: profileError } = await supabase
+    .from('psychological_profiles').select('id').eq('id', body.profileId).eq('user_id', user.id).maybeSingle();
+  if (profileError) return Response.json({ ok: false, error: 'storage_unavailable' }, { status: 503 });
+  if (!profile) throw new NotFoundError('profile');
 
   const unlockAt = new Date(Date.now() + UNLOCK_DAYS * 24 * 60 * 60 * 1000);
 

@@ -6,11 +6,11 @@ import { Button } from '@/components/ui/Button';
 import { t } from '@/lib/i18n/dict';
 import { Brand } from '@/components/layout/Brand';
 import {
-  CONSENT_VERSION_V1,
-  CONSENT_LOCALE_V1,
-  CONSENT_TEXT_V1_ES_AR,
-  computeConsentTextHash,
-} from '@/lib/consent/text-v1-es-AR';
+  CONSENT_VERSION_V2,
+  CONSENT_LOCALE_V2,
+  CONSENT_TEXT_V2_ES_AR,
+} from '@/lib/consent/text-v2-es-AR';
+import { computeConsentTextHash } from '@/lib/consent/text-v1-es-AR';
 
 export default function ConsentPage() {
   const router = useRouter();
@@ -28,26 +28,33 @@ export default function ConsentPage() {
     // Compute SHA-256 of the verbatim consent text at submit time.
     // The text is imported from a versioned, immutable constant
     // (ADR-024) so the hash is stable across reloads.
-    const consentTextHash = await computeConsentTextHash(CONSENT_TEXT_V1_ES_AR);
+    try {
+      const consentTextHash = await computeConsentTextHash(CONSENT_TEXT_V2_ES_AR);
 
-    const res = await fetch('/api/consent', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        consentVersion: CONSENT_VERSION_V1,
-        researchOptIn,
-        consentTextHash,
-        locale: CONSENT_LOCALE_V1,
-      }),
-    });
+      const res = await fetch('/api/consent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          consentVersion: CONSENT_VERSION_V2,
+          researchOptIn,
+          consentTextHash,
+          locale: CONSENT_LOCALE_V2,
+        }),
+      });
 
-    if (!res.ok) {
+      if (!res.ok) {
+        setError(res.status === 503
+          ? 'El servicio de consentimiento no está disponible. Probá de nuevo más tarde.'
+          : 'No pudimos guardar tu consentimiento. Probá de nuevo.');
+        return;
+      }
+      router.push('/onboarding');
+      router.refresh();
+    } catch {
       setError('No pudimos guardar tu consentimiento. Probá de nuevo.');
+    } finally {
       setLoading(false);
-      return;
     }
-    router.push('/onboarding');
-    router.refresh();
   }
 
   return (
@@ -63,47 +70,7 @@ export default function ConsentPage() {
       </div>
 
       <div role="region" aria-label="Información sobre el consentimiento" tabIndex={0} className="mb-8 max-h-[60vh] overflow-y-auto rounded-2xl bg-white p-6 md:p-8">
-        <article className="prose-sm prose-invert font-body text-sm leading-relaxed text-text-2">
-          <section>
-            <h2 className="mt-0 font-heading font-semibold text-2xl text-text-1">{t('consent.section_data_title')}</h2>
-            <p className="mt-2 text-pretty">{t('consent.section_data_intro')}</p>
-            <ul className="mt-2 space-y-1.5">
-              <li>{t('consent.section_data_email')}</li>
-              <li>{t('consent.section_data_text')}</li>
-              <li>{t('consent.section_data_profile')}</li>
-              <li>{t('consent.section_data_consent')}</li>
-            </ul>
-          </section>
-
-          <section className="mt-6">
-            <h2 className="font-heading font-semibold text-2xl text-text-1">{t('consent.section_who_title')}</h2>
-            <p className="mt-2 text-pretty">{t('consent.section_who_intro')}</p>
-            <ul className="mt-2 space-y-1.5">
-              <li>{t('consent.section_who_supabase')}</li>
-              <li>{t('consent.section_who_anthropic')}</li>
-              <li>{t('consent.section_who_ml')}</li>
-            </ul>
-          </section>
-
-          <section className="mt-6">
-            <h2 className="font-heading font-semibold text-2xl text-text-1">{t('consent.section_rights_title')}</h2>
-            <p className="mt-2 text-pretty">{t('consent.section_rights_intro')}</p>
-            <ul className="mt-2 space-y-1.5">
-              <li>{t('consent.section_rights_export')}</li>
-              <li>{t('consent.section_rights_delete')}</li>
-              <li>{t('consent.section_rights_optout')}</li>
-            </ul>
-          </section>
-
-          <section className="mt-6">
-            <h2 className="font-heading font-semibold text-2xl text-text-1">Umbra no es terapia</h2>
-            <p className="mt-2 text-pretty">
-              Es una herramienta de autoconocimiento. Si en algún momento sentís crisis,
-              llamá al 135 (Centro de Asistencia al Suicida, Argentina), al 911 o al
-              0800-999-0091 (Salud Mental Responde).
-            </p>
-          </section>
-        </article>
+        <article className="whitespace-pre-wrap font-body text-sm leading-relaxed text-text-2">{CONSENT_TEXT_V2_ES_AR}</article>
       </div>
 
       <form onSubmit={onSubmit} className="flex flex-col gap-5">
@@ -133,7 +100,7 @@ export default function ConsentPage() {
         </label>
 
         {error && (
-          <div className="rounded-md border border-accent-rose/30 bg-accent-rose/10 px-4 py-3 font-body text-sm text-accent-rose">
+          <div role="alert" className="rounded-md border border-accent-rose/30 bg-accent-rose/10 px-4 py-3 font-body text-sm text-accent-rose">
             {error}
           </div>
         )}

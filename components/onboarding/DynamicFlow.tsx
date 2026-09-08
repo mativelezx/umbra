@@ -8,7 +8,7 @@ import { LiveProfilePanel } from './LiveProfilePanel';
 import { QuestionCard } from './QuestionCard';
 import { ThinkingIndicator } from './ThinkingIndicator';
 import { useOnboardingStore } from '@/lib/store/onboarding-store';
-import { serializeDynamicTranscript } from '@/lib/onboarding/serialize';
+import { serializeDynamicTranscript, writtenResponses } from '@/lib/onboarding/serialize';
 import { DEMO_ONBOARDING_SCRIPT } from '@/lib/demo/onboarding-script';
 import { emptyWorkingProfile } from '@/lib/prompts/onboarding-conductor';
 import { Brand } from '@/components/layout/Brand';
@@ -36,7 +36,7 @@ type FlowError =
   | { kind: 'rate_limited' }
   | { kind: 'crisis'; resources?: unknown }
   | { kind: 'consent' }
-  | { kind: 'generic'; message: string };
+  | { kind: 'generic'; message: string; retry?: 'analysis' | 'undo' };
 
 export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
   const sessionId = useOnboardingStore((s) => s.sessionId);
@@ -54,6 +54,15 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
   const [error, setError] = useState<FlowError | null>(null);
   const bootstrapped = useRef(false);
   const demoStep = useRef(0);
+  const mounted = useRef(true);
+  const ownerAtMount = useRef(useOnboardingStore.getState().ownerId);
+  const isCurrentFlow = useCallback(() => mounted.current
+    && useOnboardingStore.getState().ownerId === ownerAtMount.current, []);
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
 
   const isDemo = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
@@ -67,9 +76,13 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
 
   const applyResponse = useCallback(
     (res: OnboardingNextResponse) => {
+      if (!isCurrentFlow()) return;
       const api = useOnboardingStore.getState();
       api.applyProfileUpdate(res.workingProfile);
-      const existingAnswered = api.turns.filter((t) => t.answer !== null);
+      // At completion the server can return the last answered turn again,
+      // rather than a new pending question. Replace it instead of duplicating it.
+      const existingAnswered = api.turns.filter((t) => t.answer !== null
+        && (res.turn.answer === null || t.question.id !== res.turn.question.id));
       api.setTurns([...existingAnswered, res.turn]);
       if (res.insights.length > 0) pushInsights(res.insights);
       setCurrentQuestion(res.turn.question);
@@ -77,7 +90,7 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
       if (res.maxTurns) setMaxTurns(res.maxTurns);
       if (res.done) api.markDone();
     },
-    [pushInsights],
+    [pushInsights, isCurrentFlow],
   );
 
   const undoLastTurn = useCallback(async () => {
@@ -100,24 +113,35 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sessionId: api.sessionId }),
       });
+      if (!isCurrentFlow()) return;
       if (!res.ok) {
-        setError({ kind: 'generic', message: 'undo_failed' });
+        setError({ kind: 'generic', message: 'undo_failed', retry: 'undo' });
         return;
       }
-      // Reset local turn state; re-fetch next so the conductor rebuilds
-      // the question from the truncated session.
-      api.setTurns([]);
+      const data = await res.json() as {
+        ok?: boolean;
+        data?: { sessionId: string; turns: OnboardingTurn[] };
+      };
+      if (!isCurrentFlow() || useOnboardingStore.getState().sessionId !== api.sessionId) return;
+      if (!data.ok || data.data?.sessionId !== api.sessionId || !Array.isArray(data.data.turns)) {
+        setError({ kind: 'generic', message: 'undo_failed', retry: 'undo' });
+        return;
+      }
+      // The server removes only the revised answer. Keep the earlier answers
+      // it returned so the next analysis still includes the whole conversation.
+      api.setTurns(data.data.turns);
       setCurrentQuestion(null);
       await fetchNextRef.current?.(null);
     } catch (e) {
       setError({
         kind: 'generic',
         message: e instanceof Error ? e.message : 'undo_network',
+        retry: 'undo',
       });
     } finally {
       setThinking(false);
     }
-  }, [isDemo]);
+  }, [isDemo, isCurrentFlow]);
 
   const fetchNextRef = useRef<
     ((previousAnswer: OnboardingAnswer | null) => Promise<OnboardingNextResponse | null>) | null
@@ -138,6 +162,7 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
           }),
         });
         const data = await res.json();
+        if (!isCurrentFlow()) return null;
         if (!res.ok || !data.ok) {
           const code = data.error ?? 'generic';
           if (code === 'rate_limited') setError({ kind: 'rate_limited' });
@@ -149,6 +174,17 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
         }
         const envelope = data.data as OnboardingNextResponse;
         const api = useOnboardingStore.getState();
+        // Keep the answer only after this same session acknowledged it. The
+        // server returns the next question, not the previous answered turn.
+        // Without this, applyResponse drops it and the final transcript is empty.
+        if (previousAnswer && api.sessionId === envelope.sessionId) {
+          const pendingIndex = api.turns.findIndex(turn => turn.answer === null);
+          if (pendingIndex >= 0) {
+            api.setTurns(api.turns.map((turn, index) => index === pendingIndex
+              ? { ...turn, answer: previousAnswer }
+              : turn));
+          }
+        }
         if (!api.sessionId || api.sessionId !== envelope.sessionId) {
           api.startSession(envelope.sessionId);
         }
@@ -164,7 +200,7 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
         setThinking(false);
       }
     },
-    [applyResponse],
+    [applyResponse, isCurrentFlow],
   );
 
   // Keep fetchNextRef in sync so undoLastTurn (defined earlier) can
@@ -176,6 +212,7 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
     if (!step) return;
     setThinking(true);
     setTimeout(() => {
+      if (!isCurrentFlow()) return;
       const api = useOnboardingStore.getState();
       setCurrentQuestion(step.question);
       setTurnNumber(demoStep.current + 1);
@@ -194,7 +231,7 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
       if (step.done) api.markDone();
       setThinking(false);
     }, 280);
-  }, [pushInsights]);
+  }, [pushInsights, isCurrentFlow]);
 
   // Bootstrap on mount
   useEffect(() => {
@@ -256,13 +293,15 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
         body: JSON.stringify({
           mode: 'dynamic',
           texts,
+          mlTexts: writtenResponses(api.turns),
           areas,
           sessionId: api.sessionId ?? undefined,
         }),
       });
       const data = await res.json();
+      if (!isCurrentFlow()) return;
       if (!res.ok || !data.ok) {
-        setError({ kind: 'generic', message: data.error ?? 'analyze_failed' });
+        setError({ kind: 'generic', message: data.error ?? 'analyze_failed', retry: 'analysis' });
         setSynthesizing(false);
         return;
       }
@@ -272,10 +311,11 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
       setError({
         kind: 'generic',
         message: e instanceof Error ? e.message : 'analyze_network',
+        retry: 'analysis',
       });
       setSynthesizing(false);
     }
-  }, [onComplete]);
+  }, [onComplete, isCurrentFlow]);
 
   const handleAnswer = useCallback(
     async (answer: OnboardingAnswer) => {
@@ -314,7 +354,11 @@ export function DynamicFlow({ onComplete, seededSessionId }: DynamicFlowProps) {
         {isDemo && <p role="status" className="pb-2 text-sm leading-relaxed text-text-2">Ejemplo local: preguntas preparadas. Tus respuestas no se envían ni generan un perfil real.</p>}
       </div>
 
-      {error && <ErrorBanner error={error} onRetry={() => fetchNext(null)} />}
+      {error && <ErrorBanner error={error} onRetry={() => {
+        if (error.kind === 'generic' && error.retry === 'analysis') void synthesizeAndComplete();
+        else if (error.kind === 'generic' && error.retry === 'undo') void undoLastTurn();
+        else void fetchNext(null);
+      }} />}
 
       <div className="grid grid-cols-1 gap-8">
         <div className="flex min-h-[420px] flex-col gap-3">

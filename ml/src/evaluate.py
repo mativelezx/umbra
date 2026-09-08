@@ -6,8 +6,8 @@ bloques (ADR-028):
 - latinoamericano_only — solo casos del corpus latinoamericano propio
 - combined — sobre la unión
 
-El bloque latinoamericano_only es el que sustenta la narrativa del TFG
-porque es el idioma de uso real del sistema.
+El bloque latinoamericano_only corresponde al idioma de uso. En el bundle
+actual contiene solo dos viñetas sintéticas y no acredita validez individual.
 
 Marca cada dimensión como "ok" o "low_confidence" según los umbrales
 mínimos del módulo ML (ADR-026 + ADR-027): R² > 0.20 y r > 0.30.
@@ -40,6 +40,7 @@ from sklearn.metrics import (
 from sklearn.model_selection import LeaveOneOut
 from sklearn.linear_model import Ridge, RidgeCV
 from scipy.stats import pearsonr
+from .embedding_cache import cached_embeddings
 
 logging.basicConfig(level=logging.INFO, format="[evaluate] %(message)s")
 log = logging.getLogger(__name__)
@@ -211,8 +212,11 @@ def detect_model_bundle():
     if ridge_v1.exists():
         bundle = joblib.load(ridge_v1)
         try:
-            from .extract_embeddings import EmbeddingExtractor
-            extractor = EmbeddingExtractor()
+            from .extract_embeddings import EmbeddingExtractor, MODEL_NAME, MODEL_REVISION
+            extractor = EmbeddingExtractor(
+                model_name=bundle.get("model_name", MODEL_NAME),
+                revision=bundle.get("model_revision", MODEL_REVISION),
+            )
         except Exception as e:
             log.warning("DistilBERT extractor no disponible: %s — fallback a baseline", e)
             if baseline.exists():
@@ -233,13 +237,8 @@ def encode_for_model(test, bundle_kind, vec_or_ext):
     if bundle_kind == "baseline_tfidf":
         return vec_or_ext.transform(test["text"].astype(str))
     # DistilBERT
-    cache_path = EMBEDDINGS_CACHE / "test.npy"
-    if cache_path.exists():
-        return np.load(cache_path)
-    EMBEDDINGS_CACHE.mkdir(parents=True, exist_ok=True)
-    X = vec_or_ext.encode(test["text"].astype(str).tolist())
-    np.save(cache_path, X)
-    return X
+    return cached_embeddings(test["text"].astype(str).tolist(),
+                             EMBEDDINGS_CACHE / "test.npy", vec_or_ext)
 
 
 def main():
@@ -318,7 +317,7 @@ def main():
         "n_full": int(len(full)),
         "warning": (
             "Essays no integrado: las métricas reportadas se basan únicamente "
-            "en el corpus latinoamericano propio (n=20 etiquetado IPIP). El poder "
+            "en viñetas sintéticas latinoamericanas (n=20, etiquetas heurísticas). El poder "
             "estadístico es bajo. Para reproducir las métricas comprometidas "
             "en el TFG, descargar Essays según ml/data/essays/README.md y "
             "re-ejecutar `make all`."

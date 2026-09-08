@@ -1,44 +1,553 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-07T00:21:29Z",
+  "generatedAt": "2026-09-08T00:20:12Z",
   "title": "Design System: umbra",
   "extensions": {
     "colorMeta": {
-      "text-1": { "role": "primary", "displayName": "Grafito de trabajo" },
-      "landing-ink": { "role": "primary", "displayName": "Tinta de portada" },
-      "umbra-void": { "role": "neutral", "displayName": "Papel de fondo" },
-      "umbra-abyss": { "role": "neutral", "displayName": "Hoja blanca" },
-      "umbra-fog": { "role": "neutral", "displayName": "Papel suave" },
-      "umbra-shadow": { "role": "neutral", "displayName": "Papel de control" },
-      "umbra-mist": { "role": "neutral", "displayName": "Línea de papel" },
-      "control-stroke": { "role": "neutral", "displayName": "Trazo de control; alias heredado violet-400" }
+      "text-1": {
+        "role": "primary",
+        "displayName": "Grafito de trabajo",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.9)",
+          "oklch(25% 0.0000 89.9)",
+          "oklch(35% 0.0000 89.9)",
+          "oklch(45% 0.0000 89.9)",
+          "oklch(55% 0.0000 89.9)",
+          "oklch(65% 0.0000 89.9)",
+          "oklch(80% 0.0000 89.9)",
+          "oklch(95% 0.0000 89.9)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "landing-ink": {
+        "role": "primary",
+        "displayName": "Tinta de portada",
+        "tonalRamp": [
+          "oklch(15% 0.0036 164.7)",
+          "oklch(25% 0.0036 164.7)",
+          "oklch(35% 0.0036 164.7)",
+          "oklch(45% 0.0036 164.7)",
+          "oklch(55% 0.0036 164.7)",
+          "oklch(65% 0.0036 164.7)",
+          "oklch(80% 0.0036 164.7)",
+          "oklch(95% 0.0036 164.7)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "umbra-void": {
+        "role": "neutral",
+        "displayName": "Papel de fondo",
+        "tonalRamp": [
+          "oklch(15% 0.0040 106.5)",
+          "oklch(25% 0.0040 106.5)",
+          "oklch(35% 0.0040 106.5)",
+          "oklch(45% 0.0040 106.5)",
+          "oklch(55% 0.0040 106.5)",
+          "oklch(65% 0.0040 106.5)",
+          "oklch(80% 0.0040 106.5)",
+          "oklch(95% 0.0040 106.5)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "umbra-abyss": {
+        "role": "neutral",
+        "displayName": "Hoja blanca",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.9)",
+          "oklch(25% 0.0000 89.9)",
+          "oklch(35% 0.0000 89.9)",
+          "oklch(45% 0.0000 89.9)",
+          "oklch(55% 0.0000 89.9)",
+          "oklch(65% 0.0000 89.9)",
+          "oklch(80% 0.0000 89.9)",
+          "oklch(95% 0.0000 89.9)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "umbra-fog": {
+        "role": "neutral",
+        "displayName": "Papel suave",
+        "tonalRamp": [
+          "oklch(15% 0.0066 106.5)",
+          "oklch(25% 0.0066 106.5)",
+          "oklch(35% 0.0066 106.5)",
+          "oklch(45% 0.0066 106.5)",
+          "oklch(55% 0.0066 106.5)",
+          "oklch(65% 0.0066 106.5)",
+          "oklch(80% 0.0066 106.5)",
+          "oklch(95% 0.0066 106.5)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "umbra-shadow": {
+        "role": "neutral",
+        "displayName": "Papel de control",
+        "tonalRamp": [
+          "oklch(15% 0.0080 106.6)",
+          "oklch(25% 0.0080 106.6)",
+          "oklch(35% 0.0080 106.6)",
+          "oklch(45% 0.0080 106.6)",
+          "oklch(55% 0.0080 106.6)",
+          "oklch(65% 0.0080 106.6)",
+          "oklch(80% 0.0080 106.6)",
+          "oklch(95% 0.0080 106.6)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "umbra-mist": {
+        "role": "neutral",
+        "displayName": "Línea de papel",
+        "tonalRamp": [
+          "oklch(15% 0.0081 106.6)",
+          "oklch(25% 0.0081 106.6)",
+          "oklch(35% 0.0081 106.6)",
+          "oklch(45% 0.0081 106.6)",
+          "oklch(55% 0.0081 106.6)",
+          "oklch(65% 0.0081 106.6)",
+          "oklch(80% 0.0081 106.6)",
+          "oklch(95% 0.0081 106.6)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "control-stroke": {
+        "role": "neutral",
+        "displayName": "Trazo de control; alias heredado violet-400",
+        "tonalRamp": [
+          "oklch(15% 0.0065 106.7)",
+          "oklch(25% 0.0065 106.7)",
+          "oklch(35% 0.0065 106.7)",
+          "oklch(45% 0.0065 106.7)",
+          "oklch(55% 0.0065 106.7)",
+          "oklch(65% 0.0065 106.7)",
+          "oklch(80% 0.0065 106.7)",
+          "oklch(95% 0.0065 106.7)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "text-2": {
+        "role": "neutral",
+        "displayName": "Grafito secundario",
+        "tonalRamp": [
+          "oklch(15% 0.0064 106.7)",
+          "oklch(25% 0.0064 106.7)",
+          "oklch(35% 0.0064 106.7)",
+          "oklch(45% 0.0064 106.7)",
+          "oklch(55% 0.0064 106.7)",
+          "oklch(65% 0.0064 106.7)",
+          "oklch(80% 0.0064 106.7)",
+          "oklch(95% 0.0064 106.7)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "text-3": {
+        "role": "neutral",
+        "displayName": "Tinta de apoyo",
+        "tonalRamp": [
+          "oklch(15% 0.0094 106.7)",
+          "oklch(25% 0.0094 106.7)",
+          "oklch(35% 0.0094 106.7)",
+          "oklch(45% 0.0094 106.7)",
+          "oklch(55% 0.0094 106.7)",
+          "oklch(65% 0.0094 106.7)",
+          "oklch(80% 0.0094 106.7)",
+          "oklch(95% 0.0094 106.7)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "text-4": {
+        "role": "neutral",
+        "displayName": "Tinta auxiliar",
+        "tonalRamp": [
+          "oklch(15% 0.0108 106.8)",
+          "oklch(25% 0.0108 106.8)",
+          "oklch(35% 0.0108 106.8)",
+          "oklch(45% 0.0108 106.8)",
+          "oklch(55% 0.0108 106.8)",
+          "oklch(65% 0.0108 106.8)",
+          "oklch(80% 0.0108 106.8)",
+          "oklch(95% 0.0108 106.8)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "muted-paper": {
+        "role": "neutral",
+        "displayName": "Papel secundario",
+        "tonalRamp": [
+          "oklch(15% 0.0110 106.6)",
+          "oklch(25% 0.0110 106.6)",
+          "oklch(35% 0.0110 106.6)",
+          "oklch(45% 0.0110 106.6)",
+          "oklch(55% 0.0110 106.6)",
+          "oklch(65% 0.0110 106.6)",
+          "oklch(80% 0.0110 106.6)",
+          "oklch(95% 0.0110 106.6)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "reading-ink": {
+        "role": "neutral",
+        "displayName": "Tinta de lectura",
+        "tonalRamp": [
+          "oklch(15% 0.0099 106.9)",
+          "oklch(25% 0.0099 106.9)",
+          "oklch(35% 0.0099 106.9)",
+          "oklch(45% 0.0099 106.9)",
+          "oklch(55% 0.0099 106.9)",
+          "oklch(65% 0.0099 106.9)",
+          "oklch(80% 0.0099 106.9)",
+          "oklch(95% 0.0099 106.9)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "landing-paper": {
+        "role": "neutral",
+        "displayName": "Papel de portada",
+        "tonalRamp": [
+          "oklch(15% 0.0080 98.9)",
+          "oklch(25% 0.0080 98.9)",
+          "oklch(35% 0.0080 98.9)",
+          "oklch(45% 0.0080 98.9)",
+          "oklch(55% 0.0080 98.9)",
+          "oklch(65% 0.0080 98.9)",
+          "oklch(80% 0.0080 98.9)",
+          "oklch(95% 0.0080 98.9)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "landing-muted": {
+        "role": "neutral",
+        "displayName": "Apoyo sobre portada",
+        "tonalRamp": [
+          "oklch(15% 0.0102 125.7)",
+          "oklch(25% 0.0102 125.7)",
+          "oklch(35% 0.0102 125.7)",
+          "oklch(45% 0.0102 125.7)",
+          "oklch(55% 0.0102 125.7)",
+          "oklch(65% 0.0102 125.7)",
+          "oklch(80% 0.0102 125.7)",
+          "oklch(95% 0.0102 125.7)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "landing-line": {
+        "role": "neutral",
+        "displayName": "Línea de portada",
+        "tonalRamp": [
+          "oklch(15% 0.0097 119.6)",
+          "oklch(25% 0.0097 119.6)",
+          "oklch(35% 0.0097 119.6)",
+          "oklch(45% 0.0097 119.6)",
+          "oklch(55% 0.0097 119.6)",
+          "oklch(65% 0.0097 119.6)",
+          "oklch(80% 0.0097 119.6)",
+          "oklch(95% 0.0097 119.6)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "landing-body": {
+        "role": "neutral",
+        "displayName": "Texto de portada",
+        "tonalRamp": [
+          "oklch(15% 0.0137 128.8)",
+          "oklch(25% 0.0137 128.8)",
+          "oklch(35% 0.0137 128.8)",
+          "oklch(45% 0.0137 128.8)",
+          "oklch(55% 0.0137 128.8)",
+          "oklch(65% 0.0137 128.8)",
+          "oklch(80% 0.0137 128.8)",
+          "oklch(95% 0.0137 128.8)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "accent-emerald": {
+        "role": "semantic-state",
+        "displayName": "Confirmación",
+        "tonalRamp": [
+          "oklch(15% 0.0619 162.9)",
+          "oklch(25% 0.0619 162.9)",
+          "oklch(35% 0.0619 162.9)",
+          "oklch(45% 0.0619 162.9)",
+          "oklch(55% 0.0619 162.9)",
+          "oklch(65% 0.0619 162.9)",
+          "oklch(80% 0.0619 162.9)",
+          "oklch(95% 0.0619 162.9)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "accent-amber": {
+        "role": "semantic-state",
+        "displayName": "Aviso",
+        "tonalRamp": [
+          "oklch(15% 0.0884 70.7)",
+          "oklch(25% 0.0884 70.7)",
+          "oklch(35% 0.0884 70.7)",
+          "oklch(45% 0.0884 70.7)",
+          "oklch(55% 0.0884 70.7)",
+          "oklch(65% 0.0884 70.7)",
+          "oklch(80% 0.0884 70.7)",
+          "oklch(95% 0.0884 70.7)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "accent-rose": {
+        "role": "semantic-state",
+        "displayName": "Error y acción destructiva",
+        "tonalRamp": [
+          "oklch(15% 0.1333 23.2)",
+          "oklch(25% 0.1333 23.2)",
+          "oklch(35% 0.1333 23.2)",
+          "oklch(45% 0.1333 23.2)",
+          "oklch(55% 0.1333 23.2)",
+          "oklch(65% 0.1333 23.2)",
+          "oklch(80% 0.1333 23.2)",
+          "oklch(95% 0.1333 23.2)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "personal-ink": {
+        "role": "primary",
+        "displayName": "Tinta personal",
+        "tonalRamp": [
+          "oklch(15% 0.0111 139.4)",
+          "oklch(25% 0.0111 139.4)",
+          "oklch(35% 0.0111 139.4)",
+          "oklch(45% 0.0111 139.4)",
+          "oklch(55% 0.0111 139.4)",
+          "oklch(65% 0.0111 139.4)",
+          "oklch(80% 0.0111 139.4)",
+          "oklch(95% 0.0111 139.4)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      },
+      "personal-paper": {
+        "role": "neutral",
+        "displayName": "Papel personal",
+        "tonalRamp": [
+          "oklch(15% 0.0093 100.0)",
+          "oklch(25% 0.0093 100.0)",
+          "oklch(35% 0.0093 100.0)",
+          "oklch(45% 0.0093 100.0)",
+          "oklch(55% 0.0093 100.0)",
+          "oklch(65% 0.0093 100.0)",
+          "oklch(80% 0.0093 100.0)",
+          "oklch(95% 0.0093 100.0)"
+        ],
+        "rampSource": "Síntesis OKLCH para la muestra del panel; no agrega tokens normativos al producto."
+      }
     },
     "typographyMeta": {
-      "display": { "displayName": "Portada", "purpose": "Título editorial fluido; sus ajustes responsivos permanecen en Landing.module.css." },
-      "headline": { "displayName": "Encabezado de trabajo", "purpose": "Regla compartida de app-content h1." },
-      "title": { "displayName": "Título de sección", "purpose": "Jerarquía compacta de lectura y bloques." },
-      "body": { "displayName": "Lectura", "purpose": "Una sola familia Bricolage Grotesque, con ajuste óptico automático." },
-      "label": { "displayName": "Control", "purpose": "Etiquetas y navegación habituales; las notas pequeñas locales no definen este rol." }
+      "display": {
+        "displayName": "Portada",
+        "purpose": "Título editorial fluido; sus ajustes responsivos permanecen en Landing.module.css."
+      },
+      "headline": {
+        "displayName": "Encabezado de trabajo",
+        "purpose": "Regla compartida de app-content h1."
+      },
+      "title": {
+        "displayName": "Título de sección",
+        "purpose": "Jerarquía compacta de lectura y bloques."
+      },
+      "body": {
+        "displayName": "Lectura",
+        "purpose": "Una sola familia Bricolage Grotesque, con ajuste óptico automático."
+      },
+      "label": {
+        "displayName": "Control",
+        "purpose": "Etiquetas y navegación habituales; las notas pequeñas locales no definen este rol."
+      },
+      "reading-title": {
+        "displayName": "Título de capítulo",
+        "purpose": "Rol efectivo de chapter-opening; 26 px en móvil, jerarquía separada en impresión."
+      },
+      "reading": {
+        "displayName": "Pasaje extenso",
+        "purpose": "Narrativa de 17 px, 18 px desde 768 px, interlineado 1.85 y ancho máximo de 70 ch."
+      }
     },
-    "shadows": [],
+    "shadows": [
+      {
+        "name": "glossary-overlay",
+        "value": "0 12px 36px #0003",
+        "purpose": "Separa la definición contextual superpuesta; no es elevación general de tarjetas."
+      }
+    ],
     "motion": [
-      { "name": "control-color", "value": "150ms", "purpose": "Transición de color de Button y confirmaciones breves." },
-      { "name": "card-border", "value": "160ms ease-out", "purpose": "Cambio de borde de card-lift; no desplaza la tarjeta." },
-      { "name": "choice-state", "value": "220ms ease-out", "purpose": "Fondo y borde de opciones de entrada y respuesta." },
-      { "name": "question-enter", "value": "220ms cubic-bezier(.16, 1, .3, 1)", "purpose": "Entrada breve de pregunta; se elimina con movimiento reducido." },
-      { "name": "reflection-reveal", "value": "760ms cubic-bezier(.16, 1, .3, 1)", "purpose": "Revelado opcional de ReflectionArt; se elimina con movimiento reducido." },
-      { "name": "goal-confirm", "value": "150ms cubic-bezier(.16, 1, .3, 1)", "purpose": "Confirmación del paso marcado; estado visible sin animación." },
-      { "name": "thinking-pulse", "value": "1.2s ease-in-out infinite", "purpose": "Indicador existente de espera; no representa avance porcentual." },
-      { "name": "ambient-field", "value": "16s ease-in-out infinite alternate", "purpose": "Contornos SVG de portada: solo corren sin pausa manual, en pantalla, con documento visible y sin movimiento reducido. Sin IntersectionObserver permanecen estáticos. WebKit sin interpolación de trazados usa una transformación bajo los mismos controles." },
-      { "name": "reduced-motion", "value": "prefers-reduced-motion: reduce", "purpose": "Animaciones y transiciones globales se reducen a .01ms y una iteración; revelado, entrada y confirmación se eliminan. La selección pierde traslación, conserva contraste y texto. El campo ambiental queda estático." }
+      {
+        "name": "control-color",
+        "value": "150ms",
+        "purpose": "Transición de color de Button y confirmaciones breves."
+      },
+      {
+        "name": "card-border",
+        "value": "160ms ease-out",
+        "purpose": "Cambio de borde de card-lift; no desplaza la tarjeta."
+      },
+      {
+        "name": "choice-state",
+        "value": "220ms ease-out",
+        "purpose": "Fondo y borde de opciones de entrada y respuesta."
+      },
+      {
+        "name": "goal-confirm",
+        "value": "150ms cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "Confirmación del paso marcado; estado visible sin animación."
+      },
+      {
+        "name": "thinking-pulse",
+        "value": "1.2s ease-in-out infinite",
+        "purpose": "Indicador existente de espera; no representa avance porcentual."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Animaciones y transiciones globales se reducen a .01ms y una iteración; revelado, entrada y confirmación se eliminan. La selección pierde traslación, conserva contraste y texto. El campo ambiental queda estático."
+      },
+      {
+        "name": "workspace-route",
+        "value": "1240ms ease-in-out",
+        "purpose": "Portal negro en document.body sobre todo el viewport: símbolo y wordmark una sola vez al entrar al espacio de trabajo por documento, sin mover o remontar contenido ni navegación. MotionProvider conserva la entrada consumida entre rutas; movimiento reducido también la consume. Cede a tecla, foco, toque/presión, documento oculto, impresión o movimiento reducido. Símbolo de 1000 ms y recorte de palabra de 900 ms."
+      },
+      {
+        "name": "brand-aperture",
+        "value": "420ms",
+        "purpose": "Separa/gira el símbolo al interactuar. El lettering vectorial no se transforma. Quieto con movimiento reducido."
+      },
+      {
+        "name": "chapter-arrival",
+        "value": "1400ms / 1600ms cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "Detalle de tinta y gesto propio por capítulo: libro, dirección, puente, facetas y puerta. SvgArtwork suspende fuera de pantalla o con pestaña oculta; se anula en movimiento reducido e impresión. Cascada efectiva sobre la llegada genérica de 1000 ms."
+      },
+      {
+        "name": "activity-goals",
+        "value": "800ms cubic-bezier(.2, .7, .2, 1)",
+        "purpose": "Transición del trazo que representa solo casilleros completados; sin movimiento con preferencia reducida."
+      },
+      {
+        "name": "glossary-arrival",
+        "value": "160ms ease-out",
+        "purpose": "Entrada de la definición solo sin movimiento reducido."
+      },
+      {
+        "name": "passage-unfold",
+        "value": "420ms cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "Despliegue compartido de paneles, pasajes y actividades; independiente del interludio de entrada al espacio de trabajo."
+      },
+      {
+        "name": "personal-paper-cycle",
+        "value": "8s cubic-bezier(.37, 0, .25, 1) infinite",
+        "purpose": "ReflectionScene sólo corre con reproducción habilitada, escena visible al menos 15 %, documento visible y sin movimiento reducido. Pausa/reproducción explícita; sin observador queda estática. El SVG compartido de impresión no reproduce el ciclo."
+      },
+      {
+        "name": "activity-art-response",
+        "value": "650ms cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "Gestos de caminata, comida, escritura, conversación y apertura ante hover/foco; no representan datos nuevos y quedan estáticos con movimiento reducido o impresión."
+      }
     ],
     "breakpoints": [
-      { "name": "app-md", "value": "768px" },
-      { "name": "app-lg-sidebar", "value": "1024px" },
-      { "name": "landing-max-narrow", "value": "360px" },
-      { "name": "landing-max-single-column", "value": "760px" },
-      { "name": "landing-max-compact", "value": "1050px" },
-      { "name": "landing-min-wide", "value": "1500px" }
+      {
+        "name": "app-md",
+        "value": "768px"
+      },
+      {
+        "name": "app-lg-sidebar",
+        "value": "1024px"
+      },
+      {
+        "name": "landing-max-narrow",
+        "value": "360px"
+      },
+      {
+        "name": "landing-max-single-column",
+        "value": "760px"
+      },
+      {
+        "name": "landing-max-compact",
+        "value": "1050px"
+      },
+      {
+        "name": "landing-min-wide",
+        "value": "1500px"
+      },
+      {
+        "name": "access-two-column",
+        "value": "960px"
+      },
+      {
+        "name": "report-preview-compact",
+        "value": "600px"
+      }
+    ],
+    "print": {
+      "source": "components/export/ReportContent.tsx; app/export/print.css",
+      "paper": "A4",
+      "contentWidth": "182mm",
+      "margins": "16mm 14mm 18mm 14mm",
+      "finalSectionMarginBottom": "0",
+      "finalSpacingPurpose": "Secciones sin margen final y aperturas explícitas de página; veinte páginas definitivas revisadas: nueve habituales y once extensas, sin hojas vacías, títulos aislados ni contenido descartado.",
+      "flow": "Cabecera y primer bloque juntos; el área y su explicación se agrupan con la primera actividad. Acciones normales agrupadas; contenido mayor que una página puede fluir.",
+      "exportLimitation": "La descarga actual rasteriza el documento; no se afirma PDF etiquetado ni texto seleccionable.",
+      "sectionMarginBottom": "0",
+      "composition": "Vista previa blanca sin marco oliva, portada y aperturas negras, ocho siglas explicadas con ejemplos cotidianos y valores simbólicos guardados, actividades íntegras y tres espacios de notas. El contenido guardado se conserva."
+    },
+    "provenance": {
+      "wordmark": "Young Serif Regular, SIL OFL 1.1; cinco glifos convertidos a contornos con espaciado óptico. No son letras originalmente dibujadas para Umbra.",
+      "record": "public/brand/README.md",
+      "license": "public/brand/YOUNG-SERIF-LICENSE.txt",
+      "symbol": "BrandMark: dos aperturas independientes del lettering.",
+      "reference": "Stoic elegido por Matías; sin reutilizar sus activos.",
+      "legacyIdentifier": "29378ec1 no es una semilla aleatoria corroborada ni una aprobación visual."
+    },
+    "evidence": {
+      "record": "docs/EXPERIENCIA-VERIFICACION-2026-09-07.md",
+      "screenshots": ".impeccable/review/personal-2026-09-07/",
+      "pdf": ".impeccable/review/personal-pdf-2026-09-07/",
+      "dataMode": "Capturas interiores y PDF sintéticos identificados como ejemplo; ingreso/movimiento real acotados sin guardar borradores ni leer o exportar narrativas personales.",
+      "reviewStatus": "Revisión visual independiente: ship / remaining clear sobre el alcance acordado. Veinte páginas definitivas: nueve habituales y once extensas, sin hojas vacías, títulos aislados ni contenido descartado.",
+      "approval": "Aceptación visual de Matías pendiente. El cierre no certifica la aplicación completa, aprobación CAE ni publicación.",
+      "detector": "Una ejecución; salida truncada por presupuesto de lectura. No se declara limpio ni revisión integral de avisos; no repetida por el documenter.",
+      "priorRecord": "docs/LECTURA-VERIFICACION-2026-09-07.md",
+      "finalPdfPages": [
+        "closed-regular",
+        "closed-long"
+      ],
+      "checks": "Registro de cierre: 294 pruebas / 52 archivos, lint/typecheck, 12 checks Chromium/WebKit y 4 checks PDF repetidos tras paginación. El documenter no los vuelve a ejecutar.",
+      "localBuild": "4_c2CSU2ObXCgmJdteoge: 4 checks nativos de ingreso/movimiento correctos en 3024 y repetidos en 3000. Verificación local, sin despliegue remoto."
+    },
+    "personalScene": {
+      "source": "components/dashboard/DashboardIntro.tsx; ReflectionDiagram.tsx; ReflectionScene.tsx; DashboardExperience.module.css; app/art-motion.css",
+      "composition": "Apertura negra, texto y acción junto a tres hojas; dos columnas 1.1:1 desde 768 px y una columna móvil.",
+      "behavior": "Pausa local explícita; no inicia lecturas, inferencias, solicitudes ni cambios de datos. ReflectionDiagram se reutiliza quieto en la portada del informe.",
+      "semanticLimit": "Historia, interpretación y posible acción son metáforas visuales; las hojas no representan puntuaciones."
+    },
+    "email": {
+      "source": "lib/email/templates.ts",
+      "surfaceBrief": ".impeccable/surfaces/lib-email-templates-ts.md",
+      "generator": "scripts/build-email-templates.ts",
+      "variants": ["welcome", "confirmation", "invite", "recovery", "magic_link", "email_change", "reauthentication", "password_changed", "email_changed", "delete_confirmation"],
+      "composition": "Carta fluida con tablas de presentación y estilos inline; cabecera grafito con marca e isotipo, cuerpo blanco con evento y acción o código, nota de seguridad y pie de papel. Bienvenida y confirmación agregan tres pasos del recorrido.",
+      "adaptation": "Georgia y Arial con respaldos de sistema son adaptaciones del canal email. No reemplazan Bricolage en la app. Superficies planas, sin sombras ni movimiento; no se inventan estados de hover.",
+      "contentBoundary": "HTML y texto plano conservan evento, acción o código, nota y enlaces legales. Los mensajes no incluyen respuestas del cuestionario, perfiles ni resultados de modelos.",
+      "assets": [
+        { "path": "public/brand/email-lockup.png", "provenance": "public/brand/email-lockup.png.provenance.json", "role": "Marca de Umbra con texto alternativo umbra; rasterización de SVG existente." },
+        { "path": "public/brand/email-aperture.png", "provenance": "public/brand/email-aperture.png.provenance.json", "role": "Isotipo decorativo con alt vacío; rasterización de SVG existente." }
+      ],
+      "assetAttribution": "BrandMark original y lettering Young Serif en contornos, SIL OFL 1.1; public/brand/README.md y public/brand/YOUNG-SERIF-LICENSE.txt. Sin imágenes generadas.",
+      "evidence": {
+        "screenshots": ".impeccable/review/emails/",
+        "checks": "Pasada reportada: veinte comprobaciones, diez variantes a 720 y 390 px; imágenes cargadas, sin desborde horizontal y axe sin violaciones en el alcance configurado.",
+        "review": "email_finish_review: SHIP, sin correcciones materiales.",
+        "documentationCheck": "Fuente y captura móvil representativa contrastadas; el documenter no repitió la pasada de QA.",
+        "limits": "La revisión de navegador no certifica Gmail, Outlook, modo oscuro de clientes ni accesibilidad integral del correo. No demuestra instalación remota de plantillas ni SMTP de Supabase; Resend en sandbox está limitado al destinatario propio habilitado."
+      }
+    },
+    "notCanonized": [
+      "compactIntro y bienvenida anterior sin consumidores",
+      "Pseudo-cortina heredada de 960 ms",
+      "Ajuste óptico aislado de siglas PDF para html2canvas",
+      "Notas pequeñas aisladas, aliases de efectos y sombra sin uso",
+      "Foco sin contorno de Textarea; no es modelo para nuevos controles",
+      "Fallbacks tipográficos y tamaños auxiliares del email no reemplazan los tokens de la interfaz; límites del proveedor no son reglas visuales"
     ]
   },
   "components": [
@@ -51,12 +560,36 @@
       "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:3rem;padding:0 1.25rem;border:0;border-radius:14px;background:#242424;color:#fff;font-family:var(--font-bricolage,sans-serif);font-size:.875rem;line-height:1.25rem;font-weight:500;transition:color 150ms,background-color 150ms;cursor:pointer}.ds-button:hover{background:#404040}.ds-button:focus-visible{outline:2px solid #242424;outline-offset:4px}.ds-button:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-button{transition-duration:.01ms}}"
     },
     {
+      "name": "Botón secundario",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Variante existente de Button, tamaño md; conserva foco visible y estado deshabilitado.",
+      "html": "<button type=\"button\" class=\"ds-button\">Volver</button>",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:3rem;padding:0 1.25rem;border:1px solid rgba(75,75,71,.3);border-radius:14px;background:#fff;color:#242424;font-family:var(--font-bricolage,sans-serif);font-size:.875rem;line-height:1.25rem;font-weight:500;transition:color 150ms,background-color 150ms;cursor:pointer}.ds-button:hover{background:#E6E6E0}.ds-button:focus-visible{outline:2px solid #242424;outline-offset:4px}.ds-button:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-button{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Botón discreto",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Variante existente de Button, tamaño md; conserva foco visible y estado deshabilitado.",
+      "html": "<button type=\"button\" class=\"ds-button\">Cancelar</button>",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:3rem;padding:0 1.25rem;border:0;border-radius:14px;background:transparent;color:#53534f;font-family:var(--font-bricolage,sans-serif);font-size:.875rem;line-height:1.25rem;font-weight:500;transition:color 150ms,background-color 150ms;cursor:pointer}.ds-button:hover{background:rgba(75,75,71,.05);color:#242424}.ds-button:focus-visible{outline:2px solid #242424;outline-offset:4px}.ds-button:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-button{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Botón destructivo",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Variante existente de Button, tamaño md; conserva foco visible y estado deshabilitado.",
+      "html": "<button type=\"button\" class=\"ds-button\">Eliminar</button>",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:3rem;padding:0 1.25rem;border:0;border-radius:14px;background:rgba(161,61,61,.9);color:#fff;font-family:var(--font-bricolage,sans-serif);font-size:.875rem;line-height:1.25rem;font-weight:500;transition:color 150ms,background-color 150ms;cursor:pointer}.ds-button:hover{background:#a13d3d}.ds-button:focus-visible{outline:2px solid #242424;outline-offset:4px}.ds-button:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-button{transition-duration:.01ms}}"
+    },
+    {
       "name": "Campo de texto",
       "kind": "input",
       "refersTo": "input",
-      "description": "Input con etiqueta asociada. El foco actual cambia borde y fondo; los errores conservan texto y aria-invalid.",
+      "description": "Input con etiqueta asociada, borde legible y contorno de foco; errores textuales y aria-invalid.",
       "html": "<div class=\"ds-field\"><label class=\"ds-label\" for=\"ds-name\">Tu nombre</label><input class=\"ds-input\" id=\"ds-name\" type=\"text\" placeholder=\"Escribí tu nombre\" aria-invalid=\"false\"></div>",
-      "css": ".ds-field{display:flex;flex-direction:column;gap:.5rem;font-family:var(--font-bricolage,sans-serif)}.ds-label{font-size:.875rem;line-height:1.25rem;font-weight:500;color:#53534f}.ds-input{width:100%;padding:.75rem 1rem;border:1px solid rgba(75,75,71,.2);border-radius:14px;background:rgba(230,230,224,.5);color:#242424;font-family:var(--font-bricolage,sans-serif);font-size:1rem;line-height:1.6;transition:border-color 150ms ease-out,background-color 150ms ease-out}.ds-input::placeholder{color:#62625c}.ds-input:focus,.ds-input:focus-visible{outline:none;border-color:#4b4b47;background:rgba(222,222,216,.3)}.ds-input[aria-invalid=true]{border-color:rgba(161,61,61,.6)}.ds-input[aria-invalid=true]:focus{border-color:#a13d3d}@media(prefers-reduced-motion:reduce){.ds-input{transition-duration:.01ms}}"
+      "css": ".ds-field{display:flex;flex-direction:column;gap:.5rem;font-family:var(--font-bricolage,sans-serif)}.ds-label{font-size:.875rem;line-height:1.25rem;font-weight:500;color:#53534f}.ds-input{width:100%;padding:.75rem 1rem;border:1px solid #62625c;border-radius:14px;background:rgba(230,230,224,.5);color:#242424;font-family:var(--font-bricolage,sans-serif);font-size:1rem;line-height:1.6;transition:border-color 150ms ease-out,background-color 150ms ease-out}.ds-input::placeholder{color:#62625c}.ds-input:focus,.ds-input:focus-visible{outline:2px solid #242424;outline-offset:4px;border-color:#242424;background:#fff}.ds-input[aria-invalid=true]{border-color:rgba(161,61,61,.6)}.ds-input[aria-invalid=true]:focus{border-color:#a13d3d}@media(prefers-reduced-motion:reduce){.ds-input{transition-duration:.01ms}}"
     },
     {
       "name": "Panel de lectura",
@@ -78,38 +611,86 @@
       "name": "Navegación principal",
       "kind": "nav",
       "refersTo": "navigation-item",
-      "description": "Extracto textual del estado activo de Sidebar. Los iconos Phosphor y la adaptación móvil pertenecen a Sidebar y TabBar; esta muestra no recrea el shell completo.",
-      "html": "<nav class=\"ds-nav\" aria-label=\"Navegación principal\"><a class=\"ds-nav-item\" href=\"/dashboard\" aria-current=\"page\">Mi resultado</a><a class=\"ds-nav-item\" href=\"/plan\">Actividades</a><a class=\"ds-nav-item\" href=\"/export\">Informe</a></nav>",
-      "css": ".ds-nav{display:flex;flex-direction:column;gap:.25rem;padding:.75rem;background:#f7f7f4;font-family:var(--font-bricolage,sans-serif)}.ds-nav-item{display:flex;align-items:center;min-height:3rem;padding:.75rem;border-radius:14px;color:#53534f;font-size:.875rem;line-height:1.25rem;text-decoration:none;transition:color 150ms,background-color 150ms}.ds-nav-item:hover{color:#242424;background:rgba(75,75,71,.05)}.ds-nav-item[aria-current=page]{color:#242424;font-weight:700}.ds-nav-item:focus-visible{outline:2px solid #242424;outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-nav-item{transition-duration:.01ms}}"
+      "description": "Muestra textual de la navegación grafito y sus ayudas. Sidebar real: 232px y Phosphor; TabBar móvil mantiene rutas y estado.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Navegación principal\"><a class=\"ds-nav-item\" href=\"/dashboard\" aria-current=\"page\"><strong>Mi resultado</strong><span>Leé y explorá tu devolución</span></a><a class=\"ds-nav-item\" href=\"/plan\"><strong>Actividades</strong><span>Elegí un paso para probar</span></a><a class=\"ds-nav-item\" href=\"/chat\"><strong>Chat</strong><span>Conversá sobre tu lectura</span></a><a class=\"ds-nav-item\" href=\"/export\"><strong>Informe</strong><span>Llevate tu perfil en PDF</span></a></nav>",
+      "css": ".ds-nav{display:flex;flex-direction:column;gap:4px;padding:12px;background:#242424;font-family:var(--font-bricolage,sans-serif)}.ds-nav-item{display:flex;flex-direction:column;justify-content:center;min-height:68px;padding:14px 12px;border-radius:12px;color:#c4c4bc;font-size:14px;line-height:1.4;text-decoration:none;transition:background-color 180ms,color 180ms}.ds-nav-item strong{font-weight:600}.ds-nav-item span{display:block;margin-top:3px;font-size:11px;line-height:1.45}.ds-nav-item:hover{background:#33332f;color:#f7f7f4}.ds-nav-item[aria-current=page]{background:#f7f7f4;color:#242424}.ds-nav-item[aria-current=page] span{color:#62625c}.ds-nav-item:focus-visible{outline:2px solid #f7f7f4;outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-nav-item{transition:none}}"
+    },
+    {
+      "name": "Índice de capítulos",
+      "kind": "custom",
+      "description": "Details nativo con títulos de la narrativa. La muestra conserva apertura por teclado y estilo de capítulo activo; el cambio de pasaje lo implementa SectionedNarrative.",
+      "html": "<details class=\"ds-chapters\"><summary>Explorá los capítulos<svg viewBox=\"0 0 256 256\" width=\"20\" height=\"20\" fill=\"none\" aria-hidden=\"true\" focusable=\"false\"><path d=\"m48 96 80 80 80-80\" stroke=\"currentColor\" stroke-width=\"16\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></summary><nav aria-label=\"Capítulos de tu lectura\"><button type=\"button\" aria-current=\"step\">Apertura</button><button type=\"button\">Un próximo paso</button></nav></details>",
+      "css": ".ds-chapters{font-family:var(--font-bricolage,sans-serif);color:var(--ink,#242424);border-bottom:1px solid var(--stone,#deded8);padding-bottom:14px}.ds-chapters summary{display:flex;align-items:center;justify-content:space-between;min-height:44px;font-size:15px;font-weight:600;cursor:pointer}.ds-chapters summary>svg{flex-shrink:0;transition:rotate 240ms ease-out}.ds-chapters[open] summary>svg{rotate:180deg}.ds-chapters nav{display:grid;gap:4px;margin-top:12px}.ds-chapters button{padding:12px;min-height:48px;text-align:left;font:14px var(--font-bricolage,sans-serif);border:0;background:transparent;border-radius:8px;color:inherit;cursor:pointer}.ds-chapters button{transition:background-color 240ms ease-out,color 240ms ease-out}.ds-chapters button:hover{background:#eff0e9}.ds-chapters button[aria-current]{background:#262e23;color:#f4f3ec}.ds-chapters button:focus-visible,.ds-chapters summary:focus-visible{outline:2px solid var(--ink,#242424);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-chapters summary>svg,.ds-chapters button{transition:none}}"
+    },
+    {
+      "name": "Término explicado",
+      "kind": "custom",
+      "description": "Muestra visual del botón de glosario y su definición al hover/foco. ExplainedText real añade toque, Escape, cierre exterior, posicionamiento y descripción accesible.",
+      "html": "<span class=\"ds-glossary\"><button type=\"button\" class=\"ds-term\" aria-describedby=\"ds-definition\">Se</button><span id=\"ds-definition\" role=\"tooltip\" class=\"ds-definition\"><strong>Se · Sensación extravertida</strong><span>En el lenguaje de Jung, prestar atención a lo que se percibe ahora con los sentidos.</span><small>En Umbra es una interpretación de IA: no mide una capacidad, una debilidad ni una probabilidad.</small></span></span>",
+      "css": ".ds-glossary{display:inline-block;position:relative;font-family:var(--font-bricolage,sans-serif);color:var(--ink,#242424)}.ds-term{border:0;padding:2px 1px;background:transparent;color:inherit;font:inherit;font-weight:600;text-decoration:underline dotted;text-underline-offset:4px;cursor:help;border-radius:3px}.ds-term:hover,.ds-glossary:focus-within .ds-term{background:#e4e9dc;color:#263123;text-decoration-style:solid}.ds-term:focus-visible{outline:2px solid currentColor;outline-offset:3px}.ds-definition{display:none;position:absolute;top:100%;left:0;z-index:100;width:min(320px,calc(100vw - 32px));padding:22px;background:var(--ink,#242424);color:var(--paper,#f7f7f4);border-radius:14px;font:14px/1.55 var(--font-bricolage,sans-serif);box-shadow:0 12px 36px #0003}.ds-glossary:hover .ds-definition,.ds-glossary:focus-within .ds-definition{display:flex;flex-direction:column;gap:12px}.ds-definition strong{font-size:16px;line-height:1.3}.ds-definition small{font-size:12px;line-height:1.5;border-top:1px solid #55554e;padding-top:12px;color:#d5d5cd}"
+    },
+    {
+      "name": "Acción de correo",
+      "kind": "button",
+      "description": "Enlace principal de lib/email/templates.ts: adaptación al correo con Arial y estilos explícitos. La muestra es local; no modifica una cuenta. Conserva foco visible, sin hover ni movimiento inventados.",
+      "html": "<a class=\"ds-email-action\" href=\"#ds-email-preview\">Cambiar mi contraseña</a>",
+      "css": ".ds-email-action{display:inline-block;background:#242424;color:#fff;border:1px solid #242424;border-radius:8px;padding:17px 24px;text-decoration:none;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.4;font-weight:700;text-align:center}.ds-email-action:focus-visible{outline:3px solid #805720;outline-offset:4px}"
     }
   ],
   "narrative": {
     "northStar": "Un espacio personal de reflexión",
-    "overview": "Umbra se presenta como un cuaderno personal de tinta y papel: cercano, expresivo y legible. La marca visible es `umbra`, en minúsculas. Bricolage Grotesque aporta personalidad a títulos compactos; las escenas de escribir, leer y caminar explican acciones reconocibles. Esta dirección aplica los principios de contraste, foco y agrupación elegidos por Matías al revisar Stoic, con identidad e ilustraciones propias.\n\nLa portada usa un campo oscuro de contornos fluidos y una vista clara del recorrido. Las pantallas de trabajo conservan fondo claro, paneles de lectura blancos y bloques oscuros de énfasis. Las preguntas, la interpretación experimental y las actividades se distinguen visualmente y mantienen sus límites junto al contenido. La ilustración acompaña; el texto y los controles explican qué hacer.",
+    "overview": "Umbra se presenta como un cuaderno personal de tinta y papel: cercano, expresivo y legible. La marca visible combina `umbra` en Young Serif Regular, convertida a contornos SVG con espaciado óptico, y un isotipo independiente de dos aperturas desplazadas sin formar letras. Bricolage Grotesque se conserva para los títulos y el texto de la interfaz. La composición aplica los principios de contraste, foco y agrupación elegidos por Matías al revisar Stoic Today y Library, con ilustraciones originales y la procedencia tipográfica declarada.\n\nLa portada usa un fondo oscuro, un libro ilustrado animado y una vista clara del recorrido. En el interior, un marco grafito continuo reúne navegación y cabecera alrededor de una hoja de trabajo clara. Una apertura personal negra enlaza historia, interpretación y acción mediante tres hojas SVG con reproducción controlable. La lectura continúa con índice de capítulos, diagramas y definiciones al alcance del texto; tres pestañas separan narrativa, datos experimentales y lectura simbólica. Las actividades usan escenas de su acción y se abren de a una. Un interludio negro de marca cubre la ventana una sola vez al entrar al espacio de trabajo por documento y cede al interactuar; no se repite en la navegación interna. El informe conserva el contenido guardado y agrega ejemplos conceptuales y espacio de reflexión en una composición A4 sobre blanco, con aperturas negras.",
     "keyCharacteristics": [
-      "Tinta grafito y papel claro, con contraste invertido en portada y bloques principales.",
-      "Una familia tipográfica gratuita con personalidad, pesos legibles y ajuste óptico automático.",
-      "Ilustraciones SVG propias de escribir, leer, caminar y guardar un informe.",
-      "Navegación compacta, tareas agrupadas y detalle elegido por la persona.",
-      "Movimiento ambiental controlable y estados comprensibles también sin animación."
+      "Marco grafito continuo, hoja de trabajo clara y superficie blanca de lectura.",
+      "Bricolage Grotesque para la interfaz y Young Serif en contornos para el logo, con procedencia y licencia.",
+      "Isotipo independiente, tres hojas de reflexión, cinco diagramas de lectura y escenas propias de las actividades.",
+      "Navegación con icono, nombre y ayuda; capítulos, glosario contextual y una actividad elegida a la vez.",
+      "Interludio de marca finito, ambiente controlable en portada y apertura personal, y estados comprensibles sin animación."
     ],
     "rules": [
-      { "name": "The Tinta y papel Rule", "body": "El énfasis principal se construye con contraste entre tinta y papel; los acentos de estado conservan su significado funcional.", "section": "colors" },
-      { "name": "The Título primero Rule", "body": "El nombre del contenido encabeza el bloque; la procedencia o atribución se presenta como apoyo cercano y no como un rótulo ornamental que compite con él.", "section": "typography" },
-      { "name": "The Superficie por tarea Rule", "body": "Un bloque oscuro destaca una unidad de trabajo o lectura; los paneles claros y los divisores agrupan su contenido sin añadir elevación ornamental.", "section": "elevation" }
+      {
+        "name": "The Tinta y papel Rule",
+        "body": "El énfasis principal se construye con contraste entre tinta y papel; los acentos de estado conservan su significado funcional.",
+        "section": "colors"
+      },
+      {
+        "name": "The Título primero Rule",
+        "body": "El nombre del contenido encabeza el bloque; la procedencia o atribución se presenta como apoyo cercano y no como un rótulo ornamental que compite con él.",
+        "section": "typography"
+      },
+      {
+        "name": "The Superficie por tarea Rule",
+        "body": "El grafito sostiene el marco y la escena; el papel organiza el trabajo y el blanco concentra la lectura o la actividad elegida, sin elevación ornamental.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Posición verificable Rule",
+        "body": "La barra de lectura representa desplazamiento y la línea de actividad representa casilleros completados; ninguna se presenta como comprensión, capacidad o nueva puntuación personal.",
+        "section": "components"
+      },
+      {
+        "name": "The Acción de cuenta Rule",
+        "body": "En los correos, la marca encuadra el evento; el texto explica qué ocurrió y conserva una acción principal o un código, con su nota de seguridad y alternativa de texto.",
+        "section": "components"
+      }
     ],
     "dos": [
-      "**Do** mantener `umbra` en minúsculas en la marca visible y Bricolage Grotesque como familia compartida.",
+      "**Do** mantener `umbra` en contornos Young Serif con su atribución y licencia, el isotipo independiente de dos aperturas y Bricolage Grotesque para la interfaz.",
       "**Do** empezar los bloques por su título y mantener la procedencia y los límites junto al contenido.",
       "**Do** reutilizar controles, navegación y escenas SVG existentes antes de crear variantes locales.",
+      "**Do** conservar las pestañas que separan narrativa, datos del modelo y lectura simbólica, y ofrecer control del ritmo de lectura.",
+      "**Do** explicar las siglas mediante el glosario compartido y conservar los énfasis y citas del texto recibido.",
+      "**Do** abrir una actividad elegida con sus pasos y permitir regresar a la opción y posición previas.",
       "**Do** conservar texto y marcas de estado además del color, con foco y operación por teclado.",
-      "**Do** mantener pausa, suspensión fuera de pantalla y alternativa estática en el campo ambiental.",
+      "**Do** mantener pausa, suspensión fuera de pantalla y alternativa estática en el libro de portada y las tres hojas de la apertura personal.",
+      "**Do** cancelar el interludio al interactuar y conservar lectura completa, glosario, actividades y espacio de notas en el informe.",
       "**Do** contrastar los cambios de tokens con las pantallas de escritorio y móvil y actualizar este registro desde el código."
     ],
     "donts": [
       "**Don't** recuperar la paleta violeta, las transparencias o las fuentes anteriores a partir de nombres heredados.",
       "**Don't** copiar la identidad, tipografía propietaria, ilustraciones, textos o capturas de Stoic al producto.",
       "**Don't** usar ilustración, animación o una figura simbólica como evidencia de análisis real o validación clínica.",
+      "**Don't** presentar posición de desplazamiento como lectura completada ni conteos de casilleros como una nueva puntuación personal.",
       "**Don't** convertir notas pequeñas, estilos locales del PDF o helpers sin consumidores en reglas generales.",
       "**Don't** agregar funcionalidades, métricas o capas de tokens que el recorrido y la implementación no contienen."
     ]

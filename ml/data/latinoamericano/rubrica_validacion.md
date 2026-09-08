@@ -88,8 +88,10 @@ Se documenta como limitación honesta en el TFG (sección 7.4.1
 Riesgos): el corpus latinoamericano propio etiqueta una dimensión por caso
 con score discreto {20, 50, 80}, no con scores continuos por dimensión.
 Esto reduce la capacidad del regresor para aprender matices finos sobre
-dominio latinoamericano; se compensa con el corpus Essays (n~2500, scores
-continuos por dimensión) en el dataset combinado.
+dominio latinoamericano. El dataset combinado también incluye 2467 textos
+Essays en inglés con etiquetas binarias por dimensión (0/1 escaladas a
+0/100 en la copia integrada). Esa incorporación no compensa ni demuestra
+validez individual en español.
 
 ## Política de aceptación
 

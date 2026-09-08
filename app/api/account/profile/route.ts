@@ -6,7 +6,7 @@ import { SessionExpiredError, NotFoundError } from '@/lib/errors';
 export const runtime = 'nodejs';
 
 const ProfilePatchSchema = z.object({
-  full_name: z.string().min(1).max(120).trim().optional(),
+  full_name: z.string().trim().min(1).max(120).optional(),
 });
 
 /**

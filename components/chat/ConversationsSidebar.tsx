@@ -21,9 +21,8 @@ interface ConversationsSidebarProps {
 
 /**
  * Sidebar that lists the user's recent chat conversations. Renders on
- * desktop (lg+) as a fixed-width column at the left of the chat, and
- * on smaller viewports as a toggleable drawer (not wired here — the
- * ChatShell decides where to place it).
+ * desktop as a column at the left of the chat. ChatShell exposes the
+ * same history through an inline disclosure on narrower screens.
  *
  * Fase 3.3 del IMPLEMENTATION_PLAN.md — chat persistente con historial.
  * PAIR cap. 5 Feedback + Control: users can return to past reflections
@@ -75,32 +74,32 @@ export function ConversationsSidebar({
   }, [activeConversationId, fetchConversations]);
 
   return (
-    <aside className="flex h-full flex-col gap-3 border-r border-violet-400/10 pr-4">
-      <div className="flex items-center justify-between gap-2">
-        <p className="font-body text-sm normal-case tracking-normal text-text-3">
+    <aside aria-label="Historial de conversaciones" className="conversation-list">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="font-body text-sm font-medium text-text-1">
           Tus conversaciones
         </p>
         <button
           type="button"
           onClick={onNewChat}
-          className="inline-flex items-center gap-1.5 rounded-full border border-violet-400/20 bg-umbra-shadow/40 px-3 py-1 font-body text-sm normal-case tracking-normal text-violet-200 transition-all duration-200 hover:border-violet-400/50 hover:bg-violet-400/10"
+          className="inline-flex min-h-11 items-center gap-2 rounded-md border border-text-3 px-3 py-2 font-body text-sm text-text-1 transition-colors duration-200 hover:bg-umbra-shadow"
           aria-label="Empezar una conversación nueva"
         >
-          <Plus size={12} weight="bold" />
-          nueva
+          <Plus size={16} weight="bold" aria-hidden="true" />
+          Nueva conversación
         </button>
       </div>
 
       {loading && (
-        <p className="font-body text-xs not-italic text-text-3/70">Cargando…</p>
+        <p role="status" className="font-body text-sm text-text-3">Cargando…</p>
       )}
 
       {error && (
-        <p className="font-body text-xs text-accent-rose">{error}</p>
+        <p role="alert" className="font-body text-sm text-accent-rose">{error}</p>
       )}
 
       {!loading && !error && conversations.length === 0 && (
-        <p className="font-body text-xs not-italic text-text-3/70">
+        <p className="font-body text-sm text-text-3">
           Todavía no empezaste una conversación.
         </p>
       )}

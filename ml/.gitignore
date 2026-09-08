@@ -22,6 +22,9 @@ mlruns/
 # HuggingFace cache (descargas de DistilBERT)
 .hf_cache/
 .cache/
+models/distilbert/
+.vercel/
+uv.lock
 
 # Notebooks checkpoint
 .ipynb_checkpoints/
@@ -31,3 +34,4 @@ mlruns/
 
 # OS
 .DS_Store
+.vercel

@@ -33,6 +33,17 @@ export type Archetype =
   | 'rebel';
 
 // ─── Psychological Profile ───
+export interface BigFiveSelfReport {
+  instrument: 'bfi-2-s-es-30-v1';
+  source: 'self_report';
+  answers: number[];
+  scores: BigFive;
+  completedAt: string;
+  scale: '1-5';
+  priorFeedback: 'not_controlled';
+  researchUse: false;
+}
+
 export interface PsychologicalProfile {
   id: string;
   userId: string;
@@ -444,3 +455,21 @@ export interface PlanRequest {
 export interface PlanResponse {
   areas: DevelopmentArea[];
 }
+
+export interface ReportExportData {
+  profile: PsychologicalProfile;
+  narrative: string | null;
+  plan: { areas: Array<{ id: string; name: string; rationale: string; actions: Array<{ id: string; title: string; description: string; microGoals: Array<{ text: string }> }> }> } | null;
+  userName: string | null;
+}
+
+export type UmbraEmailKind = 'welcome' | 'confirmation' | 'invite' | 'recovery' | 'magic_link' | 'email_change' | 'reauthentication' | 'password_changed' | 'email_changed' | 'delete_confirmation';
+export interface UmbraEmailOptions {
+  kind: UmbraEmailKind;
+  siteUrl: string;
+  actionUrl?: string;
+  code?: string;
+  expiresAt?: string;
+  preview?: boolean;
+}
+export interface UmbraEmailContent { subject: string; html: string; text: string }

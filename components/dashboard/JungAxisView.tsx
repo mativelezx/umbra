@@ -5,6 +5,7 @@ import {
   JUNG_AXIS_LABEL,
   JUNG_AXIS_DESCRIPTION,
 } from '@/lib/dimensions/labels';
+import { ExplainedText } from '@/components/ui/ExplainedText';
 import { InfoPopover } from '@/components/ui/InfoPopover';
 
 interface JungAxisViewProps {
@@ -103,7 +104,7 @@ function AxisBar({
             />
           </div>
           <p className="mt-0.5 flex items-center gap-1.5 font-body text-sm not-italic text-text-3">
-            <span className="font-body text-text-4">{axis.left}</span>
+            <span className="font-body text-text-4"><ExplainedText text={axis.left} /></span>
             <span className="font-body tabular-nums">{leftVal}/100</span>
           </p>
         </div>
@@ -124,7 +125,7 @@ function AxisBar({
           </div>
           <p className="mt-0.5 flex items-center justify-end gap-1.5 font-body text-sm not-italic text-text-3">
             <span className="font-body tabular-nums">{rightVal}/100</span>
-            <span className="font-body text-text-4">{axis.right}</span>
+            <span className="font-body text-text-4"><ExplainedText text={axis.right} /></span>
           </p>
         </div>
       </div>

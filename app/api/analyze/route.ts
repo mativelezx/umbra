@@ -14,12 +14,14 @@ import { buildInterpretNarrativePrompt } from '@/lib/prompts/interpret-narrative
 import { buildEvidencePrompt } from '@/lib/prompts/analyze-evidence';
 import { computeHash, CURRENT_PEPPER_VERSION } from '@/lib/security/peppers';
 import { inferBigFive, MlApiUnavailableError, MlApiError } from '@/lib/ml-client';
+import { normalizeBigFiveForStorage } from '@/lib/profile/normalize-big-five';
 import type { AnalyzeResponse } from '@/types';
 
 export const runtime = 'edge';
 
 const AnalyzeInputSchema = z.object({
   texts: z.array(z.string().min(1).max(15000)).min(1).max(16),
+  mlTexts: z.array(z.string().trim().min(1).max(15000)).min(1).max(16).optional(),
   mode: z.enum(['dynamic']),
   areas: z.array(z.string().min(1).max(100)).optional(),
   /**
@@ -110,7 +112,7 @@ export const POST = withErrorHandler(async (req) => {
       | { seeded?: boolean; seedText?: string }
       | null;
     if (flags?.seeded && typeof flags.seedText === 'string' && flags.seedText.length > 0) {
-      augmentedTexts.unshift(flags.seedText);
+      augmentedTexts.unshift(`Retrato importado desde ChatGPT (texto de otra IA, no autoinforme verificado):\n${flags.seedText}`);
       if (augmentedAreas) {
         augmentedAreas.unshift('Retrato importado desde ChatGPT');
       }
@@ -123,7 +125,8 @@ export const POST = withErrorHandler(async (req) => {
   const combinedText = augmentedTexts.join('\n\n');
   let mlResult;
   try {
-    mlResult = await inferBigFive(combinedText);
+    // Imported AI prose must not stand in for the user's writing in our model.
+    mlResult = await inferBigFive((body.mlTexts ?? body.texts).join('\n\n'));
   } catch (e) {
     if (e instanceof MlApiUnavailableError) {
       throw new MlUnavailableError(
@@ -209,7 +212,7 @@ export const POST = withErrorHandler(async (req) => {
     const interpret = InterpretResponseSchema.parse(sanitized);
 
     const profile: AnalyzeResponse = {
-      bigFive: mlResult.bigFive,
+      bigFive: normalizeBigFiveForStorage(mlResult.bigFive),
       jungFunctions: interpret.jungFunctions,
       archetype: interpret.archetype,
       archetypeSecondary: interpret.archetypeSecondary,
@@ -235,7 +238,8 @@ export const POST = withErrorHandler(async (req) => {
           archetype_secondary: profile.archetypeSecondary,
           analysis_raw: {
             ...rawJson,
-            ml: {
+          ml: {
+            inputSource: body.mlTexts ? 'user_open_answers' : 'legacy_transcript_without_import',
               modelVersion: mlResult.modelVersion,
               elapsedMs: mlResult.elapsedMs,
               perDimensionStatus: mlResult.perDimensionStatus,
@@ -283,6 +287,7 @@ export const POST = withErrorHandler(async (req) => {
       originalText: combinedText,
       bigFive: profile.bigFive,
       jungFunctions: profile.jungFunctions,
+      perDimensionStatus: mlResult.perDimensionStatus,
       service,
     }).catch((e) => {
       console.warn('[analyze] Pass 2 evidence failed', e);
@@ -318,13 +323,15 @@ async function runEvidencePass2(args: {
   originalText: string;
   bigFive: AnalyzeResponse['bigFive'];
   jungFunctions: AnalyzeResponse['jungFunctions'];
+  perDimensionStatus: Parameters<typeof buildEvidencePrompt>[0]['perDimensionStatus'];
   service: ReturnType<typeof createEdgeServiceClient>;
 }) {
-  const { profileId, originalText, bigFive, jungFunctions, service } = args;
+  const { profileId, originalText, bigFive, jungFunctions, perDimensionStatus, service } = args;
   const { system, prompt } = buildEvidencePrompt({
     originalText,
     bigFive,
     jungFunctions,
+    perDimensionStatus,
   });
 
   const result = await claudeText({

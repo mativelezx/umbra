@@ -4,13 +4,15 @@ import { AuthProvider } from '@/lib/providers/auth-context';
 import { MotionProvider } from '@/components/motion/MotionProvider';
 import { ThemeProvider } from '@/lib/providers/theme';
 import './globals.css';
+import './art-motion.css';
+import './reading-experience.css';
 const bricolage = Bricolage_Grotesque({ subsets: ['latin'], weight: 'variable', axes: ['opsz'], variable: '--font-bricolage', display: 'swap' });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 const SITE_NAME = 'Umbra';
-const SITE_TAGLINE = 'Un espacio para mirarte con atención.';
+const SITE_TAGLINE = 'Tu cabeza, en palabras.';
 const SITE_DESCRIPTION =
-  'Un espacio de autoconocimiento con Big Five experimental, interpretación de IA inspirada en Jung y actividades de reflexión. Proyecto académico en español.';
+  'Respondé preguntas sobre tus decisiones y hábitos. Recibí una lectura de tus respuestas y actividades para probar en tu día. Prototipo académico con IA; no es terapia.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -65,10 +67,10 @@ export const viewport: Viewport = {
 
 const DESIGN_CONTRACT = `<!--
 THESIS: A continuous reflection workspace; the reader chooses the pace and the next action.
-OWN-WORLD: lowercase umbra, Bricolage, graphite navigation, paper workspace, white reading surface, original vectors.
+OWN-WORLD: Young Serif lowercase umbra lettering (SIL OFL, vector outlines) beside a two-part aperture symbol; Bricolage for interface text, graphite navigation, paper workspace, white reading surface, original vectors.
 STORY: Answer, read one section, inspect sources, choose an optional activity, export or finish. Synthetic examples stay identified.
-FIRST VIEWPORT: Compact dark navigation frames a clear task title, a large reflective illustration and a chapter reader. Experimental data and symbolic reading have separate tabs.
-FORM: User-pinned Stoic principles; code-first direction29378ec1. Approved interior reconstruction September 6, 2026. Signature: a chosen chapter unfolds; an activity opens into a focused illustrated workspace. Reduced motion preserves all content and controls.
+FIRST VIEWPORT: Graphite navigation, task heading and an ink-black personal opening. Three moving sheets connect story, interpretation and action beside the reading button; playback is controllable. Chapter index and symbolic versus experimental sources remain distinct.
+FORM: User-pinned Stoic, code-first, extended September 7, 2026. Legacy identifier29378ec1 is not a corroborated random seed or visual approval. Signature: eight-second paper unfolding with pause/offscreen/reduced-motion control, finite chapter gestures and a 1240 ms full-viewport brand interlude. Scroll bookmark follows actual position. Personal PDF: black openings, explained symbols, everyday examples and reflection space on white paper, without an olive frame; saved content retained.
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
 -->`;
 

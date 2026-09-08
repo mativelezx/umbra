@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 const PROTECTED_PREFIXES = [
   '/dashboard',
+  '/assessment',
   '/chat',
   '/plan',
   '/export',
@@ -10,7 +11,7 @@ const PROTECTED_PREFIXES = [
   '/settings',
 ];
 const AUTH_ROUTES = ['/login', '/register'];
-const CONSENT_REQUIRED_PREFIXES = ['/onboarding', '/dashboard', '/chat', '/plan', '/export'];
+const CONSENT_REQUIRED_PREFIXES = ['/onboarding', '/dashboard', '/assessment', '/chat', '/plan', '/export'];
 
 export async function updateSession(req: NextRequest) {
   let res = NextResponse.next({ request: { headers: req.headers } });

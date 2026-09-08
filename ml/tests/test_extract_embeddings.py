@@ -5,6 +5,7 @@ sin descarga del modelo), los tests se skipean en lugar de fallar.
 """
 
 import importlib
+import os
 
 import pytest
 
@@ -27,7 +28,8 @@ def test_module_imports():
     assert extractor._model is None, "El modelo debería ser lazy"
 
 
-@pytest.mark.skipif(not _has_transformers(), reason="transformers/torch no instalados")
+@pytest.mark.skipif(os.getenv("ML_RUN_MODEL_TESTS") != "1" or not _has_transformers(),
+                    reason="integration opt-in: ML_RUN_MODEL_TESTS=1 and cached weights required")
 def test_encode_returns_correct_shape():
     """Si transformers está disponible, encode devuelve la shape esperada."""
     from src.extract_embeddings import EmbeddingExtractor, EMBEDDING_DIM

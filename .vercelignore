@@ -1,36 +1,13 @@
-# Local dependencies/build output
-node_modules
-.next
+.git
 .next-*
-out
-build
-
-# Test artifacts
-coverage
+artifacts
+ml
+plans
+docs
+.agent-os
+.claude
+.impeccable/review
+e2e
 test-results
 playwright-report
-playwright/.cache
-
-# Local/editor noise
-.DS_Store
-*.log
-*.tsbuildinfo
-
-# Local secrets/state
-.env
-.env.local
-.env*.local
-.vercel
-.claude
-.gstack
-
-# Python/ML local runtime artifacts. The Vercel app consumes the ML API via
-# ML_API_URL; Python datasets, venvs and model caches do not need to ship with
-# the Next.js deployment bundle.
-ml/.venv
-ml/.pytest_cache
-ml/**/__pycache__
-ml/mlruns
-ml/data
-ml/models
-
+.env*

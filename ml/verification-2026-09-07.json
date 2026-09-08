@@ -1,0 +1,436 @@
+{
+  "verified_at_utc": "2026-09-07T03:12:08.844304+00:00",
+  "base_commit": "0350f4319343ae538eef8563d831bbbf69cf5317",
+  "source_state": "working tree; see source_sha256 (not a committed verification release)",
+  "python": "3.11.15",
+  "packages": {
+    "numpy": "2.1.1",
+    "scipy": "1.14.1",
+    "scikit-learn": "1.5.2",
+    "pandas": "2.2.3",
+    "joblib": "1.4.2",
+    "fastapi": "0.115.0",
+    "pydantic": "2.9.2",
+    "httpx": "0.27.2",
+    "mlflow": "2.16.2",
+    "dvc": "3.55.2",
+    "pathspec": "0.12.1",
+    "torch": "2.4.1",
+    "transformers": "4.44.2",
+    "tokenizers": "0.19.1"
+  },
+  "artifacts": {
+    "models/ridge_v1.joblib": {
+      "sha256": "93eeecaaef2f334216783f0057184cbd2864edd43a484d3459e881b03d536612",
+      "bytes": 16928
+    },
+    "models/baseline_tfidf.joblib": {
+      "sha256": "6bf3b695642a56ad8b0fa04dd0edc1c833f87b13be0297ec224110af7adae117",
+      "bytes": 782243
+    },
+    "metrics.json": {
+      "sha256": "81aaba6d48bfac42ab7014c40d6b8d41da02d49a374a4c25cc00403b8ac5dd91",
+      "bytes": 1128
+    },
+    "eval_metrics.json": {
+      "sha256": "43cc5ec4562ea28ffcca657f0cf200df9bc606da6472416ffba11b718c1ddeef",
+      "bytes": 7052
+    },
+    "data/essays/essays.csv": {
+      "sha256": "7df955474aa84cbd0a0a9db6bcbdabfd3914fe91385af67cf19e6b6f13708499",
+      "bytes": 8167777
+    },
+    "data/latinoamericano/cases.csv": {
+      "sha256": "c91375aa0448092f25866be3e004085ddd738e0156e6b5354207ae3cdb751183",
+      "bytes": 8691
+    },
+    "data/splits/test.csv": {
+      "sha256": "981eee985f804bf17ea348edca83d13fd2a8ec68eda93c13e353c2c6da06ccc4",
+      "bytes": 792499
+    },
+    "data/splits/train.csv": {
+      "sha256": "d4c79bf63fb11353799653256348b2284d72e20bc3828c742a4018f41a44debf",
+      "bytes": 6684864
+    },
+    "data/splits/val.csv": {
+      "sha256": "c806c72fbe459a12e1c108ebaf175d2b1832ae198b6e9e5608df4caae01290b6",
+      "bytes": 816138
+    },
+    "data/embeddings/test.npy": {
+      "sha256": "438c00be533b12ce40c6892fa83af1ca7ff430fa8eec4320d134ff91ff3780f4",
+      "bytes": 768128
+    },
+    "data/embeddings/train.npy": {
+      "sha256": "c5cccaa96adced39a8da47cbd820723e533f64884406c1efa4530a10da23f9d2",
+      "bytes": 6110336
+    },
+    "data/embeddings/val.npy": {
+      "sha256": "005f560fbbc211b2599d7286d316f28ada0ac18bef03cfb1926e5268c5231ff0",
+      "bytes": 761984
+    }
+  },
+  "source_sha256": {
+    "src/__init__.py": "e3ac746462eeef90cd489319b7d3a56920e8a9a5f6ccb16c03b4fe3a51e8a8d5",
+    "src/api_server.py": "772337baf4a98a8497a3f3026d182d20d5698a2284c676723ebf29e4c323565f",
+    "src/baseline_tfidf.py": "cce17a83f4a2da4bd2772fa3741b3d6e3208a8c5eff32a4b6cde046c8bfdc7c9",
+    "src/embedding_cache.py": "aa5fab7c33c5b9cc4aeebeb515aae666a14fb727bba61163e064c73ac6307d33",
+    "src/evaluate.py": "f01c869034653cc41b7f02588f3123c34acd6f1421b8e589cff6019db2f1dd4b",
+    "src/extract_embeddings.py": "60a3b6022b0c79abb134d5efb14c1b52af57f0ebbe9a0a809486e738603898d5",
+    "src/predict.py": "559bc73bd35adfbb9588c68d7197b1b6d8aba4c73f4e10de9d1701d80ce86a8e",
+    "src/prepare_data.py": "7e54a5b32742503b58b9b44aa2d9ca446de0cb9ccf77b4f4ceb7ff7034a91f08",
+    "src/train_ridge.py": "6337a8849c1456277c14a097cd1d2c01a5a48b4290e691f37fc037b532425413",
+    "scripts/verify_bundle.py": "dec13774d9f860b55152e7c04183dd5a6dab39f95b1938e3b2e98c8e912e6902",
+    "requirements.txt": "5bbead7d46de8dd14b104f7fd3734f09d2e5acc76288ccedbda1934e2a7af425",
+    "dvc.yaml": "0b67bc925f57856c0f42d2584719444c3ae496840a633aebd3352972e9dcfb59",
+    "Makefile": "906a0caed62f51236555c913110840a38f27377429ba6ad52f51ba073d90bc9a",
+    "Dockerfile": "7f5097295bca2daafa834ffe50a59021139df85a28ed7ec580db99bb91df948a"
+  },
+  "corpus": {
+    "train": {
+      "n": 1989,
+      "by_language": {
+        "en": 1973,
+        "es-AR": 16
+      }
+    },
+    "val": {
+      "n": 248,
+      "by_language": {
+        "en": 246,
+        "es-AR": 2
+      }
+    },
+    "test": {
+      "n": 250,
+      "by_language": {
+        "en": 248,
+        "es-AR": 2
+      }
+    }
+  },
+  "bundle": {
+    "version": "ridge_v1",
+    "embedding_model": "distilbert-base-multilingual-cased",
+    "historical_embedding_revision": null,
+    "regressors": {
+      "openness": {
+        "class": "RidgeCV",
+        "alpha": 10.0
+      },
+      "conscientiousness": {
+        "class": "RidgeCV",
+        "alpha": 100.0
+      },
+      "extraversion": {
+        "class": "RidgeCV",
+        "alpha": 10.0
+      },
+      "agreeableness": {
+        "class": "RidgeCV",
+        "alpha": 100.0
+      },
+      "neuroticism": {
+        "class": "RidgeCV",
+        "alpha": 10.0
+      }
+    }
+  },
+  "cached_matrix_metrics_replayed": true,
+  "split_ids_disjoint": true,
+  "blocks": {
+    "combined": {
+      "n_samples": 250,
+      "metrics": {
+        "openness": {
+          "n": 248,
+          "mse": 2329.139063348376,
+          "r2": 0.06341046778569148,
+          "r": 0.2580633926745396,
+          "p_value": 3.899717089056436e-05
+        },
+        "conscientiousness": {
+          "n": 248,
+          "mse": 2489.8896124256735,
+          "r2": -0.007024204133810885,
+          "r": 0.09982318710198773,
+          "p_value": 0.11688251404991386
+        },
+        "extraversion": {
+          "n": 249,
+          "mse": 2437.3688992697553,
+          "r2": 0.022357343716041922,
+          "r": 0.15905476777351163,
+          "p_value": 0.011963043396780323
+        },
+        "agreeableness": {
+          "n": 248,
+          "mse": 2516.31731347898,
+          "r2": -0.006526925391591831,
+          "r": 0.02091835837462422,
+          "p_value": 0.7430672347603618
+        },
+        "neuroticism": {
+          "n": 249,
+          "mse": 2490.002025687978,
+          "r2": 3.7854204322229634e-06,
+          "r": 0.08821340021798837,
+          "p_value": 0.1652325057132962
+        }
+      },
+      "per_dimension_status": {
+        "openness": "low_confidence",
+        "conscientiousness": "low_confidence",
+        "extraversion": "low_confidence",
+        "agreeableness": "low_confidence",
+        "neuroticism": "low_confidence"
+      },
+      "classification_metrics": {
+        "openness": {
+          "n": 248,
+          "label_type": "binary_high_trait",
+          "decision_threshold": 50,
+          "roc_auc": 0.6486433474991826,
+          "balanced_accuracy": 0.5952271984308597,
+          "f1": 0.6212121212121212
+        },
+        "conscientiousness": {
+          "n": 248,
+          "label_type": "binary_high_trait",
+          "decision_threshold": 50,
+          "roc_auc": 0.5582955217991714,
+          "balanced_accuracy": 0.5357729992766489,
+          "f1": 0.5608856088560885
+        },
+        "agreeableness": {
+          "n": 248,
+          "label_type": "binary_high_trait",
+          "decision_threshold": 50,
+          "roc_auc": 0.49733350676378774,
+          "balanced_accuracy": 0.49193548387096775,
+          "f1": 0.6272189349112426
+        }
+      },
+      "per_dimension_classification_status": {
+        "openness": "ok",
+        "conscientiousness": "low_confidence",
+        "extraversion": "not_applicable",
+        "agreeableness": "low_confidence",
+        "neuroticism": "not_applicable"
+      }
+    },
+    "english_only": {
+      "n_samples": 248,
+      "metrics": {
+        "openness": {
+          "n": 248,
+          "mse": 2329.139063348376,
+          "r2": 0.06341046778569148,
+          "r": 0.2580633926745396,
+          "p_value": 3.899717089056436e-05
+        },
+        "conscientiousness": {
+          "n": 248,
+          "mse": 2489.8896124256735,
+          "r2": -0.007024204133810885,
+          "r": 0.09982318710198773,
+          "p_value": 0.11688251404991386
+        },
+        "extraversion": {
+          "n": 248,
+          "mse": 2446.3282858087614,
+          "r2": 0.02121405874068405,
+          "r": 0.15615075069922715,
+          "p_value": 0.013825687009538488
+        },
+        "agreeableness": {
+          "n": 248,
+          "mse": 2516.31731347898,
+          "r2": -0.006526925391591831,
+          "r": 0.02091835837462422,
+          "p_value": 0.7430672347603618
+        },
+        "neuroticism": {
+          "n": 248,
+          "mse": 2498.67824474434,
+          "r2": -0.0010989952755904309,
+          "r": 0.08506688930580042,
+          "p_value": 0.1817819729032779
+        }
+      },
+      "per_dimension_status": {
+        "openness": "low_confidence",
+        "conscientiousness": "low_confidence",
+        "extraversion": "low_confidence",
+        "agreeableness": "low_confidence",
+        "neuroticism": "low_confidence"
+      },
+      "classification_metrics": {
+        "openness": {
+          "n": 248,
+          "label_type": "binary_high_trait",
+          "decision_threshold": 50,
+          "roc_auc": 0.6486433474991826,
+          "balanced_accuracy": 0.5952271984308597,
+          "f1": 0.6212121212121212
+        },
+        "conscientiousness": {
+          "n": 248,
+          "label_type": "binary_high_trait",
+          "decision_threshold": 50,
+          "roc_auc": 0.5582955217991714,
+          "balanced_accuracy": 0.5357729992766489,
+          "f1": 0.5608856088560885
+        },
+        "extraversion": {
+          "n": 248,
+          "label_type": "binary_high_trait",
+          "decision_threshold": 50,
+          "roc_auc": 0.5909445745511319,
+          "balanced_accuracy": 0.5865860005204268,
+          "f1": 0.6254545454545455
+        },
+        "agreeableness": {
+          "n": 248,
+          "label_type": "binary_high_trait",
+          "decision_threshold": 50,
+          "roc_auc": 0.49733350676378774,
+          "balanced_accuracy": 0.49193548387096775,
+          "f1": 0.6272189349112426
+        },
+        "neuroticism": {
+          "n": 248,
+          "label_type": "binary_high_trait",
+          "decision_threshold": 50,
+          "roc_auc": 0.5557292684515666,
+          "balanced_accuracy": 0.5321477428180574,
+          "f1": 0.5433070866141733
+        }
+      },
+      "per_dimension_classification_status": {
+        "openness": "ok",
+        "conscientiousness": "low_confidence",
+        "extraversion": "low_confidence",
+        "agreeableness": "low_confidence",
+        "neuroticism": "low_confidence"
+      }
+    },
+    "latinoamericano_only": {
+      "n_samples": 2,
+      "metrics": {
+        "openness": {
+          "n": 0,
+          "note": "muestras insuficientes"
+        },
+        "conscientiousness": {
+          "n": 0,
+          "note": "muestras insuficientes"
+        },
+        "extraversion": {
+          "n": 1,
+          "note": "muestras insuficientes"
+        },
+        "agreeableness": {
+          "n": 0,
+          "note": "muestras insuficientes"
+        },
+        "neuroticism": {
+          "n": 1,
+          "note": "muestras insuficientes"
+        }
+      },
+      "per_dimension_status": {
+        "openness": "low_confidence",
+        "conscientiousness": "low_confidence",
+        "extraversion": "low_confidence",
+        "agreeableness": "low_confidence",
+        "neuroticism": "low_confidence"
+      },
+      "classification_metrics": {},
+      "per_dimension_classification_status": {
+        "openness": "not_applicable",
+        "conscientiousness": "not_applicable",
+        "extraversion": "not_applicable",
+        "agreeableness": "not_applicable",
+        "neuroticism": "not_applicable"
+      }
+    }
+  },
+  "spanish_runtime_status": {
+    "openness": "low_confidence",
+    "conscientiousness": "low_confidence",
+    "extraversion": "low_confidence",
+    "agreeableness": "low_confidence",
+    "neuroticism": "low_confidence"
+  },
+  "text_inference": {
+    "verified": true,
+    "input_kind": "synthetic",
+    "response": {
+      "big_five": {
+        "openness": 10.53,
+        "conscientiousness": 60.9,
+        "extraversion": 74.82,
+        "agreeableness": 62.7,
+        "neuroticism": 51.73
+      },
+      "per_dimension_status": {
+        "openness": "low_confidence",
+        "conscientiousness": "low_confidence",
+        "extraversion": "low_confidence",
+        "agreeableness": "low_confidence",
+        "neuroticism": "low_confidence"
+      },
+      "model_version": "ridge_v1",
+      "elapsed_ms": 1511
+    },
+    "health_before": {
+      "ok": true,
+      "service": "umbra-ml",
+      "model_loaded": false
+    },
+    "health_after": {
+      "ok": true,
+      "service": "umbra-ml",
+      "model_loaded": true
+    },
+    "embedding_revision_used": "45c032ab32cc946ad88a166f7cb282f58c753c2e",
+    "embedding_parameters_frozen": true,
+    "fresh_vs_legacy_sample": {
+      "indices": [
+        0,
+        122
+      ],
+      "n": 2,
+      "max_abs_difference": 9.5367431640625e-07,
+      "allclose_atol_1e-5": true
+    },
+    "downloaded_files": {
+      "config.json": {
+        "sha256": "67ab80c9a476e7c2d189cd03f95d297b04bd1d90e99765323af155ab6308960e",
+        "bytes": 466
+      },
+      "model.safetensors": {
+        "sha256": "fcf002be901b9ad708e0df430b8d18deaa4b3fe3519e24e9017a5ee17ca2c228",
+        "bytes": 541795680
+      },
+      "tokenizer.json": {
+        "sha256": "f4a4d5bf7301717e261fafbe26e1eb967f6ba4cb3ae0ab7a29f4642ec229f386",
+        "bytes": 1961828
+      },
+      "tokenizer_config.json": {
+        "sha256": "0f6d13e6f4da6f9e24f22ada6bc3be571123d858d7c0c05a8a7cd55a9c23c2e8",
+        "bytes": 49
+      },
+      "vocab.txt": {
+        "sha256": "fe0fda7c425b48c516fc8f160d594c8022a0808447475c1a7c6d6479763f310c",
+        "bytes": 995526
+      }
+    }
+  },
+  "limits": [
+    "Cached replay does not prove how historical embeddings were generated.",
+    "No historical DVC lock or embedding revision; no training reproduction claimed.",
+    "English held-out discrimination is not individual Spanish validity.",
+    "Spanish test consists of two synthetic cases, not participant validation."
+  ]
+}

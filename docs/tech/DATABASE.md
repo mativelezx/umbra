@@ -349,7 +349,7 @@ Called in `finally` block of every Edge route after Claude call (success OR erro
 
 ### `handle_new_user` (trigger for auth.users insert)
 
-Creates a `profiles` row automatically when a new auth user signs up. Uses `SECURITY DEFINER` + `SET search_path` for safety.
+Creates a `profiles` row automatically when a new auth user signs up. Uses `SECURITY DEFINER`; its table reference is schema-qualified. The historical function does not declare a fixed `search_path`.
 
 ### Nightly purge jobs (Supabase cron)
 
@@ -366,8 +366,9 @@ SELECT cron.schedule(
   'purge-analysis-raw',
   '0 4 * * *',
   $$UPDATE public.psychological_profiles
-    SET analysis_raw = NULL
-    WHERE created_at < NOW() - INTERVAL '30 days' AND analysis_raw IS NOT NULL$$
+    SET analysis_raw = public.retained_profile_results(analysis_raw)
+    WHERE updated_at < NOW() - INTERVAL '30 days'
+      AND analysis_raw IS DISTINCT FROM public.retained_profile_results(analysis_raw)$$
 );
 
 -- delete_confirmations expired cleanup
@@ -428,10 +429,10 @@ cannot be part of a SQL transaction with the prior PostgREST deletes.
 
 ## Backup + disaster recovery
 
-- Supabase automatic daily backups (7-day retention on free tier)
-- Point-in-time recovery on paid tiers (not in scope for TFG)
-- Manual export via `pg_dump` before major migrations (recommended)
-- Tested rollback script for Migration 002: `002_core_tables.down.sql`
+- Verify the actual project subscription and backup screen. The new free demo project did not have a scheduled backup at creation; do not promise a seven-day automatic backup.
+- Manual export via `pg_dump` before major migrations is recommended. A successful export is not a tested restoration.
+- Recovery point/time objectives and a full restore drill are still pending. Do not present an unexecuted rollback script as tested.
+- Migration `20260907020000` retains the questionnaire and ML provenance when expiring raw technical payloads. It does not delete the entire profile.
 
 ## Storage estimates (per active user)
 

@@ -6,8 +6,7 @@
 
 # Etapa 1 — embeddings congelados
 transformers==4.44.2
-# torch entra como dependencia transitiva de transformers; lo necesitamos
-# solo para forward pass sin gradientes (frozen embeddings).
+# torch es una dependencia explícita para forward pass sin gradientes.
 torch==2.4.1
 # tokenizadores rápidos
 tokenizers==0.19.1
@@ -22,6 +21,8 @@ joblib==1.4.2
 # MLOps
 mlflow==2.16.2
 dvc==3.55.2
+# DVC 3.55 imports private gitwildmatch symbols removed in pathspec 1.x.
+pathspec==0.12.1
 
 # Servir
 fastapi==0.115.0

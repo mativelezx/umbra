@@ -1,6 +1,7 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { CaretDown, ChatCircleDots } from '@phosphor-icons/react';
 import { LayoutShell } from '@/components/layout/LayoutShell';
 import { CrisisBanner } from '@/components/chat/CrisisBanner';
 import { ChatThread } from '@/components/chat/ChatThread';
@@ -76,8 +77,8 @@ function AutonomyDial({
             onClick={() => onChange(opt.value)}
             className={
               active
-                ? 'rounded-full bg-violet-400/20 px-3 py-1 font-body text-sm normal-case tracking-normal text-violet-200 transition-[scale] duration-150 ease-out active:scale-[0.96]'
-                : 'rounded-full px-3 py-1 font-body text-sm normal-case tracking-normal text-text-3 transition-[color,scale] duration-150 ease-out hover:text-text-1 active:scale-[0.96]'
+                ? 'min-h-11 rounded-full bg-text-1 px-4 py-2 font-body text-sm text-white transition-colors duration-150'
+                : 'min-h-11 rounded-full px-4 py-2 font-body text-sm text-text-3 transition-colors duration-150 hover:bg-umbra-shadow hover:text-text-1'
             }
           >
             {opt.label}
@@ -96,7 +97,14 @@ export function ChatShell({ profile }: ChatShellProps) {
   const [error, setError] = useState<string | null>(null);
   const [loadingConversation, setLoadingConversation] = useState(false);
   const [autonomyMode, setAutonomyMode] = useState<AutonomyMode>('guide');
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const historyToggleRef = useRef<HTMLButtonElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => () => {
+    abortRef.current?.abort();
+    abortRef.current = null;
+  }, []);
 
   /**
    * Load a historical conversation's messages into state. Called from
@@ -110,9 +118,13 @@ export function ChatShell({ profile }: ChatShellProps) {
     }
     setCrisis(null);
     setError(null);
+    setSending(false);
     setLoadingConversation(true);
+    const controller = new AbortController();
+    abortRef.current = controller;
     try {
-      const res = await fetch(`/api/chat/conversations/${id}`);
+      const res = await fetch(`/api/chat/conversations/${id}`, { signal: controller.signal });
+      if (abortRef.current !== controller) return;
       if (!res.ok) {
         setError('No pudimos abrir esta conversación.');
         return;
@@ -129,7 +141,8 @@ export function ChatShell({ profile }: ChatShellProps) {
         };
       };
       const payload = envelope.data;
-      if (!payload) return;
+      if (abortRef.current !== controller) return;
+      if (!payload) throw new Error('missing_conversation');
       setConversationId(payload.id);
       setMessages(
         payload.messages.map((m) => ({
@@ -139,9 +152,13 @@ export function ChatShell({ profile }: ChatShellProps) {
         })),
       );
     } catch {
+      if (abortRef.current !== controller || controller.signal.aborted) return;
       setError('Error de red al cargar la conversación.');
     } finally {
-      setLoadingConversation(false);
+      if (abortRef.current === controller) {
+        setLoadingConversation(false);
+        abortRef.current = null;
+      }
     }
   }, []);
 
@@ -156,13 +173,15 @@ export function ChatShell({ profile }: ChatShellProps) {
       abortRef.current = null;
     }
     setConversationId(undefined);
+    setSending(false);
+    setLoadingConversation(false);
     setMessages([]);
     setCrisis(null);
     setError(null);
   }, []);
 
   async function handleSend(message: string) {
-    if (crisis) return; // chat is hard-blocked after crisis
+    if (crisis || abortRef.current) return;
     setSending(true);
     setError(null);
 
@@ -192,11 +211,13 @@ export function ChatShell({ profile }: ChatShellProps) {
         }),
         signal: controller.signal,
       });
+      if (abortRef.current !== controller) return;
 
       // Handle non-streaming error responses (crisis, rate limit, etc.)
       const contentType = res.headers.get('content-type') ?? '';
       if (!contentType.includes('text/event-stream')) {
         const data = await res.json();
+        if (abortRef.current !== controller) return;
         if (data.error === 'crisis') {
           setCrisis({
             severity: data.severity,
@@ -221,53 +242,69 @@ export function ChatShell({ profile }: ChatShellProps) {
       }
 
       // Stream handling
-      const reader = res.body!.getReader();
+      if (!res.ok || !res.body) throw new Error('stream_unavailable');
+      const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buf = '';
-
-      while (true) {
+      let completed = false;
+      let receivedText = false;
+      try {
+      while (!completed) {
         const { done, value } = await reader.read();
+        if (abortRef.current !== controller) return;
         if (done) break;
-        buf += decoder.decode(value, { stream: true });
+        buf += decoder.decode(value, { stream: true }).replace(/\r\n/g, '\n');
         const lines = buf.split('\n\n');
         buf = lines.pop() ?? '';
         for (const line of lines) {
           if (!line.startsWith('data: ')) continue;
-          try {
-            const event = JSON.parse(line.slice(6));
-            if (event.type === 'start' && event.conversationId) {
+            const parsed: unknown = JSON.parse(line.slice(6));
+            if (!parsed || typeof parsed !== 'object') throw new Error('invalid_stream_event');
+            const event = parsed as Record<string, unknown>;
+            if (event.type === 'start' && typeof event.conversationId === 'string') {
               setConversationId(event.conversationId);
-            } else if (event.type === 'text') {
+            } else if (event.type === 'text' && typeof event.chunk === 'string') {
+              const chunk = event.chunk;
+              receivedText ||= chunk.trim().length > 0;
               setMessages((prev) =>
                 prev.map((m) =>
                   m.id === assistantMsgId
-                    ? { ...m, content: m.content + event.chunk }
+                    ? { ...m, content: m.content + chunk }
                     : m,
                 ),
               );
             } else if (event.type === 'done') {
+              if (!receivedText) throw new Error('empty_stream');
+              completed = true;
               setMessages((prev) =>
                 prev.map((m) =>
                   m.id === assistantMsgId ? { ...m, streaming: false } : m,
                 ),
               );
+              break;
             } else if (event.type === 'error') {
-              throw new Error(event.message ?? 'stream_error');
+              throw new Error('stream_error');
+            } else {
+              throw new Error('invalid_stream_event');
             }
-          } catch (parseErr) {
-            console.warn('[chat] parse error', parseErr);
-          }
         }
       }
+      if (!completed) throw new Error('incomplete_stream');
+      } finally {
+        await reader.cancel().catch(() => undefined);
+        reader.releaseLock();
+      }
     } catch (e) {
-      if (e instanceof Error && e.name === 'AbortError') return;
+      if (abortRef.current !== controller || controller.signal.aborted || (e instanceof Error && e.name === 'AbortError')) return;
       setError('Se cortó la conexión. Reintentá.');
       setMessages((prev) =>
         prev.filter((m) => m.id !== assistantMsgId),
       );
     } finally {
-      setSending(false);
-      abortRef.current = null;
+      if (abortRef.current === controller) {
+        setSending(false);
+        abortRef.current = null;
+      }
     }
   }
 
@@ -284,12 +321,32 @@ export function ChatShell({ profile }: ChatShellProps) {
           <AutonomyDial value={autonomyMode} onChange={setAutonomyMode} />
         </div>
       )}
-      <div className="mt-4 grid gap-6 xl:grid-cols-[200px_minmax(0,1fr)]">
-        <div className="hidden xl:block">
+      <button
+        ref={historyToggleRef}
+        type="button"
+        className="chat-history-toggle"
+        aria-expanded={historyOpen}
+        aria-controls="chat-history"
+        onClick={() => setHistoryOpen((open) => !open)}
+      >
+        <ChatCircleDots size={20} aria-hidden="true" />
+        Tus conversaciones
+        <CaretDown size={18} aria-hidden="true" />
+      </button>
+      <div className="chat-layout">
+        <div id="chat-history" className={historyOpen ? 'chat-history is-open' : 'chat-history'}>
           <ConversationsSidebar
             activeConversationId={conversationId ?? null}
-            onSelect={handleSelectConversation}
-            onNewChat={handleNewChat}
+            onSelect={(id) => {
+              if (historyOpen) historyToggleRef.current?.focus();
+              setHistoryOpen(false);
+              void handleSelectConversation(id);
+            }}
+            onNewChat={() => {
+              if (historyOpen) historyToggleRef.current?.focus();
+              setHistoryOpen(false);
+              handleNewChat();
+            }}
           />
         </div>
         <div className="chat-reading-surface">
@@ -301,7 +358,7 @@ export function ChatShell({ profile }: ChatShellProps) {
             />
           ) : (
             <>
-              <div className="chat-messages flex flex-col gap-6 pb-6">
+              <div className="chat-messages flex flex-col gap-6 pb-6" role="region" aria-label="Mensajes de la conversación" tabIndex={0}>
                 {isEmpty && profile && (
                   <ContextualGreeting profile={profile} />
                 )}
@@ -323,7 +380,7 @@ export function ChatShell({ profile }: ChatShellProps) {
                 </div>
               )}
               {error && (
-                <div className="mb-4 rounded-md border border-accent-rose/30 bg-accent-rose/10 px-4 py-3 font-body text-sm text-accent-rose">
+                <div role="alert" className="mb-4 rounded-md border border-accent-rose/30 bg-accent-rose/10 px-4 py-3 font-body text-sm text-accent-rose">
                   {error}
                 </div>
               )}

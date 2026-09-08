@@ -2,8 +2,8 @@ import type { BigFive, DimensionStatus, PerDimensionStatus } from '@/types';
 
 /**
  * Estado de confianza por dimensión que reporta el módulo ML propio.
- * Fuente: `per_dimension_status` de la evaluación versionada
- * (ml/eval_metrics.json, lectura de clasificación — ADR-027).
+ * El estado no transfiere resultados de clasificación inglesa a validez
+ * individual española. El bundle actual carece de evidencia suficiente.
  *
  * - `ok`             → la dimensión superó los umbrales comprometidos y su
  *                      valor integra el componente cuantitativo del perfil.
@@ -24,18 +24,18 @@ export const BIG_FIVE_KEYS: Array<keyof BigFive> = [
 ];
 
 /**
- * Estado por dimensión del artefacto en producción (ridge_v1), usado como
+ * Estado conservador del bundle verificado localmente (ridge_v1), usado como
  * respaldo cuando un perfil persistido no trae el bloque `ml` (perfiles
  * anteriores a la incorporación del estado, o datos de demostración).
- * Es una propiedad del modelo evaluado — no del usuario — por lo que el
- * respaldo es fiel: coincide con ml/eval_metrics.json del repositorio.
+ * Dos viñetas sintéticas españolas no habilitan valores individuales.
+ * Este respaldo no certifica el estado de un despliegue remoto.
  */
 export const RIDGE_V1_STATUS: PerDimensionStatus = {
-  openness: 'ok',
+  openness: 'low_confidence',
   conscientiousness: 'low_confidence',
-  extraversion: 'not_applicable',
+  extraversion: 'low_confidence',
   agreeableness: 'low_confidence',
-  neuroticism: 'not_applicable',
+  neuroticism: 'low_confidence',
 };
 
 const VALID: ReadonlySet<string> = new Set(['ok', 'low_confidence', 'not_applicable']);
@@ -43,13 +43,18 @@ const VALID: ReadonlySet<string> = new Set(['ok', 'low_confidence', 'not_applica
 /**
  * Extrae el estado por dimensión desde `analysis_raw` persistido.
  * Conservador ante datos faltantes o corruptos: cae al estado del
- * artefacto en producción, nunca a "todo ok".
+ * bundle verificado. Corrige también estados históricos de ridge_v1
+ * que se basaban en la clasificación inglesa.
  */
 export function extractPerDimensionStatus(analysisRaw: unknown): PerDimensionStatus {
   const ml =
     analysisRaw && typeof analysisRaw === 'object'
       ? (analysisRaw as Record<string, unknown>).ml
       : undefined;
+  if (ml && typeof ml === 'object'
+    && (ml as Record<string, unknown>).modelVersion === 'ridge_v1') {
+    return { ...RIDGE_V1_STATUS };
+  }
   const raw =
     ml && typeof ml === 'object'
       ? (ml as Record<string, unknown>).perDimensionStatus
@@ -71,7 +76,7 @@ export function quantitativeDimensions(status: PerDimensionStatus): Array<keyof 
 
 /** Etiqueta breve del estado, para la interfaz (voseo neutro). */
 export const STATUS_LABEL: Record<DimensionStatus, string> = {
-  ok: 'medida con confianza',
-  low_confidence: 'baja confianza — sin valor reportado',
+  ok: 'estimación experimental habilitada',
+  low_confidence: 'evidencia insuficiente — sin cifra',
   not_applicable: 'no evaluable — sin valor reportado',
 };

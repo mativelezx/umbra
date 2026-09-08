@@ -1,0 +1,151 @@
+{
+  "created_at": "2026-09-07T21:40:09.400368+00:00",
+  "kind": "retrospective_replay_not_new_blind_validation",
+  "evaluation_language": "en",
+  "n_test": 248,
+  "excluded_synthetic_spanish_test_rows": 2,
+  "training_rows": 1989,
+  "training_note": "Shipped models were trained with the historical mixed corpus; no refitting or promotion in this comparison.",
+  "label_type": "binary_original_classes_rescaled_from_0_100_to_0_1",
+  "split_id_overlap": false,
+  "normalized_text_overlap_counts": {
+    "train_val": 0,
+    "train_test": 0,
+    "val_test": 0
+  },
+  "artifacts_unchanged": true,
+  "sha256": {
+    "models/ridge_v1.joblib": "93eeecaaef2f334216783f0057184cbd2864edd43a484d3459e881b03d536612",
+    "models/baseline_tfidf.joblib": "6bf3b695642a56ad8b0fa04dd0edc1c833f87b13be0297ec224110af7adae117",
+    "data/embeddings/test.npy": "438c00be533b12ce40c6892fa83af1ca7ff430fa8eec4320d134ff91ff3780f4",
+    "data/splits/train.csv": "d4c79bf63fb11353799653256348b2284d72e20bc3828c742a4018f41a44debf",
+    "data/splits/val.csv": "c806c72fbe459a12e1c108ebaf175d2b1832ae198b6e9e5608df4caae01290b6",
+    "data/splits/test.csv": "981eee985f804bf17ea348edca83d13fd2a8ec68eda93c13e353c2c6da06ccc4"
+  },
+  "script_sha256": "fc01cc980610a6e27e6b8456c8046eb01c02bb6e919ebb9d9f7c1fa86fce856f",
+  "results": {
+    "openness": {
+      "constant_training_mean": {
+        "n": 248,
+        "rmse_on_binary_labels": 0.4991608037847582,
+        "r2_on_binary_labels": -0.0019241183515830151,
+        "roc_auc": 0.5,
+        "balanced_accuracy_at_fixed_half": 0.5
+      },
+      "shipped_tfidf_ridge": {
+        "n": 248,
+        "rmse_on_binary_labels": 0.48209973864000955,
+        "r2_on_binary_labels": 0.0653959204031993,
+        "roc_auc": 0.6783916312520432,
+        "balanced_accuracy_at_fixed_half": 0.6189604445897352
+      },
+      "shipped_distilbert_ridge": {
+        "n": 248,
+        "rmse_on_binary_labels": 0.4826115485556412,
+        "r2_on_binary_labels": 0.06341046591810717,
+        "roc_auc": 0.6486433474991826,
+        "balanced_accuracy_at_fixed_half": 0.5952271984308597
+      }
+    },
+    "conscientiousness": {
+      "constant_training_mean": {
+        "n": 248,
+        "rmse_on_binary_labels": 0.5009014079320052,
+        "r2_on_binary_labels": -0.014762291555215912,
+        "roc_auc": 0.5,
+        "balanced_accuracy_at_fixed_half": 0.5
+      },
+      "shipped_tfidf_ridge": {
+        "n": 248,
+        "rmse_on_binary_labels": 0.4978819297780847,
+        "r2_on_binary_labels": -0.002565011483941282,
+        "roc_auc": 0.5621753140001315,
+        "balanced_accuracy_at_fixed_half": 0.49266785033208393
+      },
+      "shipped_distilbert_ridge": {
+        "n": 248,
+        "rmse_on_binary_labels": 0.4989879386212913,
+        "r2_on_binary_labels": -0.007024210794856156,
+        "roc_auc": 0.5582955217991714,
+        "balanced_accuracy_at_fixed_half": 0.5357729992766489
+      }
+    },
+    "extraversion": {
+      "constant_training_mean": {
+        "n": 248,
+        "rmse_on_binary_labels": 0.5006200722885478,
+        "r2_on_binary_labels": -0.0027426862923396467,
+        "roc_auc": 0.5,
+        "balanced_accuracy_at_fixed_half": 0.5
+      },
+      "shipped_tfidf_ridge": {
+        "n": 248,
+        "rmse_on_binary_labels": 0.49430454694784315,
+        "r2_on_binary_labels": 0.022397740460626703,
+        "roc_auc": 0.6011579495186054,
+        "balanced_accuracy_at_fixed_half": 0.5711033047098621
+      },
+      "shipped_distilbert_ridge": {
+        "n": 248,
+        "rmse_on_binary_labels": 0.49460370951523847,
+        "r2_on_binary_labels": 0.02121405519832964,
+        "roc_auc": 0.5909445745511319,
+        "balanced_accuracy_at_fixed_half": 0.5865860005204268
+      }
+    },
+    "agreeableness": {
+      "constant_training_mean": {
+        "n": 248,
+        "rmse_on_binary_labels": 0.5009386948408141,
+        "r2_on_binary_labels": -0.0037583039552731012,
+        "roc_auc": 0.5,
+        "balanced_accuracy_at_fixed_half": 0.5
+      },
+      "shipped_tfidf_ridge": {
+        "n": 248,
+        "rmse_on_binary_labels": 0.4960159229271621,
+        "r2_on_binary_labels": 0.015872816810862167,
+        "roc_auc": 0.5889698231009365,
+        "balanced_accuracy_at_fixed_half": 0.5483870967741935
+      },
+      "shipped_distilbert_ridge": {
+        "n": 248,
+        "rmse_on_binary_labels": 0.5016290754230931,
+        "r2_on_binary_labels": -0.0065269172393089825,
+        "roc_auc": 0.49733350676378774,
+        "balanced_accuracy_at_fixed_half": 0.49193548387096775
+      }
+    },
+    "neuroticism": {
+      "constant_training_mean": {
+        "n": 248,
+        "rmse_on_binary_labels": 0.5001200314907929,
+        "r2_on_binary_labels": -0.0021095240005357674,
+        "roc_auc": 0.5,
+        "balanced_accuracy_at_fixed_half": 0.5
+      },
+      "shipped_tfidf_ridge": {
+        "n": 248,
+        "rmse_on_binary_labels": 0.49058352085916745,
+        "r2_on_binary_labels": 0.03574344137279306,
+        "roc_auc": 0.6655592469545958,
+        "balanced_accuracy_at_fixed_half": 0.6158556445834147
+      },
+      "shipped_distilbert_ridge": {
+        "n": 248,
+        "rmse_on_binary_labels": 0.4998678064276149,
+        "r2_on_binary_labels": -0.0010989929851523694,
+        "roc_auc": 0.5557292684515666,
+        "balanced_accuracy_at_fixed_half": 0.5321477428180574
+      }
+    }
+  },
+  "limits": [
+    "This test set was inspected before; it is not a new independent study.",
+    "Stored row IDs do not establish independent participant identity.",
+    "Historical embedding provenance and full training reproduction remain incomplete.",
+    "Binary-label discrimination is not continuous-score validity.",
+    "No Spanish human test or validation of Jung or activity efficacy is claimed.",
+    "No model weights, thresholds, runtime status or app scores were changed."
+  ]
+}

@@ -28,15 +28,17 @@ accuracy. Si es continua, se reportan MSE, R2 y Pearson r.
 - Tipo: textos introspectivos en ingles.
 - Etiqueta disponible en el mirror abierto: binaria 0/1 por rasgo,
   normalizada a 0/100 por `prepare_data.py`.
-- Uso correcto: clasificacion/probabilidad de rasgo alto.
+- Uso correcto: evaluar discriminación de etiquetas altas/bajas; el score
+  Ridge no es una probabilidad calibrada.
 - Riesgo: no defender como score continuo fino salvo que se consiga la
   version academica con scores continuos originales.
 
 ### Corpus propio es-AR
 
-- Estado repo: `data/latinoamericano/cases.csv`, actualmente chico.
-- Tipo: textos Umbra-like en espanol argentino.
-- Uso correcto actual: validacion cualitativa y smoke test de transferencia.
+- Estado repo: `data/latinoamericano/cases.csv`, 20 viñetas sintéticas.
+- Tipo: textos Umbra-like en espanol argentino con etiquetas heurísticas.
+- Uso correcto actual: inspección cualitativa y prueba técnica del pipeline;
+  no acredita transferencia ni validez individual española.
 - Meta minima: 300 casos.
 - Meta ideal: 500-1000 casos.
 - Captura recomendada:
@@ -91,4 +93,3 @@ Nunca debe decir:
 
 > Umbra diagnostica personalidad o reemplaza una evaluacion psicometrica
 > administrada por profesionales.
-

@@ -16,7 +16,7 @@ from typing import Dict, Optional
 import joblib
 import numpy as np
 
-from .extract_embeddings import EmbeddingExtractor
+from .extract_embeddings import EmbeddingExtractor, MODEL_NAME, MODEL_REVISION
 
 logging.basicConfig(level=logging.INFO, format="[predict] %(message)s")
 log = logging.getLogger(__name__)
@@ -26,38 +26,17 @@ MODELS_DIR = ROOT / "models"
 EVAL_METRICS = ROOT / "eval_metrics.json"
 BIG_FIVE_DIMS = ["openness", "conscientiousness", "extraversion", "agreeableness", "neuroticism"]
 
-# n minimo para que un bloque de evaluacion pueda decidir el status por dimension.
-# Por debajo de este valor la estimacion de AUC/balanced accuracy por dimension no
-# tiene precision util, asi que el bloque se descarta (criterio operativo,
-# en linea con la omision por poder estadistico declarada en el Anexo B).
+# Operational minimum, not a statistical power calculation or validation claim.
 MIN_BLOCK_N = 30
 
 
 def _load_status_from_eval_metrics(path: Path = EVAL_METRICS) -> Dict[str, str]:
-    """Lee el status por dimensión desde eval_metrics.json (ADR-027).
+    """Read Spanish regression evidence for the Spanish-facing score contract.
 
-    Dos reglas gobiernan la selección:
-
-    1. **Lectura binaria como primaria.** ADR-027 fija el reporte por
-       dimensión contra umbrales prerregistrados (regresión). Las etiquetas
-       del corpus Essays son binarias y el R² sobre un objetivo dicotómico es
-       bajo por construcción, de modo que la lectura apropiada para decidir el
-       status es la de clasificación (ROC AUC / balanced accuracy), con los
-       umbrales fijados al instrumentar esa evaluación. Por eso se prefiere
-       `per_dimension_classification_status` sobre `per_dimension_status`
-       (regresión), que queda como respaldo.
-
-    2. **Poder estadístico mínimo por bloque.** Un bloque con n muy chico no
-       sostiene una estimación de AUC por dimensión, así que no puede decidir
-       qué se le muestra a la persona usuaria. Los bloques con `n_samples`
-       declarado por debajo de MIN_BLOCK_N se descartan.
-
-    El orden de preferencia mantiene `latinoamericano_only` primero por ser el
-    idioma de uso real: cuando ese corpus alcance el n comprometido, el status
-    pasa a calcularse sobre él sin tocar código.
-
-    Si el archivo no existe, no es parseable o ningún bloque califica, devuelve
-    "low_confidence" para todas las dimensiones (fail-conservative).
+    English/combined binary discrimination remains an offline research result;
+    it cannot promote the validity of individual Spanish scores. Missing or
+    insufficient per-dimension evidence fails conservatively. The n=30 guard
+    is operational and does not by itself establish psychometric validity.
     """
     default = {dim: "low_confidence" for dim in BIG_FIVE_DIMS}
     if not path.exists():
@@ -70,24 +49,19 @@ def _load_status_from_eval_metrics(path: Path = EVAL_METRICS) -> Dict[str, str]:
         log.warning("eval_metrics.json no parseable (%s) — status default low_confidence", e)
         return default
 
-    blocks = data.get("blocks", {})
-    for status_key in ("per_dimension_classification_status", "per_dimension_status"):
-        for block_key in ("latinoamericano_only", "combined", "english_only"):
-            block = blocks.get(block_key, {})
-            status = block.get(status_key)
-            if not status:
-                continue
-            n_samples = block.get("n_samples")
-            if isinstance(n_samples, int) and n_samples < MIN_BLOCK_N:
-                log.warning(
-                    "Bloque '%s' descartado para status: n=%d < %d (sin poder estadistico)",
-                    block_key,
-                    n_samples,
-                    MIN_BLOCK_N,
-                )
-                continue
-            log.info("Cargando '%s' del bloque '%s'", status_key, block_key)
-            return {**default, **status}
+    blocks = data.get("blocks", {}) if isinstance(data, dict) else {}
+    block = blocks.get("latinoamericano_only", {}) if isinstance(blocks, dict) else {}
+    if not isinstance(block, dict):
+        return default
+    metrics = block.get("metrics", {})
+    status = block.get("per_dimension_status", {})
+    if not isinstance(metrics, dict) or not isinstance(status, dict):
+        return default
+    for dim in BIG_FIVE_DIMS:
+        metric = metrics.get(dim, {})
+        n = metric.get("n") if isinstance(metric, dict) else None
+        if type(n) is int and n >= MIN_BLOCK_N and status.get(dim) == "ok":
+            default[dim] = "ok"
     return default
 
 
@@ -105,12 +79,25 @@ class Predictor:
             log.info("Loading bundle from %s", self.bundle_path)
             self._bundle = joblib.load(self.bundle_path)
         if self._extractor is None:
-            self._extractor = EmbeddingExtractor()
+            self._extractor = EmbeddingExtractor(
+                model_name=self._bundle.get("model_name", MODEL_NAME),
+                revision=self._bundle.get("model_revision", MODEL_REVISION),
+            )
 
     def model_version(self) -> str:
         if self._bundle is None:
             return "unloaded"
         return self._bundle.get("version", "unknown")
+
+    def load(self) -> None:
+        """Load both the trained regressors and frozen embedding weights."""
+        self._ensure_loaded()
+        self._extractor._ensure_loaded()
+
+    def is_loaded(self) -> bool:
+        """Weight readiness; this does not assert a successful inference."""
+        return (self._bundle is not None and self._extractor is not None
+                and self._extractor._model is not None)
 
     def per_dimension_status(self) -> Dict[str, str]:
         return dict(self._status)
@@ -127,8 +114,7 @@ class Predictor:
         for dim in BIG_FIVE_DIMS:
             model = self._bundle["models"].get(dim)
             if model is None:
-                scores[dim] = 50.0  # neutro si la dimensión no se entrenó
-                continue
+                raise ValueError(f"Missing regressor for {dim}")
             raw = float(model.predict(emb.reshape(1, -1))[0])
             scores[dim] = float(np.clip(round(raw, 2), 0.0, 100.0))
         elapsed_ms = int((time.time() - t0) * 1000)

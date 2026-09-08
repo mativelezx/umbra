@@ -5,12 +5,6 @@ import {
   Lightbulb,
   Wind,
 } from '@phosphor-icons/react/dist/ssr';
-import {
-  quantitativeDimensions,
-  RIDGE_V1_STATUS,
-} from '@/lib/profile/dimension-display';
-import { JUNG_LABELS, BIG_FIVE_LABELS } from '@/lib/dimensions/labels';
-import type { JungFunctions } from '@/types';
 import type { ChatShellProfile } from './ChatShell';
 
 interface QuickPromptChipsProps {
@@ -35,23 +29,20 @@ interface QuickPrompt {
 }
 
 /**
- * 4 suggested opening prompts, generated from the profile. The labels the
- * user sees are fully plain-spanish. The prompts we actually send include
- * the technical Jung/Big Five hint so Claude grounds the conversation
- * in the user's real profile.
+ * Plain-language entry points. The server supplies the saved personal context;
+ * these buttons must not smuggle unvalidated scores into the user's message.
  */
 export function QuickPromptChips({
-  profile,
   onPick,
   compact = false,
 }: QuickPromptChipsProps) {
-  const prompts = buildPrompts(profile);
+  const prompts = buildPrompts();
 
   if (compact) {
     return (
       <div
         className="mb-3 flex gap-2 overflow-x-auto pb-1"
-        aria-label="Sugerencias de prompts basadas en tu perfil"
+        aria-label="Ideas para empezar la conversación"
       >
         {prompts.map((p, i) => (
           <button
@@ -73,7 +64,7 @@ export function QuickPromptChips({
   return (
     <div className="mb-6 flex flex-col gap-3">
       <p className="font-body text-sm normal-case tracking-normal text-text-3">
-        Atajos para empezar
+        Si no sabés por dónde empezar
       </p>
       <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
         {prompts.map((p, i) => (
@@ -103,61 +94,27 @@ export function QuickPromptChips({
   );
 }
 
-function buildPrompts(profile: ChatShellProfile): QuickPrompt[] {
-  const jungSorted = Object.entries(profile.jungFunctions).sort(
-    ([, a], [, b]) => b - a,
-  );
-  const topJungKey = jungSorted[0][0] as keyof JungFunctions;
-  const weakJungKey = jungSorted[jungSorted.length - 1][0] as keyof JungFunctions;
-
-  const topJung = JUNG_LABELS[topJungKey];
-  const weakJung = JUNG_LABELS[weakJungKey];
-
-  // Solo las dimensiones que el módulo midió con confianza pueden
-  // afirmarse (con o sin cifra) en los accesos rápidos del chat.
-  const status = profile.perDimensionStatus ?? RIDGE_V1_STATUS;
-  const measured = quantitativeDimensions(status);
-  const bfSorted = (Object.entries(profile.bigFive) as Array<[keyof typeof profile.bigFive, number]>)
-    .filter(([k]) => measured.includes(k))
-    .sort(([, a], [, b]) => b - a);
-  const topBfKey = bfSorted[0]?.[0] ?? null;
-  const topBfLabel = topBfKey ? BIG_FIVE_LABELS[topBfKey] : null;
-  const neuroticismMeasured = status.neuroticism === 'ok';
-  const maxNeuroticism = profile.bigFive.neuroticism;
-
-  const prompts: QuickPrompt[] = [
+function buildPrompts(): QuickPrompt[] {
+  return [
     {
-      label: `Cómo se ve mi ${topJung.label.toLowerCase()} en el día a día`,
-      prompt: `Según mi perfil, mi función dominante es "${topJung.label}" (${topJung.code}, valor ${jungSorted[0][1]}/100). ¿Qué patrones de esa forma de pensar suelen aparecer en el día a día? Dame ejemplos concretos, sin jerga técnica.`,
+      label: 'Quiero entender una decisión',
+      prompt: 'Quiero pensar una decisión que me cuesta. Haceme una pregunta para empezar por una situación concreta, sin asumir qué me pasa.',
       icon: <Lightbulb size={16} weight="duotone" />,
     },
     {
-      label: `La tensión entre mi ${topJung.label.toLowerCase()} y mi ${weakJung.label.toLowerCase()}`,
-      prompt: `Mi función más fuerte es "${topJung.label}" (${topJung.code}) y la más débil es "${weakJung.label}" (${weakJung.code}). ¿Qué tensión interna produce eso en mí y cómo la integro mejor? Respondé con tono cálido, sin terminología académica.`,
+      label: 'Algo que repito y quiero cambiar',
+      prompt: 'Quiero explorar algo que repito y me gustaría cambiar. Pedime un ejemplo cotidiano antes de proponer una interpretación.',
       icon: <Wind size={16} weight="duotone" />,
     },
+    {
+      label: 'Elegir una actividad para hoy',
+      prompt: 'A partir de lo que conté, ayudame a elegir una actividad pequeña para hoy. Explicá qué respuesta mía tomás como referencia y preguntame si la propuesta me sirve.',
+      icon: <Heart size={16} weight="duotone" />,
+    },
+    {
+      label: 'Entender mi resultado',
+      prompt: 'Explicame mi resultado con palabras simples. Separá lo que conté, lo que respondí en el cuestionario si lo completé y las interpretaciones de IA que puedo cuestionar.',
+      icon: <Compass size={16} weight="duotone" />,
+    },
   ];
-
-  if (neuroticismMeasured && maxNeuroticism > 55) {
-    prompts.push({
-      label: 'Una práctica para bajar la intensidad emocional',
-      prompt: 'Mi perfil sugiere una sensibilidad emocional alta. ¿Qué práctica concreta y chica me recomendás para empezar a regularla esta semana? Evitá consejos genéricos.',
-      icon: <Heart size={16} weight="duotone" />,
-    });
-  } else if (topBfKey && topBfLabel) {
-    prompts.push({
-      label: `Cómo aprovechar mi ${topBfLabel.label.toLowerCase()}`,
-      prompt: `Mi ${topBfLabel.label.toLowerCase()} es mi dimensión medida con más señal. ¿Cómo puedo aprovecharla más conscientemente en mi trabajo o relaciones? Dame 2 o 3 movimientos concretos.`,
-      icon: <Heart size={16} weight="duotone" />,
-    });
-  }
-
-  prompts.push({
-    label: 'Exploremos una sombra que me cuesta ver',
-    prompt:
-      'Quiero explorar una sombra de mi perfil: un patrón que repito sin darme cuenta y que ya me cuesta. Hacé una pregunta que me lleve a verla, basándote en mi perfil.',
-    icon: <Compass size={16} weight="duotone" />,
-  });
-
-  return prompts.slice(0, 4);
 }

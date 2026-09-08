@@ -8,6 +8,12 @@ import type {
   ScenarioQuestion,
 } from '@/types';
 
+/** ML language input excludes generated questions, option meanings and portraits. */
+export function writtenResponses(turns: OnboardingTurn[]): string[] {
+  return turns.flatMap(turn => turn.answer?.type === 'open_text' && turn.answer.text.trim()
+    ? [turn.answer.text.trim()] : []);
+}
+
 /**
  * Converts a completed dynamic transcript into the shape `/api/analyze`
  * expects (`{ texts[], areas[] }`). Each turn becomes one `texts[i]`

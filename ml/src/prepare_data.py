@@ -7,8 +7,8 @@ Salida:
 
 Política de splits (ADR-026 + ADR-028):
 - Ratio 80/10/10 train/val/test fijado por seed determinístico.
-- Estratificación por (origen del corpus × dimensión target) cuando
-  está disponible; sino split aleatorio.
+- Separación por origen del corpus y shuffle determinístico dentro de
+  cada origen; no se estratifica por dimensión target.
 - Si Essays no está disponible, se entrena solo con corpus latinoamericano
   (n=20). Las métricas reportadas reflejan esa limitación honestamente.
 """
@@ -36,7 +36,7 @@ BIG_FIVE_DIMS = ["openness", "conscientiousness", "extraversion", "agreeableness
 
 
 def load_latinoamericano() -> pd.DataFrame:
-    """Carga corpus latinoamericano (cases.csv) — solo subset IPIP con scores."""
+    """Load synthetic Big Five vignettes with heuristic target labels."""
     path = DATA / "latinoamericano" / "cases.csv"
     if not path.exists():
         raise FileNotFoundError(f"No se encontró el corpus latinoamericano en {path}")

@@ -12,7 +12,7 @@ interface ProfileContextPillProps {
 }
 
 /**
- * Compact row showing what Umbra already knows about the user. Uses
+ * Compact row showing the context of the experimental reading. Uses
  * plain-spanish labels — NO raw Jung codes. The backend still sees
  * the technical data, but the user just sees friendly labels.
  */
@@ -41,18 +41,18 @@ export function ProfileContextPill({ profile }: ProfileContextPillProps) {
     <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-md border border-violet-400/15 bg-umbra-shadow/40 px-4 py-3">
       <Sparkle size={14} weight="duotone" className="text-violet-300" />
       <span className="font-body text-sm normal-case tracking-normal text-text-3">
-        Umbra ya sabe de vos:
+        Contexto de tu lectura:
       </span>
       <span className="font-heading text-xs text-violet-200">{archName}</span>
       <span className="text-text-4">·</span>
       <span className="font-body text-sm text-text-2">
-        mente {topJungLabel.toLowerCase()}
+        interpretación: {topJungLabel.toLowerCase()}
       </span>
       {topBfLabel ? (
         <>
           <span className="text-text-4">·</span>
           <span className="font-body text-sm text-text-2">
-            {topBfLabel.toLowerCase()} marcada
+            estimación de {topBfLabel.toLowerCase()}
           </span>
         </>
       ) : null}

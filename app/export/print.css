@@ -1,93 +1,118 @@
-/* Print-safe styles for PDF export.
- * html2canvas doesn't render backdrop-filter, complex gradients, or
- * compositing correctly. This override gives a flat, readable PDF.
- */
-
-.pdf-root {
-  background: #ffffff !important;
-  color: #242424 !important;
-  padding: 40px;
-  max-width: 800px;
-  margin: 0 auto;
-  font-family: var(--font-bricolage), sans-serif;
-}
-
-.pdf-root * {
-  color: #242424 !important;
-  background-image: none !important;
-  backdrop-filter: none !important;
-  box-shadow: none !important;
-}
-
-.pdf-root h1,
-.pdf-root h2,
-.pdf-root h3 {
-  font-family: var(--font-bricolage), sans-serif;
-  color: #242424 !important;
-}
-
-.pdf-root .pdf-section {
-  margin-bottom: 40px;
-}
-
-.pdf-root h2, .pdf-root h3 { break-after: avoid; }
-.pdf-root .reading-passage { min-height: 0; animation: none; }
-.pdf-root .reading-heading { font-size: 18px; line-height: 1.3; }
+/* A4 uses one composition on every device. Only the preview viewport scrolls. */
+.report-preview { max-width: 100%; overflow: auto; background: #fff; padding: 0; border: 0; }
+.report-preview:focus-visible { outline: 2px solid #242424; outline-offset: 4px; }
+.report-preview-hint { font-size: 13px; color: #52564a; }
+.pdf-root { box-sizing: border-box; width: 182mm; flex-shrink: 0; padding: 0; background: #fff; color: #292d25; margin: 0 auto; font-family: var(--font-bricolage), sans-serif; font-size: 14px; line-height: 1.65; }
+.pdf-root * { box-sizing: border-box; box-shadow: none !important; backdrop-filter: none !important; animation: none !important; transition: none !important; }
+.pdf-root h1, .pdf-root h2, .pdf-root h3, .pdf-root h4 { color: #292d25; font-family: var(--font-bricolage), sans-serif; font-style: normal; letter-spacing: -.025em; }
+.pdf-root p { margin: 0 0 16px; }
+.pdf-root h2 { font-size: 34px; line-height: 1.15; margin: 0 0 20px; }
+.pdf-root h3 { font-size: 21px; line-height: 1.3; margin: 0 0 12px; }
+.pdf-root h4 { font-size: 17px; line-height: 1.3; font-weight: 650; margin: 0 0 8px; }
+.pdf-root .pdf-section { margin-bottom: 0; }
+/* No trailing spacing: html2pdf counts it as another page at the A4 boundary. */
+.pdf-root > .pdf-section:last-child { margin-bottom: 0; }
+.pdf-root .pdf-eyebrow { color: #5c664b; font-size: 12px; margin-bottom: 16px; }
+.pdf-root .pdf-note { color: #53594d; font-size: 12px; line-height: 1.6; }
+.pdf-root .pdf-cover { min-height: 245mm; padding: 30px 34px 22px; break-after: page; background: #1c201b; color: #f4f3ec; }
+.pdf-brand { display: flex; align-items: center; gap: 14px; padding-bottom: 28px; }
+.pdf-brand .brand-wordmark { width: 164px; height: 48px; }
+.pdf-root .pdf-cover h1 { font-size: 55px; line-height: 1.04; margin: 0 0 20px; font-weight: 500; letter-spacing: -.025em; color: #f4f3ec; overflow-wrap: anywhere; }
+.pdf-root .pdf-cover-deck { font-size: 15px; line-height: 1.6; margin-bottom: 0; color: #d0d7c7; }
+.pdf-root .pdf-cover .pdf-footer { margin-top: 12px; padding-top: 12px; font-size: 10px; color: #d0d7c7; border-color: #65705c; }
+.pdf-root .pdf-cover .pdf-note { color: #d0d7c7; font-size: 11px; }
+.pdf-cover-visual { width: 350px; margin: 4px auto 8px; color: #d0d7c7; }
+.pdf-cover-visual svg { width: 350px; height: 250px; }
+.pdf-cover-art { display: grid; grid-template-columns: 200px 1fr; align-items: center; gap: 20px; padding: 24px 0; border-top: 1px solid #c8cdbd; border-bottom: 1px solid #c8cdbd; margin-bottom: 18px; }
+.pdf-cover-art svg { width: 200px; height: 150px; }
+.pdf-cover-art span { font-size: 12px; color: #5c664b; }
+.pdf-cover-art h2 { margin: 6px 0 8px; }
+.pdf-cover-art p { font-size: 13px; margin: 0; }
+.pdf-cover-meta { display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid #65705c; padding: 16px 0 10px; margin-top: 12px; }
+.pdf-cover-meta strong { overflow-wrap: anywhere; max-width: 65%; }
+.pdf-cover-meta > span { flex-shrink: 0; font-size: 12px; }
+.pdf-contents { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 14px 0; font-size: 10px; color: #d0d7c7; }
+.pdf-contents > span { display: flex; align-items: center; gap: 5px; }
+.pdf-contents svg { flex-shrink: 0; }
+.pdf-section-heading { margin-bottom: 30px; }
+.pdf-section-heading p:last-child { max-width: 600px; }
+.pdf-reading-guide { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding: 20px 0 24px; border-block: 1px solid #c8cdbd; margin-bottom: 28px; }
+.pdf-reading-guide svg { margin-bottom: 10px; }
+.pdf-reading-guide strong { display: block; font-size: 15px; margin-bottom: 6px; }
+.pdf-reading-guide p { font-size: 12px; margin: 0; }
+.pdf-archetype { display: grid; grid-template-columns: 130px 1fr; gap: 26px; align-items: center; margin: 0 0 36px; padding: 22px; background: #eef0e6; }
+.pdf-archetype p { font-size: 13px; margin-bottom: 8px; }
+.pdf-root .pdf-archetype p:last-child { margin: 0; }
+.pdf-root .pdf-ink-heading { padding: 20px 26px; background: #1c201b; color: #f4f3ec; margin-bottom: 18px; }
+.pdf-ink-heading > svg { width: 32px; height: 32px; }
+.pdf-root .pdf-ink-heading h2 { color: #f4f3ec; margin: 10px 0; font-size: 32px; }
+.pdf-root .pdf-ink-heading > p { color: #d0d7c7; margin: 0; font-size: 13px; }
+.pdf-symbol-heading { display: grid; grid-template-columns: 1fr 150px; gap: 28px; align-items: center; }
+.pdf-root .pdf-symbol-heading .reading-art { width: 150px; height: 110px; }
+.pdf-new-page { break-before: page; }
+.pdf-root .chapter-opening { grid-template-columns: 1fr 115px; gap: 20px; margin: 0 0 12px; break-inside: avoid; break-after: avoid; }
+.pdf-root .reading-heading { font-size: 24px; line-height: 1.25; }
+.pdf-root .chapter-invitation { font-size: 12px; margin: 12px 0 0; color: #5c664b; }
+.pdf-root .reading-art { width: 115px; height: 80px; }
+.pdf-root .chapter-artwork { padding: 0; border-radius: 0; background: transparent; }
+.pdf-root .reading-passage { min-height: 0; }
+.pdf-root .narrative-chapter { padding-top: 10px; margin: 0 0 8px; break-inside: auto; }
+.pdf-root .chapter-lead { break-inside: avoid; }
+.pdf-root .narrative-chapter:first-child { padding-top: 0; }
 .pdf-root .reading-copy { font-size: 14px; line-height: 1.7; }
-/* The exporter inserts spacer siblings at page breaks; keep chapter spacing
-   inside its box so that insertion cannot remove an adjacent-sibling margin. */
-.pdf-root .narrative-chapter { padding-top: 24px; margin-top: 0; }
-.pdf-root p, .pdf-root li { orphans: 3; widows: 3; }
-
-/* html2pdf's CSS mode honors break-inside: avoid for elements shorter
-   than one page. Keep readable units together instead of cutting canvas
-   glyph rows. Oversized user content may still span pages. */
-.pdf-root .pdf-keep,
-.pdf-root .pdf-card,
-.pdf-root .pdf-row,
-.pdf-root .pdf-action,
-.pdf-root .pdf-footer,
-.pdf-root .narrative-chapter,
-.pdf-root p,
-.pdf-root li,
-.pdf-root h1,
-.pdf-root h2,
-.pdf-root h3 {
-  break-inside: avoid;
-  page-break-inside: avoid;
-}
-
-@media (max-width: 600px) { .pdf-root { padding: 24px 18px; } }
+.pdf-root .reading-copy p { margin-bottom: 12px; }
+.pdf-root .reading-quote { margin: 24px 0; padding: 22px 26px; background: #1c201b; color: #f4f3ec; font-size: 20px; line-height: 1.5; border-radius: 0; }
+.pdf-root .reading-copy strong { color: inherit; text-decoration: none; font-weight: 700; }
+.pdf-dimension { display: grid; grid-template-columns: 32px 1fr 148px; align-items: start; gap: 16px; padding: 12px 0; border-bottom: 1px solid #d9ddcf; }
+.pdf-dimension > svg { margin-top: 2px; }
+.pdf-dimension > span { font-size: 11px; text-align: right; color: #58634a; }
+.pdf-dimension p { font-size: 12px; margin: 0; }
+.pdf-root .pdf-reflection-question { font-size: 12px; margin-top: 6px; font-weight: 550; color: #303c23; }
+.pdf-callout { margin: 18px 0 0; padding: 16px 20px; background: #eef0e6; break-inside: avoid; }
+.pdf-callout p { margin: 8px 0 0; font-size: 13px; }
+.pdf-function-header { display: flex; justify-content: space-between; font-size: 11px; color: #596747; padding-bottom: 10px; border-bottom: 1px solid #adb59e; }
+.pdf-function { display: grid; grid-template-columns: 48px 1fr 48px; gap: 16px; align-items: start; padding: 20px 0; border-bottom: 1px solid #d9ddcf; }
+.pdf-function-code { display: block; text-align: center; width: 44px; height: 44px; line-height: 24px; background: #1c201b; color: #f4f3ec; font-size: 22px; }
+.pdf-function-value { padding-top: 8px; font-size: 16px; text-align: right; font-variant-numeric: tabular-nums; }
+.pdf-function h3 { font-size: 16px; margin-bottom: 4px; }
+.pdf-function p { margin: 0; font-size: 12px; }
+.pdf-root .pdf-function-example { display: flex; align-items: start; gap: 7px; margin-top: 10px; color: #58634a; }
+.pdf-function-example svg { flex-shrink: 0; margin-top: 3px; }
+.pdf-prompt { display: flex; gap: 16px; align-items: start; padding: 22px 24px; margin: 28px 0 20px; background: #eef0e6; }
+.pdf-prompt > svg { flex-shrink: 0; }
+.pdf-prompt p { font-size: 13px; margin: 8px 0 0; }
+.pdf-root .pdf-function + .pdf-note { margin-top: 18px; }
+.pdf-area { margin-bottom: 30px; }
+.pdf-area-heading { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-top: 2px solid #596747; break-after: avoid; break-inside: avoid; }
+.pdf-area-heading > span { font-size: 26px; color: #596747; }
+.pdf-area-heading h3 { margin: 0; font-size: 24px; }
+.pdf-rationale { font-size: 13px; }
+.pdf-action { margin: 22px 0; }
+.pdf-action > p { font-size: 13px; }
+.pdf-action-opening { display: grid; grid-template-columns: 116px 1fr; gap: 22px; align-items: center; }
+.pdf-action-opening svg { width: 116px; height: 80px; }
+.pdf-action-opening p { font-size: 13px; margin: 0; }
+.pdf-root .activity-illustration > path:nth-last-child(2), .pdf-root .activity-progress-line { display: none; }
+.pdf-action ul { margin: 12px 0 0; padding: 0; list-style: none; }
+.pdf-action li { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; padding: 10px 0; border-bottom: 1px solid #e4e6dc; }
+.pdf-checkbox { display: inline-block; width: 13px; height: 13px; flex: 0 0 13px; border: 1px solid #717962; margin-top: 5px; }
+.pdf-notes { margin-top: 32px; }
+.pdf-notes p { font-size: 13px; }
+.pdf-notes > div { height: 32px; border-bottom: 1px solid #cbd0c0; }
+.pdf-personal-notes .pdf-notes { margin-top: 28px; }
+.pdf-personal-notes .pdf-notes h3 { font-size: 18px; }
+.pdf-closing { display: flex; align-items: center; gap: 20px; padding: 24px; margin: 34px 0 18px; background: #1c201b; color: #f4f3ec; }
+.pdf-closing p { margin: 0; font-size: 17px; }
+.pdf-closing .brand-mark { width: 44px; height: 44px; }
+.pdf-footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #cbd0c0; font-size: 11px; color: #53594d; break-inside: avoid; }
+.pdf-footer p { margin: 0 0 4px; }
+.pdf-root h1, .pdf-root h2, .pdf-root h3, .pdf-root h4 { break-after: avoid; break-inside: avoid; }
+.pdf-root p, .pdf-root li, .pdf-root blockquote, .pdf-root .pdf-keep { break-inside: avoid; orphans: 3; widows: 3; }
+@media (max-width: 600px) { .report-preview { padding: 0; } }
 @media print {
+  @page { size: A4; margin: 16mm 14mm 18mm; }
   body { background: white; }
-  nav, header, button { display: none !important; }
-  .pdf-root { padding: 0; }
-}
-
-.pdf-root .pdf-card {
-  background: #f7f7f4 !important;
-  border: 1px solid #deded8 !important;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 16px;
-}
-
-.pdf-root .pdf-bar {
-  height: 8px;
-  background: #e6e6e0;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.pdf-root .pdf-bar-fill {
-  height: 100%;
-  background: #4b4b47;
-}
-
-.pdf-root .pdf-footer {
-  margin-top: 60px;
-  padding-top: 20px;
-  border-top: 1px solid #deded8;
-  font-size: 11px;
-  color: #62625c !important;
+  body nav, body > header, .app-sidebar, .app-topbar { display: none !important; }
+  .report-preview { padding: 0; overflow: visible; border: 0; background: white; }
+  .pdf-root { margin: 0; }
 }

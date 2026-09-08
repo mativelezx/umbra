@@ -1,5 +1,6 @@
 import type { MessageRole } from '@/types';
 import { cn } from '@/lib/utils';
+import { ExplainedText } from '@/components/ui/ExplainedText';
 
 interface MessageBubbleProps {
   role: MessageRole;
@@ -20,7 +21,7 @@ export function MessageBubble({ role, content, streaming = false }: MessageBubbl
         )}
       >
         <p className="whitespace-pre-wrap font-body text-sm leading-relaxed md:text-base">
-          {content}
+          {isUser ? content : <ExplainedText text={content} />}
           {streaming && (
             <span className="ml-1 inline-block h-4 w-0.5 animate-pulse bg-violet-400 align-middle" />
           )}

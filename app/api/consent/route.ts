@@ -2,26 +2,16 @@ import { z } from 'zod';
 import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { withErrorHandler } from '@/lib/api/with-error-handler';
 import { computeHash, CURRENT_PEPPER_VERSION } from '@/lib/security/peppers';
+import { computeConsentTextHash } from '@/lib/consent/text-v1-es-AR';
+import { CONSENT_VERSION_V2, CONSENT_LOCALE_V2, CONSENT_TEXT_V2_ES_AR } from '@/lib/consent/text-v2-es-AR';
 
 export const runtime = 'nodejs';
 
 const ConsentSchema = z.object({
-  consentVersion: z.string().min(1).max(50),
+  consentVersion: z.literal(CONSENT_VERSION_V2),
   researchOptIn: z.boolean(),
-  /**
-   * SHA-256 of the consent text as rendered to the user, hex-encoded.
-   * Optional for backward compatibility with pre-migration-004 clients;
-   * when absent it persists as '' in consent_records and the record is
-   * auditable only via consent_version. New clients should always
-   * compute and send this to satisfy Ley 25.326 art. 7 verifiability.
-   * See ADR-024.
-   */
-  consentTextHash: z
-    .string()
-    .regex(/^[a-f0-9]{0,64}$/i, 'hash debe ser hex SHA-256')
-    .optional(),
-  /** BCP-47 locale of the consent text (es-AR, en, etc.). Default es-AR. */
-  locale: z.string().min(2).max(10).optional(),
+  consentTextHash: z.string().regex(/^[a-f0-9]{64}$/),
+  locale: z.literal(CONSENT_LOCALE_V2),
 });
 
 export const POST = withErrorHandler(async (req) => {
@@ -35,6 +25,10 @@ export const POST = withErrorHandler(async (req) => {
   if (!user) {
     return Response.json({ ok: false, error: 'unauthenticated' }, { status: 401 });
   }
+  const canonicalHash = await computeConsentTextHash(CONSENT_TEXT_V2_ES_AR);
+  if (body.consentTextHash !== canonicalHash) {
+    return Response.json({ ok: false, error: 'consent_text_mismatch' }, { status: 400 });
+  }
 
   const service = createServiceClient();
   const ip =
@@ -45,26 +39,25 @@ export const POST = withErrorHandler(async (req) => {
 
   const ipHash = await computeHash('consent_ip', ip);
 
-  const { error: consentError } = await service.from('consent_records').insert({
-    user_id: user.id,
-    consent_version: body.consentVersion,
-    consent_text_hash: body.consentTextHash ?? '',
-    locale: body.locale ?? 'es-AR',
-    ip_hash: ipHash,
-    pepper_version: CURRENT_PEPPER_VERSION,
-    user_agent: userAgent,
+  // Both choices commit together. Missing RPC or either failed write must not
+  // leave a new acceptance with a different research preference than submitted.
+  const { data: consentId, error: consentError } = await service.rpc('record_consent_atomic', {
+    p_user_id: user.id,
+    p_consent_version: body.consentVersion,
+    p_consent_text_hash: canonicalHash,
+    p_locale: body.locale,
+    p_ip_hash: ipHash,
+    p_pepper_version: CURRENT_PEPPER_VERSION,
+    p_user_agent: userAgent,
+    p_research_opt_in: body.researchOptIn,
   });
 
-  if (consentError) {
-    console.error('[consent] failed to insert', consentError);
+  if (consentError || !consentId) {
+    console.error('[consent] atomic save failed', consentError);
+    if (consentError?.code === 'PGRST202' || consentError?.code === '42883') {
+      return Response.json({ ok: false, error: 'consent_unavailable' }, { status: 503 });
+    }
     return Response.json({ ok: false, error: 'db_error' }, { status: 500 });
-  }
-
-  if (body.researchOptIn) {
-    await service
-      .from('profiles')
-      .update({ research_opt_in: true })
-      .eq('id', user.id);
   }
 
   return { consentRecorded: true };

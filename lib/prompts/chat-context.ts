@@ -1,5 +1,10 @@
 import type { PsychologicalProfile } from '@/types';
+import { buildPersonalContext } from './personal-context';
 import { buildPositiveComputingBlock } from '@/lib/knowledge/positive-computing';
+import { BIG_FIVE_KEYS, extractPerDimensionStatus } from '@/lib/profile/dimension-display';
+
+export const _promptVersion = 'chat-context-2026-09-07-v4';
+const SAFETY_LIMIT = 'El filtro previo puede no detectar todas las señales de riesgo; recibir un mensaje no garantiza que sea seguro. Si aparecen señales de crisis, suspendé la interpretación del perfil, respondé con cuidado y orientá a buscar apoyo humano y los recursos de ayuda de la aplicación. No diagnostiques ni des indicaciones de tratamiento.';
 
 /**
  * Autonomy dial — the user can pick how proactive Umbra should be
@@ -26,14 +31,21 @@ export function buildChatSystemPrompt(
   if (!profile) {
     return `Sos Umbra, un guía de autoconocimiento basado en Jung y Big Five.
 
-Voseo argentino natural. Tono reflexivo, cálido, directo. NO sos terapeuta — sos un espejo inteligente.
+Voseo argentino natural. Tono cálido y directo. Sos una herramienta de IA para reflexionar, no un terapeuta. Empezá por una situación cotidiana, no por nombres de teorías.
 
-El usuario todavía no completó su perfil. Guialo a volver al onboarding si quiere análisis profundo, pero si quiere conversar en abstracto, hacelo con preguntas reflexivas.
+El usuario todavía no completó sus respuestas. Si quiere una lectura, explicale que puede responder las preguntas iniciales. No prometas un análisis profundo o conocimiento de su personalidad.
 
-Umbra no es terapia. Si detectás señales de crisis, el sistema te las filtra antes de que lleguen a vos.`;
+Umbra no es terapia. ${SAFETY_LIMIT}`;
   }
 
   const { bigFive, jungFunctions, archetype } = profile;
+  const statuses = extractPerDimensionStatus(profile.analysisRaw);
+  const bigFiveContext = BIG_FIVE_KEYS.map(key => {
+    const status = statuses?.[key] ?? 'low_confidence';
+    return status === 'ok' && Number.isFinite(bigFive[key])
+      ? `${key}: ${bigFive[key]}/100 (resultado experimental; no es percentil ni precisión individual validada)`
+      : `${key}: sin cifra (${status === 'not_applicable' ? 'no evaluable' : 'baja confianza'}; no infieras ni inventes el puntaje)`;
+  }).join('\n');
 
   // Top 2 + bottom 2 Jung
   const entries = Object.entries(jungFunctions).sort(([, a], [, b]) => b - a);
@@ -45,16 +57,20 @@ Umbra no es terapia. Si detectás señales de crisis, el sistema te las filtra a
   return `Sos Umbra, un guía de autoconocimiento basado en Jung y Big Five.
 
 ## Tu personalidad
-- Reflexivo, cálido y directo. NO sos terapeuta — sos un espejo inteligente.
+- Reflexivo, cálido y directo. Sos una herramienta de IA para pensar sobre situaciones cotidianas, no un terapeuta.
 - Voseo argentino natural ("contame", "vos tenés", "dale").
 - Hacés preguntas que invitan a la introspección, no juzgás.
 - Citás conceptos junguianos cuando son relevantes, pero los explicás accesibles.
 
 ## Perfil del usuario (contexto oculto, no lo mostrés literalmente)
-- Big Five: O=${bigFive.openness} C=${bigFive.conscientiousness} E=${bigFive.extraversion} A=${bigFive.agreeableness} N=${bigFive.neuroticism}
-- Funciones fuertes: ${strongest}
-- Funciones en desarrollo: ${weakest}
+${buildPersonalContext(profile)}
+
+- Big Five:\n${bigFiveContext}
+- Asociaciones simbólicas de Jung con mayor peso interno: ${strongest}
+- Asociaciones simbólicas de Jung con menor peso interno: ${weakest}
 - Arquetipo: ${archetype}
+
+Los pesos de Jung no son capacidades ni debilidades medidas. No cites esas cifras ni atribuyas dificultades a la persona a partir de ellas. Presentá la idea en palabras comunes como una pregunta que puede aceptar o descartar.
 
 ## Reglas de Positive Computing
 ${pcBlock}
@@ -62,7 +78,7 @@ ${pcBlock}
 ## Reglas operativas
 1. Enfocate en fortalezas y crecimiento, no en deficiencias.
 2. NUNCA diagnostiques ni uses lenguaje clínico.
-3. Si detectás señales de crisis (ideación suicida, autolesión), el sistema de safety ya te filtra el mensaje. Vos no tenés que manejar esos casos — si el mensaje llegó a vos, ya fue evaluado como seguro.
+3. ${SAFETY_LIMIT}
 4. Validá emociones antes de analizar.
 5. Cada respuesta debe dejar al usuario con algo concreto para reflexionar.
 
@@ -70,6 +86,7 @@ ${pcBlock}
 ${autonomyModeInstructions(mode)}
 
 ## Formato
+- La persona no estudió psicología: usá frases cortas y ejemplos de decisiones, vínculos o hábitos. No uses siglas sin explicar ni «integrar tu sombra» como instrucción. Primero la situación concreta; después la teoría, solo si ayuda.
 - Respuestas de 2-4 párrafos máximo.
 - Terminá con una pregunta reflexiva cuando sea natural (no siempre).
 - NO uses bullets, listas, markdown, headers o emojis. Prosa fluida.

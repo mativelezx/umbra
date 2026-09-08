@@ -11,7 +11,7 @@ describe('extractPerDimensionStatus', () => {
     const raw = {
       confidence: 80,
       ml: {
-        modelVersion: 'ridge_v1',
+        modelVersion: 'explicit-test-model',
         perDimensionStatus: {
           openness: 'ok',
           conscientiousness: 'low_confidence',
@@ -44,15 +44,24 @@ describe('extractPerDimensionStatus', () => {
     expect(st).toEqual(RIDGE_V1_STATUS);
   });
 
-  it('el respaldo del artefacto solo tiene apertura en estado ok (coherente con eval_metrics.json)', () => {
-    expect(quantitativeDimensions(RIDGE_V1_STATUS)).toEqual(['openness']);
+  it('no habilita cifras cuando falta evidencia para español', () => {
+    expect(quantitativeDimensions(extractPerDimensionStatus(null))).toEqual([]);
+    expect(quantitativeDimensions(RIDGE_V1_STATUS)).toEqual([]);
+  });
+
+  it('no reactiva un ok histórico de ridge_v1 obtenido del corpus inglés', () => {
+    const status = extractPerDimensionStatus({ ml: {
+      modelVersion: 'ridge_v1',
+      perDimensionStatus: { openness: 'ok' },
+    } });
+    expect(quantitativeDimensions(status)).toEqual([]);
   });
 });
 
 describe('quantitativeDimensions (HU-06: el componente cuantitativo solo integra dimensiones ok)', () => {
   it('filtra exclusivamente las dimensiones en estado ok', () => {
     const st = { ...RIDGE_V1_STATUS, conscientiousness: 'ok' as const };
-    expect(quantitativeDimensions(st)).toEqual(['openness', 'conscientiousness']);
+    expect(quantitativeDimensions(st)).toEqual(['conscientiousness']);
   });
 
   it('devuelve vacío si ninguna dimensión sostiene su valor', () => {
@@ -64,23 +73,22 @@ describe('quantitativeDimensions (HU-06: el componente cuantitativo solo integra
 });
 
 describe('coherencia con la evaluación versionada del repositorio (HU-06)', () => {
-  it('RIDGE_V1_STATUS coincide con per_dimension_classification_status de ml/eval_metrics.json', async () => {
+  it('la clasificación inglesa no habilita cifras del runtime español', async () => {
     const { readFileSync } = await import('node:fs');
     const { resolve } = await import('node:path');
     const evalMetrics = JSON.parse(
       readFileSync(resolve(process.cwd(), 'ml/eval_metrics.json'), 'utf-8'),
     ) as {
       blocks: {
-        combined: {
+        english_only: {
           n_samples: number;
           per_dimension_classification_status: Record<string, string>;
         };
+        latinoamericano_only: { n_samples: number };
       };
     };
-    const combined = evalMetrics.blocks.combined;
-    // El bloque que decide el estado debe tener poder estadístico (n >= 30),
-    // la misma regla que aplica ml/src/predict.py.
-    expect(combined.n_samples).toBeGreaterThanOrEqual(30);
-    expect(combined.per_dimension_classification_status).toEqual(RIDGE_V1_STATUS);
+    expect(evalMetrics.blocks.english_only.per_dimension_classification_status.openness).toBe('ok');
+    expect(evalMetrics.blocks.latinoamericano_only.n_samples).toBe(2);
+    expect(quantitativeDimensions(RIDGE_V1_STATUS)).toEqual([]);
   });
 });

@@ -1,277 +1,172 @@
-# Umbra — Módulo ML propio
+# Umbra — módulo ML del prototipo
 
-> Componente analítico independiente del frontend Next.js.
-> Infiere las cinco dimensiones del modelo Big Five sobre texto
-> introspectivo en español latinoamericano (e inglés) usando una
-> arquitectura de dos etapas: **DistilBERT base multilingual cased
-> congelado** como extractor de embeddings + **cinco regresores Ridge
-> multi-output** entrenados con scikit-learn. Servido como API HTTP por
-> FastAPI. Versionado de datos con DVC. Tracking de experimentos con
-> MLflow.
+El módulo convierte texto en cinco puntuaciones experimentales mediante
+DistilBERT multilingüe congelado y cinco regresores Ridge independientes.
+FastAPI lo sirve a Next.js. No constituye una medición psicométrica validada
+para personas hispanohablantes ni un instrumento clínico.
 
-## Lectura previa obligatoria
+## Arquitectura conservada
 
-- `../docs/DECISIONS.md` — ADR-002 (separación medido vs narrativo),
-  ADR-026 (este módulo), ADR-027 (umbrales por dimensión), ADR-028
-  (corpus latinoamericano).
-- `DATASET_EXPANSION.md` — plan de ampliación: Essays, PAN 2015,
-  corpus propio es-AR y datasets descartados por riesgo metodológico.
-- TP1 entregado del TFG, secciones 6.2.2 (Capa analítica), 6.2.3
-  (MLOps), 7.2.3 (Stack ML), 7.3.1 (Datasets), 7.4.1 (Riesgos).
-
-Sin ese contexto, cualquier cambio acá puede romper la coherencia
-entre el código y el documento entregado al tribunal.
-
-## Arquitectura
-
-```
-┌─────────────────────────────────────────────────────────┐
-│  Texto introspectivo del usuario (es-AR voseo)          │
-└────────────────────────┬────────────────────────────────┘
-                         ↓
-   ┌──────────────────────────────────────────────────┐
-   │ Etapa 1 — Embedding (FROZEN)                      │
-   │   DistilBERT base multilingual cased              │
-   │   Pooling: token CLS                              │
-   │   Salida: vector ℝ⁷⁶⁸                             │
-   │   Sanh et al. (2019), Howard y Ruder (2018)       │
-   └────────────────────────┬─────────────────────────┘
-                            ↓
-   ┌──────────────────────────────────────────────────┐
-   │ Etapa 2 — Regresor lineal regularizado           │
-   │   5 Ridge regressors independientes               │
-   │   uno por dimensión Big Five                      │
-   │   alpha vía GridSearchCV cv=5                     │
-   │   Hoerl y Kennard (1970), Pedregosa et al. (2011) │
-   └────────────────────────┬─────────────────────────┘
-                            ↓
-   ┌──────────────────────────────────────────────────┐
-   │ Salida JSON: {openness, conscientiousness,        │
-   │  extraversion, agreeableness, neuroticism,        │
-   │  per_dimension_status, model_version}             │
-   └──────────────────────────────────────────────────┘
+```text
+Texto → tokenizer (máximo 512 tokens) → DistilBERT congelado
+      → representación CLS de 768 valores → cinco Ridge → JSON
 ```
 
-## Estructura del módulo
+DistilBERT no se ajusta: se utiliza en modo evaluación y sin gradientes.
+RidgeCV elige alpha mediante validación cruzada sobre entrenamiento.
+El bundle existente es `models/ridge_v1.joblib`, versión `ridge_v1`, seed 42.
+La narrativa Jung/Positive Computing pertenece a la app y no a este modelo.
 
-```
-ml/
-├── README.md                        ← este archivo
-├── requirements.txt                 ← deps Python
-├── Makefile                         ← targets reproducibles
-├── Dockerfile                       ← imagen para deploy
-├── fly.toml                         ← deploy vigente (Fly.io)
-├── render.yaml                      ← alternativa (Render; requiere plan ≥ 2 GB)
-├── dvc.yaml                         ← pipeline DVC
-├── .gitignore                       ← venv, mlruns, cache
-├── data/
-│   ├── essays/                      ← Pennebaker y King (1999)
-│   │   └── README.md                ← cómo conseguir el corpus
-│   ├── latinoamericano/
-│   │   ├── cases.csv                ← corpus propio inicial n=20
-│   │   └── rubrica_validacion.md    ← criterios de validación
-│   └── splits/                      ← train/val/test 80/10/10
-├── src/
-│   ├── __init__.py
-│   ├── prepare_data.py              ← unión + split estratificado
-│   ├── baseline_tfidf.py            ← Ridge sobre TF-IDF (baseline)
-│   ├── extract_embeddings.py        ← DistilBERT congelado
-│   ├── train_ridge.py               ← 5 Ridge + MLflow
-│   ├── evaluate.py                  ← MSE + R² + r de Pearson
-│   ├── predict.py                   ← inferencia para servir
-│   └── api_server.py                ← FastAPI POST /infer
-├── models/                          ← artefactos joblib (committeables)
-│   └── .gitkeep
-├── mlruns/                          ← MLflow local (NO committeado)
-├── tests/
-│   ├── __init__.py
-│   ├── test_baseline_tfidf.py
-│   ├── test_extract_embeddings.py
-│   ├── test_train_ridge.py
-│   └── test_predict.py
-├── metrics.json                     ← métricas de entrenamiento (committeable)
-└── eval_metrics.json                ← métricas de evaluación (committeable)
-```
+El identificador del extractor es `distilbert-base-multilingual-cased`.
+Se fijó prospectivamente la revisión oficial
+`45c032ab32cc946ad88a166f7cb282f58c753c2e`.
+El bundle histórico no registró esa revisión: fijarla ahora no reconstruye
+automáticamente su historial de entrenamiento.
 
-## Uso rápido
+## Datos y resultados observados
 
-### Setup local
+| Split | Essays inglés | Viñetas sintéticas es-AR | Total |
+|---|---:|---:|---:|
+| Entrenamiento | 1973 | 16 | 1989 |
+| Validación | 246 | 2 | 248 |
+| Prueba | 248 | 2 | 250 |
+| Total | 2467 | 20 | 2487 |
+
+La copia de Essays incluida tiene etiquetas binarias por dimensión, escaladas
+de 0/1 a 0/100. Las 20 viñetas sintéticas tienen una etiqueta heurística
+20/50/80 en una sola dimensión; las demás quedan ausentes. No representan
+20 participantes ni cuestionarios administrados. Otros 30 casos cualitativos
+Jung/adversariales no forman parte de estos splits.
+
+Los splits se separan por origen y seed 42; el código no estratifica por
+dimensión target. La auditoría verifica que los identificadores no se solapan.
+La procedencia y condiciones de acceso de Essays están en
+`data/essays/README.md`; esta verificación técnica no es una nueva revisión
+de derechos de redistribución.
+
+En el test inglés ninguna dimensión supera conjuntamente R² > 0,20 y
+r > 0,30. Apertura tiene R² ≈ 0,0634, r ≈ 0,2581; en la lectura binaria
+exploratoria obtiene AUC ≈ 0,6486 y balanced accuracy ≈ 0,5952. Supera los
+cortes operativos de clasificación (AUC ≥ 0,60 y balanced accuracy ≥ 0,55).
+Eso describe discriminación entre etiquetas del corpus inglés; no valida
+puntuaciones continuas individuales en español.
+
+Las dos viñetas españolas del test aportan una etiqueta de extraversión
+y una de neuroticismo, ninguna de apertura. No permiten estimar validez
+por dimensión. El runtime devuelve `low_confidence` en las cinco dimensiones:
+no promueve un resultado inglés o combinado a confianza española.
+Las métricas binarias y de regresión permanecen visibles en `eval_metrics.json`.
+
+R² no tiene un techo bajo impuesto por etiquetas binarias: una predicción
+perfecta puede obtener R² = 1 también con dos clases. La limitación aquí es
+la evidencia observada, el dominio y el significado de las etiquetas.
+
+## Preparación local
+
+Python 3.11 es la versión usada para verificar esta entrega.
 
 ```bash
 cd ml
-python3 -m venv .venv
+python3.11 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
+export HF_HOME="$PWD/.hf_cache"
+python -c "from src.predict import Predictor; Predictor().load()"
 ```
 
-### Pipeline reproducible (recomendado)
+La primera carga descarga pesos públicos del modelo oficial (~542 MB) y
+archivos del tokenizer. Las cargas siguientes reutilizan la caché local.
+Los pesos y el entorno no se versionan ni se incluyen en el contexto Docker.
+
+Con los pesos ya presentes se puede verificar sin red:
 
 ```bash
-make all          # prepare_data → baseline → train → evaluate
-make eval         # solo re-evaluar con el modelo committeado
-make serve        # levantar FastAPI en localhost:8000
-make test         # pytest
+export HF_HOME="$PWD/.hf_cache"
+export HF_HUB_OFFLINE=1
+export TRANSFORMERS_OFFLINE=1
+make test PYTHON=.venv/bin/python
+ML_RUN_MODEL_TESTS=1 make test PYTHON=.venv/bin/python
+.venv/bin/python scripts/verify_bundle.py --with-text
 ```
 
-### Pipeline DVC (alternativa formal)
+La prueba de integración del extractor es opt-in para que los tests normales
+no disparen descargas. `verify_bundle.py` no entrena: comprueba hashes,
+separación de IDs, reproducción de métricas desde la matriz histórica,
+contrato FastAPI con inferencia real y dos embeddings recalculados.
+La comparación de dos filas no acredita toda la procedencia de las matrices.
+
+`verification-2026-09-07.json` conserva evidencia de esta auditoría:
+base Git, hashes de fuentes y artefactos, entorno, métricas, pesos y resultado
+de inferencia. Es evidencia de un árbol de trabajo; no reemplaza un tag o
+commit final de entrega.
+
+## API local
 
 ```bash
-dvc repro         # corre el pipeline completo según dvc.yaml
-mlflow ui         # tracking en http://localhost:5000
-```
-
-### Inferencia ad-hoc
-
-```bash
-curl -X POST http://localhost:8000/infer \
+HF_HOME="$PWD/.hf_cache" ML_EAGER_LOAD=1 make serve PYTHON=.venv/bin/python
+curl http://127.0.0.1:8000/health
+curl -X POST http://127.0.0.1:8000/infer \
   -H "Content-Type: application/json" \
-  -d '{"text": "Soy una persona curiosa que disfruta probar cosas nuevas..."}'
+  -d '{"text":"Me gusta aprender y pensar con calma antes de decidir."}'
 ```
 
-Devuelve:
+`ML_API_URL=http://127.0.0.1:8000` permite a `lib/ml-client.ts` consumirlo.
+`POST /infer` conserva cuatro campos: `big_five` (cinco números 0–100),
+`per_dimension_status`, `model_version` y `elapsed_ms`.
+Los números son salidas del prototipo, no percentiles ni probabilidades
+calibradas. La app debe comunicar la insuficiencia de evidencia.
 
-```json
-{
-  "big_five": {
-    "openness": 72.4,
-    "conscientiousness": 58.1,
-    "extraversion": 65.0,
-    "agreeableness": 61.7,
-    "neuroticism": 38.2
-  },
-  "per_dimension_status": {
-    "openness": "ok",
-    "conscientiousness": "ok",
-    "extraversion": "ok",
-    "agreeableness": "low_confidence",
-    "neuroticism": "ok"
-  },
-  "model_version": "ridge_v1",
-  "elapsed_ms": 487
-}
-```
+`GET /health` separa liveness (`ok`) de pesos cargados (`model_loaded`).
+Crear una instancia lazy o consultar `/version` no carga los pesos.
+`ML_EAGER_LOAD=1` carga bundle y extractor al iniciar; si falla, el servicio
+permanece vivo con `model_loaded=false`. Los pesos cargados no equivalen a
+una inferencia exitosa ni a validez científica. `elapsed_ms` mide el encode
+y Ridge: en modo lazy incluye la carga del extractor dentro de encode;
+con eager-load esa carga ya ocurrió. No incluye la lectura inicial del bundle.
 
-## Datasets
-
-### Essays (Pennebaker y King, 1999)
-~2500 textos breves de estudiantes universitarios estadounidenses con
-puntuaciones Big Five asociadas. Inglés.
-
-La versión integrada en este repo proviene de un mirror abierto con
-etiquetas binarias 0/1 por rasgo, normalizadas a 0/100 por
-`prepare_data.py`. Por eso, además de MSE/R²/r, `evaluate.py` reporta
-métricas binarias (AUC, F1, balanced accuracy) cuando detecta etiquetas
-0/100. Ver `data/essays/README.md` y `DATASET_EXPANSION.md`.
-
-### Corpus latinoamericano propio (n=20 actual; meta n>=300)
-Textos en español argentino (voseo), cada uno targeteando una
-dimensión Big Five con dirección alta/baja. Construido con asistencia
-de IA generativa y validado manualmente con la rúbrica documentada en
-`data/latinoamericano/rubrica_validacion.md` (ADR-028). Migrado a CSV
-en `data/latinoamericano/cases.csv` con scores Big Five por caso.
-El tamaño actual sirve como validación cualitativa y prueba de
-transferencia local; para sostener métricas estadísticas fuertes en
-TP2-TP4 se recomienda ampliarlo a por lo menos 300 casos con
-consentimiento e IPIP/BFI breve.
-
-### Versionado
-Ambos corpus bajo DVC. La unión se particiona en train/val/test 80/10/10
-con seed determinístico (`SEED = 42` en `prepare_data.py`).
-
-### Expansión recomendada
-
-Para TP2-TP4, la ruta metodológicamente más fuerte es:
-
-1. ampliar corpus propio `es-AR` con consentimiento e IPIP/BFI breve;
-2. agregar PAN 2015 Author Profiling como validación de transferencia;
-3. mantener datasets sintéticos solo para pruebas de pipeline, no como
-   evidencia principal.
-
-## Métricas y umbrales
-
-Tres métricas estándar de regresión, **calculadas por dimensión Big Five**:
-
-| Métrica | Símbolo | Mejor cuando |
-|---|---|---|
-| Error cuadrático medio | MSE | menor |
-| Coeficiente de determinación | R² | mayor (≤ 1) |
-| Coeficiente de correlación lineal r de Pearson | r | mayor (∈ [−1, 1]) |
-
-> **Nota crítica**: "Pearson" acá es el estadístico **Karl Pearson**, no
-> el sistema de arquetipos de **Carol Pearson** (Pearson, 1991) que usa
-> la capa narrativa. Cualquier mención debe aclarar esto si hay riesgo
-> de ambigüedad.
-
-**Umbral mínimo de aceptación por dimensión**: R² > 0.20 y r > 0.30.
-Las dimensiones por debajo se reportan honestamente y quedan
-**excluidas del componente cuantitativo del perfil** (ADR-027). El campo
-`per_dimension_status` en la respuesta del API marca cada dimensión como
-`"ok"` o `"low_confidence"`.
-
-Las métricas se reportan en tres bloques en `eval_metrics.json`:
-- `english_only` — solo casos del corpus Essays (test split).
-- `latinoamericano_only` — solo casos del corpus latinoamericano (test split).
-- `combined` — sobre la unión.
-
-El bloque `latinoamericano_only` es el que sustenta la narrativa del TFG
-(idioma de uso real).
-
-## Lo que el módulo NO hace
-
-- **No infiere funciones cognitivas Jung ni arquetipos**. Esas son
-  lecturas interpretativas de la capa narrativa (Pass 1.5 en
-  `lib/prompts/interpret-narrative.ts`). Ver ADR-002 + ADR-007.
-- **No corre en Vercel**. El bundle Next.js no incluye Python.
-- **No hace fine-tuning de DistilBERT**. Frozen embeddings por diseño
-  (Howard & Ruder 2018; Peters et al. 2019).
-- **No exporta a ONNX ni publica en HuggingFace Hub** en esta etapa
-  del proyecto.
-- **No depende del LLM externo** para la inferencia Big Five. Cero
-  costo recurrente por inferencia.
-
-## Deploy
-
-### Local (default para desarrollo y defensa académica)
-```bash
-make serve   # FastAPI en localhost:8000
-```
-El frontend Next.js (`ML_API_URL=http://localhost:8000` en `.env.local`)
-consume el endpoint vía `lib/ml-client.ts`.
-
-### Producción
-- **Fly.io** (despliegue vigente): `fly.toml` committeado. Desde `ml/`:
-  `fly apps create umbra-ml-velez` y `fly deploy --ha=false` la primera vez,
-  `fly deploy` después. (No usar `fly launch`: regenera `fly.toml` con la
-  configuración por defecto e ignora la del repo.)
-  Máquina compartida de 2 GB (el servicio ocupa ~810 MB residentes con el
-  modelo cargado), siempre encendida (`min_machines_running = 1`) y con
-  carga anticipada del modelo (`ML_EAGER_LOAD=1`), así el primer request
-  no paga los ~15 s de carga. Costo publicado: 10,70 USD/mes.
-- En Vercel: `ML_API_URL=https://umbra-ml-velez.fly.dev`.
-- **Render**: `render.yaml` se conserva como alternativa documentada; su
-  plan `starter` (512 MB) no alcanza para este servicio.
-
-## Reproducibilidad para tribunal
+## Pipeline y límites de reproducción
 
 ```bash
-git clone https://github.com/mativelezx/umbra.git
-cd umbra/ml
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-dvc pull           # baja datasets versionados (si remote configurado)
-make all           # corre pipeline completo
-cat eval_metrics.json   # métricas reproducidas
+make prepare PYTHON=.venv/bin/python
+make baseline PYTHON=.venv/bin/python
+make train PYTHON=.venv/bin/python
+make evaluate PYTHON=.venv/bin/python
+# Alternativa, con entorno activo:
+dvc repro
 ```
 
-## Referencias
+Estos comandos están previstos para nuevas ejecuciones y pueden reemplazar
+splits, matrices, bundles y métricas. No hace falta ejecutarlos para demostrar
+el bundle entregado. En esta auditoría no se reentrenó.
 
-- Sanh, V., Debut, L., Chaumond, J., y Wolf, T. (2019). DistilBERT.
-- Howard, J., y Ruder, S. (2018). ULMFiT (frozen embeddings strategy).
-- Peters, M. E. et al. (2019). To tune or not to tune?
-- Hoerl, A. E., y Kennard, R. W. (1970). Ridge regression.
-- Pedregosa, F. et al. (2011). scikit-learn.
-- Zaharia, M. et al. (2018). Accelerating the ML lifecycle with MLflow.
-- Pennebaker, J. W., y King, L. A. (1999). Essays corpus.
-- Goldberg, L. R. (1999). IPIP-NEO.
-- Sculley, D. et al. (2015). Hidden technical debt in ML systems.
-- Treveil, M. et al. (2020). Introducing MLOps.
+`dvc.yaml` declara Essays y las dependencias de extracción/evaluación.
+No existe `dvc.lock` histórico ni remote DVC configurado en esta copia:
+no se afirma una reproducción completa del entrenamiento con `dvc pull/repro`.
+El tracking MLflow está instrumentado en el entrenamiento; su presencia no
+demuestra por sí sola la trazabilidad del bundle histórico.
+
+La caché de embeddings nueva comprueba textos ordenados, modelo/revisión,
+configuración, versiones y hash del extractor, además del hash de la matriz.
+Las matrices antiguas sin metadata no se reutilizan automáticamente en nuevas
+corridas: se recomputan cuando se ejecute el pipeline. El script de auditoría
+sí las lee explícitamente para contrastar los resultados históricos.
+
+`metrics.json` corresponde a Ridge; `metrics_baseline.json` se produce al
+ejecutar el baseline. El archivo histórico del baseline puede faltar.
+`eval_metrics.json` conserva los tres bloques de evaluación.
+
+## Despliegue
+
+`fly.toml`, `render.yaml` y `Dockerfile` son configuraciones presentes.
+No se publicaron ni se verificaron despliegues en esta auditoría.
+Docker precarga la misma revisión fijada por el extractor. La inferencia
+local verificada no acredita un despliegue remoto ni el flujo completo
+Next.js/Supabase/Anthropic.
+
+## Lecturas del proyecto
+
+- `../docs/DECISIONS.md`: ADR-002, ADR-026, ADR-027 y ADR-028, a contrastar
+  con esta evidencia actual.
+- `DATASET_EXPANSION.md`: trabajo futuro; no es requisito implementado.
+- `data/latinoamericano/rubrica_validacion.md`: origen y reglas de las
+  viñetas; revisión cualitativa distinta de validación psicométrica.

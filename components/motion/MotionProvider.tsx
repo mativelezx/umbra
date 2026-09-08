@@ -1,7 +1,13 @@
 'use client';
 
 import { LazyMotion, domAnimation, MotionConfig } from 'framer-motion';
-import type { ReactNode } from 'react';
+import { createContext, useContext, useRef, type MutableRefObject, type ReactNode } from 'react';
+
+const WorkspaceEntranceContext = createContext<MutableRefObject<boolean> | null>(null);
+
+export function useWorkspaceEntrance() {
+  return useContext(WorkspaceEntranceContext);
+}
 
 /**
  * LazyMotion wrapper that tree-shakes the heavy animation bundle —
@@ -19,11 +25,15 @@ import type { ReactNode } from 'react';
  * etc. Fase 3.2 del IMPLEMENTATION_PLAN.md.
  */
 export function MotionProvider({ children }: { children: ReactNode }) {
+  // Root layout persists across internal routes, unlike each page's shell.
+  const workspaceEntered = useRef(false);
   return (
-    <LazyMotion features={domAnimation} strict>
+    <WorkspaceEntranceContext.Provider value={workspaceEntered}>
+      <LazyMotion features={domAnimation} strict>
       <MotionConfig reducedMotion="user" transition={{ type: 'spring', damping: 26, stiffness: 320 }}>
         {children}
       </MotionConfig>
-    </LazyMotion>
+      </LazyMotion>
+    </WorkspaceEntranceContext.Provider>
   );
 }

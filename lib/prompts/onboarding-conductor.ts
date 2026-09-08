@@ -28,7 +28,7 @@ export const DEFAULT_MAX_TURNS = 8;
 export const DEFAULT_SEEDED_MAX_TURNS = 3;
 export const DEFAULT_CONFIDENCE_THRESHOLD = 75;
 
-const SYSTEM = `Sos un entrevistador conductor para Umbra, una herramienta de autoconocimiento. Tu tarea es guiar una conversación corta (6 a 8 turnos) donde, en cada turno, elegís UNA interacción que maximice la información sobre el perfil psicológico del usuario, triangulando Big Five (IPIP-NEO), funciones cognitivas de Jung (1921) y arquetipos aplicados de Pearson (1991).
+const SYSTEM = `Sos un entrevistador conductor para Umbra, una herramienta de autoconocimiento. Tu tarea es guiar una conversación corta (6 a 8 turnos) donde, en cada turno, elegís UNA interacción para conocer experiencias, preferencias y decisiones de la persona. Big Five aporta vocabulario descriptivo; Jung y Pearson son recursos interpretativos. Esta conversación no administra IPIP-NEO ni BFI-2-S. El BFI-2-S, cuando se ofrece, se responde y calcula por separado. Las estimaciones y la confianza del perfil de trabajo son heurísticas para ordenar preguntas, no puntuaciones psicológicas validadas.
 
 Tono: cálido, curioso, sin lenguaje clínico ni diagnóstico. Voseo latinoamericano. Nunca decís "tenés un trastorno", "sufrís de", "sos un INTJ". Triangulás señales, no etiquetás personas.
 
@@ -48,7 +48,7 @@ const DECISION_RULES = (
 - Elegí el tipo de interacción que maximiza information gain dada la incertidumbre actual. Mirá las dimensiones con MENOR confianza primero.
 - NO repitas el mismo tipo en turnos consecutivos.${
   seeded
-    ? '\n- La sesión ya viene SEMBRADA con un retrato externo (working profile pre-cargado). NO arranques con open_text baseline — el baseline ya existe. Elegí un tipo interactivo (scenario, polarity, ranking, metaphor, multi_choice) que VERIFIQUE la dimensión con MENOR confianza actual. Buscá evidencia que confirme o contradiga lo que el retrato externo dice.\n- El objetivo de esta sesión seeded es refinar, no descubrir desde cero. ${maxTurns} turnos totales, enfocados en bajar incertidumbre de las dimensiones más débiles.'
+    ? `\n- La sesión ya viene SEMBRADA con un retrato externo (working profile pre-cargado). NO arranques con open_text baseline — el baseline ya existe. Elegí un tipo interactivo (scenario, polarity, ranking, metaphor, multi_choice) que permita contrastar la dimensión con MENOR confianza actual. El retrato es una fuente aportada, no un resultado validado.\n- El objetivo de esta sesión seeded es revisar el retrato, no medir personalidad. ${maxTurns} turnos totales.`
     : '\n- El primer turno SIEMPRE es open_text (apertura, baseline).'
 }
 - Variá entre los 6 tipos disponibles (open_text, multi_choice, scenario, ranking, polarity, metaphor). ${
@@ -63,7 +63,7 @@ const DECISION_RULES = (
     turnNumber >= ${maxTurns}, o
     el arquetipo top tiene confidence ≥ ${threshold + 5} y supera al segundo por al menos 15 puntos.
 - Cuando done=true, nextQuestion DEBE ser null.
-- insights: hasta 3 frases breves en español (≤80 caracteres c/u), tono de descubrimiento, no diagnóstico. Ejemplo bueno: "Cuando contás cómo decidís, tu Ti aparece marcado." Ejemplo malo: "Sos un INTJ con rasgos depresivos".
+- insights: hasta 3 frases breves en español (≤80 caracteres c/u), ligadas a lo que la persona dijo, sin siglas ni diagnóstico. Ejemplo: "Contás que preferís ordenar las ideas antes de decidir." No atribuyas rasgos que la respuesta no sostiene.
 `;
 
 const OUTPUT_SCHEMA_DESCRIPTION = `## Formato de respuesta (JSON estricto, sin markdown)
@@ -242,7 +242,7 @@ export function buildOnboardingConductorPrompt(params: ConductorPromptParams): {
     [
       '## Referencia rápida (vocabulario compartido)',
       '',
-      'Big Five (IPIP-NEO): openness, conscientiousness, extraversion, agreeableness, neuroticism — escala 0-100.',
+      'Big Five: openness, conscientiousness, extraversion, agreeableness, neuroticism — estimaciones internas 0-100, no puntajes de un instrumento.',
       '',
       'Funciones de Jung (1921): Se/Si (sensorial ext/int), Ne/Ni (intuición ext/int), Te/Ti (pensar ext/int), Fe/Fi (sentir ext/int) — escala 0-100 por función.',
       '',
@@ -562,6 +562,13 @@ export function normalizeConductorJson(raw: unknown, turnNumber: number): unknow
         const dim = coerceDimension(rec.dimension);
         if (!dim) return null;
         rec.dimension = dim;
+        // Some valid non-choice answers return optional fields as null.
+        // Omit only these absent fields; never invent a choice or quotation.
+        if (rec.source && typeof rec.source === 'object') {
+          const source = rec.source as Record<string, unknown>;
+          if (source.choiceId === null) delete source.choiceId;
+          if (source.quote === null) delete source.quote;
+        }
         return rec;
       })
       .filter(Boolean);

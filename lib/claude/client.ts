@@ -19,7 +19,12 @@ export function getClaude(): Anthropic {
   if (!apiKey) {
     throw new Error('ANTHROPIC_API_KEY is not set. Configurá .env.local.');
   }
-  cached = new Anthropic({ apiKey });
+  cached = new Anthropic({
+    apiKey,
+    // Fetch computes the request length. The SDK's manual header is rejected
+    // by the Next.js Edge transport in the local Node 24 runtime.
+    defaultHeaders: { 'Content-Length': null },
+  });
   return cached;
 }
 
@@ -65,11 +70,13 @@ export async function claudeText(opts: ClaudeTextOptions): Promise<ClaudeTextRes
 }
 
 /**
- * Streaming wrapper for narrative / chat. Yields text chunks and resolves
- * with usage totals at the end.
+ * Usage is independent of successful completion: a truncated response still
+ * consumes tokens. Missing counters remain unknown, never fabricated as zero.
  */
 export async function* claudeStream(opts: ClaudeTextOptions): AsyncGenerator<
-  { type: 'text'; text: string } | { type: 'done'; inputTokens: number; outputTokens: number; model: string }
+  { type: 'text'; text: string }
+  | { type: 'usage'; inputTokens?: number; outputTokens?: number }
+  | { type: 'done'; inputTokens?: number; outputTokens?: number; model: string }
 > {
   const client = getClaude();
   const model = opts.model ?? getModelId();
@@ -82,17 +89,34 @@ export async function* claudeStream(opts: ClaudeTextOptions): AsyncGenerator<
     messages: [{ role: 'user', content: opts.prompt }],
   });
 
-  let inputTokens = 0;
-  let outputTokens = 0;
+  let inputTokens: number | undefined;
+  let outputTokens: number | undefined;
+  let stopReason: string | null = null;
+  let receivedStop = false;
 
   for await (const event of stream) {
     if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
       yield { type: 'text', text: event.delta.text };
     } else if (event.type === 'message_delta' && 'usage' in event) {
-      outputTokens = event.usage?.output_tokens ?? outputTokens;
+      const reported = event.usage?.output_tokens;
+      if (Number.isSafeInteger(reported) && reported >= 0) {
+        outputTokens = reported;
+        yield { type: 'usage', outputTokens };
+      }
+      stopReason = event.delta.stop_reason ?? stopReason;
     } else if (event.type === 'message_start' && 'message' in event) {
-      inputTokens = event.message.usage?.input_tokens ?? inputTokens;
+      const reported = event.message.usage?.input_tokens;
+      if (Number.isSafeInteger(reported) && reported >= 0) {
+        inputTokens = reported;
+        yield { type: 'usage', inputTokens };
+      }
+    } else if (event.type === 'message_stop') {
+      receivedStop = true;
     }
+  }
+
+  if (!receivedStop || (stopReason !== 'end_turn' && stopReason !== 'stop_sequence')) {
+    throw new Error('Claude response incomplete');
   }
 
   yield { type: 'done', inputTokens, outputTokens, model };

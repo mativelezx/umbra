@@ -1,7 +1,7 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
+import { useLayoutEffect, useRef, useState } from 'react';
+import { ArrowLeft, ArrowRight, CaretDown } from '@phosphor-icons/react';
 import {
   Sparkle,
   Wind,
@@ -10,6 +10,9 @@ import {
   Path,
 } from '@phosphor-icons/react/dist/ssr';
 import { slugFromHeading } from '@/lib/dimensions/narrative-sections';
+import { ExplainedText } from '@/components/ui/ExplainedText';
+import { ReadingPosition } from './ReadingPosition';
+import { ReadingArt } from './ReadingArt';
 
 interface SectionedNarrativeProps {
   content: string;
@@ -140,31 +143,43 @@ export function SectionedNarrative({
   const sections = parseSections(content);
   const [selected, setSelected] = useState(0);
   const [showAll, setShowAll] = useState(false);
+  const [copyState, setCopyState] = useState('');
   const passageRef = useRef<HTMLDivElement>(null);
+  const focusPending = useRef(false);
   const current = Math.min(selected, Math.max(0, sections.length - 1));
   const guided = presentation === 'reader' && sections.length > 1 && !streaming && !showAll;
   const visibleSections = guided ? [sections[current]] : sections;
 
   function goTo(index: number) {
+    focusPending.current = true;
     setSelected(index);
-    requestAnimationFrame(() => {
+    setCopyState('');
+  }
+  useLayoutEffect(() => {
+      if (!focusPending.current) return;
+      focusPending.current = false;
       const passage = passageRef.current;
       if (!passage) return;
       passage.focus({ preventScroll: true });
       const heading = passage.querySelector('h3') ?? passage;
       const bounds = heading.getBoundingClientRect();
       if (bounds.top < 24 || bounds.bottom > window.innerHeight - 96) {
-        passage.scrollIntoView({ block: 'start', behavior: 'auto' });
+        passage.scrollIntoView?.({ block: 'start', behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
       }
-    });
-  }
+  }, [current, showAll]);
+
+  const renderBlock = (block: Block, index: number) => block.kind === 'quote'
+    ? <blockquote key={index} className="reading-quote"><span className="not-italic"><ExplainedText text={block.text} document={presentation === 'document'} /></span></blockquote>
+    : <p key={index} className={index > 0 ? 'mt-4' : ''}><ExplainedText text={block.text} document={presentation === 'document'} /></p>;
 
   return (
     <div className={presentation === 'document' ? 'reading-document' : 'reading-journey'}>
+      {presentation === 'reader' && sections.length > 1 && !streaming && <details className="chapter-index"><summary>Explorá los capítulos <span>{sections.length} miradas</span><CaretDown size={20} aria-hidden="true" /></summary><nav aria-label="Capítulos de tu lectura">{sections.map((section, index) => <button key={`${section.heading}-${index}`} type="button" aria-current={index === current && !showAll ? 'step' : undefined} onClick={() => { setShowAll(false); goTo(index); }}>{section.icon}<span>{section.heading || 'Tu lectura'}</span><ArrowRight size={18} aria-hidden="true" /></button>)}</nav></details>}
       {presentation === 'reader' && sections.length > 1 && !streaming && <div className="reading-controls">
         <p className="text-sm text-text-3" aria-live="polite">{showAll ? 'Lectura completa' : `Sección ${current + 1} de ${sections.length}`}</p>
         <button className="quiet-button" onClick={() => setShowAll(!showAll)}>{showAll ? 'Leer por secciones' : 'Ver lectura completa'}</button>
       </div>}
+      {presentation === 'reader' && !streaming && <ReadingPosition revision={`${guided ? current : 'all'}-${content.length}`} />}
       <div ref={passageRef} tabIndex={-1} className="reading-passage" key={guided ? current : 'all'}>
       {visibleSections.map((section, i) => (
         <section
@@ -172,37 +187,24 @@ export function SectionedNarrative({
           id={section.heading ? slugFromHeading(section.heading) : undefined}
           className="narrative-chapter scroll-mt-24"
         >
-          {section.heading && (
-            <h3 className="reading-heading">
-              {section.heading}
-            </h3>
-          )}
+          <div className={presentation === 'document' ? 'chapter-lead' : undefined}>
+          <div className="chapter-opening"><div>{section.heading && <h3 className="reading-heading">{section.heading}</h3>}<p className="chapter-invitation">{['Una primera mirada, no una etiqueta.', 'Observá qué te resulta cercano.', 'Una posibilidad para mirar con curiosidad.', 'Qué vale la pena para vos.', 'De la lectura a un paso posible.'][(guided ? current : i) % 5]}</p></div><ReadingArt chapter={guided ? current : i} /></div>
+          {presentation === 'document' && section.blocks[0] && <div className="reading-copy">{renderBlock(section.blocks[0], 0)}</div>}
+          </div>
           <div
             className={`reading-copy ${
               section.heading ? 'mt-3' : ''
             }`}
           >
-            {section.blocks.map((block, idx) => {
-              if (block.kind === 'quote') {
-                return (
-                  <blockquote
-                    key={idx}
-                    className="my-6 border-l border-violet-400/40 pl-5 text-lg font-medium text-text-1"
-                  >
-                    <span className="not-italic">{block.text}</span>
-                  </blockquote>
-                );
-              }
-              return (
-                <p key={idx} className={idx > 0 ? 'mt-4' : ''}>
-                  {block.text}
-                </p>
-              );
-            })}
+            {(presentation === 'document' ? section.blocks.slice(1) : section.blocks).map(renderBlock)}
           </div>
         </section>
       ))}
       </div>
+      {presentation === 'reader' && !streaming && <div className="reading-takeaway"><p>No hace falta que todo encaje con vos.<br /><strong>¿Qué idea te gustaría seguir pensando?</strong></p><button type="button" className="quiet-button" onClick={async () => {
+        try { await navigator.clipboard.writeText(visibleSections.map(section => [section.heading, ...section.blocks.map(block => block.text)].join('\n\n')).join('\n\n')); setCopyState('Texto copiado. Podés pegarlo en tus notas.'); }
+        catch { setCopyState('No se pudo copiar. Podés seleccionar el texto y copiarlo manualmente.'); }
+      }}>Copiar esta lectura</button><p role="status" className="text-sm">{copyState}</p></div>}
       {guided && <div className="reading-navigation">
         <button type="button" className="quiet-button" disabled={current === 0} onClick={() => goTo(current - 1)} aria-label="Sección anterior"><ArrowLeft size={20} /> Anterior</button>
         {current < sections.length - 1 ? <button type="button" className="focus-button" onClick={() => goTo(current + 1)} aria-label="Siguiente sección">Seguir leyendo <ArrowRight size={20} /></button> : <p className="text-sm text-text-2">La lectura termina acá. Podés volver cuando quieras.</p>}

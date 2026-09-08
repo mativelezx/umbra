@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { serializeDynamicTranscript, transcriptCharLength } from './serialize';
+import { serializeDynamicTranscript, transcriptCharLength, writtenResponses } from './serialize';
 import type { OnboardingTurn } from '@/types';
 
 function turn(partial: Partial<OnboardingTurn>): OnboardingTurn {
@@ -20,6 +20,18 @@ function turn(partial: Partial<OnboardingTurn>): OnboardingTurn {
     ...partial,
   };
 }
+
+describe('writtenResponses', () => {
+  it('passes only the user written answers, never generated questions or option meanings', () => {
+    const turns = [
+      turn({ answer: { questionId: 'q', type: 'open_text', answeredAt: '2026-09-07', text: '  Prefiero escuchar antes de hablar.  ' } }),
+      turn({ answer: { questionId: 'q', type: 'open_text', answeredAt: '2026-09-07', text: '   ' } }),
+      turn({ answer: { questionId: 'q', type: 'multi_choice', answeredAt: '2026-09-07', selectedIds: ['a'] } }),
+      turn({ answer: null }),
+    ];
+    expect(writtenResponses(turns)).toEqual(['Prefiero escuchar antes de hablar.']);
+  });
+});
 
 describe('serializeDynamicTranscript', () => {
   it('skips turns without answers', () => {

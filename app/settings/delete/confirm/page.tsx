@@ -6,6 +6,7 @@ import { Warning, CheckCircle } from '@phosphor-icons/react';
 import { GlassCard } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { createClient } from '@/lib/supabase/client';
+import { useOnboardingStore } from '@/lib/store/onboarding-store';
 
 function ConfirmContent() {
   const router = useRouter();
@@ -36,6 +37,8 @@ function ConfirmContent() {
         }
         throw new Error(data.error ?? 'delete_failed');
       }
+      useOnboardingStore.getState().bindUser(null);
+      useOnboardingStore.persist.clearStorage();
       setDone(true);
       // Sign out and redirect
       const supabase = createClient();

@@ -14,11 +14,12 @@ from __future__ import annotations
 
 import logging
 import os
+import secrets
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from .predict import Predictor, get_default_predictor, BIG_FIVE_DIMS
 
@@ -46,6 +47,24 @@ app.add_middleware(
 _predictor: Optional[Predictor] = None
 
 
+def require_service_key(x_ml_api_key: Optional[str] = Header(default=None)) -> None:
+    """Server-to-server access; local development may run without a key."""
+    expected = os.getenv("ML_API_KEY", "")
+    public_runtime = os.getenv("VERCEL") == "1" or os.getenv("ML_REQUIRE_AUTH") == "1"
+    if not expected:
+        if public_runtime:
+            raise HTTPException(status_code=503, detail="service_not_configured")
+        return
+    if not x_ml_api_key or not secrets.compare_digest(x_ml_api_key, expected):
+        raise HTTPException(status_code=401, detail="unauthorized")
+
+
+def require_admin_key(x_ml_api_key: Optional[str] = Header(default=None)) -> None:
+    if not os.getenv("ML_API_KEY"):
+        raise HTTPException(status_code=503, detail="service_not_configured")
+    require_service_key(x_ml_api_key)
+
+
 def _get_predictor() -> Predictor:
     global _predictor
     if _predictor is None:
@@ -63,7 +82,7 @@ def _eager_load() -> None:
     """
     if os.getenv("ML_EAGER_LOAD", "0") == "1":
         try:
-            _get_predictor()
+            _get_predictor().load()
             log.info("modelo cargado al inicio (ML_EAGER_LOAD=1)")
         except Exception as exc:  # noqa: BLE001 — no impedir el arranque
             log.warning("carga anticipada fallida, se reintenta en la primera inferencia: %s", exc)
@@ -71,6 +90,15 @@ def _eager_load() -> None:
 
 class InferRequest(BaseModel):
     text: str = Field(..., min_length=1, max_length=15000)
+
+    @field_validator('text')
+    @classmethod
+    def require_written_content(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError('Text must contain written content')
+        # Preserve nonempty input exactly; changing preprocessing would alter
+        # inference parity with the historical frozen model.
+        return value
 
 
 class InferResponse(BaseModel):
@@ -86,7 +114,8 @@ class InferResponse(BaseModel):
 
 @app.get("/health")
 def health():
-    return {"ok": True, "service": "umbra-ml", "model_loaded": _predictor is not None}
+    return {"ok": True, "service": "umbra-ml",
+            "model_loaded": _predictor is not None and _predictor.is_loaded()}
 
 
 @app.get("/version")
@@ -101,7 +130,7 @@ def version():
     }
 
 
-@app.post("/infer", response_model=InferResponse)
+@app.post("/infer", response_model=InferResponse, dependencies=[Depends(require_service_key)])
 def infer(req: InferRequest):
     try:
         p = _get_predictor()
@@ -115,7 +144,7 @@ def infer(req: InferRequest):
         raise HTTPException(status_code=500, detail="internal_error")
 
 
-@app.post("/admin/reload-status")
+@app.post("/admin/reload-status", dependencies=[Depends(require_admin_key)])
 def reload_status():
     """Recarga per_dimension_status desde eval_metrics.json. Útil tras
     re-entrenar y querer aplicar nuevos umbrales sin reiniciar."""

@@ -39,11 +39,22 @@ afterEach(() => {
 });
 
 describe('landing example', () => {
+  it('connects the illustrated scene to the selected example without auto-advancing the reader', () => {
+    const { container } = render(<HeroExperience />);
+    expect(container.querySelector('[data-story-scene]')).toHaveAttribute('data-story-scene', 'questions');
+    fireEvent.click(screen.getByRole('tab', { name: 'Lectura' }));
+    expect(container.querySelector('[data-story-scene]')).toHaveAttribute('data-story-scene', 'reading');
+    fireEvent.click(screen.getByRole('button', { name: 'Pausar movimiento' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'Actividades' }));
+    expect(container.querySelector('[data-story-scene]')).toHaveAttribute('data-story-scene', 'activities');
+    expect(screen.getByRole('region')).toHaveAttribute('data-motion', 'paused');
+  });
+
   it('switches the actual example content and keeps one selected tab in the tab order', () => {
     render(<HeroExperience />);
     const questions = screen.getByRole('tab', { name: 'Preguntas' });
     expect(questions).toHaveAttribute('aria-selected', 'true');
-    expect(within(screen.getByRole('tabpanel')).getByText(/¿Qué te pasa cuando/)).toBeVisible();
+    expect(within(screen.getByRole('tabpanel')).getByText(/¿Qué decisión venís postergando/)).toBeVisible();
 
     fireEvent.click(screen.getByRole('tab', { name: 'Lectura' }));
     expect(screen.getByRole('tabpanel', { name: 'Lectura' })).toHaveTextContent('Interpretación de ejemplo');
@@ -51,7 +62,7 @@ describe('landing example', () => {
     expect(screen.getByRole('tab', { name: 'Lectura' })).toHaveAttribute('aria-selected', 'true');
 
     fireEvent.click(screen.getByRole('tab', { name: 'Actividades' }));
-    expect(screen.getByRole('tabpanel', { name: 'Actividades' })).toHaveTextContent('Caminata sin destino');
+    expect(screen.getByRole('tabpanel', { name: 'Actividades' })).toHaveTextContent('Probá un paso pequeño');
     expect(screen.queryByRole('tabpanel', { name: 'Preguntas' })).not.toBeInTheDocument();
   });
 
@@ -103,7 +114,7 @@ describe('landing example', () => {
     expect(example).toHaveAttribute('data-motion', 'reduced');
     expect(screen.getByRole('button', { name: 'Movimiento reducido' })).toBeDisabled();
     fireEvent.click(screen.getByRole('tab', { name: 'Actividades' }));
-    expect(screen.getByRole('tabpanel')).toHaveTextContent('Caminata sin destino');
+    expect(screen.getByRole('tabpanel')).toHaveTextContent('Probá un paso pequeño');
     act(() => setReducedMotion(false));
     expect(example).toHaveAttribute('data-motion', 'running');
   });

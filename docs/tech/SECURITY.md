@@ -94,7 +94,7 @@ export function verifyHash(
 4. Bump `CURRENT_PEPPER_VERSION = 2`
 5. Deploy
 6. New rows written with `pepper_version = 2`; old rows remain readable with `pepper_version = 1`
-7. After 30 days (crisis_events retention) or 180 days (research_dataset), old rows purge naturally (if ever needed)
+7. Verify scheduled retention for each table. Crisis events have a 30-day job; research contributions do not have an automatic 180-day purge in the current migrations. They require the documented opt-out or deletion action.
 8. Remove V1 pepper from env + code once no rows reference it (optional cleanup)
 
 ## RLS (Row Level Security)

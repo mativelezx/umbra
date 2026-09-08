@@ -56,17 +56,11 @@ otra escala.
 
 ## Versionado DVC
 
-Una vez disponible, ejecutar:
-
-```bash
-cd ml
-dvc add data/essays/essays.csv
-git add data/essays/essays.csv.dvc
-```
-
-Esto agrega el archivo al tracking DVC sin meterlo al repo git;
-solo el `.dvc` queda committeado. Reproducción con `dvc pull` cuando
-hay remote configurado.
+En la copia de entrega, `essays.csv` está versionado directamente en Git.
+`ml/dvc.yaml` lo declara como dependencia de preparación. No hay un archivo
+`.dvc` para este CSV, un remote configurado ni un `dvc.lock` histórico.
+Por eso `dvc pull` no constituye un mecanismo de recuperación verificado
+para esta entrega. Ver `ml/README.md` y el informe de verificación del bundle.
 
 ## Si Essays no está disponible
 

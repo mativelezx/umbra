@@ -44,6 +44,13 @@ export const POST = withErrorHandler(async (req) => {
     .maybeSingle();
   if (!consent) throw new ConsentRequiredError();
 
+  // loadSession intentionally creates a session for a missing resume target.
+  // Undo must never have that side effect, including for another user's ID.
+  const { data: owned, error: ownershipError } = await supabase
+    .from('onboarding_sessions').select('id').eq('id', body.sessionId).eq('user_id', user.id).maybeSingle();
+  if (ownershipError) return Response.json({ ok: false, error: 'storage_unavailable' }, { status: 503 });
+  if (!owned) throw new NotFoundError('onboarding_session');
+
   const service = createEdgeServiceClient();
   const session = await loadSession(service, user.id, body.sessionId);
 

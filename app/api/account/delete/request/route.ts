@@ -1,6 +1,7 @@
 import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { withErrorHandler } from '@/lib/api/with-error-handler';
 import { SessionExpiredError } from '@/lib/errors';
+import { requestOrigin } from '@/lib/auth/request-origin';
 import { computeHash, randomToken, CURRENT_PEPPER_VERSION } from '@/lib/security/peppers';
 import {
   sendDeleteConfirmationEmail,
@@ -27,8 +28,7 @@ export const POST = withErrorHandler(async (req) => {
   const tokenHash = await computeHash('delete_token', rawToken);
   const userIdHash = await computeHash('crisis', user.id);
   const expiresAt = new Date(Date.now() + TOKEN_TTL_MS).toISOString();
-  const url = new URL(req.url);
-  const magicLink = `${url.origin}/settings/delete/confirm?token=${rawToken}`;
+  const magicLink = `${requestOrigin(req)}/settings/delete/confirm?token=${rawToken}`;
 
   // Attempt send first; only persist the confirmation row if the email was
   // actually dispatched (or we're in dev fallback with a logged link). This

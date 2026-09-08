@@ -1,0 +1,45 @@
+.form, .summary { color: #242424; max-width: 760px; margin-inline: auto; }
+.form h1, .summary h2 { font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1.12; letter-spacing: -.03em; text-wrap: balance; margin-block: 1rem 1.5rem; font-weight: 600; }
+.form p, .summary p { color: #53534f; line-height: 1.65; margin-block: 1rem; max-width: 68ch; }
+.consent { padding: 1.5rem; background: #efefe9; border-radius: 14px; margin-top: 2rem; }
+.consent h2 { font-size: 1.35rem; font-weight: 600; }
+.consent label { display: flex; gap: .85rem; align-items: center; min-height: 48px; line-height: 1.5; cursor: pointer; }
+.consent input { width: 22px; height: 22px; flex-shrink: 0; accent-color: #242424; }
+.actions { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-block: 2rem 1rem; }
+.form .note, .summary .note { font-size: .875rem; }
+.source { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #cfcfc6; font-size: .875rem; }
+.source summary, .explore summary { padding-block: .8rem; min-height: 44px; cursor: pointer; font-weight: 600; }
+.source a, .explore a { text-decoration: underline; text-underline-offset: 4px; }
+.progress { display: flex; justify-content: space-between; gap: 1rem; color: #53534f; font-size: .875rem; }
+.form progress { display: block; width: 100%; height: 5px; appearance: none; margin-block: 1rem 2.5rem; border: 0; background: #deded5; border-radius: 4px; }
+.form progress::-webkit-progress-bar { background: #deded5; border-radius: 4px; }
+.form progress::-webkit-progress-value { background: #242424; border-radius: 4px; }
+.form progress::-moz-progress-bar { background: #242424; border-radius: 4px; }
+.question { border-top: 1px solid #cfcfc6; padding-block: 1.5rem 2rem; min-width: 0; }
+.question legend { font-weight: 600; font-size: 1.125rem; line-height: 1.45; padding-top: 1.5rem; margin-bottom: 1.2rem; }
+.question legend > span { color: #53534f; margin-right: .3rem; font-variant-numeric: tabular-nums; }
+.options { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: .5rem; }
+.options label { position: relative; cursor: pointer; min-width: 0; }
+.options input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.options label > span { display: flex; flex-direction: column; justify-content: center; gap: .4rem; min-height: 98px; padding: .7rem .4rem; text-align: center; background: #fff; border: 1px solid #babbb2; border-radius: 12px; font-size: .75rem; line-height: 1.35; transition: background-color .15s, color .15s; }
+.options b { font-size: 1.2rem; font-weight: 500; }
+.options input:checked + span { background: #242424; border-color: #242424; color: #fff; }
+.options input:focus-visible + span { outline: 2px solid #242424; outline-offset: 4px; }
+.options label:hover > span { border-color: #242424; }
+.options input:disabled + span { opacity: .7; cursor: wait; }
+.error { color: #a02e32 !important; }
+.confirmation { display: flex; gap: .75rem; align-items: center; }
+.summary { padding-block: 1rem 2rem; }
+.dimensions { margin-block: 2rem; }
+.dimension { display: grid; grid-template-columns: 1fr auto; gap: .5rem 2rem; padding-block: 1.4rem; border-top: 1px solid #cfcfc6; }
+.dimension h3 { font-size: 1.25rem; font-weight: 600; }
+.dimension p { font-size: .875rem; margin-block: .5rem; }
+.dimension > strong { font-size: 1.8rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+.dimension small { color: #53534f; font-size: .875rem; }
+.scale { grid-column: 1/-1; height: 4px; background: #deded5; border-radius: 4px; }
+.scale span { display: block; height: 100%; background: #242424; border-radius: 4px; }
+.primaryLink { display: inline-flex; align-items: center; justify-content: space-between; gap: 2rem; min-height: 48px; background: #242424; color: white; border-radius: 14px; padding: .8rem 1.2rem; }
+.primaryLink:hover { background: #40403c; }
+.explore { padding: 1rem 1.5rem; border-radius: 14px; background: #efefe9; }
+@media (max-width: 480px) { .options { gap: .3rem; } .options label > span { font-size: .75rem; min-height: 112px; padding-inline: .2rem; } .dimension { gap: .5rem 1rem; } .consent { padding: 1rem; } .actions > button { flex: 1 1 auto; } }
+@media (prefers-reduced-motion: reduce) { .form progress::-webkit-progress-value, .options label > span { transition: none; } }

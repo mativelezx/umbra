@@ -18,11 +18,13 @@ const NarrativeInputSchema = z.object({
   profileId: z.string().uuid(),
   regenerate: z.boolean().optional().default(false),
 });
+const NarrativeContentSchema = z.string().trim().min(1).max(20000);
 
 const DAILY_TOKEN_CAP = Number(process.env.DAILY_TOKEN_CAP ?? 15000);
 const DAILY_COST_CAP_CENTS = Number(process.env.DAILY_COST_CAP_CENTS ?? 200);
 
 export async function POST(req: Request) {
+  const generationStartedAt = new Date().toISOString();
   const response = new Response();
   const supabase = createEdgeClient(req, response);
 
@@ -43,6 +45,16 @@ export async function POST(req: Request) {
     );
   }
 
+  // Check acceptance before reading content, reserving budget or generating text.
+  const { data: consent, error: consentError } = await supabase
+    .from('consent_records').select('id').eq('user_id', user.id).limit(1).maybeSingle();
+  if (consentError) {
+    return Response.json({ ok: false, error: 'consent_unavailable' }, { status: 503 });
+  }
+  if (!consent) {
+    return Response.json({ ok: false, error: 'consent_required' }, { status: 403 });
+  }
+
   // Fetch profile
   const { data: profileRow, error: profileError } = await supabase
     .from('psychological_profiles')
@@ -61,25 +73,28 @@ export async function POST(req: Request) {
       .from('narratives')
       .select('id, content')
       .eq('profile_id', body.profileId)
+      .eq('user_id', user.id)
+      .gte('created_at', profileRow.updated_at)
       .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle();
     if (existing) {
       // Stream the existing narrative back as SSE
+      let replayInterval: ReturnType<typeof setInterval> | undefined;
       return new Response(
         new ReadableStream({
           start(controller) {
             const encoder = new TextEncoder();
-            // Chunk into sentences for natural streaming feel
-            const chunks = existing.content.match(/.{1,80}(?:\s|$)/g) ?? [existing.content];
+            // Preserve every character, including Markdown line breaks and long words.
+            const chunks = existing.content.match(/[\s\S]{1,80}/g) ?? [existing.content];
             let i = 0;
-            const interval = setInterval(() => {
+            replayInterval = setInterval(() => {
               if (i >= chunks.length) {
                 controller.enqueue(
                   encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`),
                 );
                 controller.close();
-                clearInterval(interval);
+                clearInterval(replayInterval);
                 return;
               }
               controller.enqueue(
@@ -89,6 +104,9 @@ export async function POST(req: Request) {
               );
               i++;
             }, 40);
+          },
+          cancel() {
+            clearInterval(replayInterval);
           },
         }),
         {
@@ -157,8 +175,9 @@ export async function POST(req: Request) {
 
   const encoder = new TextEncoder();
   let fullText = '';
-  let inputTokens = 0;
-  let outputTokens = 0;
+  // Keep the reservation for any usage the provider never reports.
+  let inputTokens = estInput;
+  let outputTokens = estOutput;
 
   const safeEnqueue = (controller: ReadableStreamDefaultController, chunk: Uint8Array) => {
     try {
@@ -170,6 +189,7 @@ export async function POST(req: Request) {
 
   const stream = new ReadableStream({
     async start(controller) {
+      let completed = false;
       try {
         for await (const event of claudeStream({
           system,
@@ -183,11 +203,22 @@ export async function POST(req: Request) {
               controller,
               encoder.encode(`data: ${JSON.stringify({ type: 'text', chunk: event.text })}\n\n`),
             );
-          } else if (event.type === 'done') {
-            inputTokens = event.inputTokens;
-            outputTokens = event.outputTokens;
+          } else if (event.type === 'usage' || event.type === 'done') {
+            if (event.type === 'done') completed = true;
+            inputTokens = event.inputTokens ?? inputTokens;
+            outputTokens = event.outputTokens ?? outputTokens;
           }
         }
+        if (!completed) throw new Error('narrative_incomplete');
+        const content = NarrativeContentSchema.parse(fullText);
+        const { data: saved, error: saveError } = await service.from('narratives').insert({
+          user_id: user.id,
+          profile_id: body.profileId,
+          content,
+          created_at: generationStartedAt,
+        }).select('id').single();
+        if (saveError || !saved) throw new Error('narrative_save_failed');
+        // Completion means the whole provider response is persisted, not merely displayed.
         safeEnqueue(controller, encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
       } catch (e) {
         console.error('[narrative] stream error', e);
@@ -200,22 +231,6 @@ export async function POST(req: Request) {
           controller.close();
         } catch {
           // already closed on client disconnect
-        }
-        // Persist narrative regardless of client connection state, so users who
-        // navigate away mid-stream don't lose it and don't get recharged on return.
-        if (fullText.trim().length > 0) {
-          try {
-            if (body.regenerate) {
-              await service.from('narratives').delete().eq('profile_id', body.profileId);
-            }
-            await service.from('narratives').insert({
-              user_id: user.id,
-              profile_id: body.profileId,
-              content: fullText,
-            });
-          } catch (e) {
-            console.warn('[narrative] persist failed', e);
-          }
         }
         try {
           const actualCost = costUsdCents(model, inputTokens, outputTokens);

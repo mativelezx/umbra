@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/Input';
 import { GlassCard } from '@/components/ui/Card';
 import { t } from '@/lib/i18n/dict';
 import { Brand } from '@/components/layout/Brand';
+import { AccessPrelude } from '@/components/layout/AccessPrelude';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -60,12 +61,15 @@ export default function RegisterPage() {
       return;
     }
 
+    // Registration must not depend on an optional welcome email. The server
+    // authenticates the account and deduplicates retries at the mail provider.
+    void fetch('/api/account/welcome', {method:'POST'}).catch(() => undefined);
     router.push('/consent');
     router.refresh();
   }
 
   return (
-    <div className="focus-backdrop"><main className="auth-entry relative mx-auto flex min-h-screen max-w-lg items-center justify-center px-5 py-12">
+    <div className="focus-backdrop access-layout"><AccessPrelude /><main className="auth-entry relative mx-auto flex min-h-screen max-w-lg items-center justify-center px-5 py-12">
       <GlassCard className="w-full">
         <div className="mb-8">
           <Brand />

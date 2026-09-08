@@ -13,7 +13,7 @@ export default function PrivacyPage() {
         Política de privacidad
       </h1>
       <p className="mt-3 font-body text-xs tabular-nums text-text-3">
-        Última actualización: 27 de abril de 2026
+        Revisión local: 7 de septiembre de 2026 · pendiente de aprobación para publicación
       </p>
       <p className="mt-6 max-w-2xl text-pretty font-body text-base leading-relaxed text-text-2">
         Vamos al grano: lo que escribís en Umbra es tuyo. Esto explica qué hacemos con tus datos, dónde viven, quién los toca y cómo te los podés llevar.
@@ -37,28 +37,31 @@ export default function PrivacyPage() {
         <section>
           <h2 className="font-heading font-semibold text-2xl text-text-1">Por qué podemos guardarlo</h2>
           <p className="mt-2 text-pretty">
-            Ley 25.326 de Protección de Datos Personales (Argentina). El tratamiento se apoya en tu consentimiento explícito, que firmás al registrarte y que registramos como hash SHA-256 del texto que viste, así podés probar mañana qué firmaste hoy.
+            El prototipo registra tu aceptación, versión y hash SHA-256 del mismo texto que presenta la pantalla de consentimiento. Las versiones anteriores permanecen en el historial. Estas funciones no acreditan por sí solas cumplimiento integral de la Ley 25.326.
           </p>
         </section>
 
         <section>
           <h2 className="font-heading font-semibold text-2xl text-text-1">Quién tiene acceso</h2>
           <p className="mt-2 text-pretty">
-            Tres lugares, ninguno con tu identidad pegada al texto. Supabase (PostgreSQL en Brasil) guarda los datos con políticas de acceso por usuario; solo vos podés leer lo tuyo. Anthropic recibe tu texto solo para escribir tu narrativa y no lo guarda más allá del procesamiento. Nuestro módulo propio de aprendizaje automático infiere los puntajes Big Five sin guardar tu texto. Para hosting y mail transaccional usamos Vercel y Resend.
+            Supabase guarda la cuenta y los datos con políticas de acceso por usuario. El responsable técnico puede acceder para mantenimiento y soporte. Anthropic recibe texto y contexto para onboarding, interpretación, narrativa, chat y actividades; el módulo propio de aprendizaje automático procesa texto para Big Five. Hosting y correo dependen de la configuración del entorno. Tus textos pueden contener datos identificatorios aunque no enviemos tu nombre en un campo separado.
+          </p>
+          <p className="mt-2 text-pretty">
+            Están pendientes de verificar la región efectiva, las condiciones de retención de los proveedores, los respaldos y su restauración. No se garantiza que los proveedores borren el contenido inmediatamente después de procesarlo. Esta revisión local debe aprobarse y completarse antes de habilitar un entorno para personas usuarias reales.
           </p>
         </section>
 
         <section>
           <h2 className="font-heading font-semibold text-2xl text-text-1">Cuánto tiempo</h2>
           <p className="mt-2 text-pretty">
-            Mientras tu cuenta esté activa. Podés eliminarla cuando quieras desde Configuración y borramos todo en cascada. Algunos payloads técnicos (debug y auditoría) se purgan solos a los 30 días.
+            Los datos de cuenta se conservan hasta solicitar su eliminación. Las contribuciones de investigación permanecen si no pedís también su purga. El código incluye purgas previstas a 30 días de ciertos payloads técnicos; su ejecución real requiere verificación. El borrado puede fallar parcialmente entre servicios: la pantalla informa el error y permite reintentar con un enlace vigente.
           </p>
         </section>
 
         <section>
           <h2 className="font-heading font-semibold text-2xl text-text-1">Tus derechos</h2>
           <p className="mt-2 text-pretty">
-            Tenés derecho a acceder, rectificar, cancelar y oponerte al tratamiento de tus datos. Cualquiera de esas acciones está disponible en Configuración. El tiempo de respuesta es de 10 días hábiles. Para reclamos formales tenés derecho a presentarte ante la Agencia de Acceso a la Información Pública (AAIP).
+            Configuración reúne descarga de datos, cambio del nombre visible, participación en investigación y solicitud de eliminación. Otros pedidos se gestionan con el responsable del proyecto. Revisá el alcance y las condiciones completas en el texto de consentimiento antes de aceptar.
           </p>
         </section>
 

@@ -1,166 +1,120 @@
 # umbra
 
-Plataforma web de autoconocimiento basada en Big Five (IPIP-NEO), funciones cognitivas de Jung y Positive Computing. Umbra es el Trabajo Final de Grado de Ingeniería en Software para Universidad Siglo 21.
+Prototipo de autoconocimiento para el Trabajo Final de Graduación de Ingeniería en Software, Universidad Siglo 21. Reúne escritura personal, un cuestionario opcional, una lectura orientativa y actividades para elegir. No es terapia, diagnóstico ni una medición psicológica validada.
 
-**Producción:** https://umbra-sigma.vercel.app
-**Estado:** deployed, migraciones 001-006 documentadas, módulo ML reproducible y readiness de defensa activo
-**Workspace:** pnpm `9.15.0` + Turborepo baseline single-package
-**Nota clínica:** Umbra no es terapia, diagnóstico ni consejo médico.
+## Acceso y versión
 
-## Qué Hace
+La dirección de publicación es https://umbra-sigma.vercel.app. La reentrega se prepara en la rama `codex/reentrega-final-2026-09-07`. Un enlace o un despliegue exitoso no sustituyen la prueba del recorrido completo: consultar el estado de verificación más abajo.
 
-Umbra toma texto introspectivo del usuario y devuelve una lectura reflexiva en español latinoamericano con safety crítico:
+No hace falta un ZIP para consultar este repositorio. Las instrucciones siguientes se ejecutan desde un checkout de esta versión. No se incluyen contraseñas, claves de proveedores, datos de cuentas, dependencias instaladas ni cachés.
 
-1. **Onboarding:** modo guiado, texto libre o flujo dinámico conducido.
-2. **Capa analítica propia:** `ml/` infiere Big Five con DistilBERT multilingual congelado + Ridge multi-output y reporta métricas por dimensión.
-3. **Capa narrativa:** IA generativa externa produce lectura interpretativa: funciones Jung, arquetipo Pearson, retrato y plan.
-4. **Dashboard:** arquetipo, radar Big Five, barras de funciones, narrativa y carta al futuro.
-5. **Chat seguro:** banner permanente "no es terapia", regex lexicon, idiom pre-filter, classifier fail-closed y crisis card con recursos argentinos.
-6. **Plan de desarrollo:** 3 áreas con acciones y micro-objetivos.
-7. **Export:** informe PDF/print-safe y exportación de datos.
-8. **Ley 25.326:** consentimiento, exportación, rectificación, cancelación y oposición.
+## Qué hace cada componente
 
-## Stack
+- **Cuestionario BFI-2-S:** 30 afirmaciones en español. Calcula cinco promedios de 1 a 5 con la clave publicada y las respuestas inversas. Es un autoinforme opcional, no un porcentaje ni una comparación con otras personas.
+- **ML propio:** DistilBERT preentrenado y congelado convierte el texto en números; cinco regresores Ridge producen estimaciones experimentales. No se entrenó DistilBERT desde cero.
+- **Claude:** usa el contexto declarado para redactar la lectura, conversar y proponer actividades. Jung y los arquetipos se presentan como recursos interpretativos; no son resultados del Ridge.
+- **Supabase:** registra la cuenta, el consentimiento y los datos; aplica permisos por usuario.
+- **Interfaz:** permite revisar las fuentes, guardar actividades, conversar, descargar el informe y administrar los datos.
 
-- **Framework:** Next.js `14.2.35` App Router + React `18.3`.
-- **Lenguaje:** TypeScript strict.
-- **UI:** Tailwind CSS `3.4`, tokens `umbra-*`, `violet-*`, `accent-*`, `text-*`.
-- **Datos:** Supabase Auth/PostgreSQL/RLS via `@supabase/ssr`.
-- **Estado:** Zustand 5.
-- **IA narrativa:** Anthropic Claude con `ANTHROPIC_MODEL_ID` fijado por entorno.
-- **ML propio:** Python, Hugging Face Transformers, scikit-learn, MLflow, DVC, FastAPI, joblib.
-- **Validación:** Zod, Vitest, Playwright y `@axe-core/playwright`.
-- **Tooling:** pnpm workspace metadata + Turborepo baseline para checks cacheables.
+Las cinco dimensiones del modelo actual conservan `low_confidence`. Hacer más pruebas con textos inventados no valida puntuaciones psicológicas. El cuestionario ofrece una fuente directa de respuestas, separada del ML. No hubo estudio con participantes ni evaluación de usabilidad humana.
 
-## Estructura Del Repo
+## Requisitos
 
-Umbra se mantiene intencionalmente como single-package root app. Moverla a `apps/web` es una migración futura, no una limpieza menor, porque impacta rutas, Vercel, imports, tesis y evidencia de defensa.
+Node.js 24 LTS, pnpm 9.15.0, Python 3.11 para el entorno ML local y Docker si se usa Supabase local. La web utiliza Next.js 15.5.25, React 18, TypeScript estricto y Tailwind 3.4. No usar Node 20: el cliente actual de Supabase requiere WebSocket nativo. El servicio de Vercel usa Python 3.12; una inferencia sintética comparada produjo exactamente los mismos cinco valores que el servicio local. Esto no demuestra validez psicológica.
 
 ```text
-umbra/
-├── app/              # Next.js App Router
-├── components/       # UI por feature
-├── lib/              # dominio, prompts, Supabase, safety, stores
-├── types/            # contratos compartidos
-├── ml/               # módulo analítico Python reproducible
-├── docs/             # documentación técnica, académica y de producto
-├── thesis/           # estructura de tesis
-├── supabase/         # migraciones y snippets
-├── .agent-os/        # contratos/agentes portables
-├── .claude/          # adaptador local mínimo
-├── package.json
-├── pnpm-workspace.yaml
-├── pnpm-lock.yaml
-└── turbo.json
+app/                   pantallas y APIs Next.js
+components/            interfaz y pruebas de componentes
+lib/                   lógica, cuestionario, prompts y controles
+types/                 tipos compartidos
+e2e/                   recorridos Playwright con opt-in
+ml/                    cálculo, artefactos y evaluación experimental
+supabase/migrations/   evolución de la base y permisos
+supabase/templates/    correos de autenticación con la marca
+public/                marca e imágenes con procedencia
 ```
 
-## Setup Local
+## Poner en marcha la web
+
+1. Instalá dependencias: `pnpm install --frozen-lockfile`.
+2. Copiá `.env.local.example` a `.env.local` y completá los valores de tu entorno. El ejemplo no contiene claves válidas.
+3. Prepará Supabase y el servicio ML antes de intentar un análisis.
+4. Ejecutá `pnpm dev` y abrí http://localhost:3000.
+
+Para compilar y ejecutar una versión optimizada:
 
 ```bash
-corepack enable
-pnpm install
-pnpm dev
+pnpm build
+pnpm start
 ```
 
-Abrir http://localhost:3000.
+La compilación necesita las variables públicas de Supabase. Las claves de servidor, Anthropic, ML y correo nunca deben llevar el prefijo `NEXT_PUBLIC_`. No usar credenciales de producción en capturas, ejemplos, tests públicos ni commits.
 
-Para demo sin backend:
+`NEXT_PUBLIC_DEMO_MODE=true` habilita un ejemplo ficticio de interfaz. Sus respuestas no generan el perfil preparado, no prueban persistencia ni proveedores y no habilitan el chat sin una cuenta. La versión de servicio real usa `false`.
 
-```env
-NEXT_PUBLIC_DEMO_MODE=true
+## Base de datos
+
+Usá un proyecto propio vacío o Supabase local. Revisá el destino antes de aplicar SQL; nunca uses `db reset` sobre una base compartida.
+
+```bash
+supabase start
+supabase migration up --local
 ```
 
-## Variables De Entorno
+Para un proyecto remoto autorizado, las migraciones se aplican con la CLI y conexión privada. La CLI 2.84.2 falló al separar las sentencias de la migración de consentimiento durante esta publicación: se ejecutaron los archivos de consentimiento y retención con `psql --single-transaction -v ON_ERROR_STOP=1 -f ...`, se verificaron funciones y permisos y recién después se registraron como aplicados. No marcar una migración como aplicada sin ejecutar y comprobar su SQL.
 
-Copiá `.env.local.example` a `.env.local` y completá:
+La migración de retención conserva `analysis_raw.selfReport` y `analysis_raw.ml`; depura otros datos técnicos después de 30 días desde la última actualización del perfil. El cronograma de tareas se verifica en `cron.job`. Tener un archivo SQL no significa que el destino lo esté ejecutando.
 
-- Supabase URL/anon/service role.
-- Anthropic API key e identificador de modelo.
-- Peppers HMAC versionados: `CONSENT_IP_PEPPER_V1`, `CRISIS_PEPPER_V1`, `RESEARCH_PEPPER_V1`, `DELETE_TOKEN_PEPPER_V1`.
-- Caps de presupuesto diario.
-- `ML_API_URL`, por defecto `http://localhost:8000`.
-- URL pública y configuración de email.
+Las copias de respaldo y una restauración probada son controles separados. No se promete respaldo automático por utilizar el plan gratuito.
 
-## Módulo Analítico
+## Ejecutar el ML local
+
+Desde la raíz:
 
 ```bash
 cd ml
-python3 -m venv .venv
+python3.11 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
-make all
-make serve
+python -m pip install -r requirements.txt
+export HF_HOME="$PWD/.hf_cache"
+ML_EAGER_LOAD=1 python -m uvicorn src.api_server:app --host 127.0.0.1 --port 8000
 ```
 
-Detalle: [`ml/README.md`](ml/README.md).
+La primera carga descarga los pesos públicos. `GET /health` distingue proceso vivo de pesos cargados. `POST /infer` acepta `{"text":"Texto sintético para comprobar el servicio."}` y devuelve valores, versión y estado por dimensión.
 
-## Comandos
+En el alojamiento público, `ML_API_KEY` debe coincidir en el servicio Python y el servidor Next.js; la inferencia rechaza llamadas sin esa clave. La administración también requiere la clave. No hay reemplazo automático de los puntajes ML por puntajes inventados por Claude.
 
-```bash
-pnpm dev              # Next dev
-pnpm build            # Production build
-pnpm start            # Next start
-pnpm typecheck        # tsc --noEmit
-pnpm lint             # next lint
-pnpm test             # Vitest
-pnpm test:e2e         # Playwright
-pnpm verify           # typecheck + lint + test + build
-pnpm turbo:build      # Build vía Turbo
-pnpm integrity:check  # Cruza workspace, APIs, Supabase/RLS y residuos
-pnpm agent-os:check   # Gate mínimo Agent OS
-```
+No ejecutar entrenamiento, `make clean` o `dvc repro` para grabar la demo: pueden reemplazar artefactos. Hay una revisión fijada del extractor para próximas ejecuciones, pero no un historial completo que reconstruya todo el entrenamiento original.
 
-## Flujo De Usuario
+## Pruebas y alcance
 
-```text
-/ → /register → /consent → /onboarding
-  → /api/analyze
-    → ML Big Five
-    → narrativa externa
-      → /dashboard
-        ├─ /chat
-        ├─ /plan
-        ├─ /export
-        └─ /settings
-```
+Comprobaciones de esta revisión:
 
-## Documentación Canónica
-
-- [`docs/PLAN.md`](docs/PLAN.md) — entry point y dashboard de estado.
-- [`docs/SYSTEM_SPEC.md`](docs/SYSTEM_SPEC.md) — spec del sistema.
-- [`docs/API_MAP.md`](docs/API_MAP.md) — rutas y contratos.
-- [`docs/FEATURE_MAP.md`](docs/FEATURE_MAP.md) — features y matriz de estado.
-- [`docs/PROMPT_ARCHITECTURE.md`](docs/PROMPT_ARCHITECTURE.md) — prompts y knowledge base.
-- [`docs/DECISIONS.md`](docs/DECISIONS.md) — ADRs.
-- [`docs/tech/`](docs/tech/) — arquitectura, seguridad, DB, rate limit, evals y observabilidad.
-- [`docs/biz/`](docs/biz/) — TFG, validación, ética, legal, mercado y plan.
-- [`docs/research/`](docs/research/) — protocolo SUS y reclutamiento.
-- [`thesis/`](thesis/) — tesis con capítulos.
-- [`UMBRA_MASTER_BUILD.md`](UMBRA_MASTER_BUILD.md) — spec histórica de la fase web inicial, mantenida porque la tesis la referencia.
-
-## Guardrails
-
-- No MBTI.
-- No lenguaje diagnóstico ni clínico.
-- No prompts inline; siempre en `lib/prompts/`.
-- No `any` en TypeScript.
-- No `console.log` productivo.
-- No emoji en UI; usar Phosphor Icons.
-- Crisis pipeline fail-closed antes de cualquier respuesta sensible.
-- RLS obligatorio para datos de usuario.
-
-## Checklist Antes De Deploy/Defensa
+| Comprobación | Resultado |
+|---|---|
+| Vitest, lógica y componentes | 396 pruebas aprobadas, 65 archivos |
+| Tipos, lint y compilación web | Aprobados con la configuración de destino |
+| Auditoría de dependencias web de producción | Sin vulnerabilidades conocidas reportadas por pnpm audit |
+| Python con pesos reales | 37 pruebas aprobadas, ninguna omitida |
+| Retención | Prueba aislada aprobada: conserva resultados y elimina sólo el contenido técnico vencido |
+| Supabase nuevo | 15 tablas con RLS y tres tareas programadas activas; aislamiento y recorrido remoto se comprueban aparte |
 
 ```bash
 pnpm typecheck
 pnpm lint
 pnpm test
-pnpm build
-pnpm test:e2e
-pnpm integrity:check
-pnpm agent-os:check
+pnpm audit --prod
+bash scripts/test-profile-retention.sh
+cd ml
+ML_RUN_MODEL_TESTS=1 HF_HOME="$PWD/.hf_cache" python -m pytest tests -q
 ```
 
----
+La suite web limita la concurrencia para funcionar en una computadora de estudiante con Supabase y ML activos. Los casos de navegador distinguen fixtures, servicios locales y llamadas pagas reales. No ejecutar toda la carpeta E2E sin revisar sus opt-ins: crea cuentas y algunos recorridos consumen crédito de Anthropic. Las capturas y respuestas sintéticas no representan participantes humanos.
 
-Umbra no es terapia. Si estás en crisis: 135 (Argentina) · 911 · Salud Mental Responde · Centros de Salud Mental Comunitaria.
+## Correo y operación
+
+Las plantillas de bienvenida, autenticación, recuperación, cambio de email y eliminación están en `lib/email/` y `supabase/templates/`. La guía es [docs/EMAILS.md](docs/EMAILS.md). Diseñar una plantilla no configura SMTP: el remitente de prueba de Resend sólo puede enviar al titular. Para destinatarios externos hace falta un dominio verificado.
+
+El límite de consumo por usuario sí se aplica. `GLOBAL_DAILY_BUDGET_USD` es un parámetro declarado cuyo corte automático no está implementado; no asumir que limita toda la factura. No abrir el prototipo a uso masivo sin cerrar ese control.
+
+La reentrega requiere lectura y revisión del autor. La aprobación académica corresponde al CAE; ni los tests ni este README la garantizan. Debe reconocerse la asistencia utilizada, sin inventar investigación, fechas, resultados ni autoría.

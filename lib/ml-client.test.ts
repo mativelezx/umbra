@@ -17,6 +17,7 @@ afterEach(() => {
   globalThis.fetch = ORIGINAL_FETCH;
   process.env.ML_API_URL = ORIGINAL_ENV;
   vi.restoreAllMocks();
+  vi.unstubAllEnvs();
 });
 
 function mockFetch(
@@ -33,6 +34,16 @@ function mockFetch(
 }
 
 describe('inferBigFive', () => {
+  it('sends the private service key only in the server request header', async () => {
+    vi.stubEnv('ML_API_KEY', 'synthetic-test-key');
+    globalThis.fetch = mockFetch(503, {});
+    await expect(inferBigFive('synthetic QA text')).rejects.toBeInstanceOf(MlApiUnavailableError);
+    expect(globalThis.fetch).toHaveBeenCalledWith('http://test.ml/infer', expect.objectContaining({
+      headers: { 'Content-Type': 'application/json', 'X-ML-API-Key': 'synthetic-test-key' },
+      body: JSON.stringify({ text: 'synthetic QA text' }),
+    }));
+  });
+
   it('parses a healthy big_five payload + per_dimension_status', async () => {
     globalThis.fetch = mockFetch(200, {
       big_five: {
@@ -62,12 +73,12 @@ describe('inferBigFive', () => {
     expect(r.elapsedMs).toBe(412);
   });
 
-  it('clamps values to 0-100', async () => {
+  it.each([250, -50, 'NaN', '50', null, true, undefined])('rejects an invalid score instead of inventing a value: %s', async (score) => {
     globalThis.fetch = mockFetch(200, {
       big_five: {
-        openness: 250,
-        conscientiousness: -50,
-        extraversion: 'NaN',
+        openness: score,
+        conscientiousness: 55,
+        extraversion: 30,
         agreeableness: 50,
         neuroticism: 50,
       },
@@ -78,11 +89,28 @@ describe('inferBigFive', () => {
         agreeableness: 'ok',
         neuroticism: 'ok',
       },
+      model_version: 'ridge_v1',
+      elapsed_ms: 10,
     });
-    const r = await inferBigFive('x');
-    expect(r.bigFive.openness).toBe(100);
-    expect(r.bigFive.conscientiousness).toBe(0);
-    expect(r.bigFive.extraversion).toBe(50); // NaN → default 50
+    await expect(inferBigFive('x')).rejects.toBeInstanceOf(MlApiError);
+  });
+
+  it.each([{}, [], null, { big_five: [] }, { big_five: {} }])('rejects incomplete response bodies: %j', async (body) => {
+    globalThis.fetch = mockFetch(200, body);
+    await expect(inferBigFive('x')).rejects.toBeInstanceOf(MlApiError);
+  });
+
+  it('classifies invalid JSON as an ML response error', async () => {
+    globalThis.fetch = mockFetch(200, '<html>not JSON</html>', 'text/html');
+    await expect(inferBigFive('x')).rejects.toBeInstanceOf(MlApiError);
+  });
+
+  it.each([{ model_version: '' }, { model_version: null }, { elapsed_ms: -1 }, { elapsed_ms: '5' }, { elapsed_ms: 1.5 }])('rejects invalid response metadata: %j', async (invalid) => {
+    globalThis.fetch = mockFetch(200, {
+      big_five: { openness: 60, conscientiousness: 50, extraversion: 50, agreeableness: 50, neuroticism: 50 },
+      model_version: 'ridge_v1', elapsed_ms: 10, ...invalid,
+    });
+    await expect(inferBigFive('x')).rejects.toBeInstanceOf(MlApiError);
   });
 
   it('marks dimensions as low_confidence by default if missing', async () => {
@@ -95,6 +123,8 @@ describe('inferBigFive', () => {
         neuroticism: 50,
       },
       // no per_dimension_status
+      model_version: 'ridge_v1',
+      elapsed_ms: 10,
     });
     const r = await inferBigFive('x');
     expect(r.perDimensionStatus.openness).toBe('low_confidence');
@@ -125,9 +155,14 @@ describe('inferBigFive', () => {
 });
 
 describe('isMlApiHealthy', () => {
-  it('returns true when /health returns ok:true', async () => {
-    globalThis.fetch = mockFetch(200, { ok: true });
+  it('returns true only when the service is alive and its weights are loaded', async () => {
+    globalThis.fetch = mockFetch(200, { ok: true, model_loaded: true });
     expect(await isMlApiHealthy()).toBe(true);
+  });
+
+  it.each([{ ok: true }, { ok: true, model_loaded: false }, { ok: 'true', model_loaded: true }, { ok: true, model_loaded: 'true' }])('rejects liveness without explicit weight readiness: %j', async (body) => {
+    globalThis.fetch = mockFetch(200, body);
+    expect(await isMlApiHealthy()).toBe(false);
   });
 
   it('returns false on HTTP 503', async () => {

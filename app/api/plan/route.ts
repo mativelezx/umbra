@@ -78,6 +78,7 @@ function extractJsonObject(text: string): unknown | null {
 }
 
 export const POST = withErrorHandler(async (req) => {
+  const generationStartedAt = new Date().toISOString();
   const body = PlanInputSchema.parse(await req.json());
   const response = new Response();
   const supabase = createEdgeClient(req, response);
@@ -86,6 +87,15 @@ export const POST = withErrorHandler(async (req) => {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new SessionExpiredError();
+
+  const { data: consent, error: consentError } = await supabase
+    .from('consent_records').select('id').eq('user_id', user.id).limit(1).maybeSingle();
+  if (consentError) {
+    return Response.json({ ok: false, error: 'consent_unavailable' }, { status: 503 });
+  }
+  if (!consent) {
+    return Response.json({ ok: false, error: 'consent_required' }, { status: 403 });
+  }
 
   const { data: profileRow } = await supabase
     .from('psychological_profiles')
@@ -104,6 +114,8 @@ export const POST = withErrorHandler(async (req) => {
       .from('development_plans')
       .select('id, areas, created_at')
       .eq('user_id', user.id)
+      .eq('profile_id', profileRow.id)
+      .gte('created_at', profileRow.updated_at)
       .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -191,16 +203,15 @@ export const POST = withErrorHandler(async (req) => {
       })),
     }));
 
-    // Upsert plan (keep only one plan per user)
-    if (body.regenerate) {
-      await service.from('development_plans').delete().eq('user_id', user.id);
-    }
+    // Keep previous plans for export/history. Consumers select only current derivatives.
     const { data: inserted, error: insertError } = await service
       .from('development_plans')
       .insert({
         user_id: user.id,
         profile_id: profileRow.id,
         areas: areasWithIds,
+        // Anchor freshness before reading the profile, not after the provider returns.
+        created_at: generationStartedAt,
       })
       .select('id')
       .single();

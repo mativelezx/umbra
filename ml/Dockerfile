@@ -26,9 +26,7 @@ COPY eval_metrics.json* ./
 COPY metrics.json* ./
 
 # Pre-descargar DistilBERT al build para evitar cold start en inferencia
-RUN python -c "from transformers import AutoTokenizer, AutoModel; \
-    AutoTokenizer.from_pretrained('distilbert-base-multilingual-cased'); \
-    AutoModel.from_pretrained('distilbert-base-multilingual-cased')"
+RUN python -c "from src.extract_embeddings import EmbeddingExtractor; EmbeddingExtractor()._ensure_loaded()"
 
 EXPOSE 8000
 

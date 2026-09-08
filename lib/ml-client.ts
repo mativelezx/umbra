@@ -49,29 +49,17 @@ function getBaseUrl(): string {
   return url && url.length > 0 ? url.replace(/\/$/, '') : DEFAULT_BASE;
 }
 
-function isBigFiveDimension(key: string): key is BigFiveDimension {
-  return (
-    key === 'openness' ||
-    key === 'conscientiousness' ||
-    key === 'extraversion' ||
-    key === 'agreeableness' ||
-    key === 'neuroticism'
-  );
-}
-
-function clamp01_100(n: unknown): number {
-  const v = typeof n === 'number' ? n : Number(n);
-  if (!Number.isFinite(v)) return 50;
-  return Math.min(100, Math.max(0, Math.round(v * 100) / 100));
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
 function parseInferPayload(json: unknown): MlInferResponse {
-  if (!json || typeof json !== 'object') {
+  if (!isRecord(json) || !isRecord(json.big_five)) {
     throw new MlApiError(200, json);
   }
-  const j = json as Record<string, unknown>;
-  const bf = (j.big_five ?? {}) as Record<string, unknown>;
-  const status = (j.per_dimension_status ?? {}) as Record<string, unknown>;
+  const j = json;
+  const bf = json.big_five;
+  const status = isRecord(j.per_dimension_status) ? j.per_dimension_status : {};
   const dims: BigFiveDimension[] = [
     'openness',
     'conscientiousness',
@@ -79,26 +67,28 @@ function parseInferPayload(json: unknown): MlInferResponse {
     'agreeableness',
     'neuroticism',
   ];
+  if (Object.keys(bf).length !== dims.length
+    || typeof j.model_version !== 'string' || j.model_version.trim().length === 0
+    || typeof j.elapsed_ms !== 'number' || !Number.isSafeInteger(j.elapsed_ms) || j.elapsed_ms < 0) {
+    throw new MlApiError(200, json);
+  }
   const bigFive = {} as BigFive;
   const perDimensionStatus = {} as PerDimensionStatus;
   for (const dim of dims) {
-    bigFive[dim] = clamp01_100(bf[dim]);
+    const value = bf[dim];
+    if (typeof value !== 'number' || !Number.isFinite(value) || value < 0 || value > 100) {
+      throw new MlApiError(200, json);
+    }
+    bigFive[dim] = value;
     const s = status[dim];
     perDimensionStatus[dim] =
       s === 'ok' || s === 'not_applicable' ? s : 'low_confidence';
   }
-  // sanity check: rechazo silencioso de keys desconocidas
-  for (const k of Object.keys(bf)) {
-    if (!isBigFiveDimension(k)) {
-      // eslint-disable-next-line no-console
-      console.warn('[ml-client] big_five contiene clave inesperada:', k);
-    }
-  }
   return {
     bigFive,
     perDimensionStatus,
-    modelVersion: typeof j.model_version === 'string' ? j.model_version : 'unknown',
-    elapsedMs: typeof j.elapsed_ms === 'number' ? j.elapsed_ms : 0,
+    modelVersion: j.model_version,
+    elapsedMs: j.elapsed_ms,
   };
 }
 
@@ -120,7 +110,10 @@ export async function inferBigFive(text: string): Promise<MlInferResponse> {
   try {
     res = await fetch(`${base}/infer`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(process.env.ML_API_KEY ? { 'X-ML-API-Key': process.env.ML_API_KEY } : {}),
+      },
       body: JSON.stringify({ text }),
       signal: controller.signal,
     });
@@ -142,18 +135,23 @@ export async function inferBigFive(text: string): Promise<MlInferResponse> {
     }
     throw new MlApiError(res.status, body);
   }
-  const json = (await res.json()) as unknown;
+  let json: unknown;
+  try {
+    json = await res.json();
+  } catch {
+    throw new MlApiError(res.status, { error: 'invalid_ml_response_json' });
+  }
   return parseInferPayload(json);
 }
 
-/** Health check liviano. Devuelve `false` ante cualquier error. */
+/** Checks liveness and loaded weights, not successful inference or model validity. */
 export async function isMlApiHealthy(): Promise<boolean> {
   const base = getBaseUrl();
   try {
     const res = await fetch(`${base}/health`, { method: 'GET', signal: AbortSignal.timeout(3_000) });
     if (!res.ok) return false;
-    const j = (await res.json()) as { ok?: boolean };
-    return Boolean(j?.ok);
+    const j: unknown = await res.json();
+    return isRecord(j) && j.ok === true && j.model_loaded === true;
   } catch {
     return false;
   }

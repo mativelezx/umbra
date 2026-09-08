@@ -227,9 +227,39 @@ otp_expiry = 3600
 # sender_name = "Admin"
 
 # Uncomment to customize email template
-# [auth.email.template.invite]
-# subject = "You have been invited"
-# content_path = "./supabase/templates/invite.html"
+[auth.email.template.confirmation]
+subject = "umbra — confirmá tu email y empezamos"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.invite]
+subject = "umbra — te invitaron a entrar"
+content_path = "./supabase/templates/invite.html"
+
+[auth.email.template.recovery]
+subject = "umbra — recuperá el acceso a tu cuenta"
+content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.magic_link]
+subject = "umbra — tu enlace para entrar"
+content_path = "./supabase/templates/magic_link.html"
+
+[auth.email.template.email_change]
+subject = "umbra — confirmá el cambio de email"
+content_path = "./supabase/templates/email_change.html"
+
+[auth.email.template.reauthentication]
+subject = "umbra — tu código de verificación"
+content_path = "./supabase/templates/reauthentication.html"
+
+[auth.email.notification.password_changed]
+enabled = true
+subject = "umbra — cambió tu contraseña"
+content_path = "./templates/password_changed.html"
+
+[auth.email.notification.email_changed]
+enabled = true
+subject = "umbra — cambió el email de tu cuenta"
+content_path = "./templates/email_changed.html"
 
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]

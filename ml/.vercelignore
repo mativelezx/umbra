@@ -1,0 +1,14 @@
+.venv
+.hf_cache
+.dvc
+.pytest_cache
+__pycache__
+data
+tests
+scripts
+mlruns
+requirements.txt
+models/distilbert
+models/baseline_tfidf.joblib
+*.log
+*.md

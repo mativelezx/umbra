@@ -3,18 +3,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { DownloadSimple } from '@phosphor-icons/react';
 import { LayoutShell } from '@/components/layout/LayoutShell';
-import { SectionedNarrative } from '@/components/dashboard/SectionedNarrative';
+import { ReportContent } from '@/components/export/ReportContent';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/LoadingDimension';
 import { createClient } from '@/lib/supabase/client';
-import { formatDateEs } from '@/lib/utils';
-import { ARCHETYPE_INFO } from '@/types';
-import type { Archetype, BigFive, JungFunctions, PsychologicalProfile } from '@/types';
+import type { ReportExportData as ExportData } from '@/types';
 import './print.css';
-import {
-  extractPerDimensionStatus,
-  STATUS_LABEL,
-} from '@/lib/profile/dimension-display';
 
 /**
  * Minimal shape of the html2pdf.js chain — the library itself has no
@@ -24,42 +18,17 @@ import {
 interface Html2PdfChain {
   set(options: Record<string, unknown>): Html2PdfChain;
   from(element: HTMLElement): Html2PdfChain;
+  toPdf(): Html2PdfChain;
+  get(key: 'pdf'): Promise<PdfDocument>;
   save(): Promise<void>;
 }
 
-const BIG_FIVE_LABELS: Record<keyof BigFive, string> = {
-  openness: 'Apertura',
-  conscientiousness: 'Responsabilidad',
-  extraversion: 'Extraversión',
-  agreeableness: 'Amabilidad',
-  neuroticism: 'Sensibilidad',
-};
-
-const BIG_FIVE_ORDER: Array<keyof BigFive> = [
-  'openness',
-  'conscientiousness',
-  'extraversion',
-  'agreeableness',
-  'neuroticism',
-];
-
-
-const JUNG_LABELS: Record<keyof JungFunctions, string> = {
-  Se: 'Sensación extravertida',
-  Si: 'Sensación introvertida',
-  Ne: 'Intuición extravertida',
-  Ni: 'Intuición introvertida',
-  Te: 'Pensamiento extravertido',
-  Ti: 'Pensamiento introvertido',
-  Fe: 'Sentimiento extravertido',
-  Fi: 'Sentimiento introvertido',
-};
-
-interface ExportData {
-  profile: PsychologicalProfile;
-  narrative: string | null;
-  plan: { areas: Array<{ id: string; name: string; rationale: string; actions: Array<{ id: string; title: string; description: string; microGoals: Array<{ text: string }> }> }> } | null;
-  userName: string | null;
+interface PdfDocument {
+  internal: { getNumberOfPages(): number };
+  setPage(page: number): void;
+  setFontSize(size: number): void;
+  setTextColor(value: number): void;
+  text(text: string, x: number, y: number, options?: { align: 'right' }): void;
 }
 
 export default function ExportPage() {
@@ -117,6 +86,8 @@ export default function ExportPage() {
         .from('narratives')
         .select('content')
         .eq('user_id', user.id)
+        .eq('profile_id', profileRow.id)
+        .gte('created_at', profileRow.updated_at)
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -125,6 +96,8 @@ export default function ExportPage() {
         .from('development_plans')
         .select('areas')
         .eq('user_id', user.id)
+        .eq('profile_id', profileRow.id)
+        .gte('created_at', profileRow.updated_at)
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -174,13 +147,16 @@ export default function ExportPage() {
         typeof html2pdfModule === 'function'
           ? html2pdfModule
           : html2pdfModule.default;
-      await html2pdf()
+      await document.fonts.ready;
+      const worker = html2pdf()
         .set({
-          margin: [10, 10, 10, 10],
+          margin: [16, 14, 18, 14],
           filename: `umbra-perfil-${new Date().toISOString().slice(0, 10)}.pdf`,
           image: { type: 'jpeg', quality: 0.98 },
           html2canvas: {
             scale: 2,
+            windowWidth: 1200,
+            scrollY: 0,
             useCORS: true,
             backgroundColor: '#ffffff',
           },
@@ -188,7 +164,18 @@ export default function ExportPage() {
           pagebreak: { mode: ['css', 'legacy'] },
         })
         .from(pdfRef.current)
-        .save();
+        .toPdf();
+      const pdf = await worker.get('pdf');
+      const pageCount = pdf.internal.getNumberOfPages();
+      for (let page = 1; page <= pageCount; page += 1) {
+        pdf.setPage(page);
+        pdf.setFontSize(8);
+        pdf.setTextColor(95);
+        if (page > 1) pdf.text('umbra / cuaderno de autoconocimiento', 14, 10);
+        pdf.text('Lectura orientativa · No es un diagnóstico', 14, 289);
+        pdf.text(`${page} / ${pageCount}`, 196, 289, { align: 'right' });
+      }
+      await worker.save();
     } catch (e) {
       console.error('[export] PDF generation failed', e);
       setError('No pudimos generar el PDF. Probá de nuevo.');
@@ -218,8 +205,6 @@ export default function ExportPage() {
     );
   }
 
-  const info = ARCHETYPE_INFO[data.profile.archetype];
-
   return (
     <LayoutShell>
       <div className="flex flex-col gap-8">
@@ -241,136 +226,9 @@ export default function ExportPage() {
           </Button>
         </div>
 
-        {/* Preview */}
-        <div className="rounded-lg border border-violet-400/20 bg-white p-0 overflow-hidden">
-          <div ref={pdfRef} className="pdf-root">
-            <div className="pdf-section pdf-keep">
-              <h1 style={{ fontSize: '48px', margin: '0 0 8px', fontStyle: 'normal' }}>
-                umbra
-              </h1>
-              <p style={{ fontSize: '14px', color: '#62625c', margin: 0 }}>
-                Tu perfil — {formatDateEs(new Date())}
-                {data.userName && ` · ${data.userName}`}
-              </p>
-            </div>
-
-            <div className="pdf-section pdf-card">
-              <h2 style={{ fontSize: '36px', margin: '0 0 4px', fontStyle: 'normal' }}>
-                {info.name}
-              </h2>
-              {data.profile.archetypeSecondary && (
-                <p style={{ fontSize: '13px', margin: 0 }}>+ {data.profile.archetypeSecondary}</p>
-              )}
-              <p style={{ fontSize: '11px', textTransform: 'none', letterSpacing: '0', margin: '8px 0 0' }}>
-                Arquetipo · interpretación de IA inspirada en Jung
-              </p>
-              <p style={{ marginTop: '12px', fontSize: '14px', lineHeight: '1.6' }}>
-                {info.description}
-              </p>
-              <p style={{ fontSize: '13px', lineHeight: '1.6' }}>Figura simbólica para reflexionar. No es un diagnóstico ni una descripción definitiva de vos.</p>
-            </div>
-
-            <div className="pdf-section pdf-card">
-              <h3 style={{ margin: '0 0 16px' }}>Big Five · estimación experimental de ML</h3>
-              <p style={{ margin: '0 0 12px', fontSize: '12px', lineHeight: '1.5', color: '#555' }}>
-                Escala de 0 a 100. Solo se reporta la cifra de dimensiones habilitadas por los umbrales del modelo; las restantes se declaran con su estado, sin valor. No son percentiles ni permiten comparaciones con la población. No hay precisión individual validada.
-              </p>
-              {(() => {
-                const dimStatus = extractPerDimensionStatus(data.profile.analysisRaw);
-                return BIG_FIVE_ORDER.map((key) => {
-                  const measured = dimStatus[key] === 'ok';
-                  return (
-                    <div key={key} className="pdf-row" style={{ marginBottom: '12px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '13px' }}>
-                        <span>{BIG_FIVE_LABELS[key]}</span>
-                        {measured ? (
-                          <span style={{ fontVariantNumeric: 'tabular-nums' }}>{data.profile.bigFive[key]}</span>
-                        ) : (
-                          <span style={{ fontSize: '11px', textTransform: 'none', letterSpacing: '0', color: '#777' }}>
-                            {STATUS_LABEL[dimStatus[key]]}
-                          </span>
-                        )}
-                      </div>
-                      {measured ? (
-                        <div className="pdf-bar">
-                          <div className="pdf-bar-fill" style={{ width: `${data.profile.bigFive[key]}%` }} />
-                        </div>
-                      ) : (
-                        <div className="pdf-bar" style={{ background: 'transparent', border: '1px dashed #ccc' }} />
-                      )}
-                    </div>
-                  );
-                });
-              })()}
-            </div>
-
-            <div className="pdf-section pdf-card">
-              <h3 style={{ margin: '0 0 16px' }}>Funciones de Jung · interpretación de IA</h3>
-              <p style={{ fontSize: '13px', marginBottom: '16px' }}>Valores de la capa interpretativa, en escala de 0 a 100. No son medidas psicométricas ni probabilidades.</p>
-              {(Object.keys(JUNG_LABELS) as Array<keyof JungFunctions>).map((key) => (
-                <div key={key} className="pdf-row" style={{ marginBottom: '10px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '12px' }}>
-                    <span>{key} · {JUNG_LABELS[key]}</span>
-                    <span style={{ fontVariantNumeric: 'tabular-nums' }}>{data.profile.jungFunctions[key]}</span>
-                  </div>
-                  <div className="pdf-bar">
-                    <div className="pdf-bar-fill" style={{ width: `${data.profile.jungFunctions[key]}%` }} />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {data.narrative && (
-              <div className="pdf-section">
-                <div className="pdf-keep">
-                <h2 style={{ fontSize: '24px', margin: '0 0 16px', fontStyle: 'normal' }}>
-                  Tu lectura
-                </h2>
-                <p style={{ fontSize: '13px', marginBottom: '16px' }}>Texto generado por IA. Puede equivocarse; revisá qué te resulta útil.</p>
-                </div>
-                <SectionedNarrative content={data.narrative} presentation="document" />
-              </div>
-            )}
-
-            {data.plan && (
-              <div className="pdf-section">
-                {data.plan.areas.map((area, i) => (
-                  <div key={area.id} className={i === 0 ? 'pdf-keep' : undefined}>
-                  {i === 0 && <h2 style={{ fontSize: '24px', margin: '0 0 16px', fontStyle: 'normal' }}>Actividades de reflexión</h2>}
-                  <div className="pdf-card">
-                    <h3 style={{ margin: '0 0 8px' }}>
-                      {i + 1}. {area.name}
-                    </h3>
-                    <p style={{ fontSize: '12px', fontStyle: 'normal', margin: '0 0 12px' }}>
-                      {area.rationale}
-                    </p>
-                    {area.actions.map((action) => (
-                      <div key={action.id} className="pdf-action" style={{ marginBottom: '12px', paddingLeft: '12px', borderLeft: '1px solid #deded8' }}>
-                        <div style={{ fontSize: '13px', fontWeight: 600 }}>{action.title}</div>
-                        <div style={{ fontSize: '12px', marginTop: '4px' }}>{action.description}</div>
-                        <ul style={{ fontSize: '12px', marginTop: '6px', paddingLeft: '16px' }}>
-                          {action.microGoals.map((goal, gi) => (
-                            <li key={gi}>{goal.text}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="pdf-footer">
-              {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && <p>Ejemplo local con datos ficticios. No representa un análisis real.</p>}
-              <p style={{ margin: 0 }}>
-                Generado por Umbra · TFG Ingeniería en Software, Universidad Siglo 21
-              </p>
-              <p style={{ margin: '4px 0 0' }}>
-                Umbra no es terapia. Si estás en crisis: 135 (Argentina) · 911
-              </p>
-            </div>
-          </div>
+        <p className="report-preview-hint">Vista previa en formato A4. En pantallas pequeñas, deslizá el papel para recorrerlo.</p>
+        <div className="report-preview" role="region" aria-label="Vista previa del informe A4" tabIndex={0}>
+          <div ref={pdfRef} className="pdf-root"><ReportContent data={data} /></div>
         </div>
       </div>
     </LayoutShell>

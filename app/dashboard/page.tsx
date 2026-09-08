@@ -8,8 +8,11 @@ import { JungAxisView } from '@/components/dashboard/JungAxisView';
 import { ArchetypeMap } from '@/components/dashboard/ArchetypeMap';
 import { CartaFuturaCard } from '@/components/dashboard/CartaFuturaCard';
 import { ProfileWorkspace } from '@/components/dashboard/ProfileWorkspace';
-import { ReflectionArt } from '@/components/ui/ReflectionArt';
-import type { Archetype, BigFive, JungFunctions as JF } from '@/types';
+import { SelfReportSummary } from '@/components/assessment/SelfReportSummary';
+import { extractSelfReport } from '@/lib/assessment/bfi2s';
+import { Info } from '@phosphor-icons/react/dist/ssr';
+import styles from '@/components/dashboard/DashboardExperience.module.css';
+import type { Archetype, BigFive, BigFiveSelfReport, JungFunctions as JF } from '@/types';
 import {
   extractPerDimensionStatus,
   RIDGE_V1_STATUS,
@@ -30,6 +33,7 @@ import {
 export const dynamic = 'force-dynamic';
 
 interface DashboardData {
+  selfReport?: BigFiveSelfReport | null;
   fullName: string | null;
   createdAt: string;
   bigFive: BigFive;
@@ -52,25 +56,17 @@ interface DashboardData {
 function DashboardView({ data }: { data: DashboardData }) {
   return (
     <LayoutShell>
-      <header className="experience-heading">
-        <div>
-          <h1>Mi resultado</h1>
-          <p className="experience-lead">{data.fullName ? `${data.fullName.split(' ')[0]}, una` : 'Una'} lectura.<br />Muchas formas de mirarte.</p>
-          <p className="experience-caption">Perfil experimental para reflexionar. No es una evaluación clínica ni una medida de tu valor personal.</p>
-        </div>
-        <div className="reflection-composition" aria-hidden="true">
-          <svg viewBox="0 0 300 260" className="reflection-contours" fill="none">
-            {[0, 1, 2, 3, 4].map(i => <path key={i} d={`M${22 + i * 17} 230 C${-30 + i * 18} 60, ${240 - i * 14} -50, ${268 - i * 14} 145 S150 285, ${65 + i * 16} 205`} />)}
-          </svg>
-          <ReflectionArt variant="mirror" reveal />
-        </div>
+      <header className={styles.pageHeading}>
+        <h1>Mi resultado</h1>
+        <p><Info size={18} aria-hidden="true" /><span>Perfil experimental para reflexionar. No es una evaluación clínica ni una medida de tu valor personal.</span></p>
       </header>
       <ProfileWorkspace
-        reading={<NarrativeSection profileId={data.profileId} initialContent={data.narrativeContent} />}
-        measurement={<div className="measurement-view">
-          <div>
+        firstName={data.fullName?.split(' ')[0]}
+        reading={<><SelfReportSummary report={data.selfReport ?? null} /><NarrativeSection profileId={data.profileId} initialContent={data.narrativeContent} /></>}
+        measurement={<div className={styles.measurement}>
+          <div className={styles.measurementIntro}>
             <h2 className="focus-title">Qué puede estimar el modelo</h2>
-            <p className="reading-copy mt-5">El módulo propio de ML ofrece estimaciones experimentales de Big Five. Solo se muestra una cifra cuando la dimensión supera el criterio de evaluación comprometido.</p>
+            <p className="reading-copy mt-5">El módulo propio de ML ofrece estimaciones experimentales de Big Five. La versión actual no tiene evidencia suficiente para mostrar cifras individuales en español: las cinco dimensiones aparecen con ese estado.</p>
             <p className="mt-4 text-sm leading-relaxed text-text-2">Estos resultados no son percentiles ni permiten compararte con otras personas. Superar ese criterio no demuestra precisión individual en español.</p>
           </div>
           <BigFiveDimensions bigFive={data.bigFive} status={data.perDimensionStatus} />
@@ -193,6 +189,8 @@ export default async function DashboardPage() {
     .from('narratives')
     .select('content')
     .eq('user_id', user.id)
+    .eq('profile_id', profileRow.id)
+    .gte('created_at', profileRow.updated_at)
     .order('created_at', { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -208,6 +206,7 @@ export default async function DashboardPage() {
   return (
     <DashboardView
       data={{
+        selfReport: extractSelfReport(profileRow.analysis_raw),
         fullName: profileMeta?.full_name ?? null,
         createdAt: profileMeta?.created_at ?? profileRow.created_at,
         bigFive,

@@ -31,6 +31,7 @@ import {
   markCompleted,
 } from '@/lib/onboarding/session-store';
 import { transcriptCharLength } from '@/lib/onboarding/serialize';
+import { turnPolicy } from '@/lib/onboarding/turn-policy';
 import type { OnboardingNextResponse, OnboardingTurn } from '@/types';
 
 export const runtime = 'edge';
@@ -117,6 +118,32 @@ export const POST = withErrorHandler(async (req) => {
     session = await attachAnswer(service, session, body.previousAnswer);
   }
 
+  const sessionMaxTurns = session.flags?.seeded === true ? 3 : DEFAULT_MAX_TURNS;
+  // Resuming must return the unanswered card, not append another one or
+  // consume another provider call. This also recovers older long sessions.
+  const pendingTurn = session.turns.find(turn => turn.answer === null);
+  if (!body.previousAnswer && pendingTurn) {
+    return {
+      sessionId: session.sessionId, turn: pendingTurn, workingProfile: session.workingProfile,
+      insights: [], done: false,
+      turnNumber: Math.min(session.turns.indexOf(pendingTurn) + 1, sessionMaxTurns),
+      maxTurns: sessionMaxTurns,
+    } satisfies OnboardingNextResponse;
+  }
+  const policy = turnPolicy(session.turns, sessionMaxTurns);
+  if (policy.complete) {
+    await markCompleted(service, session.sessionId);
+    const answered = session.turns.filter(turn => turn.answer !== null);
+    return { sessionId: session.sessionId, turn: answered[answered.length - 1], workingProfile: session.workingProfile,
+      insights: [], done: true, turnNumber: Math.min(answered.length, sessionMaxTurns), maxTurns: sessionMaxTurns } satisfies OnboardingNextResponse;
+  }
+  if (policy.needsWriting) {
+    const pending = session.turns.find(turn => turn.answer === null && turn.question.type === 'open_text');
+    const updated = pending ? session : await commitFallbackTurn(service, session, buildFallbackOpenTextQuestion(session.turns.length, []));
+    return { sessionId: updated.sessionId, turn: pending ?? updated.turns[updated.turns.length - 1], workingProfile: updated.workingProfile,
+      insights: [], done: false, turnNumber: sessionMaxTurns, maxTurns: sessionMaxTurns } satisfies OnboardingNextResponse;
+  }
+
   const today = new Date().toISOString().slice(0, 10);
   const haiku = getHaikuModelId();
   const estInput = 4500 + Math.ceil(transcriptCharLength(session.turns) / 4);
@@ -143,7 +170,6 @@ export const POST = withErrorHandler(async (req) => {
   const isSeeded = session.flags?.seeded === true;
   // Seeded sessions run shorter (3 refinement turns) since the baseline
   // profile is already pre-populated from the external retrato.
-  const sessionMaxTurns = isSeeded ? 3 : DEFAULT_MAX_TURNS;
   const { system, prompt } = buildOnboardingConductorPrompt({
     priorTurns: session.turns,
     workingProfile: session.workingProfile,
@@ -174,7 +200,10 @@ export const POST = withErrorHandler(async (req) => {
     if (!json) throw new Error('conductor_no_json');
 
     const repaired = normalizeConductorJson(JSON.parse(json), turnNumber);
-    const parsed = ConductorResponseSchema.parse(repaired);
+    const proposed = ConductorResponseSchema.parse(repaired);
+    const parsed = proposed.done && !policy.hasWriting ? {
+      ...proposed, done: false, nextQuestion: buildFallbackOpenTextQuestion(turnNumber - 1, []),
+    } : proposed;
 
     const cleanInsights = parsed.insights.filter(
       (i) => !BANNED_INSIGHT_RE.test(i.text),
@@ -219,8 +248,8 @@ export const POST = withErrorHandler(async (req) => {
     const fallback = buildFallbackOpenTextQuestion(turnNumber - 1, exclude);
     const updated = await commitFallbackTurn(service, session, fallback);
 
-    const done = updated.turns.length >= sessionMaxTurns;
-    if (done) await markCompleted(service, updated.sessionId);
+    // A new fallback still needs an answer; never finish on an unanswered card.
+    const done = false;
 
     const envelope: OnboardingNextResponse = {
       sessionId: updated.sessionId,

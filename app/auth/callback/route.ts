@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { requestOrigin } from '@/lib/auth/request-origin';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -17,6 +18,7 @@ function isSafeRelativePath(value: string | null): value is string {
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
+  const origin = requestOrigin(request);
   const code = url.searchParams.get('code');
   const next = url.searchParams.get('next');
   const redirectTo = isSafeRelativePath(next) ? next : '/consent';
@@ -25,7 +27,7 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(new URL(redirectTo, url.origin));
+      return NextResponse.redirect(new URL(redirectTo, origin));
     }
     // The exchange is one-shot: the first click consumes the code and sets
     // the session cookie, a second click (or a browser retry) fails. Treat
@@ -35,7 +37,7 @@ export async function GET(request: Request) {
       data: { user },
     } = await supabase.auth.getUser();
     if (user) {
-      return NextResponse.redirect(new URL(redirectTo, url.origin));
+      return NextResponse.redirect(new URL(redirectTo, origin));
     }
     // Hard failure: PKCE exchange failed AND no live session. Send the user
     // to a dedicated error page with a hint about why.
@@ -45,9 +47,9 @@ export async function GET(request: Request) {
         ? 'used'
         : 'pkce';
     return NextResponse.redirect(
-      new URL(`/auth/auth-code-error?reason=${reason}`, url.origin),
+      new URL(`/auth/auth-code-error?reason=${reason}`, origin),
     );
   }
 
-  return NextResponse.redirect(new URL('/auth/auth-code-error?reason=pkce', url.origin));
+  return NextResponse.redirect(new URL('/auth/auth-code-error?reason=pkce', origin));
 }
